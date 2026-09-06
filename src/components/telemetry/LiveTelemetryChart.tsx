@@ -202,7 +202,7 @@ export function LiveTelemetryChart() {
             <ToggleGroup.Item
               key={c.id}
               value={c.id}
-              className="inline-flex items-center gap-1.5 rounded-sm border border-line px-2 py-1 text-text-secondary transition-colors hover:text-text-primary data-[state=on]:border-text-primary data-[state=on]:text-text-primary"
+              className="inline-flex items-center gap-1.5 rounded-sm border border-line px-2 py-1 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:border-text-primary data-[state=on]:text-text-primary"
             >
               <span
                 aria-hidden
@@ -239,7 +239,7 @@ export function LiveTelemetryChart() {
               <ToggleGroup.Item
                 key={s}
                 value={String(s)}
-                className="px-2 py-1.5 text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
+                className="px-2 py-1.5 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
               >
                 {s}s
               </ToggleGroup.Item>

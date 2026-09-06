@@ -31,11 +31,10 @@ export function ProtocolStack() {
 
         <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_1fr] lg:gap-14">
           <ol className="overflow-hidden rounded-lg border border-line">
-            {layers.map((l, i) => (
+            {layers.map((l) => (
               <Reveal
                 as="li"
                 key={l.name}
-                delay={i * 0.05}
                 className={`flex items-baseline justify-between gap-4 border-b border-line px-5 py-4 last:border-0 ${
                   l.tone ? "bg-accent-tint" : "bg-surface"
                 }`}

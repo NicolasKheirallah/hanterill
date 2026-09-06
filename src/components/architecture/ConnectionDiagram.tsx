@@ -65,7 +65,7 @@ export function ConnectionDiagram() {
                 style={{ marginLeft: "-3px" }}
                 initial={{ left: phase === "request" ? "87.5%" : "12.5%", opacity: 0 }}
                 animate={{ left: phase === "request" ? "12.5%" : "87.5%", opacity: [0, 1, 1, 1, 0] }}
-                transition={{ duration: 1.8, ease: "easeInOut", delay: 0.9 }}
+                transition={{ duration: 1.7, ease: [0.65, 0, 0.35, 1], delay: 0.9 }}
                 onAnimationComplete={() => setPhase((p) => (p === "request" ? "response" : "request"))}
               />
             ) : null}

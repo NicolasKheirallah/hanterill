@@ -1,10 +1,14 @@
 "use client";
 
+import * as React from "react";
 import { useTransition } from "react";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
+
+type WithAddTransitionType = { unstable_addTransitionType?: (type: string) => void };
+const addTransitionType = (React as WithAddTransitionType).unstable_addTransitionType;
 
 /**
  * EN / SV. Switching keeps the current page and records the choice (next-intl
@@ -18,7 +22,12 @@ export function LocaleSwitcher() {
 
   function set(locale: Locale) {
     if (locale === active) return;
+    // React 19.2 starts a view transition for this navigation. Only the
+    // content region carries view-transition-name: page-main, so the header
+    // and footer stay put; globals.css crossfades it and disables the effect
+    // under reduced motion. Browsers without the API just swap instantly.
     startTransition(() => {
+      addTransitionType?.("locale");
       router.replace(pathname, { locale });
     });
   }

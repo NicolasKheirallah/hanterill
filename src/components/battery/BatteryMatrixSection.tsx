@@ -112,7 +112,7 @@ export function BatteryMatrixSection() {
               <ToggleGroup.Item
                 key={v}
                 value={v}
-                className="rounded-[2px] px-2.5 py-1.5 text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
+                className="rounded-[2px] px-2.5 py-1.5 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
               >
                 {t(VIEW_KEY[v])}
               </ToggleGroup.Item>

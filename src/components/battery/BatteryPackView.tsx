@@ -74,7 +74,7 @@ export function BatteryPackView() {
             <ToggleGroup.Item
               key={m}
               value={m}
-              className="rounded-[2px] px-2 py-1 text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
+              className="rounded-[2px] px-2 py-1 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
             >
               {t(MODE_KEY[m])}
             </ToggleGroup.Item>

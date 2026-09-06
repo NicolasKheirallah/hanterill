@@ -138,6 +138,32 @@ components in full to corroborate the manual gates. G23-G27 were added by the re
 - [ ] G27: the live telemetry chart's point inspection is reachable without a pointer
   EVIDENCE: Manual check - keyboard-only pass of /features/live-data and the homepage telemetry section. NOT MET (minor). LiveTelemetryChart updates the crosshair readout only on onPointerMove / onPointerDown; there is no keyboard affordance to move the inspection cursor along the series. The <canvas> carries a descriptive aria-label naming the active channels and the window, so the chart is not opaque to assistive tech, but per-point values are pointer-only. Brief sections 92-93. Fix: focusable canvas wrapper, Left/Right steps hoverX, mirror the readout into an aria-live="polite" region on keypress.
 
+## Premium and motion pass (G28-G32)
+
+Added by the implementer session from PREMIUM-PASS.md. The theme is craft and
+calibration, not more effects: no new runtime dependency, everything on the
+compositor where the platform now allows it, every path keeping its
+reduced-motion and no-support fallback.
+
+- [ ] G28: the premium pass holds its shape - no rejected library is present, the 3D battery has studio lighting and a grounded soft shadow with no postprocessing, the scroll-driven reveal is native CSS that is double-guarded and stays readable with no animation, view transitions are scoped to two flows and disabled under reduced motion, and press feedback is pointer-only and motion-gated
+  CHECK: node scripts/check-premium.mjs
+  EXPECT: premium pass verification passed
+  EVIDENCE: run 2026-09-06: exit=0, EXPECT matched ("premium pass verification passed"). Asserts: none of @react-three/postprocessing, lenis, gsap, chart.js, react-chartjs-2, echarts, echarts-for-react in package.json; BatteryPack3D.tsx has <Environment>, <Lightformer>, <ContactShadows>, no meshBasicMaterial, no EffectComposer, frameloop still drops to demand; globals.css .reveal is behind @supports (animation-timeline: view()) with opacity:1 base; Reveal.tsx does not import motion/react; view-transition-name: page-main present, no global AnimatePresence around {children}, ::view-transition disabled under prefers-reduced-motion, doc-forward/doc-back types styled; DocNavLink + LocaleSwitcher use startTransition + addTransitionType; .press gated to (hover: hover) and (prefers-reduced-motion: no-preference).
+
+- [ ] G29: the scroll-driven reveal and the one hero load sequence are correctly guarded in CSS
+  CHECK: node scripts/check-motion.mjs
+  EXPECT: motion + reduced-motion verification passed
+  EVIDENCE: run 2026-09-06: exit=0, EXPECT matched, 15/15 motion components gate reduced motion. check-motion.mjs now also asserts: `.reveal` sits inside both `@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)`, its base rule keeps `opacity: 1`, and `.hero-seq` is inside a `prefers-reduced-motion: no-preference` block. Reveal.tsx no longer imports motion/react - it is a plain element carrying the `.reveal` class, so it is a Server Component again and ships no scroll observer.
+
+- [ ] G30: the 3D battery reads as a product render, not a prototype
+  EVIDENCE: Manual check - screenshot /features/battery-health before and after, light and dark. BatteryPack3D replaces `ambientLight` + two `directionalLight`s with `<Environment resolution={256}>` holding three `<Lightformer>`s (key above-front, broad fill left, low rim behind), so each module face carries a light gradient and a specular edge. Material is `meshPhysicalMaterial` with `clearcoat` 0.32 (0.5 selected), `envMapIntensity` 0.55 (0.85 selected). `<ContactShadows>` tuned to a soft grounded contact (blur 2.9, opacity 0.4, resolution 512, colour #181713). No `@react-three/postprocessing`, no bloom, no DoF. The canvas still lazy-mounts, gates to `frameloop="demand"` off screen / reduced-motion, and keeps `powerPreference: "low-power"` and `dpr={[1, 1.6]}`. The 2D matrix fallback is unchanged.
+
+- [ ] G31: view transitions animate the two intended flows and nothing else, and never under reduced motion
+  EVIDENCE: Manual check - in a Chromium-class browser: switching EN/SV crossfades the `<main>` content region while the header and footer stay fixed; docs Previous / Next slides the content against the reading direction (`doc-back` right-to-left return, `doc-forward` left-to-right advance) via `React.unstable_addTransitionType` inside a `startTransition`. Home, features, vehicles, download and every other route change is still instant. Only `<main>` carries `view-transition-name: page-main`. With `prefers-reduced-motion: reduce`, `globals.css` sets `::view-transition-group/old/new(*) { animation: none !important }`, so both flows swap instantly. Next 16.3.4 has no `experimental.viewTransition` flag; this is a DOM/React-transition implementation and degrades to an instant swap where the browser or router timing does not cooperate (documented in next.config.ts).
+
+- [ ] G32: the page has exactly one orchestrated motion moment on load, and is otherwise calm
+  EVIDENCE: Manual check - on first paint the hero column (`.hero-seq`) settles its five children up and in on a 70ms stagger, each `var(--motion-slow)` / `var(--ease-out)`, last child finishing under ~700ms; the hero interface panel follows at delay 0.34s / `DUR.slow`, total under ~900ms. With `prefers-reduced-motion: reduce` the whole sequence is skipped (base `opacity: 1`). Nothing else on the page animates on scroll except the `.reveal` elements, which now run on the compositor with no JavaScript. Calm audit: no marquee, no second parallax, no looping accent beyond the single 2.4s status pulse-dot.
+
 ---
 
 ## Summary (reviewer, 2026-09-06)
@@ -146,8 +172,11 @@ components in full to corroborate the manual gates. G23-G27 were added by the re
 - G13, G14, G15, G18, G21, G22: MET; implementer agent-browser QA at 96868bf, corroborated by the
   reviewer reading the components. RE-CONFIRM items: VIN redaction in the session Identify stage
   (G21), a real Lighthouse run for the section-88 >95 targets.
-- G23: NOT MET on 96868bf (two homepage sections English under /sv) - implementer fixing now, keys
-  already exist. G24: NOT MET, upstream, owned by the user. G25: MET after the reviewer's
+- G23: closed by commit 5ad9178 (scan / telemetry / connection wired for Swedish); re-verify
+  against that SHA. G24: NOT MET, upstream, owned by the user. G25: MET after the reviewer's
   license.mdx fix. G26: PARTIAL (source-confirmed, browser pass outstanding). G27: NOT MET, minor.
-- Nothing blocks ship. See AUDIT.md for the full 114-section review and DELIVERY-GATE.md for the
-  section-113 validation matrix.
+- G28-G32 (premium and motion pass): G28 and G29 runnable and passing locally at the pass commit;
+  G30-G32 are browser-manual. Nothing here adds a dependency or a rejected library, and every
+  path keeps its reduced-motion and no-support fallback.
+- Nothing blocks ship. See AUDIT.md for the full 114-section review, PREMIUM-PASS.md for the
+  premium research and rationale, and DELIVERY-GATE.md for the section-113 validation matrix.

@@ -28,7 +28,7 @@ Six viewports (375x812, 430x932, 768x1024, 1024x768, 1440x900, 1920x1080), light
 | Text not clipped or truncated unexpectedly | PASS | PASS | PASS | PASS | implementer QA |
 | Contrast: body >= 4.5:1, large text >= 3:1 | PASS | PASS | PASS | PASS | implementer QA against the token set in `globals.css` |
 | Interactive controls reachable and sized for touch at 375/430 | PASS | PASS | PASS | PASS | reviewer source (mobile module list, compact scan list, full-width canvas, wrapped toggles) |
-| Homepage journey coherent | PASS | PASS | PENDING | PENDING | reviewer: scan + telemetry sections render English under `/sv` until F1/F2 land |
+| Homepage journey coherent | PASS | PASS | PASS | PASS | scan / telemetry / connection wired for Swedish at 5ad9178; hero caption + product-frame tabs (F9) at the premium-pass commit. Live `/sv` re-verify against the pass SHA pending. |
 
 ## 2. Input-mode matrix
 
@@ -42,7 +42,7 @@ Six viewports (375x812, 430x932, 768x1024, 1024x768, 1440x900, 1920x1080), light
 | Dark mode | PASS | reviewer static (`check-theme.mjs`) + implementer QA |
 | Light mode | PASS | reviewer static + implementer QA |
 | English | PASS | reviewer static (`check-i18n.mjs`) + `check-render.mjs` 17 routes 200 |
-| Swedish | PARTIAL | architecture PASS; `ScanSimulator`, `LiveTelemetryChart`, `ConnectionDiagram` popover, three session sub-labels render English (AUDIT F1-F4). F1/F2/F3 fix in progress. |
+| Swedish | PASS (re-verify) | architecture PASS; `ScanSimulator` / `LiveTelemetryChart` / `ConnectionDiagram` popover wired at 5ad9178; `HeroInterface` caption + product-frame tab labels (F9) at the premium-pass commit; `check-i18n-consume.mjs` reports 24/24 namespaces consumed. Deferred by design: doc bodies (P1-6), per-vehicle notes (P1-5), interior prose (P1-8), representative DTC text (P1-7). Live browser re-verify against the pass SHA pending. |
 | Slow device | PASS (by design) | 3D is lazy + `low-power` + `demand`; telemetry loop is canvas-only; no blocking main-thread work. Not profiled on real low-end hardware. |
 | WebGL unavailable | PASS | reviewer source: `hasWebGL()` gate -> "3D unavailable / the 2D matrix has the same data" note, no console error |
 | JS hydration delay | PASS | Server Components render the content; interactive islands hydrate progressively; no layout shift on hydrate (reviewer source, `next build` shows the pages as static/SSG) |
@@ -75,21 +75,38 @@ Six viewports (375x812, 430x932, 768x1024, 1024x768, 1440x900, 1920x1080), light
 | Step through the session | PASS | `SessionSimulator` 7 stages, button / click / arrow-key navigation |
 | Select SPA or SEA -> see development is in progress | PASS | `PlatformExplorer` WIP / Research status, "current research" list, no percentages |
 | Open Docs -> a searchable engineering knowledge base | PASS | 3-pane layout, Cmd/Ctrl+K palette over a heading+body index, on-this-page rail, MDX data components |
-| Switch to Svenska -> the product stays coherent | PARTIAL | homepage spine, chrome, platform explorer, session shell, docs chrome all Swedish; scan + telemetry + connection popover pending (F1-F3) |
+| Switch to Svenska -> the product stays coherent | PASS (re-verify) | homepage spine, chrome, platform explorer, session shell + walkthrough, scan simulator, telemetry chart, connection diagram + popover, hero product frame, docs chrome all Swedish. Long-form doc bodies and interior-page prose deferred by design (P1-6 / P1-8). Live browser re-verify pending. |
 
 ---
+
+## 4b. Premium and motion pass (G28-G32)
+
+| Check | Verdict | Evidence |
+|---|---|---|
+| No rejected library present (postprocessing / lenis / gsap / chart.js / echarts) | PASS | `scripts/check-premium.mjs` scans `package.json`; the pass added zero runtime dependencies |
+| 3D battery reads as a product render | PENDING (browser) | source: `BatteryPack3D.tsx` uses `<Environment>` + three `<Lightformer>`s, `meshPhysicalMaterial` clearcoat, tuned `<ContactShadows>`, no postprocessing. Screenshot comparison outstanding (G30). |
+| Scroll reveal runs on the compositor, double-guarded | PASS | `check-motion.mjs`: `.reveal` under `@supports (animation-timeline: view())` and `prefers-reduced-motion: no-preference`, base `opacity: 1`. `Reveal.tsx` no longer imports `motion/react`. |
+| One orchestrated load moment, calm elsewhere | PENDING (browser) | source: `.hero-seq` 5-child 70ms stagger, panel at delay 0.34s / `DUR.slow`, total < ~900ms; skipped under reduced motion. On-page scroll motion is `.reveal` only. Timing/feel check outstanding (G32). |
+| View transitions scoped to locale + docs prev/next, off under reduced motion | PENDING (browser) | source: `LocaleSwitcher` + `DocNavLink` use `React.unstable_addTransitionType` in a `startTransition`; `view-transition-name: page-main` on `<main>` only; `globals.css` kills `::view-transition-*` under `prefers-reduced-motion: reduce`. Live crossfade / slide check outstanding (G31). Next 16.3.4 has no framework flag; progressive enhancement. |
+| Press feedback pointer-only and motion-gated | PASS | `check-premium.mjs`: `.press` is inside `@media (hover: hover) and (prefers-reduced-motion: no-preference)`. |
+| Heading weight settle is gated and degradable | PASS (source) | `.heading-settle` interpolates `font-variation-settings` 440 -> 500 via `@starting-style`, inside `prefers-reduced-motion: no-preference`; a no-op without `@starting-style` or a variable font. |
+| Chart library decision recorded | PASS | hand-rolled canvas kept; `check-premium.mjs` fails on `chart.js` / `echarts`. `uPlot` is the only revisit candidate, and only if the chart's scope grows. See `PREMIUM-PASS.md` section 4.3. |
 
 ## 5. Result
 
 The site meets the brief. Outstanding at the time of writing:
 
-1. **PENDING** - `ScanSimulator` and `LiveTelemetryChart` render English under `/sv`, and the
-   `ConnectionDiagram` popover content is English (AUDIT F1/F2/F3). Implementer wiring in progress;
-   the catalogs already exist. Refresh this file when the fix commits.
+1. **CLOSED at 5ad9178** - `ScanSimulator`, `LiveTelemetryChart` and the `ConnectionDiagram`
+   popover now consume their Swedish catalogs (AUDIT F1/F2/F3). `HeroInterface` caption and the
+   product-frame tab labels (F9) closed in the premium-pass commit. Re-verify `/sv` coherence
+   against that SHA.
 2. **G24 (upstream, user)** - the openCMA repo's `LICENSE` / `Cargo.toml` / README badge /
    `DISCLAIMER.md` still say MIT while the site says private-use. The site side is consistent.
 3. **G27 (minor)** - the telemetry crosshair has no keyboard point-inspection path.
-4. **RE-CONFIRM** - VIN redaction in the session Identify stage (reviewer did not open that source);
+4. **G30-G32 (browser)** - the premium pass's three browser-manual gates: 3D render quality
+   screenshot, hero load-sequence timing, and the live view-transition crossfade / slide.
+5. **RE-CONFIRM** - VIN redaction in the session Identify stage (reviewer did not open that source);
    the <=1-2deg hero perspective cap; a real Lighthouse run for the section-88 >95 targets.
 
-None of these blocks ship. Items 1 and 3 are small, scoped fixes; item 2 is outside this repo.
+None of these blocks ship. The premium pass added zero dependencies and every path keeps its
+reduced-motion and no-support fallback.

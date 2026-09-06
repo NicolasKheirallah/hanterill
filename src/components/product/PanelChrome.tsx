@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import {
   Activity,
   Battery,
@@ -12,12 +13,12 @@ import { cn } from "@/lib/cn";
 import { StatusMarker } from "@/components/ui/StatusBadge";
 
 export const panelTabs = [
-  { id: "overview", label: "Overview", icon: LayoutGrid },
-  { id: "battery", label: "Battery", icon: Battery },
-  { id: "dtc", label: "DTC", icon: TriangleAlert },
-  { id: "modules", label: "Modules", icon: Cpu },
-  { id: "live", label: "Live", icon: Activity },
-  { id: "logs", label: "Logs", icon: ScrollText },
+  { id: "overview", key: "panelOverview", icon: LayoutGrid },
+  { id: "battery", key: "panelBattery", icon: Battery },
+  { id: "dtc", key: "panelDtc", icon: TriangleAlert },
+  { id: "modules", key: "panelModules", icon: Cpu },
+  { id: "live", key: "panelLive", icon: Activity },
+  { id: "logs", key: "panelLogs", icon: ScrollText },
 ] as const;
 
 export type PanelTabId = (typeof panelTabs)[number]["id"];
@@ -38,6 +39,7 @@ export function PanelChrome({
   children: ReactNode;
   connection?: "connected" | "scanning";
 }) {
+  const t = useTranslations("views");
   return (
     <div className="overflow-hidden rounded-[10px] border border-line-strong bg-surface shadow-[0_1px_0_var(--line)] [--panel-fg:var(--text-secondary)]">
       <div className="flex items-center justify-between border-b border-line bg-bg-secondary px-3.5 py-2.5">
@@ -46,19 +48,20 @@ export function PanelChrome({
           openCMA
         </div>
         <StatusMarker tone={connection === "connected" ? "ok" : "info"} pulse>
-          {connection === "connected" ? "Connected" : "Scanning"}
+          {connection === "connected" ? t("connected") : t("scanningShort")}
         </StatusMarker>
       </div>
 
       <div className="grid grid-cols-[92px_minmax(0,1fr)] sm:grid-cols-[136px_minmax(0,1fr)]">
         <nav
           className="border-r border-line bg-bg-secondary/60 py-2"
-          aria-label="Diagnostic panel sections"
+          aria-label={t("panelSectionsAria")}
           role={onSelect ? "tablist" : undefined}
         >
-          {panelTabs.map((t) => {
-            const Icon = t.icon;
-            const isActive = t.id === active;
+          {panelTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = tab.id === active;
+            const label = t(tab.key);
             const cls = cn(
               "flex w-full items-center gap-2 px-3 py-2 text-left font-mono text-[12px] transition-colors",
               isActive
@@ -67,21 +70,21 @@ export function PanelChrome({
             );
             return onSelect ? (
               <button
-                key={t.id}
+                key={tab.id}
                 type="button"
                 role="tab"
                 aria-selected={isActive}
                 tabIndex={isActive ? 0 : -1}
-                onClick={() => onSelect(t.id)}
+                onClick={() => onSelect(tab.id)}
                 className={cls}
               >
                 <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
-                {t.label}
+                {label}
               </button>
             ) : (
-              <span key={t.id} className={cls} aria-current={isActive ? "true" : undefined}>
+              <span key={tab.id} className={cls} aria-current={isActive ? "true" : undefined}>
                 <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
-                {t.label}
+                {label}
               </span>
             );
           })}

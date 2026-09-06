@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
-import { ContactShadows, OrbitControls } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer, OrbitControls } from "@react-three/drei";
 import { useReducedMotion } from "motion/react";
 import * as THREE from "three";
 import { batteryDemo, moduleStats } from "@/lib/demo-data";
@@ -27,10 +27,30 @@ function colorFor(mode: Mode, m: number): THREE.Color {
     );
   }
   const dn = Math.min(1, s.delta / 12);
-  return new THREE.Color().lerpColors(
-    new THREE.Color("#7a7a74"),
-    new THREE.Color("#8a6b28"),
-    dn,
+  return new THREE.Color().lerpColors(new THREE.Color("#7a7a74"), new THREE.Color("#8a6b28"), dn);
+}
+
+/**
+ * Studio lighting without an HDRI file: three soft area lights as scene
+ * geometry. A key above and in front, a broad fill to the left, a low rim
+ * behind. This gives each module a gradient across its faces and a specular
+ * edge, which is what reads as "photographed" rather than "flat shaded".
+ * Rendered once (frames default) so it costs nothing per frame.
+ */
+function StudioEnvironment() {
+  return (
+    <Environment resolution={256}>
+      <color attach="background" args={["#111111"]} />
+      <Lightformer intensity={2.6} position={[2.5, 5, 4]} scale={[8, 5, 1]} color="#fdfaf3" />
+      <Lightformer intensity={1.1} position={[-6, 2.5, 1]} scale={[6, 8, 1]} color="#e8ecf2" />
+      <Lightformer
+        intensity={1.4}
+        position={[0, 1.2, -6]}
+        rotation={[0, Math.PI, 0]}
+        scale={[10, 3, 1]}
+        color="#cfd4da"
+      />
+    </Environment>
   );
 }
 
@@ -90,12 +110,15 @@ function Modules({
             }}
           >
             <boxGeometry args={[W, isSel ? 0.62 : 0.44, D]} />
-            <meshStandardMaterial
+            <meshPhysicalMaterial
               color={c.color}
-              roughness={0.72}
-              metalness={0.05}
+              roughness={0.62}
+              metalness={0.12}
+              clearcoat={isSel ? 0.5 : 0.32}
+              clearcoatRoughness={0.55}
+              envMapIntensity={isSel ? 0.85 : 0.55}
               emissive={isSel ? "#3557e0" : "#000000"}
-              emissiveIntensity={isSel ? 0.22 : 0}
+              emissiveIntensity={isSel ? 0.16 : 0}
             />
           </mesh>
         );
@@ -103,7 +126,7 @@ function Modules({
       {/* Tray */}
       <mesh position={[0, -0.02, 0]} receiveShadow>
         <boxGeometry args={[COLS * (W + GAP) + 0.3, 0.12, ROWS * (D + GAP) + 0.3]} />
-        <meshStandardMaterial color="#3a3a37" roughness={0.9} />
+        <meshStandardMaterial color="#302f2c" roughness={0.95} metalness={0.05} envMapIntensity={0.25} />
       </mesh>
     </group>
   );
@@ -135,11 +158,18 @@ export function BatteryPack3D({
         onPointerMissed={() => setSelected(null)}
       >
         <color attach="background" args={["#00000000"]} />
-        <ambientLight intensity={0.9} />
-        <directionalLight position={[5, 8, 5]} intensity={1.1} castShadow />
-        <directionalLight position={[-6, 3, -4]} intensity={0.3} />
+        <ambientLight intensity={0.25} />
+        <StudioEnvironment />
         <Modules mode={mode} active={active} selected={selected} onSelect={setSelected} onHover={setHover} />
-        <ContactShadows position={[0, -0.09, 0]} opacity={0.28} scale={16} blur={2.4} far={5} />
+        <ContactShadows
+          position={[0, -0.09, 0]}
+          opacity={0.4}
+          scale={15}
+          blur={2.9}
+          resolution={512}
+          far={4}
+          color="#181713"
+        />
         <OrbitControls
           enablePan={false}
           enableZoom={false}

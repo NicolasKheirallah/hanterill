@@ -249,6 +249,137 @@ Detailed per-item breakdown in the brief section-110 column format follows.
 
 ---
 
+## P3: premium and motion pass (from PREMIUM-PASS.md)
+
+A calibration pass, not a feature pass. No new runtime dependency. The bar is
+precision, materiality, one orchestrated moment, weightlessness. Full research,
+package landscape and the considered-and-rejected list are in `PREMIUM-PASS.md`.
+
+### P3-1 3D battery: product render, not prototype
+
+- **Current behaviour (before P3):** `ambientLight` + two `directionalLight`s, flat
+  `meshStandardMaterial` boxes, one untuned `ContactShadows`. Geometry and interaction
+  correct; the surface reads as a prototype.
+- **Problem:** the highest-value 3D surface on the site looks unfinished next to the
+  Apple / Polestar bar the brief sets.
+- **Proposed interaction:** unchanged. This is a lighting and material change only.
+- **Library:** `@react-three/drei` `Environment` + `Lightformer` (already a dependency).
+  No postprocessing.
+- **Accessibility:** none affected. The 2D matrix fallback, the WebGL gate and the
+  reduced-motion `frameloop="demand"` are unchanged.
+- **Mobile:** `dpr={[1, 1.6]}` and `powerPreference: "low-power"` kept; the environment
+  renders once, not per frame.
+- **Performance:** one extra offscreen cube-camera pass on mount. Negligible; the render
+  loop still stops when the canvas is off screen.
+- **Priority:** P0 within the pass. **Status:** DONE (`BatteryPack3D.tsx`). `<Environment>`
+  with three `<Lightformer>`s (key, fill, rim), `meshPhysicalMaterial` with a faint
+  `clearcoat`, `<ContactShadows>` tuned to a soft grounded contact. `check-premium.mjs`
+  fails if the environment, the soft shadow, or the "no postprocessing" rule regresses.
+
+### P3-2 Scroll reveal: native CSS, off the main thread
+
+- **Current behaviour (before P3):** `Reveal` mounted a `motion` component per block and
+  ran a JS `useInView` observer.
+- **Problem:** per-section JS scroll observers for what the 2026 platform does on the
+  compositor for free; and a per-section fade-and-rise is the generic tell the design
+  guidance calls out.
+- **Proposed interaction:** `.reveal` class driven by `animation-timeline: view()`. A
+  stack cascades on its own as each element crosses its entry range.
+- **Library:** none. `@supports (animation-timeline: view())` + `prefers-reduced-motion:
+  no-preference` guards; base `opacity: 1` so content is readable with no support.
+- **Accessibility:** reduced motion and no-support both fall to "just visible".
+- **Mobile:** identical; compositor-run, no scroll listener.
+- **Performance:** removes the observer from every `Reveal`, and `Reveal.tsx` becomes a
+  Server Component again (no `motion/react` import).
+- **Priority:** P0 within the pass. **Status:** DONE (`Reveal.tsx`, `globals.css`).
+  `check-motion.mjs` asserts both guards and the `opacity: 1` base.
+
+### P3-3 One orchestrated load moment
+
+- **Current behaviour (before P3):** the hero had a load sequence; the hero interface
+  panel came in at delay 0.1 / `DUR.explain`.
+- **Problem:** the sequence was loose and long; the sanctioned single page-load moment
+  should be tight and unmistakably deliberate.
+- **Proposed interaction:** `.hero-seq` staggers its five children up and in on a 70ms
+  step, `var(--motion-slow)` each; the interface panel follows at delay 0.34s /
+  `DUR.slow`. Total under ~900ms. Nothing else on the page animates on scroll except the
+  reveal.
+- **Library:** CSS for the text stagger (Hero stays a Server Component); the panel keeps
+  its existing `motion` entrance, retuned.
+- **Accessibility / mobile:** the whole sequence is skipped under reduced motion (base
+  `opacity: 1`).
+- **Performance:** transform + opacity only, compositor-run.
+- **Priority:** P1 within the pass. **Status:** DONE (`Hero.tsx`, `HeroInterface.tsx`,
+  `globals.css`).
+
+### P3-4 Scoped view transitions
+
+- **Current behaviour (before P3):** locale switch and docs prev / next were plain swaps.
+- **Problem:** the language change reads as a reload; docs sequential navigation gives no
+  orientation cue.
+- **Proposed interaction:** locale switch crossfades the `<main>` content region (header
+  and footer fixed); docs Previous / Next slides the content against the reading
+  direction, keyed to a `doc-forward` / `doc-back` transition type. Every other route
+  change stays instant.
+- **Library:** the platform View Transitions API via `React.unstable_addTransitionType`
+  inside a `startTransition`. Next 16.3.4 has no `experimental.viewTransition` flag, so
+  this is a DOM/React-transition implementation and a progressive enhancement: instant
+  swap where the browser or timing does not cooperate. `view-transition-name: page-main`
+  scopes it; `globals.css` disables it entirely under reduced motion.
+- **Accessibility:** reduced motion swaps instantly; keyboard and screen-reader flow
+  unchanged (`DocNavLink` is a real `<a>` with the correct href).
+- **Mobile / performance:** compositor-run, zero animation JS on these flows; no library.
+- **Priority:** P1 within the pass. **Status:** DONE (`LocaleSwitcher.tsx`,
+  `DocNavLink.tsx`, `[...slug]/page.tsx`, `[locale]/layout.tsx`, `globals.css`,
+  `next.config.ts` note). Revisit the framework flag on a Next upgrade that ships it.
+
+### P3-5 Micro-polish, measured
+
+- **Press feedback:** a `.press` utility - `translateY(1px) scale(0.985)` on `:active`,
+  gated to `(hover: hover) and (prefers-reduced-motion: no-preference)` so it does not
+  fire on touch tap-ghosting. Applied to the toggle groups; `Button` already had its own.
+- **Connection packet easing:** the request/response dot now uses `[0.65, 0, 0.35, 1]`
+  (quick out, settle in) instead of `easeInOut`, so it reads like a signal.
+- **Heading weight settle:** section headings interpolate `font-variation-settings`
+  "wght" 440 -> 500 once on first paint via `@starting-style` (Inter is a variable face);
+  subliminal, off under reduced motion, a no-op without `@starting-style` or a variable
+  font.
+- **Considered, not done:** a global `:focus-visible` outline-offset transition - risks
+  regressing the many existing `transition-colors` rules; revisit with a scoped audit.
+  Extending `AnimatedNumber` to the battery / platform detail panels - those panels use
+  `AnimatePresence mode="wait"`, and the swap fade is the better transition for a full
+  content change; `AnimatedNumber` stays on the persisted counters (scan totals, report).
+- **Priority:** P2 within the pass. **Status:** DONE except the two "considered, not done"
+  items.
+
+### P3-6 Chart library: keep the hand-rolled canvas
+
+- **Decision:** do not adopt Chart.js or ECharts. The benchmarks put both at 4-7x the CPU
+  and memory of the current canvas, and their default visual language is rounded-marketing,
+  not instrument. The hand-rolled `<canvas>` already is the lightweight option and handles
+  the window, crosshair, multi-series, reduced motion and off-screen pause.
+- **Revisit trigger:** only if the chart's feature list grows (stacked panes,
+  brush-to-zoom, exported PNG), and then with `uPlot`, which keeps the current performance
+  profile. `chartjs-plugin-streaming` (last release 2020), ECharts (~1MB, look) and
+  commercial libraries are out regardless.
+- **Priority:** P1 within the pass. **Status:** DONE (no change; decision recorded).
+  `check-premium.mjs` fails the build if `chart.js`, `react-chartjs-2`, `echarts` or
+  `echarts-for-react` is added.
+
+### Considered and rejected in this pass
+
+| Idea | Why not (short) |
+|---|---|
+| Lenis smooth scroll | Brief forbids scroll hijacking; a precision-instrument brand wants exact native scroll; never-sleeping rAF loop. `check-premium.mjs` fails on `lenis`. |
+| WebGPU renderer now | R3F 9 does not fully support it; 27 boxes gain nothing; would add a WebGL2 fallback path. |
+| GSAP / ScrollTrigger | Motion covers every interaction; no pinned sequence is designed; a second engine is dead weight. `check-premium.mjs` fails on `gsap`. |
+| Postprocessing (bloom / DoF / chromatic aberration) | Directly against "not a flashy marketing site". `check-premium.mjs` fails on `@react-three/postprocessing`. |
+| Particle field / shader background | Named-banned in the brief; the hero is product-led. |
+| Motion+ (paid) | `AnimatedNumber` already exists; the rest are marketing-site components. |
+| Global page transitions | Latency and motion where none aids the user; only locale + docs-sequential benefit. |
+
+---
+
 ## i18n boundary (what a `/sv` visitor sees today)
 
 **Swedish:** metadata, navigation, footer, hero, feature blocks, protocol stack, ECU topology,

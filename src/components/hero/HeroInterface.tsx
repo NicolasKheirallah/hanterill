@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   AnimatePresence,
   motion,
@@ -19,6 +20,7 @@ import { DUR, EASE } from "@/lib/motion";
  * for touch input.
  */
 export function HeroInterface() {
+  const tc = useTranslations("common");
   const reduce = useReducedMotion();
   const [tab, setTab] = useState<PanelTabId>("overview");
   const ref = useRef<HTMLDivElement>(null);
@@ -51,7 +53,7 @@ export function HeroInterface() {
         style={reduce ? undefined : { rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
         initial={reduce ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: DUR.explain, ease: EASE.out, delay: 0.1 }}
+        transition={{ duration: DUR.slow, ease: EASE.out, delay: 0.34 }}
       >
         <PanelChrome active={tab} onSelect={setTab}>
           <AnimatePresence mode="wait" initial={false}>
@@ -68,7 +70,7 @@ export function HeroInterface() {
         </PanelChrome>
       </motion.div>
       <p className="mt-3 text-center font-mono text-[11px] text-text-muted">
-        Representative interface with sample values. Not a live vehicle reading.
+        {tc("representative")}
       </p>
     </div>
   );

@@ -247,6 +247,41 @@ Run against the settled tree once the F1/F2 wiring lands, then fold into `GATES.
 
 ---
 
+## 7b. Live browser verification (2026-09-06, commit `5ad9178` + fresh prod build, port 4477)
+
+Driven with agent-browser against `next start`. Reduced-motion emulation could not be applied
+through the tool this run, so G26 stays PARTIAL (source-confirmed only).
+
+| Interaction | Result |
+|---|---|
+| Hero product-frame tabs (Overview / Battery / DTC / Modules / Live / Logs) | PASS - clicking `Battery` swaps the panel to SoH / SoC / pack V / pack A / cell delta / min-max / pack temp + the mini deviation grid |
+| Connection diagram node popovers | PASS - `data-state=open`, `aria-expanded=true`, facts render ("Diagnostic gateway / DoIP capable / TCP / UDP on port 13400"). agent-browser's snapshot does not portal-capture Radix content, which made it *look* inert; JS confirms it works |
+| Protocol details disclosure | PASS - expands to the UDP/TCP/routing/UDS rows |
+| Full Vehicle Scan simulator | PASS - "Idle" while off screen (no premature autoplay), then `Idle -> Vehicle detected -> Scanning ECUs -> Scan complete` over ~3-4 s on scroll-in; `Replay` appears at the end; ECU rows and 3 fault rows populate |
+| Live Telemetry chart | PASS - canvas ImageData hash changes frame to frame (`MOVING=true`); `Pause` freezes it (`MOVING=false`); channel toggle `Motor torque` off->on; crosshair readout populates on pointer move ("08:32:21 - Pack voltage 398.1 V - Battery temperature 23.8 C") |
+| 108-potential matrix | PASS - cell click exposes `aria-label` "Module 14, group 2, 3.725 volts, 4 millivolts above pack average"; ArrowRight x2 + ArrowDown moves roving focus to M15 G4; Enter sets `aria-selected=true`; Escape clears the selection |
+| Locale switch EN -> SV | PASS - URL `/` -> `/sv`, page preserved |
+| F1 scan under /sv | PASS - stage label renders "Skannar styrenheter"; section title "Fullständig fordonsskanning" |
+| F2 telemetry under /sv | PASS - channel buttons "Packspänning / Batteritemperatur / Motormoment"; window control present |
+| F3 connection popover under /sv | PASS - "Fordon / Diagnostikgateway / DoIP-kapabel / TCP / UDP på port 13400" (identifiers stay verbatim) |
+| Session simulator under /sv | PASS - "Klicka dig igenom en representativ session", stages "01 Anslut ... 06 Realtidsdata" |
+| Docs command palette | PASS (partial) - Ctrl+K opens the dialog with the input focused; filtered-result capture failed on a selector, not verified end to end |
+
+### F9 (new, low) - hero caption hardcoded English under /sv
+
+`src/components/hero/HeroInterface.tsx:71` renders the literal
+"Representative interface with sample values. Not a live vehicle reading." The catalog key
+`common.representative` already holds the Swedish and is unused here. Not caught by
+`check-i18n-consume.mjs` because the `common` namespace is consumed elsewhere. One-line fix:
+`t("common.representative")`. Reported to the implementer.
+
+### Not a bug - things that looked broken but work
+
+- Connection popovers appeared inert in the accessibility snapshot; they open correctly (Radix
+  portals outside the snapshot scope).
+- The scan simulator shows "Idle" and does nothing until its section is ~40% in view; that is the
+  intended `useInView` autoplay gate, not a dead control.
+
 ## 8. Change log for this audit
 
 - Added `src/components/docs/mdx/`: `tone.ts`, `index.ts`, and 9 components

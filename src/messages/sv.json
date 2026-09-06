@@ -530,7 +530,15 @@
     "diagnosticCapable": "diagnostikkapabla",
     "connected": "Ansluten",
     "noUds": "Ingen UDS",
-    "snapshotAvailable": "ögonblicksbild finns"
+    "snapshotAvailable": "ögonblicksbild finns",
+    "scanningShort": "Skannar",
+    "panelSectionsAria": "Diagnostikpanelens avsnitt",
+    "panelOverview": "Översikt",
+    "panelBattery": "Batteri",
+    "panelDtc": "DTC",
+    "panelModules": "Styrenheter",
+    "panelLive": "Realtid",
+    "panelLogs": "Loggar"
   },
   "ecuTopology": {
     "title": "Ett fordonsnätverk, kartlagt.",

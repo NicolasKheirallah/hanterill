@@ -200,6 +200,153 @@
   }
 }
 
+/* ------------------------------------------------------------------ *
+ * Scroll-driven reveal. Native `animation-timeline: view()`: no JS, no
+ * scroll observer, runs on the compositor. Base opacity stays 1 so the
+ * content is visible when the animation does not run (no support, or
+ * reduced motion). A stack of `.reveal` elements cascades on its own.
+ * ------------------------------------------------------------------ */
+.reveal {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 12%;
+    }
+  }
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * The one orchestrated page-load moment: the hero column settles in on
+ * a short stagger. Everything else on the page is calm and responds
+ * only to pointer and keyboard. Skipped entirely under reduced motion.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-seq > * {
+    animation: hero-rise var(--motion-slow) var(--ease-out) both;
+  }
+  .hero-seq > :nth-child(1) { animation-delay: 0ms; }
+  .hero-seq > :nth-child(2) { animation-delay: 70ms; }
+  .hero-seq > :nth-child(3) { animation-delay: 140ms; }
+  .hero-seq > :nth-child(4) { animation-delay: 210ms; }
+  .hero-seq > :nth-child(5) { animation-delay: 280ms; }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * View transitions. Scoped to the <main> content region so the header
+ * and footer never move. Only two flows opt in: the locale switch
+ * (crossfade) and docs previous/next (a short directional slide keyed
+ * to a transition type). Everything else navigates instantly.
+ * ------------------------------------------------------------------ */
+.page-main {
+  view-transition-name: page-main;
+}
+
+::view-transition-old(page-main),
+::view-transition-new(page-main) {
+  animation-duration: var(--motion-base);
+  animation-timing-function: var(--ease-standard);
+}
+
+/* Docs previous/next: content slides against the reading direction. */
+html:active-view-transition-type(doc-forward) {
+  &::view-transition-old(page-main) {
+    animation-name: vt-slide-out-left;
+  }
+  &::view-transition-new(page-main) {
+    animation-name: vt-slide-in-right;
+  }
+}
+html:active-view-transition-type(doc-back) {
+  &::view-transition-old(page-main) {
+    animation-name: vt-slide-out-right;
+  }
+  &::view-transition-new(page-main) {
+    animation-name: vt-slide-in-left;
+  }
+}
+
+@keyframes vt-slide-out-left {
+  to { opacity: 0; transform: translateX(-24px); }
+}
+@keyframes vt-slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+}
+@keyframes vt-slide-out-right {
+  to { opacity: 0; transform: translateX(24px); }
+}
+@keyframes vt-slide-in-left {
+  from { opacity: 0; transform: translateX(-24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Press feedback. A small physical push on click, pointer devices only
+ * so it does not fire on touch tap-ghosting, and off under reduced
+ * motion. Applied to buttons and toggle items that are not already
+ * handling their own :active transform.
+ * ------------------------------------------------------------------ */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .press {
+    transition: transform var(--motion-fast) var(--ease-out);
+  }
+  .press:active {
+    transform: translateY(1px) scale(0.985);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Section headings settle from a slightly lighter weight to their
+ * resting weight once, on first paint. Inter is a variable face, so
+ * this is a real axis interpolation, not a swap. Subliminal by intent;
+ * off under reduced motion, and a no-op where `@starting-style` or a
+ * variable font is unavailable.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .heading-settle {
+    font-variation-settings: "wght" 500;
+    transition: font-variation-settings var(--motion-explain) var(--ease-standard);
+  }
+  @starting-style {
+    .heading-settle {
+      font-variation-settings: "wght" 440;
+    }
+  }
+}
+
 @keyframes packet-travel {
   0% { offset-distance: 0%; opacity: 0; }
   8% { opacity: 1; }

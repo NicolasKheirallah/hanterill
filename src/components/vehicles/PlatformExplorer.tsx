@@ -55,7 +55,7 @@ export function PlatformExplorer({ defaultPlatform = "CMA" as Platform }) {
           <ToggleGroup.Item
             key={p}
             value={p}
-            className="rounded-[2px] px-3 py-1.5 text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
+            className="rounded-[2px] px-3 py-1.5 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
           >
             {platformMeta[p].label}
           </ToggleGroup.Item>

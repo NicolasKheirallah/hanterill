@@ -530,7 +530,15 @@
     "diagnosticCapable": "diagnostic-capable",
     "connected": "Connected",
     "noUds": "No UDS",
-    "snapshotAvailable": "snapshot available"
+    "snapshotAvailable": "snapshot available",
+    "scanningShort": "Scanning",
+    "panelSectionsAria": "Diagnostic panel sections",
+    "panelOverview": "Overview",
+    "panelBattery": "Battery",
+    "panelDtc": "DTC",
+    "panelModules": "Modules",
+    "panelLive": "Live",
+    "panelLogs": "Logs"
   },
   "ecuTopology": {
     "title": "One vehicle network, mapped.",

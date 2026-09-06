@@ -17,7 +17,7 @@ export function Hero() {
       />
       <Container className="relative py-16 sm:py-20 lg:py-28">
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
-          <div>
+          <div className="hero-seq">
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-muted">
               {t("eyebrow")}
             </p>
