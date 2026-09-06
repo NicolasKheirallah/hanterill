@@ -1,0 +1,29 @@
+openCMA is 100% local. It talks to the vehicle and writes to your disk. There is no backend and no account.
+
+## Stays on your machine
+
+- Every diagnostic session, DTC read and live capture
+- Exports you create (JSON, CSV)
+- Application settings and connection profiles
+- Logs
+
+## Never collected
+
+- No telemetry
+- No analytics or usage tracking
+- No cloud account
+- No external backend
+- No diagnostic data uploaded anywhere
+- No third-party crash reporting
+
+## VIN redaction
+
+The VIN is read during vehicle identification. In logs and exports, openCMA redacts it where it is not required, so a shared session file does not carry a full VIN by default. Full VIN is kept only where you explicitly ask for it.
+
+## Network activity
+
+During a session, openCMA communicates only with the vehicle over the local link. The application does not need an internet connection to run. This website separately queries the GitHub API to show the latest release and repository stats.
+
+## No subscription
+
+There is no paid tier and no license server. The source is available to read, and openCMA is provided for personal, non-commercial use. There is nothing to monetise in your vehicle data.

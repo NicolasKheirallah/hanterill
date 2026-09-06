@@ -1,0 +1,35 @@
+The high-voltage battery data comes from the Battery Energy Control Module (BECM) over UDS. openCMA opens an extended session with the BECM and reads by identifier.
+
+## What you get
+
+- State of Health and State of Charge
+- Pack voltage and pack current
+- All 108 cell-group potentials on CMA: 27 modules, 4 groups each
+- Minimum, maximum and delta across cell groups
+- Pack and module temperatures
+- Estimated usable capacity against nominal
+- BECM hardware and software part numbers
+
+## Reading it
+
+After routing activation:
+
+```text
+0x10 03            enter extended diagnostic session (BECM)
+0x22 49 6D         read battery state of health
+0x22 16 35         read pack voltage
+0x22 <cell block>  read cell-group potentials
+0x19 02 FF         read DTC by status mask
+```
+
+Values are decoded against the CMA battery layout. The cell-group potentials are read as a block and mapped to module and group positions, not derived from a single summary field.
+
+## Reading the cell matrix
+
+A healthy pack sits within a few millivolts across all 108 groups. A widening delta, or one module consistently offset from the pack mean, is more informative than the SOH percentage alone. The website's [battery section](/features/battery-health) shows the same matrix with sample data.
+
+## Provisional platforms
+
+<Callout kind="warning" title="Unverified on SEA and SPA2">
+On SEA and SPA2 the BECM identifiers and scaling differ and are not verified. openCMA marks battery data on those platforms as unverified and it should not be used for decisions.
+</Callout>

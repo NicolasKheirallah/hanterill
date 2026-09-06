@@ -1,0 +1,30 @@
+openCMA separates reading from changing. Most of what it does is reads. The parts that change the vehicle are grouped, labelled, and off by default.
+
+## Read-only
+
+Battery data, ECU identification, fault codes and live telemetry are reads. Running them cannot change vehicle configuration.
+
+## Operations that change the vehicle
+
+- Clearing diagnostic information (`0x14`)
+- Writing data by identifier (`0x2E`)
+- Running routines (`0x31`)
+- Input/output control (`0x2F`)
+
+<Callout kind="caution" title="Off by default">
+In openCMA these require enabling write access for the session. They fail closed: if the opt-in is not present, the request is not sent. There is no hidden path around the gate.
+</Callout>
+
+## High voltage
+
+<Callout kind="warning" title="High-voltage systems are hazardous">
+Electric vehicles carry hazardous high-voltage systems. Reading battery data over a diagnostic link does not de-energise anything and does not make physical high-voltage service safe. HV service requires the manufacturer's procedures, equipment and training.
+</Callout>
+
+## Not a replacement for manufacturer tooling
+
+openCMA is independent and is not affiliated with Volvo Cars, Polestar or Geely. Do not make a safety-critical repair decision on openCMA output alone, especially on Experimental or Research platforms where decoding is not verified.
+
+## If something looks wrong
+
+Stop. Do not run routines to "fix" a reading you do not understand. Export the session and compare it against a known-good reference or ask in the project's discussions before acting.

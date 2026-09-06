@@ -1,0 +1,34 @@
+openCMA is a layered diagnostic stack with a native desktop shell. Nothing in the path is a proprietary cloud API.
+
+## Layers
+
+```text
+openCMA            desktop application, Rust and Tauri v2
+Diagnostic engine  sessions, routines, decoders
+ISO 14229 UDS      unified diagnostic services
+ISO 13400 DoIP     diagnostics over IP
+TCP / UDP          sockets, discovery, routing activation
+Ethernet           passive ENET cable, RJ45
+Vehicle gateway    CEM / VGM on CMA
+```
+
+## Session lifecycle
+
+1. UDP vehicle identification on port 13400 enumerates responders.
+2. A TCP connection opens to the vehicle on port 13400.
+3. Routing activation (`0x0005`) is sent and must be accepted before any diagnostic request.
+4. The engine opens a diagnostic session per ECU (`0x10`) and issues reads.
+5. Responses are decoded against platform-specific maps.
+6. The session is held in memory and written to disk on export.
+
+## Components
+
+- **Transport**: async Rust sockets, one connection multiplexed across ECUs.
+- **UDS**: request and response framing, negative-response handling, pending-response (`0x78`) retries.
+- **Decoders**: per-platform maps from data identifiers to typed values. CMA is complete; SEA and SPA2 are partial and flagged.
+- **Safety gate**: any service that changes ECU state (`0x14`, `0x2E`, `0x31`, `0x2F`) checks a session-scoped write flag and fails closed.
+- **Interface**: React and TypeScript, typed against the engine over Tauri commands. No bundled browser engine.
+
+## Why Rust and Tauri
+
+The protocol work benefits from Rust's concurrency and error handling. Tauri keeps the binary small and avoids shipping a Chromium runtime, so the application feels native rather than like a web page in a window.

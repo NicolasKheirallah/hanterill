@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# openCMA website
 
-## Getting Started
+Public marketing and documentation site for openCMA, a source-available,
+dealer-grade vehicle diagnostic and high-voltage telemetry application for Volvo,
+Polestar and compatible CMA-platform vehicles. openCMA is provided for personal,
+non-commercial use under the project license.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router), React 19, TypeScript
+- Tailwind CSS v4 with a tokenised CSS-variable design system (`src/app/globals.css`)
+- Motion (`motion/react`) for state-communicating animation
+- Lucide icons
+- MDX + Shiki for the documentation section
+
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build
+npm run start
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+  app/                 routes (App Router)
+    page.tsx           homepage: the full narrative
+    features/          overview + battery-health, vehicle-diagnostics, live-data, service-functions
+    vehicles/ download/ safety/ privacy/ about/
+    docs/[...slug]/    MDX documentation
+    sitemap.ts robots.ts
+  components/
+    layout/            Header, Footer, ThemeToggle, ScrollSentinel, Wordmark
+    hero/ architecture/ battery/ features/ product/ opensource/ vehicles/ download/ sections/
+    ui/                Button, Reveal, Code, Prose, PageHeader, layout primitives, StatusBadge
+  content/docs/        11 MDX documents
+  lib/                 site config, github API, platform detection, vehicle + ECU data, demo data
+scripts/               verification scripts used by GATES.md
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Configuration
 
-## Learn More
+`src/lib/site.ts` holds the site config. The GitHub repository slug
+(`repo: "opencma/opencma"`) is a **placeholder**. Set it to the real
+`owner/name` and every source link, releases link, and the GitHub API calls in
+`src/lib/github.ts` follow. The Download and Open Source sections fetch the
+latest release and repository stats at request time (`revalidate: 3600`) and
+render an offline fallback if GitHub cannot be reached, so the page never blocks
+on the API and never shows fabricated numbers.
 
-To learn more about Next.js, take a look at the following resources:
+## Content
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Vehicle support and status labels: `src/lib/vehicles.ts`
+- CMA ECU reference (codes, names, part numbers): `src/lib/ecus.ts`
+- Simulated interface values (clearly labelled representative data, not a vehicle
+  reading): `src/lib/demo-data.ts`
+- Documentation: `src/content/docs/*.mdx`, registered in `src/lib/docs.ts` and
+  `src/lib/docs-registry.ts`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Verification
 
-## Deploy on Vercel
+`GATES.md` is an acceptance ledger. The `scripts/check-*.mjs` files verify routes,
+homepage composition, types, lint, anti-slop static checks, theme system,
+reduced-motion handling, SEO metadata, GitHub integration resilience, legal and
+accessibility content, the production build, and a running-server render of every
+route. `DELIVERY-GATE.md` is the anti-slop Delivery Gate report.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Independence
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+openCMA is an independent project. It is not affiliated with, maintained by,
+sponsored by or authorised by Volvo Cars, Polestar or Geely. Manufacturer and
+model names are used only to describe compatibility. The source is available to
+read; the project is licensed for private, non-commercial use.

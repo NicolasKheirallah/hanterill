@@ -1,0 +1,67 @@
+openCMA is built CMA-first. The Compact Modular Architecture platform under Polestar 2 and the smaller electric Volvos is where battery, ECU and routine coverage was written and validated.
+
+## Platform compatibility is not support
+
+Two different things:
+
+- **Platform compatibility** means openCMA can reach the vehicle over DoIP.
+- **Verified support** means the diagnostic functions are implemented and checked
+  against known-good references.
+
+A car can be reachable and still expose almost nothing useful. Status labels on
+this site always reflect verified support.
+
+## Status labels
+
+| Label | Meaning |
+| --- | --- |
+| Supported | Verified runtime implementation. Battery, DTC, ECU identification and live data are exercised regularly. |
+| Partial | Some functions verified, others not yet covered on this vehicle. |
+| Testing | Implementation exists but needs validation. |
+| WIP | Actively being developed. Connects, but decoding is incomplete. |
+| Research | Architecture being investigated. Not usable for diagnostics. |
+| Planned | On the roadmap. No implementation yet. |
+
+## Platforms
+
+### CMA - Supported
+
+| Vehicle | Years |
+| --- | --- |
+| Polestar 2 | 2021 to present |
+| Volvo XC40 Recharge / EX40 | 2021 to present |
+| Volvo C40 Recharge / EC40 | 2022 to present |
+
+### SPA - WIP / Research
+
+First-generation Recharge plug-in hybrids. Platform recognised; ECU mapping and
+battery decoding in progress. Do not rely on any figures from these vehicles.
+
+| Vehicle | Years | Status |
+| --- | --- | --- |
+| Volvo XC60 Recharge | 2018 to present | WIP |
+| Volvo S60 / V60 Recharge | 2019 to present | WIP |
+| Volvo S90 / V90 Recharge | 2018 to present | Research |
+| Volvo XC90 Recharge | 2016 to present | Research |
+
+### SEA - Research
+
+Newer BEVs including Zeekr. Sub-platform mapping under verification; not shown as
+SEA1 or SEA2 until confirmed.
+
+| Vehicle | Years | Status |
+| --- | --- | --- |
+| Volvo EX30 | 2024 to present | Research |
+| Polestar 4 | 2024 to present | Research |
+| Zeekr 001 / 009 / X | 2021 to present | Research |
+
+### SPA2 - Research
+
+| Vehicle | Years | Status |
+| --- | --- | --- |
+| Volvo EX90 | 2024 to present | Research |
+| Polestar 3 | 2024 to present | Research |
+
+## Not manufacturer support
+
+Compatibility describes which vehicles openCMA can communicate with. It is not a claim of endorsement. openCMA is an independent project and is not affiliated with Volvo Cars, Polestar or Geely.

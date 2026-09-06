@@ -1,0 +1,579 @@
+{
+  "meta": {
+    "title": "openCMA | Vehicle Diagnostics for Volvo & Polestar",
+    "description": "Source-available vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and for personal use."
+  },
+  "common": {
+    "skipToContent": "Skip to content",
+    "download": "Download",
+    "downloadApp": "Download openCMA",
+    "viewSource": "View source",
+    "viewOnGitHub": "View on GitHub",
+    "readMore": "Read more",
+    "language": "Language",
+    "theme": "Theme",
+    "simulated": "Simulated session",
+    "sampleData": "Fixed sample data, not a vehicle reading",
+    "representative": "Representative interface with sample values. Not a live vehicle reading.",
+    "privateUse": "Source-available, for private use"
+  },
+  "nav": {
+    "features": "Features",
+    "vehicles": "Vehicles",
+    "docs": "Docs",
+    "safety": "Safety",
+    "github": "GitHub"
+  },
+  "hero": {
+    "eyebrow": "Open vehicle diagnostics",
+    "title": "Dealer-grade diagnostics. Direct from the vehicle.",
+    "lead": "Connect to a supported Volvo or Polestar over Ethernet and read battery health, ECU faults and live telemetry. No subscription, no proprietary adapter, no cloud.",
+    "platforms": "Windows, macOS, Linux",
+    "principles": "Source-available, local only, no telemetry"
+  },
+  "connection": {
+    "title": "No proprietary diagnostic interface required.",
+    "lead": "A passive ENET cable and any Ethernet interface are enough to reach a supported vehicle. Select a part of the chain to see what it does.",
+    "requestLabel": "Request, read data",
+    "responseLabel": "Response, 398.6 V",
+    "protocolDetails": "Protocol details",
+    "nodes": {
+      "vehicleLabel": "Vehicle",
+      "vehicleSub": "OBD-II port",
+      "enetLabel": "ENET cable",
+      "enetSub": "Passive, OBD-II to RJ45",
+      "computerLabel": "Computer",
+      "computerSub": "Ethernet interface",
+      "opencmaLabel": "openCMA",
+      "opencmaSub": "Runs locally"
+    }
+  },
+  "features": {
+    "title": "Everything the vehicle exposes. In one place.",
+    "lead": "Six areas of the vehicle, read over the same connection. No mode switching between tools.",
+    "batteryTitle": "Battery health",
+    "batteryBody": "State of health and charge, pack voltage, cell-group distribution, min and max, delta, and pack temperature. The single dashboard percentage, and the numbers behind it.",
+    "batteryCta": "Battery diagnostics",
+    "scanTitle": "Full vehicle scan",
+    "scanBody": "openCMA discovers ECUs over DoIP, identifies which speak UDS, and pulls identification, hardware and software data from each.",
+    "scanCta": "Vehicle diagnostics",
+    "faultTitle": "Understand the fault, not just the warning light",
+    "faultBody": "openCMA reads DTCs with their status: active now, pending, stored or historical. Where the ECU kept a freeze frame, the snapshot comes with it.",
+    "liveTitle": "Live telemetry",
+    "liveBody": "Pack voltage and current, battery and inverter temperature, motor torque, 12 V system. Sampled and plotted like engineering software, not a marketing chart.",
+    "liveCta": "Live data",
+    "serviceTitle": "Service procedures",
+    "serviceBody": "EPB service mode, 12 V battery adaptation, service reminder reset, HVAC damper calibration and selected UDS routines, where the platform supports them.",
+    "serviceCta": "Service functions",
+    "evidenceTitle": "Evidence, before and after",
+    "evidenceBody": "Export a session to JSON or CSV, do the work, scan again, and compare. The difference is the record.",
+    "evidenceCta": "Compare diagnostic sessions",
+    "writeAccess": "Explicit write access required",
+    "readOnlyNote": "Read-only diagnostics stay read-only. Write-capable routines are separated in the interface and fail closed unless you enable them for that session.",
+    "sohLabel": "Battery state of health",
+    "spreadLabel": "Cell-group spread",
+    "spreadWithin": "within 2 mV",
+    "spreadMid": "2 to 4 mV",
+    "spreadOver": "over 4 mV",
+    "dtcActive": "Active",
+    "dtcPending": "Pending",
+    "dtcStored": "Stored",
+    "dtcHistorical": "Historical",
+    "dtcSnapshot": "Snapshot available",
+    "dtcPresent": "Present at scan",
+    "dtcSeenOnce": "Seen once",
+    "dtcRetained": "Cleared, retained",
+    "routineEpb": "Electric parking brake",
+    "routineEpbAction": "Service position",
+    "routine12v": "12 V battery",
+    "routine12vAction": "Adaptation reset",
+    "routineClimate": "Climate control",
+    "routineClimateAction": "Damper calibration",
+    "routineSunroof": "Sunroof",
+    "routineSunroofAction": "Normalisation",
+    "beforeRepair": "Before repair",
+    "afterRepair": "After repair",
+    "totalDtcs": "total DTCs"
+  },
+  "battery": {
+    "eyebrow": "Battery",
+    "matrixTitle": "108 potentials. One battery.",
+    "matrixLead": "27 modules, four cell-group potentials each. Hover, focus or select any potential to compare it with the pack.",
+    "viewVoltage": "Voltage",
+    "viewDeviation": "Deviation",
+    "viewModule": "Module",
+    "pack": "Pack",
+    "clearSelection": "Clear selection",
+    "packMean": "Pack mean",
+    "spread": "Spread",
+    "minMax": "Min / Max",
+    "packTemp": "Pack temp",
+    "module": "Module",
+    "group": "Group",
+    "average": "Average",
+    "highest": "Highest",
+    "lowest": "Lowest",
+    "delta": "Delta",
+    "temperature": "Temperature",
+    "moduleAverage": "Module average",
+    "moduleDelta": "Module delta",
+    "fromPackMean": "from pack mean",
+    "hoverHint": "Hover, focus or select a potential. On a supported CMA vehicle these are live values read from the BECM; here they are fixed sample data.",
+    "withinLegend": "within 3 mV",
+    "midLegend": "3 to 5 mV",
+    "overLegend": "over 5 mV",
+    "voltageLegend": "Absolute cell-group voltage. Fill stays neutral; select a potential for the exact value.",
+    "tapModule": "Tap a module to inspect it.",
+    "previousModule": "Previous module",
+    "nextModule": "Next module",
+    "stateOfHealth": "State of health",
+    "source": "Source",
+    "vehicleBms": "Vehicle BMS",
+    "updated": "Updated",
+    "live": "Live",
+    "condition": "Condition",
+    "conditionGood": "Good",
+    "levelSimple": "Simple",
+    "levelDetailed": "Detailed",
+    "levelEngineering": "Engineering",
+    "stateOfCharge": "State of charge",
+    "cellDelta": "Cell delta",
+    "packVoltage": "Pack voltage",
+    "usableCapacity": "Usable capacity",
+    "controlModule": "Control module",
+    "transport": "Transport",
+    "protocol": "Protocol",
+    "service": "Service",
+    "identifiersNote": "Identifiers are representative of the CMA battery. Exact DIDs are in the ECU reference.",
+    "matrixViewAria": "Matrix view mode",
+    "gridAria": "Battery cell-group potentials, 27 modules by 4 groups",
+    "srAtAverage": "at pack average",
+    "srOffset": "{mv} millivolts {direction} pack average",
+    "srAbove": "above",
+    "srBelow": "below",
+    "srCell": "Module {module}, group {group}, {volts} volts, {relation}",
+    "moduleN": "Module {module}",
+    "moduleNGroupG": "Module {module}, group {group}",
+    "moduleTemperature": "Module temperature",
+    "moduleSpread": "Module spread",
+    "moduleAvgVoltage": "Module average voltage",
+    "scaleMean": "mean {volts} V",
+    "groupN": "Group {group}",
+    "detailLevelAria": "Detail level",
+    "howRead": "How this value is read",
+    "provReportedBy": "Reported by",
+    "provBms": "Battery management system",
+    "provReadVia": "Read via",
+    "provUdsDoip": "UDS over DoIP",
+    "provSession": "extended diagnostic session, read by identifier",
+    "provDecodedAgainst": "Decoded against",
+    "provCmaMap": "CMA battery map",
+    "provNotScaled": "not scaled from one field",
+    "provRefresh": "Refresh",
+    "provOnDemand": "On demand",
+    "provPolled": "polled while the view is open",
+    "didReference": "Full data-identifier reference in the docs"
+  },
+  "scan": {
+    "stageIdle": "Idle",
+    "stageDiscovering": "Discovering vehicle",
+    "stageDetected": "Vehicle detected",
+    "stageRouting": "Activating diagnostic route",
+    "stageScanning": "Scanning ECUs",
+    "stageComplete": "Scan complete",
+    "start": "Start",
+    "pause": "Pause",
+    "resume": "Resume",
+    "replay": "Replay",
+    "vehicle": "Vehicle",
+    "detecting": "detecting",
+    "ecus": "ECUs",
+    "faults": "Faults",
+    "withFaults": "With faults",
+    "ready": "READY",
+    "scanning": "Scanning…",
+    "storedFault": "stored fault",
+    "storedFaults": "stored faults",
+    "lastObserved": "Last observed",
+    "snapshotAvailable": "snapshot available"
+  },
+  "telemetry": {
+    "live": "Live",
+    "pause": "Pause",
+    "resume": "Resume",
+    "channels": "Telemetry channels",
+    "window": "Time window",
+    "note": "Simulated drive cycle, deterministic sample data",
+    "channelNames": {
+      "pack_v": "Pack voltage",
+      "pack_a": "Pack current",
+      "batt_t": "Battery temperature",
+      "inv_t": "Inverter temperature",
+      "motor_nm": "Motor torque",
+      "lv_v": "12 V rail"
+    }
+  },
+  "platforms": {
+    "title": "CMA-first, with expanding DoIP support.",
+    "lead": "Polestar 2 and the CMA Volvos are the tested platforms. SPA hybrids and newer SEA and SPA2 cars connect, but their decoding is still being worked out. Platform compatibility is not the same as verified support.",
+    "moreLink": "Full compatibility and status",
+    "disclaimer": "Compatibility is not a claim of manufacturer support. openCMA is an independent project and is not affiliated with Volvo Cars, Polestar or Geely.",
+    "verifiedFunctions": "Verified functions",
+    "currentResearch": "Current research",
+    "labelsHeading": "What the labels mean",
+    "platformLabel": "Platform",
+    "powertrainLabel": "Powertrain",
+    "statusLabel": "openCMA status",
+    "modelYearsLabel": "Model years",
+    "platformAria": "Vehicle platform",
+    "status": {
+      "supported": "Supported",
+      "partial": "Partial",
+      "testing": "Testing",
+      "wip": "WIP",
+      "research": "Research",
+      "planned": "Planned"
+    },
+    "blurbs": {
+      "CMA": "Compact Modular Architecture. The tested platform: Polestar 2 and the smaller electric Volvos.",
+      "SPA": "Scalable Product Architecture. First-generation Recharge plug-in hybrids. Platform recognised; diagnostic mapping in progress.",
+      "SEA": "Sustainable Experience Architecture. Newer BEVs including Zeekr. Platform mapping under verification.",
+      "SPA2": "Second-generation SPA. Different gateway and security model. Under investigation."
+    },
+    "statusNotes": {
+      "supported": "Verified runtime implementation. Battery, DTC, ECU identification and live data are exercised regularly.",
+      "partial": "Some functions are implemented and verified; others are not yet covered on this vehicle.",
+      "testing": "Implementation exists but still needs validation against known-good references.",
+      "wip": "Actively being developed. Connects, but decoding is incomplete and changes between releases.",
+      "research": "Architecture is being investigated. Not usable for diagnostics.",
+      "planned": "On the roadmap. No implementation yet."
+    },
+    "capLabels": {
+      "connection": "DoIP connection",
+      "ecu-discovery": "ECU discovery",
+      "dtc-scan": "DTC scan",
+      "battery-soh": "Battery state of health",
+      "cell-potentials": "Cell-group potentials",
+      "live-data": "Live data",
+      "service-routines": "Service routines"
+    },
+    "capStatus": {
+      "supported": "Supported",
+      "partial": "Partial",
+      "in-progress": "In progress",
+      "not-verified": "Not verified",
+      "none": "Not started"
+    }
+  },
+  "protocolStack": {
+    "title": "Built on automotive standards.",
+    "lead": "openCMA speaks to the vehicle diagnostic network with the same protocols a dealer tool uses. There is no proprietary cloud API in the path.",
+    "paragraph": "A session starts with UDP discovery on port 13400, opens a TCP channel, activates routing, then exchanges UDS requests. Reads use service 0x22 and 0x19; sessions and routines use 0x10 and 0x31.",
+    "layers": {
+      "opencma": "Desktop application, Rust and Tauri",
+      "engine": "Sessions, routines, decoders",
+      "uds": "Unified Diagnostic Services",
+      "doip": "Diagnostics over IP",
+      "transport": "Sockets, discovery, routing activation",
+      "ethernet": "Passive ENET cable, RJ45",
+      "gateway": "CEM / VGM on CMA"
+    },
+    "engineName": "Diagnostic engine",
+    "transportName": "TCP / UDP",
+    "ethernetName": "Ethernet",
+    "gatewayName": "Vehicle gateway",
+    "wire": {
+      "udp": "Vehicle identification and announcement",
+      "tcp": "Diagnostic message channel",
+      "routing": "0x0005 before any UDS request",
+      "session": "Diagnostic session control",
+      "read": "Read data by identifier",
+      "dtc": "Read DTC information"
+    },
+    "wireLabels": {
+      "routing": "Routing activation"
+    }
+  },
+  "privacy": {
+    "title": "Your vehicle data stays with you.",
+    "lead": "openCMA talks to the vehicle and writes diagnostic data to your disk. There is no backend to require, no subscription to buy, and no vehicle telemetry to monetise. VIN is redacted in logs and exports where it is not needed.",
+    "moreLink": "How openCMA handles data",
+    "directLink": "Direct link. Nothing else in the path.",
+    "vehicle": "Vehicle",
+    "computer": "Computer",
+    "absent": {
+      "cloud": "Cloud backend",
+      "account": "Account",
+      "analytics": "Analytics",
+      "telemetry": "Telemetry",
+      "upload": "Data upload"
+    }
+  },
+  "opensource": {
+    "title": "Inspect everything.",
+    "lead": "Every request openCMA sends to a vehicle is in the source: the decoders, the routing, the safety gates. The code is available to read; openCMA is for private use.",
+    "viewRepo": "View repository",
+    "readArch": "Read architecture",
+    "statsUnavailable": "Live repository stats are unavailable right now.",
+    "openRepo": "Open the repository",
+    "stackRustDesc": "Diagnostic engine, DoIP and UDS stack, decoders",
+    "stackTauriDesc": "Native shell, no bundled browser runtime",
+    "stackUiDesc": "Interface, typed against the engine"
+  },
+  "hardware": {
+    "title": "The adapter is just a cable.",
+    "lead": "A passive ENET cable maps the vehicle's OBD-II pins to an RJ45 plug. From there it is ordinary Ethernet into your computer.",
+    "connectionGuide": "Connection guide",
+    "chain": {
+      "obd": "OBD-II connector",
+      "enet": "ENET cable",
+      "rj45": "RJ45",
+      "usb": "USB-C Ethernet adapter",
+      "laptop": "Laptop"
+    },
+    "notWanted": {
+      "elm": "No ELM327 or generic OBD dongle",
+      "j2534": "No J2534 pass-through interface for standard DoIP",
+      "bluetooth": "No proprietary Bluetooth adapter",
+      "driver": "No driver install for a passive ENET cable"
+    }
+  },
+  "download": {
+    "title": "Works on macOS, Windows and Linux.",
+    "lead": "One application, built natively for each platform. No installer bundles a browser engine. Downloads never start on their own.",
+    "heading": "Download openCMA",
+    "latestRelease": "latest release on GitHub",
+    "releases": "Releases",
+    "download": "Download",
+    "detected": "Detected",
+    "buildYourself": "Prefer to build it yourself?",
+    "buildFromSource": "Build from source",
+    "unavailable": "Release details could not be loaded from GitHub. The links above open the releases page.",
+    "licenseHeading": "License",
+    "readLicense": "Read license terms"
+  },
+  "safety": {
+    "title": "Read-only by default. Writes are gated.",
+    "lead": "Most of openCMA only reads. The operations that change the vehicle are separated in the interface and fail closed unless you enable write access for that session.",
+    "readOnly": "Read-only",
+    "changesVehicle": "Changes the vehicle",
+    "writeAccess": "Explicit write access required",
+    "highVoltageTitle": "High voltage.",
+    "highVoltageBody": "Electric vehicles carry hazardous high-voltage systems. Software diagnostic access does not make physical HV service safe, and openCMA is not a substitute for service procedures from the manufacturer.",
+    "safetyDocs": "Safety documentation",
+    "readOnlyItems": {
+      "battery": "Battery data",
+      "ecuId": "ECU identification",
+      "faultCodes": "Fault codes",
+      "telemetry": "Live telemetry",
+      "export": "Session export"
+    },
+    "writeItems": {
+      "clear": "Clear diagnostic information",
+      "routines": "Service routines",
+      "adaptations": "Adaptations",
+      "udsWrite": "UDS write by identifier"
+    }
+  },
+  "faq": {
+    "title": "Questions people actually ask",
+    "compatTitle": "Compatibility questions",
+    "home": [
+      {
+        "q": "Do I need a special diagnostic tool or dongle?",
+        "a": "No. A passive ENET cable (OBD-II to RJ45) and any Ethernet interface on your computer are enough for DoIP on supported vehicles. There is no ELM327, no J2534 box and no Bluetooth adapter in the path."
+      },
+      {
+        "q": "Does openCMA send any data anywhere?",
+        "a": "No. It communicates only with the vehicle and writes results to your disk. There is no account, no backend, no analytics and no telemetry. VIN is redacted in logs and exports where it is not needed."
+      },
+      {
+        "q": "Which vehicles are actually supported?",
+        "a": "Polestar 2 and the CMA-platform Volvos (XC40/EX40, C40/EC40) are the tested platforms. Newer SEA and SPA2 cars connect over DoIP but their ECU maps and battery decoding are still being verified and are marked Experimental or Research."
+      },
+      {
+        "q": "Can openCMA damage my car?",
+        "a": "Standard use is read-only. Operations that change the vehicle (clearing DTCs, service routines, adaptations) are separated in the interface and disabled unless you enable write access for that session. High-voltage service still requires the manufacturer's procedures."
+      },
+      {
+        "q": "Is this an official Volvo or Polestar tool?",
+        "a": "No. openCMA is an independent project. It is not affiliated with, maintained by or authorised by Volvo Cars, Polestar or Geely. The source is available to read; it is provided for personal, non-commercial use."
+      },
+      {
+        "q": "What can I do with the battery data?",
+        "a": "Read state of health and charge, pack voltage, per-cell-group potentials for all 108 positions on CMA, min/max/delta and pack temperature, and export a session to compare before and after a repair."
+      }
+    ],
+    "compat": [
+      {
+        "q": "Does openCMA work with any Volvo or Polestar?",
+        "a": "No. openCMA is CMA-first. Polestar 2 and the CMA Volvos (XC40/EX40, C40/EC40) are the tested platforms. SPA plug-in hybrids and newer SEA and SPA2 cars connect over DoIP, but their decoding is still being worked out and is marked WIP or Research."
+      },
+      {
+        "q": "What is the difference between platform compatibility and support?",
+        "a": "Platform compatibility means openCMA can reach the vehicle over DoIP. Support means the diagnostic functions are implemented and verified against known-good references. A car can be reachable and still show almost nothing useful, which is why WIP and Research platforms are labelled separately."
+      },
+      {
+        "q": "My car is listed as WIP or Research. Can I use it?",
+        "a": "You can connect and, on some, read identification data. Do not rely on battery figures or fault interpretation, and do not run service routines. WIP and Research mean the decoding is not verified."
+      },
+      {
+        "q": "Is this endorsed by Volvo or Polestar?",
+        "a": "No. openCMA is an independent project, not affiliated with, maintained by or authorised by Volvo Cars, Polestar or Geely. Manufacturer names are used only to describe compatibility."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Download openCMA and see what your car knows.",
+    "body": "Source-available, for private use. Runs on your computer. Reads the vehicle directly."
+  },
+  "footer": {
+    "blurb": "Dealer-grade diagnostics for Volvo and Polestar, running on your own computer.",
+    "diagnostics": "Diagnostics",
+    "developers": "Developers",
+    "project": "Project",
+    "disclaimer": "openCMA is an independent project, not affiliated with, maintained by, sponsored by or authorised by Volvo Cars, Polestar or Geely. Manufacturer names are used only to describe compatibility. Source-available; private use only.",
+    "tagline": "Built for people who want to understand their vehicles.",
+    "links": {
+      "batteryHealth": "Battery health",
+      "vehicleDiagnostics": "Vehicle diagnostics",
+      "liveData": "Live data",
+      "serviceFunctions": "Service functions",
+      "download": "Download",
+      "documentation": "Documentation",
+      "architecture": "Architecture",
+      "source": "Source",
+      "buildFromSource": "Build from source",
+      "privacy": "Privacy",
+      "safety": "Safety",
+      "about": "About",
+      "license": "License"
+    }
+  },
+  "docs": {
+    "eyebrow": "Documentation",
+    "title": "How openCMA works, in detail.",
+    "lead": "From plugging in a cable to decoding a battery block. Written for owners who want the specifics and engineers who want the protocol.",
+    "search": "Search documentation",
+    "searchPlaceholder": "Search docs, protocols, identifiers…",
+    "searchHint": "to search",
+    "noResults": "No matches.",
+    "onThisPage": "On this page",
+    "allDocs": "All docs",
+    "previous": "Previous",
+    "next": "Next",
+    "copy": "Copy",
+    "copied": "Copied",
+    "englishOnly": "This page is currently available in English.",
+    "groups": {
+      "Start": "Start",
+      "Diagnostics": "Diagnostics",
+      "Reference": "Reference",
+      "Project": "Project"
+    }
+  },
+  "views": {
+    "vehicle": "Vehicle",
+    "batteryHealth": "Battery health",
+    "cellDelta": "Cell delta",
+    "packVoltage": "Pack voltage",
+    "stateOfCharge": "State of charge",
+    "stateOfHealth": "State of health",
+    "packCurrent": "Pack current",
+    "avgCellGroup": "Avg cell group",
+    "minMax": "Min / Max",
+    "packTemp": "Pack temp",
+    "packVoltage60s": "Pack voltage, 60 s",
+    "potentialsCaption": "108 cell-group potentials, deviation from mean",
+    "moduleGroupTitle": "Module {module}, group {group}: {value} mV",
+    "discovered": "discovered",
+    "diagnosticCapable": "diagnostic-capable",
+    "connected": "Connected",
+    "noUds": "No UDS",
+    "snapshotAvailable": "snapshot available"
+  },
+  "ecuTopology": {
+    "title": "One vehicle network, mapped.",
+    "lead": "A simplified view of the CMA electric platform around its gateway. Select any control unit for its details.",
+    "noUds": "no uds",
+    "domain": "Domain",
+    "partNumber": "Part number",
+    "notPublished": "not published",
+    "diagnostics": "Diagnostics",
+    "udsSession": "UDS session",
+    "noUdsSession": "No UDS",
+    "fullReference": "Full ECU reference",
+    "domains": {
+      "gateway": "Gateway",
+      "energy": "Energy",
+      "chassis": "Chassis",
+      "cabin": "Cabin"
+    },
+    "domainBlurbs": {
+      "gateway": "Routing and central control",
+      "energy": "High-voltage battery, charging and drivetrain",
+      "chassis": "Steering, braking and motion sensing",
+      "cabin": "Displays, comfort, telematics and restraints"
+    }
+  },
+  "session": {
+    "eyebrow": "Interactive",
+    "title": "Click through a representative session",
+    "lead": "Fixed sample values, chosen for the website. Every panel here mirrors a real openCMA view; nothing connects to a vehicle.",
+    "label": "Representative session, simulated vehicle",
+    "previous": "Previous",
+    "next": "Next",
+    "replay": "Replay",
+    "stages": {
+      "connect": "Connect",
+      "identify": "Identify",
+      "scan": "Scan",
+      "inspect": "Inspect",
+      "battery": "Battery",
+      "live": "Live data",
+      "report": "Report"
+    },
+    "report": {
+      "title": "Vehicle health report",
+      "exampleTag": "Example report",
+      "ecusDiscovered": "ECUs discovered",
+      "modulesWithFaults": "Modules with faults",
+      "activeFaults": "Active faults",
+      "storedFaults": "Stored faults",
+      "batteryHealth": "Battery health",
+      "cellDelta": "Cell delta"
+    }
+  },
+  "pages": {
+    "featuresEyebrow": "Features",
+    "featuresTitle": "Everything the vehicle exposes. In one place.",
+    "featuresLead": "Four areas of coverage, read over the same connection. Standard diagnostics stay read-only; write-capable functions are separated and gated.",
+    "batteryHealthEyebrow": "Features / Battery health",
+    "batteryHealthTitle": "The percentage, and the numbers behind it.",
+    "batteryHealthLead": "openCMA reads high-voltage battery data reported by the vehicle: state of health and charge, pack voltage, cell-group distribution, imbalance and temperature.",
+    "vehicleDiagnosticsEyebrow": "Features / Vehicle diagnostics",
+    "vehicleDiagnosticsTitle": "Every ECU on the network, not just the one with the light on.",
+    "vehicleDiagnosticsLead": "openCMA discovers the vehicle ECUs over DoIP, identifies which speak UDS, and reads fault and identification data from each.",
+    "liveDataEyebrow": "Features / Live data",
+    "liveDataTitle": "Engineering telemetry, sampled and plotted.",
+    "liveDataLead": "openCMA polls data identifiers on a loop and plots them like instrumentation software: fixed axes, thin traces, no decoration.",
+    "serviceFunctionsEyebrow": "Features / Service functions",
+    "serviceFunctionsTitle": "The operations that change the vehicle, kept separate.",
+    "serviceFunctionsLead": "Where the platform supports them, openCMA can run service routines and adaptations. These are not part of ordinary diagnostics and are disabled until you enable write access.",
+    "vehiclesEyebrow": "Vehicles",
+    "vehiclesTitle": "CMA-first, with expanding DoIP platform support.",
+    "vehiclesLead": "Select a platform and a vehicle to see exactly which functions are verified. Status labels always reflect verified support, never platform membership.",
+    "downloadEyebrow": "Download",
+    "downloadTitle": "Get openCMA.",
+    "downloadLead": "Native builds for each desktop platform. Nothing installs automatically and nothing phones home.",
+    "safetyEyebrow": "Safety",
+    "safetyTitle": "What is safe, and what is not.",
+    "safetyLead": "Automotive diagnostic software can read a lot and change some things. openCMA is built so the difference is obvious.",
+    "privacyEyebrow": "Privacy",
+    "privacyTitle": "100% local.",
+    "privacyLead": "openCMA has no backend and no account system. It talks to the vehicle and writes to your disk. That is the whole data path.",
+    "aboutEyebrow": "About",
+    "aboutTitle": "A project for people who want to understand their vehicles.",
+    "aboutLead": "openCMA started as a way to read CMA battery data without a dealer subscription. It grew into a general DoIP and UDS diagnostic tool."
+  }
+}

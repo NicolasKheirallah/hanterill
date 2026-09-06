@@ -1,0 +1,36 @@
+openCMA ships a command-line companion for scripted reads and batch exports. It uses the same diagnostic engine as the desktop application.
+
+## Usage
+
+```text
+opencma scan --iface eth0 --out session.json
+opencma battery --iface eth0 --format csv
+opencma dtc --iface eth0 --ecu BECM
+opencma read --iface eth0 --ecu BECM --did 0x496D
+```
+
+## Common flags
+
+| Flag | Purpose |
+| --- | --- |
+| `--iface` | Ethernet interface to use for DoIP |
+| `--out` | File to write the session to |
+| `--format` | `json` or `csv` |
+| `--ecu` | Restrict to one ECU by code |
+| `--did` | Read a single data identifier |
+| `--allow-write` | Required before any operation that changes the vehicle |
+
+Without `--allow-write`, write operations exit without sending a request. This matches the desktop gate described in [Safety](/docs/safety).
+
+## Exit codes
+
+| Code | Meaning |
+| --- | --- |
+| 0 | Completed |
+| 2 | No vehicle found on the interface |
+| 3 | Routing activation refused |
+| 4 | Requested ECU did not answer |
+
+## Scripting
+
+The JSON output is stable and suitable for diffing two sessions in CI or a shop workflow. VIN is redacted in the output by default.

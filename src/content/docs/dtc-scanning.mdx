@@ -1,0 +1,37 @@
+openCMA reads Diagnostic Trouble Codes with UDS service `0x19` (ReadDTCInformation) from every ECU that answers a diagnostic session.
+
+## Status, not just a code
+
+Each DTC carries a status byte. openCMA presents it as one of:
+
+| State | Meaning |
+| --- | --- |
+| Active | The fault is present now. |
+| Pending | Seen once, not yet confirmed over enough drive cycles. |
+| Stored | Confirmed and recorded. |
+| Historical | Previously set, since cleared, retained for evidence. |
+
+A single "check engine" light can sit on top of one active code and several historical ones. The status is what tells you which is which.
+
+## Freeze frames and snapshots
+
+Where the ECU stored a snapshot at the time of the fault, openCMA retrieves it with the code: the conditions recorded when the DTC matured. Not every code has one.
+
+## Scanning
+
+```text
+0x19 01 FF     report number of DTCs by status mask
+0x19 02 FF     report DTCs by status mask
+0x19 04 <dtc>  report snapshot record for a DTC
+0x19 06 <dtc>  report extended data record for a DTC
+```
+
+openCMA runs this per ECU and aggregates the result into one list, grouped by module.
+
+## Clearing
+
+Clearing DTCs (`0x14`) changes ECU state and is treated as a write operation. It is disabled until you enable write access for the session. See [Safety](/docs/safety).
+
+## Evidence workflow
+
+Export the session to JSON or CSV, do the repair, scan again, and compare. The reduction in active and stored codes is the record of the work.
