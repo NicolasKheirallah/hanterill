@@ -37,7 +37,7 @@ export function Header() {
           <Wordmark />
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
           {nav.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
@@ -71,7 +71,7 @@ export function Header() {
           </a>
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           <LocaleSwitcher />
           <ThemeToggle />
           <Button href="/download" size="sm">
@@ -79,7 +79,7 @@ export function Header() {
           </Button>
         </div>
 
-        <div className="flex items-center gap-1 md:hidden">
+        <div className="flex items-center gap-1 lg:hidden">
           <LocaleSwitcher />
           <ThemeToggle />
           <button
@@ -95,7 +95,7 @@ export function Header() {
       </div>
 
       {open ? (
-        <div className="border-t border-line bg-bg-primary md:hidden">
+        <div className="border-t border-line bg-bg-primary lg:hidden">
           <nav
             className="mx-auto flex max-w-[1200px] flex-col px-5 py-3 sm:px-8"
             aria-label="Mobile"

@@ -1,3 +1,6 @@
+import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
+import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
+
 openCMA is a layered diagnostic stack with a native desktop shell. Nothing in the path is a proprietary cloud API.
 
 ## Layers
@@ -20,6 +23,20 @@ Vehicle gateway    CEM / VGM on CMA
 4. The engine opens a diagnostic session per ECU (`0x10`) and issues reads.
 5. Responses are decoded against platform-specific maps.
 6. The session is held in memory and written to disk on export.
+
+A single request travels the same path every time, and the response comes back
+along it:
+
+<ProtocolFlow
+  steps={[
+    { node: "openCMA", detail: "diagnostic engine" },
+    { node: "Ethernet", detail: "passive ENET cable" },
+    { node: "Vehicle gateway", detail: "CEM / VGM, DoIP" },
+    { node: "Target ECU", detail: "BECM, extended session" },
+  ]}
+  request="0x22 0x49 0x6D  read battery state of health"
+  response="0x62 0x49 0x6D <scaled value>  94.7 %"
+/>
 
 ## Components
 

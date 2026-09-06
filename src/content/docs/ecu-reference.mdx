@@ -1,50 +1,22 @@
-ECU codes, names and part numbers for the CMA electric platform, grouped as openCMA lays them out around the gateway. Names and numbers follow published wiring documentation. Diagnostic-capable means the ECU answers a UDS session.
+import { EcuReference } from "@/components/docs/mdx/EcuReference";
+
+ECU codes, names and part numbers for the CMA electric platform, grouped as openCMA lays them out around the gateway. Names and numbers follow published wiring documentation. UDS means the ECU answers a diagnostic session. This table is generated from the site's ECU data, so it matches the ECU topology on the homepage exactly.
 
 ## Gateway
 
-| Code | Name | Part number | UDS |
-| --- | --- | --- | --- |
-| CEM | Central Electronic Module | 32320214 | yes |
-| VGM | Vehicle Gateway Module | 36003604 | yes |
-| VCU1 | Vehicle Computational Unit 1 | 32350312 | yes |
+<EcuReference domain="gateway" />
 
 ## Energy
 
-| Code | Name | Part number | UDS |
-| --- | --- | --- | --- |
-| BECM | Battery Energy Control Module | 32290432 | yes |
-| OBC | On-Board Charger | 36003389 | yes |
-| IHFA | Inverter, High Voltage, Front Axle | | yes |
-| IEM | Inverter, ERAD Module | | yes |
-| HVHA | High-Voltage Coolant Heater | | yes |
-| ACCA | Air-Conditioning Compressor Module | | yes |
-| EFAD | Electric Front Axle Drive | | no |
-| ERAD | Electric Rear Axle Drive | | no |
+<EcuReference domain="energy" />
 
 ## Chassis
 
-| Code | Name | Part number | UDS |
-| --- | --- | --- | --- |
-| EPAS | Electric Power-Assisted Steering | 36010599 | yes |
-| SAS | Steering Angle Sensor | | yes |
-| SCL | Steering Column Lock | 32246209 | yes |
-| EGSM | Electronic Gear Selector Module | 31492589 | yes |
-| BCM | Brake Control Module | | yes |
-| WAM | Wide-Angle Vision Module | | yes |
+<EcuReference domain="chassis" />
 
 ## Cabin
 
-| Code | Name | Part number | UDS |
-| --- | --- | --- | --- |
-| DIM | Driver Information Module | 36003414 | yes |
-| IHU | Infotainment Head Unit | 36012873 | yes |
-| CCD | Centre Console Display | | yes |
-| SWM | Steering Wheel Module | 31674383 | yes |
-| TCAM | Telematics and Connectivity Antenna Module | 36003394 | yes |
-| ATM | Auxiliary Telematics Module | | yes |
-| AUD | Audio Amplifier Module | 32265526 | yes |
-| SRS | Supplemental Restraint System | | yes |
-| CCM | Climate Control Module | | yes |
+<EcuReference domain="cabin" caption="Blank part numbers are positions the public documentation does not list. openCMA still reads identification from the ECU directly with service 0x22." />
 
 ## Common identifiers
 
@@ -56,4 +28,4 @@ ECU codes, names and part numbers for the CMA electric platform, grouped as open
   ["0xF195", "Software version"],
 ]} />
 
-Blank part numbers are positions where the public documentation does not list one. openCMA still reads identification from the ECU directly with `0x22`.
+openCMA reads these from every ECU that answers, not just the battery module, so a full scan produces a hardware and software inventory of the car.

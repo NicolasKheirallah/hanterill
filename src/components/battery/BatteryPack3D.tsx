@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import { ContactShadows, OrbitControls } from "@react-three/drei";
 import { useReducedMotion } from "motion/react";
@@ -35,11 +36,13 @@ function colorFor(mode: Mode, m: number): THREE.Color {
 
 function Modules({
   mode,
+  active,
   selected,
   onSelect,
   onHover,
 }: {
   mode: Mode;
+  active: boolean;
   selected: number | null;
   onSelect: (m: number | null) => void;
   onHover: (m: number | null) => void;
@@ -48,7 +51,7 @@ function Modules({
   const reduce = useReducedMotion();
 
   useFrame((_, dt) => {
-    if (!group.current || reduce) return;
+    if (!group.current || reduce || !active) return;
     group.current.rotation.y += dt * 0.12;
   });
 
@@ -106,8 +109,17 @@ function Modules({
   );
 }
 
-export function BatteryPack3D({ mode }: { mode: Mode }) {
+export function BatteryPack3D({
+  mode,
+  active = true,
+  hint,
+}: {
+  mode: Mode;
+  active?: boolean;
+  hint: string;
+}) {
   const reduce = useReducedMotion();
+  const t = useTranslations("battery");
   const [selected, setSelected] = useState<number | null>(14);
   const [hover, setHover] = useState<number | null>(null);
   const shown = hover ?? selected;
@@ -118,7 +130,7 @@ export function BatteryPack3D({ mode }: { mode: Mode }) {
       <Canvas
         camera={{ position: [6.5, 5.5, 7], fov: 42 }}
         dpr={[1, 1.6]}
-        frameloop={reduce ? "demand" : "always"}
+        frameloop={reduce || !active ? "demand" : "always"}
         gl={{ antialias: true, powerPreference: "low-power" }}
         onPointerMissed={() => setSelected(null)}
       >
@@ -126,7 +138,7 @@ export function BatteryPack3D({ mode }: { mode: Mode }) {
         <ambientLight intensity={0.9} />
         <directionalLight position={[5, 8, 5]} intensity={1.1} castShadow />
         <directionalLight position={[-6, 3, -4]} intensity={0.3} />
-        <Modules mode={mode} selected={selected} onSelect={setSelected} onHover={setHover} />
+        <Modules mode={mode} active={active} selected={selected} onSelect={setSelected} onHover={setHover} />
         <ContactShadows position={[0, -0.09, 0]} opacity={0.28} scale={16} blur={2.4} far={5} />
         <OrbitControls
           enablePan={false}
@@ -138,14 +150,14 @@ export function BatteryPack3D({ mode }: { mode: Mode }) {
 
       {s ? (
         <div className="pointer-events-none absolute left-3 top-3 rounded-sm border border-line-strong bg-surface/95 px-2.5 py-1.5 font-mono text-[11px] shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
-          <div className="text-text-primary">Module {s.module}</div>
+          <div className="text-text-primary">{t("moduleN", { module: s.module })}</div>
           <div className="text-text-secondary">
             {s.avg.toFixed(3)} V · Δ {s.delta} mV · {s.temp.toFixed(1)} °C
           </div>
         </div>
       ) : null}
       <div className="pointer-events-none absolute bottom-2 right-3 font-mono text-[10px] text-text-muted">
-        Drag to rotate · click a module
+        {hint}
       </div>
     </div>
   );

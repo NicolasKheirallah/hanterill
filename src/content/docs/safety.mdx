@@ -1,3 +1,5 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
 openCMA separates reading from changing. Most of what it does is reads. The parts that change the vehicle are grouped, labelled, and off by default.
 
 ## Read-only
@@ -11,15 +13,15 @@ Battery data, ECU identification, fault codes and live telemetry are reads. Runn
 - Running routines (`0x31`)
 - Input/output control (`0x2F`)
 
-<Callout kind="caution" title="Off by default">
+<SafetyNotice level="adaptation" title="Off by default">
 In openCMA these require enabling write access for the session. They fail closed: if the opt-in is not present, the request is not sent. There is no hidden path around the gate.
-</Callout>
+</SafetyNotice>
 
 ## High voltage
 
-<Callout kind="warning" title="High-voltage systems are hazardous">
+<SafetyNotice level="high-voltage" title="High-voltage systems are hazardous">
 Electric vehicles carry hazardous high-voltage systems. Reading battery data over a diagnostic link does not de-energise anything and does not make physical high-voltage service safe. HV service requires the manufacturer's procedures, equipment and training.
-</Callout>
+</SafetyNotice>
 
 ## Not a replacement for manufacturer tooling
 

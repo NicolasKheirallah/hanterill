@@ -1,3 +1,5 @@
+import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
+
 openCMA reads Diagnostic Trouble Codes with UDS service `0x19` (ReadDTCInformation) from every ECU that answers a diagnostic session.
 
 ## Status, not just a code
@@ -25,6 +27,15 @@ Where the ECU stored a snapshot at the time of the fault, openCMA retrieves it w
 0x19 04 <dtc>  report snapshot record for a DTC
 0x19 06 <dtc>  report extended data record for a DTC
 ```
+
+A report-by-status-mask exchange:
+
+<DiagnosticExample
+  service="ReadDTCInformation, 0x19 subfunction 0x02"
+  request="19 02 FF"
+  response="59 02 FF <dtc><status> <dtc><status> ..."
+  note="0xFF asks for every status. Each three-byte DTC is followed by one status byte; openCMA classifies that byte as active, pending, stored or historical."
+/>
 
 openCMA runs this per ECU and aggregates the result into one list, grouped by module.
 

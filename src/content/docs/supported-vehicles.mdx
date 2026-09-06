@@ -1,3 +1,8 @@
+import { PlatformSupport } from "@/components/docs/mdx/PlatformSupport";
+import { VehicleSupport } from "@/components/docs/mdx/VehicleSupport";
+import { Wip } from "@/components/docs/mdx/Wip";
+import { Experimental } from "@/components/docs/mdx/Experimental";
+
 openCMA is built CMA-first. The Compact Modular Architecture platform under Polestar 2 and the smaller electric Volvos is where battery, ECU and routine coverage was written and validated.
 
 ## Platform compatibility is not support
@@ -24,43 +29,34 @@ this site always reflect verified support.
 
 ## Platforms
 
-### CMA - Supported
+The tables below are generated from the same support data the rest of the site
+uses, so they cannot drift from the vehicles page.
 
-| Vehicle | Years |
-| --- | --- |
-| Polestar 2 | 2021 to present |
-| Volvo XC40 Recharge / EX40 | 2021 to present |
-| Volvo C40 Recharge / EC40 | 2022 to present |
+### CMA
 
-### SPA - WIP / Research
+<PlatformSupport platform="CMA" />
 
-First-generation Recharge plug-in hybrids. Platform recognised; ECU mapping and
-battery decoding in progress. Do not rely on any figures from these vehicles.
+The full capability breakdown for the reference vehicle:
 
-| Vehicle | Years | Status |
-| --- | --- | --- |
-| Volvo XC60 Recharge | 2018 to present | WIP |
-| Volvo S60 / V60 Recharge | 2019 to present | WIP |
-| Volvo S90 / V90 Recharge | 2018 to present | Research |
-| Volvo XC90 Recharge | 2016 to present | Research |
+<VehicleSupport model="Polestar 2" />
 
-### SEA - Research
+### SPA
 
-Newer BEVs including Zeekr. Sub-platform mapping under verification; not shown as
-SEA1 or SEA2 until confirmed.
+<Wip note="First-generation Recharge plug-in hybrids. openCMA connects over DoIP; ECU mapping and battery decoding are incomplete. Do not rely on any figures from these vehicles." />
 
-| Vehicle | Years | Status |
-| --- | --- | --- |
-| Volvo EX30 | 2024 to present | Research |
-| Polestar 4 | 2024 to present | Research |
-| Zeekr 001 / 009 / X | 2021 to present | Research |
+<PlatformSupport platform="SPA" />
 
-### SPA2 - Research
+### SEA
 
-| Vehicle | Years | Status |
-| --- | --- | --- |
-| Volvo EX90 | 2024 to present | Research |
-| Polestar 3 | 2024 to present | Research |
+<Experimental kind="research" note="Newer BEVs including Zeekr. Battery and ECU layout differ from CMA. Sub-platform names such as SEA1 or SEA2 are not shown until a mapping is confirmed." />
+
+<PlatformSupport platform="SEA" />
+
+### SPA2
+
+<Experimental kind="research" />
+
+<PlatformSupport platform="SPA2" />
 
 ## Not manufacturer support
 

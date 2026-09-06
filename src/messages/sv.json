@@ -172,7 +172,14 @@
     "provRefresh": "Uppdatering",
     "provOnDemand": "Vid behov",
     "provPolled": "avläst medan vyn är öppen",
-    "didReference": "Fullständig referens för dataidentifierare i dokumentationen"
+    "didReference": "Fullständig referens för dataidentifierare i dokumentationen",
+    "pack3dModules": "Pack, 27 moduler",
+    "pack3dColourMode": "3D-färgläge",
+    "pack3dChecking": "Kontrollerar enhet…",
+    "pack3dLoading": "Laddar 3D-vy…",
+    "pack3dUnavailable": "Interaktiv 3D-vy är inte tillgänglig här.",
+    "pack3dFallback2d": "2D-potentialmatrisen nedan har samma data.",
+    "pack3dHint": "Dra för att rotera · klicka på en modul"
   },
   "scan": {
     "stageIdle": "Vilar",
@@ -389,7 +396,7 @@
       },
       {
         "q": "Vilka fordon stöds egentligen?",
-        "a": "Polestar 2 och CMA-plattformens Volvo-modeller (XC40/EX40, C40/EC40) är de testade plattformarna. Nyare SEA- och SPA2-bilar ansluter via DoIP, men deras styrenhetskartor och batteriavkodning verifieras fortfarande och är markerade som experimentella eller under utredning."
+        "a": "Polestar 2 och CMA-plattformens Volvo-modeller (XC40/EX40, C40/EC40) är de testade plattformarna. Nyare SEA- och SPA2-bilar ansluter via DoIP, men deras styrenhetskartor och batteriavkodning verifieras fortfarande och är markerade som pågående (WIP) eller under utredning."
       },
       {
         "q": "Kan openCMA skada min bil?",
@@ -407,7 +414,7 @@
     "compat": [
       {
         "q": "Fungerar openCMA med vilken Volvo eller Polestar som helst?",
-        "a": "Nej. openCMA är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA-laddhybrider och nyare SEA- och SPA2-bilar ansluter via DoIP, men deras avkodning är fortfarande under arbete och markerad som WIP eller under utredning."
+        "a": "Nej. openCMA är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA-laddhybrider och nyare SEA- och SPA2-bilar ansluter via DoIP, men deras avkodning är fortfarande under arbete och markerad som pågående (WIP) eller under utredning."
       },
       {
         "q": "Vad är skillnaden mellan plattformskompatibilitet och stöd?",
@@ -415,7 +422,7 @@
       },
       {
         "q": "Min bil står som WIP eller under utredning. Kan jag använda den?",
-        "a": "Du kan ansluta och, på vissa, läsa identifieringsdata. Lita inte på batterivärden eller feltolkning, och kör inga servicerutiner. WIP och utredning betyder att avkodningen inte är verifierad."
+        "a": "Du kan ansluta och, på vissa, läsa identifieringsdata. Lita inte på batterivärden eller feltolkning, och kör inga servicerutiner. Pågående (WIP) och utredning betyder att avkodningen inte är verifierad."
       },
       {
         "q": "Är detta godkänt av Volvo eller Polestar?",
@@ -477,8 +484,8 @@
     "batteryHealth": "Batterihälsa",
     "cellDelta": "Celldifferens",
     "packVoltage": "Packspänning",
-    "stateOfCharge": "Laddningstillstånd",
-    "stateOfHealth": "Hälsotillstånd",
+    "stateOfCharge": "Laddningsnivå (SoC)",
+    "stateOfHealth": "Hälsotillstånd (SoH)",
     "packCurrent": "Packström",
     "avgCellGroup": "Medel cellgrupp",
     "minMax": "Min / Max",

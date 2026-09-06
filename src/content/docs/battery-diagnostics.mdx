@@ -1,4 +1,12 @@
+import { DidReference } from "@/components/docs/mdx/DidReference";
+import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
 The high-voltage battery data comes from the Battery Energy Control Module (BECM) over UDS. openCMA opens an extended session with the BECM and reads by identifier.
+
+<SafetyNotice level="read-only">
+Everything on this page is a read. openCMA queries the BECM and decodes the response. It does not write to the module and does not change how the pack is managed.
+</SafetyNotice>
 
 ## What you get
 
@@ -12,17 +20,29 @@ The high-voltage battery data comes from the Battery Energy Control Module (BECM
 
 ## Reading it
 
-After routing activation:
+After routing activation, openCMA enters an extended session with the BECM
+(`0x10 0x03`) and reads each identifier:
 
-```text
-0x10 03            enter extended diagnostic session (BECM)
-0x22 49 6D         read battery state of health
-0x22 16 35         read pack voltage
-0x22 <cell block>  read cell-group potentials
-0x19 02 FF         read DTC by status mask
-```
+<DidReference
+  rows={[
+    ["0x496D", "Battery state of health"],
+    ["0x1635", "Pack voltage"],
+    ["0xF190", "VIN, for session correlation"],
+  ]}
+/>
 
-Values are decoded against the CMA battery layout. The cell-group potentials are read as a block and mapped to module and group positions, not derived from a single summary field.
+The state-of-health read on the wire:
+
+<DiagnosticExample
+  service="ReadDataByIdentifier, 0x22"
+  request="22 49 6D"
+  response="62 49 6D 03 E6"
+  note="0x03E6 is 998 raw. Scaled by 0.1 that is 99.8, then offset against nominal capacity to the reported SoH. The scaling lives in the CMA decoder map, not in the ECU response."
+/>
+
+Cell-group potentials are read as a block and mapped to module and group
+positions, not derived from a single summary field. DTCs come from the same
+session with `0x19 0x02 0xFF`.
 
 ## Reading the cell matrix
 

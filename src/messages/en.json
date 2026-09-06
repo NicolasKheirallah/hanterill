@@ -172,7 +172,14 @@
     "provRefresh": "Refresh",
     "provOnDemand": "On demand",
     "provPolled": "polled while the view is open",
-    "didReference": "Full data-identifier reference in the docs"
+    "didReference": "Full data-identifier reference in the docs",
+    "pack3dModules": "Pack, 27 modules",
+    "pack3dColourMode": "3D colour mode",
+    "pack3dChecking": "Checking device…",
+    "pack3dLoading": "Loading 3D view…",
+    "pack3dUnavailable": "Interactive 3D view unavailable here.",
+    "pack3dFallback2d": "The 2D potential matrix below has the same data.",
+    "pack3dHint": "Drag to rotate · click a module"
   },
   "scan": {
     "stageIdle": "Idle",
