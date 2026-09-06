@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { useInView, useReducedMotion } from "motion/react";
 import { Box } from "lucide-react";
+import { cn } from "@/lib/cn";
 
 type Mode = "deviation" | "temperature";
 
@@ -16,7 +17,10 @@ const MODE_KEY: Record<Mode, "viewDeviation" | "temperature"> = {
 
 const BatteryPack3D = dynamic(() => import("./BatteryPack3D").then((m) => m.BatteryPack3D), {
   ssr: false,
-  loading: () => <Placeholder label="" />,
+  // Shown only while the chunk downloads, after the section is in view. A
+  // skeleton, not a blank box; the label text is added by the parent's
+  // pre-mount state, which does have the translations.
+  loading: () => <Placeholder pulse />,
 });
 
 function hasWebGL(): boolean {
@@ -31,9 +35,14 @@ function hasWebGL(): boolean {
 
 const subscribe = () => () => {};
 
-function Placeholder({ label }: { label: string }) {
+function Placeholder({ label, pulse }: { label?: string; pulse?: boolean }) {
   return (
-    <div className="flex h-72 w-full items-center justify-center rounded-lg border border-line bg-surface font-mono text-[12px] text-text-muted sm:h-80">
+    <div
+      className={cn(
+        "flex h-72 w-full items-center justify-center rounded-lg border border-line bg-surface font-mono text-[12px] text-text-muted sm:h-80",
+        pulse && "motion-safe:animate-pulse",
+      )}
+    >
       {label}
     </div>
   );
@@ -94,7 +103,7 @@ export function BatteryPackView() {
           <BatteryPack3D mode={mode} active={visible} hint={t("pack3dHint")} />
         </div>
       ) : (
-        <Placeholder label="" />
+        <Placeholder label={t("pack3dLoading")} />
       )}
     </div>
   );
