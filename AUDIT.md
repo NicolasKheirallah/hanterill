@@ -14,35 +14,39 @@ consciously postponed with rationale · `N/A` optional and not taken.
 
 ## 1. Executive summary
 
-The implementation is substantially complete and high quality. Phase 1 (full marketing + docs
-site), phase 2 (interactive engineering visualisations, scan simulator, live telemetry, platform
-explorer, licensing, micro-interactions) and most of phase 3 (en/sv i18n, modern docs, 7-stage
-session simulator, restrained 3D battery) are in the tree, type-checked, linted and building. The
-reviewer independently re-ran all 16 runnable static checks plus `next build` and the 17-route
-render check (all green), and read the ten load-bearing interactive components in full.
+The implementation is substantially complete and high quality. Phases 1-3 plus a premium and
+motion pass are in the tree at head `16d539e`, type-checked, linted and building (53 pages). The
+reviewer independently re-ran all 17 runnable checks plus `next build` and the 17-route render
+check (all exit 0), read the ten load-bearing interactive components in full, and drove a live
+browser pass over every interaction (sections 7b and 7c).
 
-Findings that matter, most significant first:
+Findings, current status:
 
-1. **F1 / F2 - two homepage sections render English under `/sv`.** `ScanSimulator` and
-   `LiveTelemetryChart` call no translation API; their Swedish catalogs (`scan.*`, `telemetry.*`)
-   exist but are unused. This contradicts the plan's claim that the homepage journey is fully
-   Swedish. Small fix (catalogs are done). *Being addressed by the implementer as of this writing.*
-2. **F3 - `ConnectionDiagram` partial i18n.** Node popover facts, link labels and the
-   protocol-details list are hardcoded English; only the trigger labels are translated.
-3. **Licensing (P0, resolved).** The upstream repo is still MIT (`LICENSE`, `Cargo.toml`, README
-   badge, `DISCLAIMER.md`). The website says "source-available, private use". Per the user's
-   decision the website deliberately leads a planned relicense. The website is now internally
-   consistent (the reviewer rewrote `license.mdx`). Upstream metadata is the user's follow-up.
-4. **F5 / F6 / F7 - minor.** 2D matrix and 3D pack selections are not cross-synchronised (F5);
-   the telemetry crosshair is pointer-only, no keyboard path (F6); the simulated DTC codes are
-   realistic-looking and should be confirmed against project data or made obviously synthetic (F7).
-5. **DEFERRED - Swedish doc bodies (P1-6) and Swedish interior-page prose (P1-8),** both with
-   written rationale; `/sv` shows coherent pages with an "available in English" notice, not 404s.
-6. **Library divergences (accepted): `<canvas>` not ECharts (§18); `@next/mdx` + `cmdk` + Shiki
-   not Fumadocs (§53); custom grid state not TanStack Table (§25); no GSAP (§4).**
+1. **F1 / F2 / F3 - Swedish coverage holes - CLOSED at `5ad9178`.** `ScanSimulator` +
+   `scan-sim.ts` now consume `scan.*`, `LiveTelemetryChart` consumes `telemetry.*`,
+   `ConnectionDiagram` consumes `connection.*`. Verified live: `/sv` renders "Skannar
+   styrenheter", "Packspänning", "Diagnostikgateway". `check-i18n-consume.mjs` (gate G23) added and
+   passing.
+2. **F9 - hero caption + product-frame tabs English under `/sv` - CLOSED at `16d539e`.**
+   `HeroInterface` caption -> `common.representative`, `PanelChrome` tab labels -> `views.panel*`.
+   Verified live.
+3. **Licensing (P0, resolved by user decision).** The upstream repo is still MIT (`LICENSE`,
+   `Cargo.toml`, README badge, `DISCLAIMER.md`). The website says "source-available, private use".
+   The website deliberately leads a planned relicense; it is internally consistent (the reviewer
+   rewrote `license.mdx`, gate G25). Upstream metadata is the user's follow-up - gate G24, open.
+4. **Still open, none blocking:** G26 reduced-motion behaviour (source-confirmed only; browser
+   emulation unavailable this session); F6 / G27 telemetry crosshair has no keyboard path (minor);
+   F10 the 3D pack has no loading state before it mounts (section 98 polish); F5 the 2D matrix and
+   3D pack selections are independent (low). F7 - the simulated DTC records are synthetic fixtures
+   authored for the site, correctly behind "Simulated session" labels (not from project data;
+   confirmed with the implementer).
+5. **DEFERRED with rationale:** Swedish doc bodies (P1-6), Swedish interior-page prose (P1-8),
+   per-vehicle notes (P1-5), representative DTC text (P1-7). `/sv` shows coherent pages with an
+   "available in English" notice, not 404s.
+6. **Library divergences (accepted):** `<canvas>` not ECharts (§18); `@next/mdx` + `cmdk` + Shiki
+   not Fumadocs (§53); custom grid state not TanStack Table (§25); no GSAP (§4).
 
-No blocking correctness defect was found. Nothing here should hold ship; the failing gates are the
-two `/sv` sections, an upstream metadata mismatch the user owns, and a minor chart-a11y affordance.
+No blocking correctness defect was found.
 
 ---
 
@@ -281,6 +285,30 @@ through the tool this run, so G26 stays PARTIAL (source-confirmed only).
   portals outside the snapshot scope).
 - The scan simulator shows "Idle" and does nothing until its section is ~40% in view; that is the
   intended `useInView` autoplay gate, not a dead control.
+- The 3D battery pack shows an empty box in a full-page screenshot; that is `useInView({ once })`
+  not having fired during the scroll-through. It mounts and renders on a normal scroll-to.
+
+## 7c. Second live pass - commit `16d539e` (premium and motion pass)
+
+Fresh prod build, port 4478. Re-verified the F9 fix and the premium-pass additions.
+
+| Item | Result |
+|---|---|
+| F9 - hero caption under /sv | CLOSED - "Representativt gränssnitt med exempelvärden. Inte en avläsning i realtid från ett fordon." |
+| F9 - product-frame tab labels under /sv | CLOSED - "Översikt / Batteri / DTC / Styrenheter / Realtid / Loggar" (was English); the "Live" button flagged earlier was this tab, now "Realtid" |
+| CSS scroll reveal (G29/G32) | PASS - `.reveal` x7 compute `animation-timeline: view()`, `animation-name: reveal-rise`, `opacity: 1` base. Compositor-driven, readable with no animation. |
+| 3D battery studio lighting (G30) | PASS (dark) - live screenshot: grounded 27-module pack, warm PBR deviation gradient with a specular edge per face, module 14 isolated and lifted with the accent emissive, soft contact shadow, no post-processing. Light theme not re-checked. |
+| View transitions (G31) | PASS (wiring) - `document.startViewTransition` is a function; `<main>` = `view-transition-name: page-main`, `<html>` = `root`; scoped exactly as designed. Crossfade not captured in a still. |
+| Hero load stagger (G32) | Structure present (one `.hero-seq`); the <900ms sequence had finished by query time, not captured running. |
+| All 17 runnable checks at 16d539e | exit 0 (adds `check-i18n-consume`, `check-license-consistency`, `check-premium`; `check-motion` now carries the G29 assertions) |
+
+### F10 (new, low, section 98) - 3D pack has no loading state
+
+`BatteryPackView` renders `<Placeholder label="" />` both as the `next/dynamic` loading fallback
+and while `useInView({ once: true })` has not yet fired, so there is a brief blank bordered box
+with no skeleton, spinner or label. The brief's section 98 asks for a preserved-layout loading
+state (skeleton / scanning line / status label). One-line fix: pass a real label
+(`t("battery.pack3dChecking")`) to both.
 
 ## 8. Change log for this audit
 

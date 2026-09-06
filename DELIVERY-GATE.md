@@ -10,9 +10,11 @@ Evidence sources:
 - **implementer QA** - the implementer's agent-browser pass on the production build at `96868bf`,
   with an evidence paragraph in `GATES.md` history.
 
-Status: **provisional** while the implementer wires AUDIT F1/F2/F3 (two `/sv` sections + the
-connection popover). Rows that depend on that are marked PENDING and are refreshed on the next
-commit.
+Status: **verified against head `16d539e`**. AUDIT F1/F2/F3 (Swedish scan, telemetry, connection
+popover) closed at `5ad9178`; F9 (hero caption, product-frame tabs) closed at `16d539e`. All 17
+runnable checks re-run to exit 0, `next build` clean, and a live browser pass drove the
+interactions. The one item still source-only is reduced-motion behaviour (G26) - the browser tool
+could not apply the emulation this session.
 
 ---
 
@@ -28,7 +30,7 @@ Six viewports (375x812, 430x932, 768x1024, 1024x768, 1440x900, 1920x1080), light
 | Text not clipped or truncated unexpectedly | PASS | PASS | PASS | PASS | implementer QA |
 | Contrast: body >= 4.5:1, large text >= 3:1 | PASS | PASS | PASS | PASS | implementer QA against the token set in `globals.css` |
 | Interactive controls reachable and sized for touch at 375/430 | PASS | PASS | PASS | PASS | reviewer source (mobile module list, compact scan list, full-width canvas, wrapped toggles) |
-| Homepage journey coherent | PASS | PASS | PASS | PASS | scan / telemetry / connection wired for Swedish at 5ad9178; hero caption + product-frame tabs (F9) at the premium-pass commit. Live `/sv` re-verify against the pass SHA pending. |
+| Homepage journey coherent | PASS | PASS | PASS | PASS | reviewer live at 16d539e: `/sv` renders "Skannar styrenheter", "Packspänning", "Diagnostikgateway", "Representativt gränssnitt med exempelvärden...", tabs "Översikt / Batteri / DTC / Styrenheter / Realtid / Loggar". Identifiers stay verbatim. |
 
 ## 2. Input-mode matrix
 
@@ -42,7 +44,7 @@ Six viewports (375x812, 430x932, 768x1024, 1024x768, 1440x900, 1920x1080), light
 | Dark mode | PASS | reviewer static (`check-theme.mjs`) + implementer QA |
 | Light mode | PASS | reviewer static + implementer QA |
 | English | PASS | reviewer static (`check-i18n.mjs`) + `check-render.mjs` 17 routes 200 |
-| Swedish | PASS (re-verify) | architecture PASS; `ScanSimulator` / `LiveTelemetryChart` / `ConnectionDiagram` popover wired at 5ad9178; `HeroInterface` caption + product-frame tab labels (F9) at the premium-pass commit; `check-i18n-consume.mjs` reports 24/24 namespaces consumed. Deferred by design: doc bodies (P1-6), per-vehicle notes (P1-5), interior prose (P1-8), representative DTC text (P1-7). Live browser re-verify against the pass SHA pending. |
+| Swedish | PASS | reviewer live at 16d539e + `check-i18n-consume.mjs` 24/24 namespaces consumed. Scan, telemetry, connection popover, hero caption, product-frame tabs all confirmed Swedish in a browser. Deferred by design (namespace consumed, some values English): doc bodies (P1-6), per-vehicle notes (P1-5), interior prose (P1-8), representative DTC text (P1-7). |
 | Slow device | PASS (by design) | 3D is lazy + `low-power` + `demand`; telemetry loop is canvas-only; no blocking main-thread work. Not profiled on real low-end hardware. |
 | WebGL unavailable | PASS | reviewer source: `hasWebGL()` gate -> "3D unavailable / the 2D matrix has the same data" note, no console error |
 | JS hydration delay | PASS | Server Components render the content; interactive islands hydrate progressively; no layout shift on hydrate (reviewer source, `next build` shows the pages as static/SSG) |
@@ -75,7 +77,7 @@ Six viewports (375x812, 430x932, 768x1024, 1024x768, 1440x900, 1920x1080), light
 | Step through the session | PASS | `SessionSimulator` 7 stages, button / click / arrow-key navigation |
 | Select SPA or SEA -> see development is in progress | PASS | `PlatformExplorer` WIP / Research status, "current research" list, no percentages |
 | Open Docs -> a searchable engineering knowledge base | PASS | 3-pane layout, Cmd/Ctrl+K palette over a heading+body index, on-this-page rail, MDX data components |
-| Switch to Svenska -> the product stays coherent | PASS (re-verify) | homepage spine, chrome, platform explorer, session shell + walkthrough, scan simulator, telemetry chart, connection diagram + popover, hero product frame, docs chrome all Swedish. Long-form doc bodies and interior-page prose deferred by design (P1-6 / P1-8). Live browser re-verify pending. |
+| Switch to Svenska -> the product stays coherent | PASS | reviewer live at 16d539e: homepage spine, chrome, platform explorer, session walkthrough (01 Anslut ... 06 Realtidsdata), scan simulator, telemetry chart, connection popover, hero product frame + tabs, docs chrome all Swedish. Long-form doc bodies and interior-page prose deferred by design (P1-6 / P1-8). |
 
 ---
 
@@ -84,29 +86,29 @@ Six viewports (375x812, 430x932, 768x1024, 1024x768, 1440x900, 1920x1080), light
 | Check | Verdict | Evidence |
 |---|---|---|
 | No rejected library present (postprocessing / lenis / gsap / chart.js / echarts) | PASS | `scripts/check-premium.mjs` scans `package.json`; the pass added zero runtime dependencies |
-| 3D battery reads as a product render | PENDING (browser) | source: `BatteryPack3D.tsx` uses `<Environment>` + three `<Lightformer>`s, `meshPhysicalMaterial` clearcoat, tuned `<ContactShadows>`, no postprocessing. Screenshot comparison outstanding (G30). |
+| 3D battery reads as a product render | PASS (dark) | reviewer live screenshot at 16d539e: 1134x320 canvas, grounded 27-module pack, warm PBR deviation gradient, module 14 isolated and lifted with the accent emissive, soft contact shadow, no glow / post-processing. Reads as a product render. Light theme peer-attested. Nitpick: blank box with no skeleton before `useInView` mounts it (G30, section-98). |
 | Scroll reveal runs on the compositor, double-guarded | PASS | `check-motion.mjs`: `.reveal` under `@supports (animation-timeline: view())` and `prefers-reduced-motion: no-preference`, base `opacity: 1`. `Reveal.tsx` no longer imports `motion/react`. |
-| One orchestrated load moment, calm elsewhere | PENDING (browser) | source: `.hero-seq` 5-child 70ms stagger, panel at delay 0.34s / `DUR.slow`, total < ~900ms; skipped under reduced motion. On-page scroll motion is `.reveal` only. Timing/feel check outstanding (G32). |
-| View transitions scoped to locale + docs prev/next, off under reduced motion | PENDING (browser) | source: `LocaleSwitcher` + `DocNavLink` use `React.unstable_addTransitionType` in a `startTransition`; `view-transition-name: page-main` on `<main>` only; `globals.css` kills `::view-transition-*` under `prefers-reduced-motion: reduce`. Live crossfade / slide check outstanding (G31). Next 16.3.4 has no framework flag; progressive enhancement. |
+| One orchestrated load moment, calm elsewhere | PASS | reviewer live at 16d539e: one `.hero-seq` container; `.reveal` x7 compute `animation-timeline: view()` + `animation-name: reveal-rise` + `opacity: 1` base (compositor-driven, readable fallback). No other scroll animation observed. The sub-900ms hero stagger itself was source-verified only (finished before query time). |
+| View transitions scoped to locale + docs prev/next, off under reduced motion | PASS (wiring) | reviewer live at 16d539e: `typeof document.startViewTransition === "function"`, `<main>` computes `view-transition-name: page-main`, `<html>` computes `root` - scoping exactly as designed. `LocaleSwitcher` + `DocNavLink` use `addTransitionType` in `startTransition`; `globals.css` kills `::view-transition-*` under reduced motion. The crossfade / slide itself is not captured in a static screenshot. Next 16.3.4 has no framework flag; progressive enhancement. |
 | Press feedback pointer-only and motion-gated | PASS | `check-premium.mjs`: `.press` is inside `@media (hover: hover) and (prefers-reduced-motion: no-preference)`. |
 | Heading weight settle is gated and degradable | PASS (source) | `.heading-settle` interpolates `font-variation-settings` 440 -> 500 via `@starting-style`, inside `prefers-reduced-motion: no-preference`; a no-op without `@starting-style` or a variable font. |
 | Chart library decision recorded | PASS | hand-rolled canvas kept; `check-premium.mjs` fails on `chart.js` / `echarts`. `uPlot` is the only revisit candidate, and only if the chart's scope grows. See `PREMIUM-PASS.md` section 4.3. |
 
 ## 5. Result
 
-The site meets the brief. Outstanding at the time of writing:
+The site meets the brief. Verified against head `16d539e` (17 runnable checks exit 0, `next build`
+clean, live browser pass). Outstanding, none blocking ship:
 
-1. **CLOSED at 5ad9178** - `ScanSimulator`, `LiveTelemetryChart` and the `ConnectionDiagram`
-   popover now consume their Swedish catalogs (AUDIT F1/F2/F3). `HeroInterface` caption and the
-   product-frame tab labels (F9) closed in the premium-pass commit. Re-verify `/sv` coherence
-   against that SHA.
-2. **G24 (upstream, user)** - the openCMA repo's `LICENSE` / `Cargo.toml` / README badge /
+1. **G24 (upstream, user)** - the openCMA repo's `LICENSE` / `Cargo.toml` / README badge /
    `DISCLAIMER.md` still say MIT while the site says private-use. The site side is consistent.
+2. **G26 (reduced-motion)** - source-confirmed only; the browser tool could not apply the
+   reduced-motion emulation this session, so a per-page behavioural pass is still owed.
 3. **G27 (minor)** - the telemetry crosshair has no keyboard point-inspection path.
-4. **G30-G32 (browser)** - the premium pass's three browser-manual gates: 3D render quality
-   screenshot, hero load-sequence timing, and the live view-transition crossfade / slide.
+4. **G30 polish** - the 3D pack shows a blank box (no skeleton or label) in the brief window
+   before `useInView` mounts it (section-98 loading state).
 5. **RE-CONFIRM** - VIN redaction in the session Identify stage (reviewer did not open that source);
-   the <=1-2deg hero perspective cap; a real Lighthouse run for the section-88 >95 targets.
+   the <=1-2deg hero perspective cap; a real Lighthouse run for the section-88 >95 targets;
+   the 3D pack and view transitions in light theme.
 
-None of these blocks ship. The premium pass added zero dependencies and every path keeps its
-reduced-motion and no-support fallback.
+The premium pass added zero dependencies and every path keeps its reduced-motion and no-support
+fallback.

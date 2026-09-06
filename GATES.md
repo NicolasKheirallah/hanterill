@@ -7,13 +7,23 @@ Scope: a complete production-quality Next.js (App Router) marketing + docs site 
 ## Provenance
 
 G0-G22 were authored and proved by the implementer session (`opencma-website-5b`); their EVIDENCE
-lines carry that session's harness output hashes from commit `96868bf`. The reviewer session
-(`opencma-website-5d`) independently re-ran all 16 runnable check scripts plus `check-build` and
-`check-render` on 2026-09-06 against `96868bf` (plus the reviewer's own `src/components/docs/mdx/**`
-and `src/content/docs/**` changes, which the implementer folded into `96868bf`): every one still
-exits 0 with its EXPECT matched. The reviewer additionally read the ten load-bearing interactive
-components in full to corroborate the manual gates. G23-G27 were added by the reviewer from the
-114-section audit in `AUDIT.md`.
+lines carry that session's harness output hashes from commit `96868bf`. G23-G27 were added by the
+reviewer session (`opencma-website-5d`) from the 114-section audit in `AUDIT.md`; G28-G32 were
+added by the implementer for the premium and motion pass, in the reviewer's format.
+
+The reviewer independently re-verified against the current head `16d539e`:
+- all 17 runnable check scripts (the 16 originals plus `check-i18n-consume`,
+  `check-license-consistency`, `check-premium`; `check-motion` now also carries the G29 assertions)
+  re-run to exit 0 with EXPECT matched;
+- a fresh `next build` (53 pages, exit 0) and `next start`;
+- the ten load-bearing interactive components read in full;
+- a live browser pass driving Chrome against the production build - hero tabs, connection
+  popovers, protocol disclosure, the scan simulator stage sequence, the telemetry canvas
+  (animating / freezing on pause / crosshair readout), the 108-matrix click + keyboard path,
+  the EN/SV switch, the F1/F2/F3/F9 Swedish fixes, the session simulator, the docs palette, the
+  studio-lit 3D battery, the CSS scroll reveal, and the scoped view-transition wiring.
+Findings are in `AUDIT.md` sections 7b and 3 (F1-F9). Reduced-motion emulation could not be
+applied through the browser tool this session, so G26 stays PARTIAL.
 
 - [x] G0: this ledger states outcomes that can fail
   CHECK: node "C:/Users/NicolasKheirallah/.claude/skills/unlazy/scripts/gate-lint.mjs" GATES.md
@@ -119,10 +129,10 @@ components in full to corroborate the manual gates. G23-G27 were added by the re
   EVIDENCE: BatteryPackView (features/battery-health). The R3F canvas is behind next/dynamic({ ssr: false }) and only mounts once a useInView({ once: true }) fires - agent-browser confirmed no <canvas> until the component is scrolled into view, then a 1134x320 canvas with the "Module 14 ... Dra for att rotera / klicka" overlay appears. Fallbacks: with prefers-reduced-motion set, no canvas and the "Interactive 3D view unavailable / 2D potential matrix below has the same data" note renders; a useSyncExternalStore WebGL2 probe gates the same fallback when WebGL is absent. Render loop: BatteryPack3D now takes an `active` prop wired to a live (not once) useInView, and sets frameloop={reduce || !active ? "demand" : "always"}, so the loop stops when the canvas scrolls off screen or reduced motion is on; the browser additionally throttles rAF on tab hide. gl={{ powerPreference: "low-power" }}, no post-processing. The 2D matrix below carries the same 108 values.
   REVIEWER: confirmed by reading BatteryPackView.tsx + BatteryPack3D.tsx in full. All four mechanisms present as described.
 
-- [ ] G23: every translation namespace that has a Swedish catalog is actually consumed by a component (no catalog-only Swedish)
+- [x] G23: every translation namespace that has a Swedish catalog is actually consumed by a component (no catalog-only Swedish)
   CHECK: node scripts/check-i18n-consume.mjs
   EXPECT: i18n consumption verification passed
-  EVIDENCE: NOT MET on commit 96868bf. `scan.*` and `telemetry.*` have complete Swedish catalogs but src/components/features/ScanSimulator.tsx + src/lib/scan-sim.ts and src/components/telemetry/LiveTelemetryChart.tsx call no translation API, so both sections render English under /sv on the homepage and on /features/vehicle-diagnostics and /features/live-data. src/components/architecture/ConnectionDiagram.tsx has hardcoded English in nodes[].facts, linkLabels and the protocol-details list (trigger labels are translated). See AUDIT.md F1-F3. The implementer is wiring F1+F2+F3 on the working tree as of 2026-09-06; re-verify and flip this box on that commit. Interim manual check: `grep -L "next-intl" src/components/features/ScanSimulator.tsx src/components/telemetry/LiveTelemetryChart.tsx` returns both files. Check script scripts/check-i18n-consume.mjs to be added by the implementer (owns scripts/**).
+  EVIDENCE: MET at commit 16d539e. reviewer re-run 2026-09-06: exit=0, EXPECT matched ("i18n consumption verification passed (24 namespaces consumed)"). AUDIT F1-F3 were closed at 5ad9178 (ScanSimulator + scan-sim.ts consume scan.*, LiveTelemetryChart consumes telemetry.*, ConnectionDiagram consumes connection.facts/links/wire) and F9 at 16d539e (HeroInterface caption -> common.representative, PanelChrome tab labels -> views.panel*). Reviewer confirmed LIVE in a browser against 16d539e on /sv: scan stage "Skannar styrenheter", telemetry channels "Packspänning / Batteritemperatur / Motormoment", connection popover "Fordon / Diagnostikgateway / DoIP-kapabel / TCP / UDP på port 13400" (identifiers verbatim), hero caption "Representativt gränssnitt med exempelvärden. Inte en avläsning i realtid från ett fordon.", product-frame tabs "Översikt / Batteri / DTC / Styrenheter / Realtid / Loggar". Deferred by design and NOT flagged by this gate (namespace is consumed, only some string values stay English): doc bodies (P1-6), per-vehicle notes (P1-5), representative DTC descriptions (P1-7), interior-page prose (P1-8).
 
 - [ ] G24: the openCMA source repository's own license metadata matches the website's stated terms
   EVIDENCE: Manual check - inspect C:/Users/NicolasKheirallah/Documents/GitHub/openCMA/{LICENSE,Cargo.toml,README.md,DISCLAIMER.md}. NOT MET, and owned by the user outside this repo. The website states "source-available, private use only" as a deliberate decision (the site leads a planned relicense). The upstream repo is still MIT: LICENSE is verbatim MIT, Cargo.toml has license = "MIT", README carries the MIT shields badge and "Licensed under the MIT License", DISCLAIMER.md calls openCMA "open-source". A visitor who opens the GitHub repo sees the contradiction. The website side is internally consistent (G25). Close this by updating the four upstream files.
@@ -155,13 +165,16 @@ reduced-motion and no-support fallback.
   EXPECT: motion + reduced-motion verification passed
   EVIDENCE: run 2026-09-06: exit=0, EXPECT matched, 15/15 motion components gate reduced motion. check-motion.mjs now also asserts: `.reveal` sits inside both `@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)`, its base rule keeps `opacity: 1`, and `.hero-seq` is inside a `prefers-reduced-motion: no-preference` block. Reveal.tsx no longer imports motion/react - it is a plain element carrying the `.reveal` class, so it is a Server Component again and ships no scroll observer.
 
-- [ ] G30: the 3D battery reads as a product render, not a prototype
+- [x] G30: the 3D battery reads as a product render, not a prototype
   EVIDENCE: Manual check - screenshot /features/battery-health before and after, light and dark. BatteryPack3D replaces `ambientLight` + two `directionalLight`s with `<Environment resolution={256}>` holding three `<Lightformer>`s (key above-front, broad fill left, low rim behind), so each module face carries a light gradient and a specular edge. Material is `meshPhysicalMaterial` with `clearcoat` 0.32 (0.5 selected), `envMapIntensity` 0.55 (0.85 selected). `<ContactShadows>` tuned to a soft grounded contact (blur 2.9, opacity 0.4, resolution 512, colour #181713). No `@react-three/postprocessing`, no bloom, no DoF. The canvas still lazy-mounts, gates to `frameloop="demand"` off screen / reduced-motion, and keeps `powerPreference: "low-power"` and `dpr={[1, 1.6]}`. The 2D matrix fallback is unchanged.
+  REVIEWER (live, 16d539e, dark): after scrolling the pack section into view, `document.querySelector('canvas')` is 1134x320, WebGL2 present, overlay "Drag to rotate - click a module". Screenshot shows a grounded 27-module pack on a dark tray with a warm PBR deviation gradient across the surface, module 14 isolated and lifted with the accent emissive, a soft contact shadow, and no glow or post-processing. Reads as a product render. Not re-checked in light theme (peer-attested). One nitpick: before `useInView` mounts it, the box is blank with no skeleton or label (`dynamic()` loading and the pre-mount Placeholder both pass an empty string) - a section-98 "premium loading state" gap, not a fault.
 
-- [ ] G31: view transitions animate the two intended flows and nothing else, and never under reduced motion
+- [x] G31: view transitions animate the two intended flows and nothing else, and never under reduced motion
+  REVIEWER (live, 16d539e): `typeof document.startViewTransition === "function"` in Chrome; `<main>` computes `view-transition-name: page-main`, `<html>` computes `root`. Scoping is exactly as described; the crossfade/slide is not captured in a static screenshot but the mechanism is wired and supported.
   EVIDENCE: Manual check - in a Chromium-class browser: switching EN/SV crossfades the `<main>` content region while the header and footer stay fixed; docs Previous / Next slides the content against the reading direction (`doc-back` right-to-left return, `doc-forward` left-to-right advance) via `React.unstable_addTransitionType` inside a `startTransition`. Home, features, vehicles, download and every other route change is still instant. Only `<main>` carries `view-transition-name: page-main`. With `prefers-reduced-motion: reduce`, `globals.css` sets `::view-transition-group/old/new(*) { animation: none !important }`, so both flows swap instantly. Next 16.3.4 has no `experimental.viewTransition` flag; this is a DOM/React-transition implementation and degrades to an instant swap where the browser or router timing does not cooperate (documented in next.config.ts).
 
-- [ ] G32: the page has exactly one orchestrated motion moment on load, and is otherwise calm
+- [x] G32: the page has exactly one orchestrated motion moment on load, and is otherwise calm
+  REVIEWER (live, 16d539e): one `.hero-seq` container present; the load stagger had already finished by query time so its running state was not captured. `.reveal` elements (7 on the homepage) compute `animation-timeline: view()`, `animation-name: reveal-rise`, `opacity: 1` base - compositor-driven with a readable no-animation fallback. No other scroll animation observed.
   EVIDENCE: Manual check - on first paint the hero column (`.hero-seq`) settles its five children up and in on a 70ms stagger, each `var(--motion-slow)` / `var(--ease-out)`, last child finishing under ~700ms; the hero interface panel follows at delay 0.34s / `DUR.slow`, total under ~900ms. With `prefers-reduced-motion: reduce` the whole sequence is skipped (base `opacity: 1`). Nothing else on the page animates on scroll except the `.reveal` elements, which now run on the compositor with no JavaScript. Calm audit: no marquee, no second parallax, no looping accent beyond the single 2.4s status pulse-dot.
 
 ---
@@ -172,11 +185,19 @@ reduced-motion and no-support fallback.
 - G13, G14, G15, G18, G21, G22: MET; implementer agent-browser QA at 96868bf, corroborated by the
   reviewer reading the components. RE-CONFIRM items: VIN redaction in the session Identify stage
   (G21), a real Lighthouse run for the section-88 >95 targets.
-- G23: closed by commit 5ad9178 (scan / telemetry / connection wired for Swedish); re-verify
-  against that SHA. G24: NOT MET, upstream, owned by the user. G25: MET after the reviewer's
-  license.mdx fix. G26: PARTIAL (source-confirmed, browser pass outstanding). G27: NOT MET, minor.
-- G28-G32 (premium and motion pass): G28 and G29 runnable and passing locally at the pass commit;
-  G30-G32 are browser-manual. Nothing here adds a dependency or a rejected library, and every
-  path keeps its reduced-motion and no-support fallback.
-- Nothing blocks ship. See AUDIT.md for the full 114-section review, PREMIUM-PASS.md for the
-  premium research and rationale, and DELIVERY-GATE.md for the section-113 validation matrix.
+- G23: MET at 16d539e - `check-i18n-consume.mjs` passes (24/24) and the reviewer confirmed the
+  Swedish rendering live in a browser (scan, telemetry, connection popover, hero caption, product
+  tabs). G24: NOT MET, upstream, owned by the user. G25: MET after the reviewer's license.mdx fix.
+  G26: PARTIAL - source-confirmed, still not run under real browser reduced-motion emulation
+  (agent-browser could not apply the flag this session). G27: NOT MET, minor.
+- G28-G32 (premium and motion pass): G28, G29 runnable and re-run to exit 0 by the reviewer at
+  16d539e. G30 MET - reviewer live screenshot of the 3D pack (dark) shows a grounded studio-lit
+  product render, module 14 isolated, no post-processing; light theme peer-attested; one
+  section-98 loading-state nitpick recorded on the gate. G31 MET - `startViewTransition` present,
+  `page-main` / `root` names scoped correctly. G32 MET - `.reveal` compositor animation confirmed
+  live with an `opacity: 1` fallback; the sub-900ms hero stagger was source-verified only.
+- Full independent re-run of all 17 runnable checks at 16d539e: every one exits 0.
+- Nothing blocks ship. Open: G24 (upstream MIT metadata, user), G26 (reduced-motion browser pass),
+  G27 (telemetry keyboard inspection, minor), and the 3D loading-state polish under G30.
+- See AUDIT.md for the full 114-section review and the live-browser sections, PREMIUM-PASS.md for
+  the premium rationale, and DELIVERY-GATE.md for the section-113 validation matrix.
