@@ -46,7 +46,25 @@
       "computerSub": "Ethernet interface",
       "opencmaLabel": "openCMA",
       "opencmaSub": "Runs locally"
-    }
+    },
+    "facts": {
+      "vehicle": ["Diagnostic gateway", "DoIP capable", "TCP / UDP on port 13400"],
+      "enet": ["Passive Ethernet cable", "No active electronics", "No driver required"],
+      "computer": ["Windows, macOS, Linux", "Any wired Ethernet interface", "USB-C adapter is fine"],
+      "opencma": ["Speaks DoIP and UDS", "Writes results to local storage", "No cloud in the path"]
+    },
+    "linkObd": "OBD-II",
+    "linkEthernet": "Ethernet",
+    "linkUsb": "USB / socket",
+    "wire": {
+      "udp": "Vehicle identification",
+      "tcp": "Diagnostic message channel",
+      "routing": "0x0005, before any UDS request",
+      "read": "Read data by identifier",
+      "dtc": "Read DTC information",
+      "standards": "DoIP and UDS"
+    },
+    "routingLabel": "Routing activation"
   },
   "features": {
     "title": "Everything the vehicle exposes. In one place.",
@@ -202,7 +220,18 @@
     "storedFault": "stored fault",
     "storedFaults": "stored faults",
     "lastObserved": "Last observed",
-    "snapshotAvailable": "snapshot available"
+    "snapshotAvailable": "snapshot available",
+    "statusStored": "stored",
+    "statusHistorical": "historical",
+    "statusPending": "pending",
+    "faultLine": "{count, plural, one {# {status} fault} other {# {status} faults}}",
+    "vehicleId": "Polestar 2 · CMA",
+    "footerNote": "Simulated session · fixed sample data, not a vehicle reading",
+    "startScanAria": "Start scan",
+    "resumeScanAria": "Resume scan",
+    "pauseScanAria": "Pause scan",
+    "replayScanAria": "Replay scan",
+    "speedAria": "Playback speed {n} times"
   },
   "telemetry": {
     "live": "Live",
@@ -211,6 +240,10 @@
     "channels": "Telemetry channels",
     "window": "Time window",
     "note": "Simulated drive cycle, deterministic sample data",
+    "footerNote": "Simulated drive cycle · deterministic sample data",
+    "resumeAria": "Resume telemetry",
+    "pauseAria": "Pause telemetry",
+    "chartAria": "Live telemetry, {sec} second window, channels: {list}",
     "channelNames": {
       "pack_v": "Pack voltage",
       "pack_a": "Pack current",

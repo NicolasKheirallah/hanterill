@@ -1,8 +1,19 @@
 # Gates: openCMA public website
 
-OWNS: src/**, content/**, scripts/**, public/**, next.config.ts, mdx-components.tsx, package.json, tsconfig.json, GATES.md
+OWNS: src/**, content/**, scripts/**, public/**, next.config.ts, mdx-components.tsx, package.json, tsconfig.json, GATES.md, INTERACTION-UPGRADE-PLAN.md, DELIVERY-GATE.md, AUDIT.md
 
 Scope: a complete production-quality Next.js (App Router) marketing + docs site for openCMA: full homepage narrative, Features + 4 subpages, Vehicles, Download, Docs (MDX), Safety, Privacy, About; light/dark themes; restrained state-communicating motion; graceful GitHub API integration; SEO metadata; WCAG 2.1 AA scaffolding. Phase 2 adds interactive engineering visualisations, a scan simulator, a live telemetry chart, a platform explorer, source-available/private-use licensing, and micro-interactions. Phase 3 adds English + Swedish i18n, a modern docs experience, a full session walkthrough, and a restrained 3D battery view.
+
+## Provenance
+
+G0-G22 were authored and proved by the implementer session (`opencma-website-5b`); their EVIDENCE
+lines carry that session's harness output hashes from commit `96868bf`. The reviewer session
+(`opencma-website-5d`) independently re-ran all 16 runnable check scripts plus `check-build` and
+`check-render` on 2026-09-06 against `96868bf` (plus the reviewer's own `src/components/docs/mdx/**`
+and `src/content/docs/**` changes, which the implementer folded into `96868bf`): every one still
+exits 0 with its EXPECT matched. The reviewer additionally read the ten load-bearing interactive
+components in full to corroborate the manual gates. G23-G27 were added by the reviewer from the
+114-section audit in `AUDIT.md`.
 
 - [x] G0: this ledger states outcomes that can fail
   CHECK: node "C:/Users/NicolasKheirallah/.claude/skills/unlazy/scripts/gate-lint.mjs" GATES.md
@@ -106,3 +117,37 @@ Scope: a complete production-quality Next.js (App Router) marketing + docs site 
 
 - [x] G22: any 3D view lazy-loads, degrades to a 2D fallback when WebGL is unavailable or reduced-motion is set, and pauses its render loop off screen and on tab hide
   EVIDENCE: BatteryPackView (features/battery-health). The R3F canvas is behind next/dynamic({ ssr: false }) and only mounts once a useInView({ once: true }) fires - agent-browser confirmed no <canvas> until the component is scrolled into view, then a 1134x320 canvas with the "Module 14 ... Dra for att rotera / klicka" overlay appears. Fallbacks: with prefers-reduced-motion set, no canvas and the "Interactive 3D view unavailable / 2D potential matrix below has the same data" note renders; a useSyncExternalStore WebGL2 probe gates the same fallback when WebGL is absent. Render loop: BatteryPack3D now takes an `active` prop wired to a live (not once) useInView, and sets frameloop={reduce || !active ? "demand" : "always"}, so the loop stops when the canvas scrolls off screen or reduced motion is on; the browser additionally throttles rAF on tab hide. gl={{ powerPreference: "low-power" }}, no post-processing. The 2D matrix below carries the same 108 values.
+  REVIEWER: confirmed by reading BatteryPackView.tsx + BatteryPack3D.tsx in full. All four mechanisms present as described.
+
+- [ ] G23: every translation namespace that has a Swedish catalog is actually consumed by a component (no catalog-only Swedish)
+  CHECK: node scripts/check-i18n-consume.mjs
+  EXPECT: i18n consumption verification passed
+  EVIDENCE: NOT MET on commit 96868bf. `scan.*` and `telemetry.*` have complete Swedish catalogs but src/components/features/ScanSimulator.tsx + src/lib/scan-sim.ts and src/components/telemetry/LiveTelemetryChart.tsx call no translation API, so both sections render English under /sv on the homepage and on /features/vehicle-diagnostics and /features/live-data. src/components/architecture/ConnectionDiagram.tsx has hardcoded English in nodes[].facts, linkLabels and the protocol-details list (trigger labels are translated). See AUDIT.md F1-F3. The implementer is wiring F1+F2+F3 on the working tree as of 2026-09-06; re-verify and flip this box on that commit. Interim manual check: `grep -L "next-intl" src/components/features/ScanSimulator.tsx src/components/telemetry/LiveTelemetryChart.tsx` returns both files. Check script scripts/check-i18n-consume.mjs to be added by the implementer (owns scripts/**).
+
+- [ ] G24: the openCMA source repository's own license metadata matches the website's stated terms
+  EVIDENCE: Manual check - inspect C:/Users/NicolasKheirallah/Documents/GitHub/openCMA/{LICENSE,Cargo.toml,README.md,DISCLAIMER.md}. NOT MET, and owned by the user outside this repo. The website states "source-available, private use only" as a deliberate decision (the site leads a planned relicense). The upstream repo is still MIT: LICENSE is verbatim MIT, Cargo.toml has license = "MIT", README carries the MIT shields badge and "Licensed under the MIT License", DISCLAIMER.md calls openCMA "open-source". A visitor who opens the GitHub repo sees the contradiction. The website side is internally consistent (G25). Close this by updating the four upstream files.
+
+- [x] G25: no page on the site both claims private-use and presents MIT text or the repo LICENSE file as governing
+  CHECK: node scripts/check-license-consistency.mjs
+  EXPECT: license consistency verification passed
+  EVIDENCE: MET. The reviewer rewrote src/content/docs/license.mdx to stop citing the upstream LICENSE file as authoritative ("Always defer to the LICENSE file ... the LICENSE file wins" removed) and to frame the terms as the project's current statement with a note that the formal text is being updated. Confirmed by grep: no "MIT" literal and no href matching /blob/.+/LICENSE anywhere under src/content/docs or src/app; the About page says "not open source in the OSI sense"; footer and download link /docs/license, not the GitHub file. check-render.mjs (G12) still finds "source-available", "private use" and "OSI" on /docs/license. Check script scripts/check-license-consistency.mjs to be added by the implementer.
+
+- [ ] G26: with prefers-reduced-motion set, the scan sequence shows its end state, the telemetry chart shows a static window with a slow periodic tick (not continuous scroll), the 3D canvas uses frameloop "demand", no scroll-linked transforms run, and the nav underline layout animation is skipped
+  EVIDENCE: Manual check - Playwright/CDP reduced-motion emulation, per-page, checklist in DELIVERY-GATE.md section 2. PARTIAL. Confirmed by source: ScanSimulator seeds elapsed = SCAN_END under reduce; LiveTelemetryChart runs a 2000ms setInterval tick instead of rAF under reduce; BatteryPack3D sets frameloop="demand" under reduce; BatteryPackView shows the 2D-fallback note under reduce; globals.css has an @media (prefers-reduced-motion: reduce) block that clamps every animation and transition to ~0ms. Not yet run under real browser reduced-motion emulation across all routes; the implementer's G14/G18 QA covered part of it (3D fallback on /features/battery-health).
+
+- [ ] G27: the live telemetry chart's point inspection is reachable without a pointer
+  EVIDENCE: Manual check - keyboard-only pass of /features/live-data and the homepage telemetry section. NOT MET (minor). LiveTelemetryChart updates the crosshair readout only on onPointerMove / onPointerDown; there is no keyboard affordance to move the inspection cursor along the series. The <canvas> carries a descriptive aria-label naming the active channels and the window, so the chart is not opaque to assistive tech, but per-point values are pointer-only. Brief sections 92-93. Fix: focusable canvas wrapper, Left/Right steps hoverX, mirror the readout into an aria-live="polite" region on keypress.
+
+---
+
+## Summary (reviewer, 2026-09-06)
+
+- G0-G12, G16, G17, G19, G20: MET and independently re-run to exit 0 by the reviewer.
+- G13, G14, G15, G18, G21, G22: MET; implementer agent-browser QA at 96868bf, corroborated by the
+  reviewer reading the components. RE-CONFIRM items: VIN redaction in the session Identify stage
+  (G21), a real Lighthouse run for the section-88 >95 targets.
+- G23: NOT MET on 96868bf (two homepage sections English under /sv) - implementer fixing now, keys
+  already exist. G24: NOT MET, upstream, owned by the user. G25: MET after the reviewer's
+  license.mdx fix. G26: PARTIAL (source-confirmed, browser pass outstanding). G27: NOT MET, minor.
+- Nothing blocks ship. See AUDIT.md for the full 114-section review and DELIVERY-GATE.md for the
+  section-113 validation matrix.

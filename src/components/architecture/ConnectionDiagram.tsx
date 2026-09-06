@@ -11,49 +11,21 @@ import { DUR, EASE } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 
 type Node = {
-  id: string;
+  id: "vehicle" | "enet" | "computer" | "opencma";
   icon: typeof Car;
-  label: string;
-  sub: string;
-  facts: string[];
 };
 
 const nodes: Node[] = [
-  {
-    id: "vehicle",
-    icon: Car,
-    label: "Vehicle",
-    sub: "OBD-II port",
-    facts: ["Diagnostic gateway", "DoIP capable", "TCP / UDP on port 13400"],
-  },
-  {
-    id: "enet",
-    icon: Cable,
-    label: "ENET cable",
-    sub: "Passive, OBD-II to RJ45",
-    facts: ["Passive Ethernet cable", "No active electronics", "No driver required"],
-  },
-  {
-    id: "computer",
-    icon: Laptop,
-    label: "Computer",
-    sub: "Ethernet interface",
-    facts: ["Windows, macOS, Linux", "Any wired Ethernet interface", "USB-C adapter is fine"],
-  },
-  {
-    id: "opencma",
-    icon: Gauge,
-    label: "openCMA",
-    sub: "Runs locally",
-    facts: ["Speaks DoIP and UDS", "Writes results to local storage", "No cloud in the path"],
-  },
+  { id: "vehicle", icon: Car },
+  { id: "enet", icon: Cable },
+  { id: "computer", icon: Laptop },
+  { id: "opencma", icon: Gauge },
 ];
-
-const linkLabels = ["OBD-II", "Ethernet", "USB / socket"];
 
 export function ConnectionDiagram() {
   const reduce = useReducedMotion();
   const tt = useTranslations("connection");
+  const linkLabels = [tt("linkObd"), tt("linkEthernet"), tt("linkUsb")];
   const [phase, setPhase] = useState<"request" | "response">("request");
   const railRef = useRef<HTMLDivElement>(null);
   const inView = useInView(railRef, { amount: 0.5 });
@@ -69,7 +41,7 @@ export function ConnectionDiagram() {
           <ol className="flex flex-col sm:hidden">
             {nodes.map((n, i) => (
               <li key={n.id}>
-                <NodeButton node={n} orientation="mobile" tt={tt} />
+                <NodeButton node={n} orientation="mobile" tt={tt} facts={tt.raw(`facts.${n.id}`) as string[]} />
                 {i < nodes.length - 1 ? (
                   <div className="ml-5 flex items-center gap-3 py-2">
                     <span className="h-6 w-px bg-line-strong" />
@@ -100,7 +72,7 @@ export function ConnectionDiagram() {
             <ol className="relative grid grid-cols-4">
               {nodes.map((n, i) => (
                 <li key={n.id} className="relative flex flex-col items-center px-2 text-center">
-                  <NodeButton node={n} orientation="desktop" tt={tt} />
+                  <NodeButton node={n} orientation="desktop" tt={tt} facts={tt.raw(`facts.${n.id}`) as string[]} />
                   {i < nodes.length - 1 ? (
                     <span className="absolute -top-1 left-full z-10 -translate-x-1/2 whitespace-nowrap bg-surface px-1.5 font-mono text-[10px] uppercase tracking-wider text-text-muted">
                       {linkLabels[i]}
@@ -126,12 +98,12 @@ export function ConnectionDiagram() {
           <Disclosure label={tt("protocolDetails")} className="mt-5">
             <dl className="grid gap-x-8 gap-y-1 font-mono text-[12px] sm:grid-cols-2">
               {[
-                ["UDP 13400", "Vehicle identification"],
-                ["TCP 13400", "Diagnostic message channel"],
-                ["Routing activation", "0x0005, before any UDS request"],
-                ["UDS 0x22", "Read data by identifier"],
-                ["UDS 0x19", "Read DTC information"],
-                ["ISO 13400 / 14229", "DoIP and UDS"],
+                ["UDP 13400", tt("wire.udp")],
+                ["TCP 13400", tt("wire.tcp")],
+                [tt("routingLabel"), tt("wire.routing")],
+                ["UDS 0x22", tt("wire.read")],
+                ["UDS 0x19", tt("wire.dtc")],
+                ["ISO 13400 / 14229", tt("wire.standards")],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between border-b border-line py-1.5">
                   <dt className="text-text-primary">{k}</dt>
@@ -146,7 +118,17 @@ export function ConnectionDiagram() {
   );
 }
 
-function NodeButton({ node, orientation, tt }: { node: Node; orientation: "desktop" | "mobile"; tt: (k: string) => string }) {
+function NodeButton({
+  node,
+  orientation,
+  tt,
+  facts,
+}: {
+  node: Node;
+  orientation: "desktop" | "mobile";
+  tt: (k: string) => string;
+  facts: string[];
+}) {
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
   const Icon = node.icon;
@@ -193,7 +175,7 @@ function NodeButton({ node, orientation, tt }: { node: Node; orientation: "deskt
           >
             <div className="font-mono text-[12px] text-text-primary">{tt(`nodes.${node.id}Label`)}</div>
             <ul className="mt-2 space-y-1 text-[12px] text-text-secondary">
-              {node.facts.map((f) => (
+              {facts.map((f) => (
                 <li key={f} className="flex gap-2">
                   <span aria-hidden className="mt-[7px] h-px w-2 shrink-0 bg-line-strong" />
                   {f}

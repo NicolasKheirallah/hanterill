@@ -1,58 +1,95 @@
-# antislop Delivery Gate: openCMA website
+# Delivery Gate: openCMA website (brief section 113 validation matrix)
 
-Mode 1 (during the build). Every line is PASS with concrete evidence, or N/A with a
-reason. Static evidence is a `scripts/check-*.mjs` run; visual evidence is the browser
-QA recorded in `GATES.md` (G14).
+Authoritative validation record, written by the reviewer session (`opencma-website-5d`). It maps
+the brief's section-113 test matrix and verify list, and the section-114 definition of done, onto
+concrete evidence. The implementer's antislop-rules Delivery Gate is in git history at `96868bf`.
 
-## Group 1: Hard Gate (absolute)
+Evidence sources:
+- **reviewer static** - a `scripts/check-*.mjs` run re-executed by the reviewer, 2026-09-06.
+- **reviewer source** - the reviewer read the component and confirmed the behaviour in code.
+- **implementer QA** - the implementer's agent-browser pass on the production build at `96868bf`,
+  with an evidence paragraph in `GATES.md` history.
 
-| Rule | Item | Verdict | Evidence |
-| --- | --- | --- | --- |
-| R-02 | No em dash (`—`) in UI copy or committed `.md` | PASS | `scripts/check-antislop.mjs` scans `src/**` and root `.md`; commas / colons / parentheses only. `AGENTS.md` is Next.js-generated and exempt. |
-| R-03 | No fabricated statistics or metrics | PASS | GitHub stars / forks / release come from the API with a null fallback (`scripts/check-github.mjs`); no hard-coded counts. Diagnostic figures are labelled "Simulated session" / "Representative session" / fixed sample data. |
-| R-05 | No fake testimonials, no invented trust badges | PASS | None on the site. No "trusted by", no logo wall, no review blocks. |
-| R-09 | Every interactive element works | PASS | Connection nodes, ECU topology, platform explorer, 108-grid, scan simulator, session timeline, docs search and TOC, theme and locale toggles all act. No `href="#"`. `scripts/check-interactions.mjs`, `scripts/check-routes.mjs`. |
-| R-17 | Real states: empty, loading, error | PASS | GitHub panel has a null/unavailable state; download panel has a "could not load from GitHub" line; docs search has a no-results state; 3D view has a checking / unavailable state. |
-| R-18 | Keyboard reachable, visible focus | PASS | Skip link to `#main-content`; grid arrow-key navigation; `aria-current` on nav and stage; focus-visible rings. Confirmed in browser QA (G14). |
-| R-23..R-28 | No dark-pattern copy, no forced urgency, honest CTAs | PASS | Primary CTA is "Download openCMA"; it never auto-starts a download. No countdowns, no "only today". |
-| R-32..R-38 | No impersonation; independence stated; licensing honest | PASS | Footer and `/about` state openCMA is independent and not affiliated with Volvo Cars, Polestar or Geely. Licensing is "source-available, for private use", never "open source" in the OSI sense (`content/docs/license.mdx`, `scripts/check-content.mjs`). |
+Status: **provisional** while the implementer wires AUDIT F1/F2/F3 (two `/sv` sections + the
+connection popover). Rows that depend on that are marked PENDING and are refreshed on the next
+commit.
 
-## Group 2: Purpose-Gate (technique needs a written reason)
+---
 
-| Rule | Technique | Purpose | Evidence |
-| --- | --- | --- | --- |
-| R-07 | Motion | Reveal information, show system state, indicate interactivity. Section reveals keep opacity 1 if animation never runs; scan and telemetry motion communicate a diagnostic process. | `scripts/check-motion.mjs` (16/16 motion components gate on `prefers-reduced-motion`; no raw scroll listeners). |
-| R-11 | 3D (React Three Fiber) | Spatial understanding of a 27-module pack: rotate, hover, isolate, switch voltage / temperature. Not decorative. | `BatteryPack3D.tsx`; lazy, WebGL-gated, 2D fallback, render loop paused when idle. |
-| R-12 | Mono type for data labels | Instrument-panel convention; used for values and identifiers, not body copy. | Consistent across panels; body copy is the sans face. |
-| R-14 | Hairline borders / low radius | Engineering-instrument look chosen in the brief. | One radius scale; borders group data, they do not decorate. |
-| R-19 | Command palette | Fast navigation for a keyboard-first audience (developers). | `CommandPalette.tsx`, `DocsSearch.tsx`. |
-| R-31 | Code comments | Kept only where they explain a non-obvious reason (protocol detail, why a value is not scaled from one field, render-loop gating). | `antislop-code` checklist applied; no decorative banners, no line-by-line narration. |
+## 1. Viewport x theme x locale grid
 
-## Group 3: Quality Locks (consistency)
+Six viewports (375x812, 430x932, 768x1024, 1024x768, 1440x900, 1920x1080), light + dark, `/en` +
+`/sv`.
 
-| Rule | Item | Verdict | Evidence |
-| --- | --- | --- | --- |
-| R-01 | One accent colour, locked | PASS | `--accent` only; status colours are semantic (ok / warning / error / info), not a second brand accent. |
-| R-04 | One type system | PASS | Inter + IBM Plex Mono, two roles, no third family. |
-| R-06 | One corner-radius scale | PASS | Tokens in `globals.css`; no pill buttons in a square layout. |
-| R-10 | Sections exist because the content needs them | PASS | Each homepage section maps to a product capability (`scripts/check-homepage.mjs`, 13 sections). No template filler. |
-| R-15 | Contrast AA both themes | PASS | Tokens verified >= 4.5:1 for body, >= 3:1 for large text, light and dark. Browser QA (G14). |
-| R-16 | No horizontal overflow, mobile intact | PASS | `min-w-0` on grid/flex children, `overflow-x-auto` wrappers on wide tables and the matrix. Browser QA at 375 / 430 / 768 / 1024 / 1440 / 1920 (G14). |
-| R-37 | Direction is real, not "draft without direction" | PASS | Scandinavian / instrument direction is set by the brief and followed; dials are not at 1/1/1. |
+| Check | en / light | en / dark | sv / light | sv / dark | Evidence |
+|---|---|---|---|---|---|
+| No horizontal overflow at any of the six widths | PASS | PASS | PASS | PASS | reviewer source (`min-w-0` on every grid/flex child, `overflow-x-auto` wrappers on the matrix, ECU tables, code blocks, session timeline) + implementer QA |
+| Navigation usable, no clipped items | PASS | PASS | PASS | PASS | implementer QA; Header switches to the mobile menu at `lg` after a `/sv` overflow fix in `96868bf` |
+| Text not clipped or truncated unexpectedly | PASS | PASS | PASS | PASS | implementer QA |
+| Contrast: body >= 4.5:1, large text >= 3:1 | PASS | PASS | PASS | PASS | implementer QA against the token set in `globals.css` |
+| Interactive controls reachable and sized for touch at 375/430 | PASS | PASS | PASS | PASS | reviewer source (mobile module list, compact scan list, full-width canvas, wrapped toggles) |
+| Homepage journey coherent | PASS | PASS | PENDING | PENDING | reviewer: scan + telemetry sections render English under `/sv` until F1/F2 land |
 
-## Phase 2 and 3 addendum
+## 2. Input-mode matrix
+
+| Mode | Result | Evidence |
+|---|---|---|
+| Mouse | PASS | reviewer source + implementer QA across every interactive section |
+| Trackpad | PASS | implementer QA |
+| Keyboard only | PASS with one gap | reviewer source: 108-grid arrow/Enter/Escape + roving tabindex; scan rows are buttons; session panel arrow keys on a focused `role="group"`; platform toggles; connection Popover on focus. GAP: telemetry crosshair point-inspection is pointer-only (AUDIT F6, gate G27). |
+| Touch | PASS | reviewer source: every hover has a tap equivalent (module lists, tap-to-inspect, Popover on tap) |
+| Reduced motion | PASS | reviewer source: scan seeds end state; telemetry = static window + 2000ms tick; 3D `frameloop="demand"`; nav underline `layoutId` skipped; `globals.css` `@media (prefers-reduced-motion: reduce)` clamps all animation/transition. Full per-page browser emulation is gate G26 (PARTIAL). |
+| Dark mode | PASS | reviewer static (`check-theme.mjs`) + implementer QA |
+| Light mode | PASS | reviewer static + implementer QA |
+| English | PASS | reviewer static (`check-i18n.mjs`) + `check-render.mjs` 17 routes 200 |
+| Swedish | PARTIAL | architecture PASS; `ScanSimulator`, `LiveTelemetryChart`, `ConnectionDiagram` popover, three session sub-labels render English (AUDIT F1-F4). F1/F2/F3 fix in progress. |
+| Slow device | PASS (by design) | 3D is lazy + `low-power` + `demand`; telemetry loop is canvas-only; no blocking main-thread work. Not profiled on real low-end hardware. |
+| WebGL unavailable | PASS | reviewer source: `hasWebGL()` gate -> "3D unavailable / the 2D matrix has the same data" note, no console error |
+| JS hydration delay | PASS | Server Components render the content; interactive islands hydrate progressively; no layout shift on hydrate (reviewer source, `next build` shows the pages as static/SSG) |
+
+## 3. Section-113 verify list
 
 | Item | Verdict | Evidence |
-| --- | --- | --- |
-| Battery Health carries no hex identifier in the primary view | PASS | `scripts/check-interactions.mjs` fails on any `0x..` in `BatteryHealthPanel.tsx`; provenance chain + docs link replace it. |
-| Interactive visualisations work by mouse, keyboard and touch | PASS | Grid `role="grid"` + arrow keys; scan rows clickable mid-run; session timeline arrow-key navigable; mobile module lists for touch. Browser QA (G18). |
-| Representative session never presents as a live connection | PASS | "Representative session, simulated vehicle" label on the walkthrough; report tagged "Example report"; downloads are user-clicked. |
-| 3D view degrades and pauses | PASS | `BatteryPackView.tsx` renders the canvas only when WebGL is present, reduced motion is off, and the section is in view; `frameloop="demand"` otherwise. |
-| English and Swedish both resolve; identifiers not localised | PASS | `scripts/check-i18n.mjs`: both locales build statically, switcher preserves the path, protocol tokens appear verbatim in `sv.json`, sample homepage keys differ from English. i18n boundary documented in `INTERACTION-UPGRADE-PLAN.md`. |
-| Docs read like a modern wiki | PASS | `scripts/check-docs.mjs`: three-pane layout, Cmd/Ctrl-K search over an index, on-this-page rail, `Callout` / `SpecList` components used in `.mdx`, copy buttons on code. |
-| Licensing language is consistent | PASS | "Source-available, for private use" everywhere; `scripts/check-content.mjs` checks the phrase in `en.json`, `sv.json` and the license doc, and fails on "open source" used as a licence claim. |
+|---|---|---|
+| No dead controls | PASS | reviewer static (`check-interactions.mjs`, `check-routes.mjs`) + reviewer source: no `href="#"`; every button has a handler; chart legend selects series; download is a real menu |
+| No inaccessible hover-only data | PARTIAL | 108-grid, scan, platform, connection all expose their data on focus / tap too. Exception: telemetry crosshair values are pointer-only (F6 / G27). |
+| No animation-induced layout shift | PASS | reviewer source: scan totals row is a fixed 3-col grid with an `AnimatedNumber`; "Scanning..." -> count does not reflow; `AnimatePresence` swaps use `mode="wait"` with reserved min-heights |
+| No severe CPU use while idle | PASS | reviewer source: scan rAF stops at `complete`, when off screen, paused, or tab-hidden; telemetry loop stops off screen / paused / tab-hidden; 3D `frameloop="demand"` when not visible |
+| No continuous offscreen WebGL rendering | PASS | reviewer source: `BatteryPackView` mounts the canvas only after it scrolls in (`useInView once`) and passes a live `useInView` as `active` -> `frameloop="demand"` when scrolled away |
+| No chart memory leak | PASS | reviewer source: `LiveTelemetryChart` cancels its rAF and clears its interval on cleanup; no accumulating arrays (the signal is a pure function of `t`, not a growing buffer) |
+| No localization overflow | PASS | implementer QA; the `/sv` Header overflow at 768px was fixed in `96868bf` by moving to the mobile menu earlier |
+| No contradictory licensing language | PARTIAL | on-site: PASS after the `license.mdx` rewrite (gate G25). Upstream repo still says MIT (gate G24) - a visitor who opens GitHub sees the contradiction. Owner: user, outside this repo. |
+| No WIP vehicle represented as supported | PASS | reviewer source: `PlatformExplorer` + `vehicles.ts` - status is a word plus a tone; `statusMeta` maps `wip`/`research` to "info", never "ok"; `check-interactions.mjs` fails on `0/n` or `% complete` |
+| No fake diagnostic data presented as real | PASS | reviewer source: "Simulated session" / "Representative session, simulated vehicle" / "Example report" labels; DTC records are synthetic fixtures authored for the site (AUDIT F7), never claimed as verified codes; VIN redacted in the session Identify stage (implementer QA, reviewer RE-CONFIRM) |
 
-## Result
+## 4. Section-114 definition of done (user journey)
 
-All Delivery Gate items PASS. Manual browser gates (G14, G15, G18, G21, G22) are tracked
-in `GATES.md` and carry their own evidence lines.
+| The visitor can... | Verdict | Evidence |
+|---|---|---|
+| Hover the battery -> get data | PASS | `BatteryMatrixSection` hover/focus -> instrument panel |
+| Select a module -> inspect it | PASS | persistent selection, animated summary->detail, Clear button |
+| Start the scan -> watch ECUs respond | PASS | `ScanSimulator` staged discovery with timing variation |
+| Select a fault -> understand it | PASS | ECU row expands to code, status class, last-observed, snapshot flag |
+| Open live data -> see the signal moving | PASS | `LiveTelemetryChart` canvas loop, deterministic drive cycle |
+| Select a potential -> compare it with the pack | PASS | detail panel shows value, pack mean, deviation, module delta; pack-scale marker moves |
+| Step through the session | PASS | `SessionSimulator` 7 stages, button / click / arrow-key navigation |
+| Select SPA or SEA -> see development is in progress | PASS | `PlatformExplorer` WIP / Research status, "current research" list, no percentages |
+| Open Docs -> a searchable engineering knowledge base | PASS | 3-pane layout, Cmd/Ctrl+K palette over a heading+body index, on-this-page rail, MDX data components |
+| Switch to Svenska -> the product stays coherent | PARTIAL | homepage spine, chrome, platform explorer, session shell, docs chrome all Swedish; scan + telemetry + connection popover pending (F1-F3) |
+
+---
+
+## 5. Result
+
+The site meets the brief. Outstanding at the time of writing:
+
+1. **PENDING** - `ScanSimulator` and `LiveTelemetryChart` render English under `/sv`, and the
+   `ConnectionDiagram` popover content is English (AUDIT F1/F2/F3). Implementer wiring in progress;
+   the catalogs already exist. Refresh this file when the fix commits.
+2. **G24 (upstream, user)** - the openCMA repo's `LICENSE` / `Cargo.toml` / README badge /
+   `DISCLAIMER.md` still say MIT while the site says private-use. The site side is consistent.
+3. **G27 (minor)** - the telemetry crosshair has no keyboard point-inspection path.
+4. **RE-CONFIRM** - VIN redaction in the session Identify stage (reviewer did not open that source);
+   the <=1-2deg hero perspective cap; a real Lighthouse run for the section-88 >95 targets.
+
+None of these blocks ship. Items 1 and 3 are small, scoped fixes; item 2 is outside this repo.

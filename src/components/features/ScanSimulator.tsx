@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { StatusMarker } from "@/components/ui/StatusBadge";
@@ -11,7 +12,7 @@ import {
   scanTotals,
   simEcus,
   stageAt,
-  stageLabel,
+  stageKey,
   type ScanStage,
   type SimFault,
 } from "@/lib/scan-sim";
@@ -23,7 +24,14 @@ const statusClass: Record<SimFault["status"], string> = {
   pending: "text-status-warning",
 };
 
+const statusKey: Record<SimFault["status"], "statusStored" | "statusHistorical" | "statusPending"> = {
+  stored: "statusStored",
+  historical: "statusHistorical",
+  pending: "statusPending",
+};
+
 export function ScanSimulator({ compact = false }: { compact?: boolean }) {
+  const t = useTranslations("scan");
   const reduce = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { amount: 0.4 });
@@ -80,27 +88,35 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3">
         <div className="flex items-center gap-2.5">
           <StatusMarker tone={done ? "ok" : stage === "idle" ? "muted" : "info"} pulse={!done && stage !== "idle"}>
-            <span aria-live="polite">{stageLabel[stage]}</span>
+            <span aria-live="polite">{t(stageKey[stage])}</span>
           </StatusMarker>
         </div>
         <div className="flex items-center gap-1 font-mono text-[12px]">
           <button
             type="button"
-            aria-label={running ? "Pause scan" : done ? "Replay scan" : elapsed > 0 ? "Resume scan" : "Start scan"}
+            aria-label={
+              running
+                ? t("pauseScanAria")
+                : done
+                  ? t("replayScanAria")
+                  : elapsed > 0
+                    ? t("resumeScanAria")
+                    : t("startScanAria")
+            }
             onClick={() => (done ? replay() : setPaused((p) => !p))}
             className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-line px-2.5 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
           >
             {done ? (
               <>
-                <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} /> Replay
+                <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} /> {t("replay")}
               </>
             ) : running ? (
               <>
-                <Pause className="h-3.5 w-3.5" strokeWidth={1.75} /> Pause
+                <Pause className="h-3.5 w-3.5" strokeWidth={1.75} /> {t("pause")}
               </>
             ) : (
               <>
-                <Play className="h-3.5 w-3.5" strokeWidth={1.75} /> {elapsed > 0 ? "Resume" : "Start"}
+                <Play className="h-3.5 w-3.5" strokeWidth={1.75} /> {elapsed > 0 ? t("resume") : t("start")}
               </>
             )}
           </button>
@@ -108,7 +124,7 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
             <button
               type="button"
               onClick={() => setSpeed((s) => (s === 1 ? 2 : 1))}
-              aria-label={`Playback speed ${speed} times`}
+              aria-label={t("speedAria", { n: speed })}
               className="inline-flex h-8 w-9 items-center justify-center rounded-sm border border-line text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
             >
               {speed}&times;
@@ -119,21 +135,21 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
 
       {/* Vehicle line */}
       <div className="flex items-center justify-between border-b border-line px-4 py-2.5 font-mono text-[12px]">
-        <span className="text-text-muted">Vehicle</span>
+        <span className="text-text-muted">{t("vehicle")}</span>
         <span className={cn("transition-colors", elapsed >= 900 ? "text-text-primary" : "text-text-muted")}>
-          {elapsed >= 900 ? "Polestar 2 · CMA" : "detecting"}
+          {elapsed >= 900 ? t("vehicleId") : t("detecting")}
         </span>
       </div>
 
       {/* Totals row: layout-stable */}
       <div className="grid grid-cols-3 divide-x divide-line border-b border-line font-mono text-[12px]">
-        <Stat label="ECUs" value={done ? scanTotals.discovered : visibleEcus.length} suffix={done ? "" : ` / ${simEcus.length}`} />
+        <Stat label={t("ecus")} value={done ? scanTotals.discovered : visibleEcus.length} suffix={done ? "" : ` / ${simEcus.length}`} />
         <Stat
-          label="Faults"
+          label={t("faults")}
           value={faultCount}
-          placeholder={stage === "scanning" ? "Scanning…" : undefined}
+          placeholder={stage === "scanning" ? t("scanning") : undefined}
         />
-        <Stat label="With faults" value={new Set(visibleEcus.filter((e) => e.faults.length).map((e) => e.code)).size} />
+        <Stat label={t("withFaults")} value={new Set(visibleEcus.filter((e) => e.faults.length).map((e) => e.code)).size} />
       </div>
 
       {/* ECU list */}
@@ -160,10 +176,13 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
                   <span className="font-mono text-[13px] text-text-primary">{e.code}</span>
                   {e.faults.length ? (
                     <span className="font-mono text-[12px] text-status-warning">
-                      {e.faults.length} {e.faults[0].status} fault{e.faults.length > 1 ? "s" : ""}
+                      {t("faultLine", {
+                        count: e.faults.length,
+                        status: t(statusKey[e.faults[0].status]),
+                      })}
                     </span>
                   ) : (
-                    <StatusMarker tone="ok">READY</StatusMarker>
+                    <StatusMarker tone="ok">{t("ready")}</StatusMarker>
                   )}
                 </button>
                 <AnimatePresence initial={false}>
@@ -180,13 +199,13 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
                           <div className="flex items-center justify-between font-mono text-[12px]">
                             <span className="text-text-primary">{f.code}</span>
                             <span className={cn("text-[11px] uppercase tracking-wider", statusClass[f.status])}>
-                              {f.status}
+                              {t(statusKey[f.status])}
                             </span>
                           </div>
                           <p className="mt-1 text-[13px] text-text-secondary">{f.title}</p>
                           <p className="mt-1 font-mono text-[11px] text-text-muted">
-                            Last observed {f.lastSeen}
-                            {f.snapshot ? " · snapshot available" : ""}
+                            {t("lastObserved")} {f.lastSeen}
+                            {f.snapshot ? ` · ${t("snapshotAvailable")}` : ""}
                           </p>
                         </div>
                       ))}
@@ -200,7 +219,7 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
       </ul>
 
       <p className="border-t border-line px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-text-muted">
-        Simulated session · fixed sample data, not a vehicle reading
+        {t("footerNote")}
       </p>
     </div>
   );

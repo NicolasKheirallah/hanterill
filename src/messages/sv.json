@@ -46,7 +46,25 @@
       "computerSub": "Ethernet-gränssnitt",
       "opencmaLabel": "openCMA",
       "opencmaSub": "Körs lokalt"
-    }
+    },
+    "facts": {
+      "vehicle": ["Diagnostikgateway", "DoIP-kapabel", "TCP / UDP på port 13400"],
+      "enet": ["Passiv Ethernet-kabel", "Ingen aktiv elektronik", "Ingen drivrutin krävs"],
+      "computer": ["Windows, macOS, Linux", "Valfritt trådbundet Ethernet-gränssnitt", "USB-C-adapter fungerar"],
+      "opencma": ["Talar DoIP och UDS", "Skriver resultat till lokal lagring", "Inget moln i vägen"]
+    },
+    "linkObd": "OBD-II",
+    "linkEthernet": "Ethernet",
+    "linkUsb": "USB / uttag",
+    "wire": {
+      "udp": "Fordonsidentifiering",
+      "tcp": "Kanal för diagnostikmeddelanden",
+      "routing": "0x0005, före varje UDS-begäran",
+      "read": "Läs data via identifierare",
+      "dtc": "Läs DTC-information",
+      "standards": "DoIP och UDS"
+    },
+    "routingLabel": "Routningsaktivering"
   },
   "features": {
     "title": "Allt fordonet exponerar. På ett ställe.",
@@ -202,7 +220,18 @@
     "storedFault": "lagrat fel",
     "storedFaults": "lagrade fel",
     "lastObserved": "Senast observerat",
-    "snapshotAvailable": "ögonblicksbild finns"
+    "snapshotAvailable": "ögonblicksbild finns",
+    "statusStored": "lagrat",
+    "statusHistorical": "historiskt",
+    "statusPending": "väntande",
+    "faultLine": "{count, plural, one {# {status} fel} other {# {status} fel}}",
+    "vehicleId": "Polestar 2 · CMA",
+    "footerNote": "Simulerad session · fasta exempelvärden, inte en fordonsavläsning",
+    "startScanAria": "Starta skanning",
+    "resumeScanAria": "Återuppta skanning",
+    "pauseScanAria": "Pausa skanning",
+    "replayScanAria": "Spela skanning igen",
+    "speedAria": "Uppspelningshastighet {n} gånger"
   },
   "telemetry": {
     "live": "Realtid",
@@ -211,6 +240,10 @@
     "channels": "Telemetrikanaler",
     "window": "Tidsfönster",
     "note": "Simulerad körcykel, deterministiska exempelvärden",
+    "footerNote": "Simulerad körcykel · deterministiska exempelvärden",
+    "resumeAria": "Återuppta telemetri",
+    "pauseAria": "Pausa telemetri",
+    "chartAria": "Realtidstelemetri, {sec} sekunders fönster, kanaler: {list}",
     "channelNames": {
       "pack_v": "Packspänning",
       "pack_a": "Packström",

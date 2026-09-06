@@ -7,13 +7,14 @@ import { ecus } from "@/lib/ecus";
 
 export type ScanStage = "idle" | "discovering" | "detected" | "routing" | "scanning" | "complete";
 
-export const stageLabel: Record<ScanStage, string> = {
-  idle: "Idle",
-  discovering: "Discovering vehicle",
-  detected: "Vehicle detected",
-  routing: "Activating diagnostic route",
-  scanning: "Scanning ECUs",
-  complete: "Scan complete",
+/** Message-catalog key (scan namespace) for each stage. */
+export const stageKey: Record<ScanStage, string> = {
+  idle: "stageIdle",
+  discovering: "stageDiscovering",
+  detected: "stageDetected",
+  routing: "stageRouting",
+  scanning: "stageScanning",
+  complete: "stageComplete",
 };
 
 export type SimFault = {

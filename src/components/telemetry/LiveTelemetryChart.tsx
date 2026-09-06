@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { Pause, Play } from "lucide-react";
 import { useInView, useReducedMotion } from "motion/react";
@@ -26,11 +27,18 @@ const SERIES_COLORS = ["#3557e0", "#4e72a2", "#855a1b"];
  * slow periodic tick instead).
  */
 export function LiveTelemetryChart() {
+  const t = useTranslations("telemetry");
   const reduce = useReducedMotion();
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const readoutRef = useRef<HTMLDivElement>(null);
   const inView = useInView(wrapRef, { amount: 0.3 });
+
+  const label = useCallback((id: ChannelId) => t(`channelNames.${id}`), [t]);
+  const labelRef = useRef(label);
+  useEffect(() => {
+    labelRef.current = label;
+  }, [label]);
 
   const [active, setActive] = useState<ChannelId[]>(defaultChannels);
   const [windowSec, setWindowSec] = useState<(typeof WINDOWS)[number]>(30);
@@ -122,7 +130,7 @@ export function LiveTelemetryChart() {
 
       const readT = hoverX.current == null ? now : t0 + (hoverX.current / w) * (now - t0);
       readout.push(
-        `${ch.label}  ${sample(id, readT).toFixed(ch.decimals)} ${ch.unit}`,
+        `${labelRef.current(id)}  ${sample(id, readT).toFixed(ch.decimals)} ${ch.unit}`,
       );
     });
 
@@ -187,7 +195,7 @@ export function LiveTelemetryChart() {
           type="multiple"
           value={active}
           onValueChange={(v) => v.length && setActive(v as ChannelId[])}
-          aria-label="Telemetry channels"
+          aria-label={t("channels")}
           className="flex flex-wrap gap-1 font-mono text-[12px]"
         >
           {channels.map((c) => (
@@ -205,7 +213,7 @@ export function LiveTelemetryChart() {
                     : "var(--line-strong)",
                 }}
               />
-              {c.label}
+              {t(`channelNames.${c.id}`)}
             </ToggleGroup.Item>
           ))}
         </ToggleGroup.Root>
@@ -213,18 +221,18 @@ export function LiveTelemetryChart() {
         <div className="flex items-center gap-1 font-mono text-[12px]">
           <button
             type="button"
-            aria-label={paused ? "Resume telemetry" : "Pause telemetry"}
+            aria-label={paused ? t("resumeAria") : t("pauseAria")}
             onClick={() => setPaused((p) => !p)}
             className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-line px-2.5 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
           >
             {paused ? <Play className="h-3.5 w-3.5" strokeWidth={1.75} /> : <Pause className="h-3.5 w-3.5" strokeWidth={1.75} />}
-            {paused ? "Resume" : "Live"}
+            {paused ? t("resume") : t("live")}
           </button>
           <ToggleGroup.Root
             type="single"
             value={String(windowSec)}
             onValueChange={(v) => v && setWindowSec(Number(v) as (typeof WINDOWS)[number])}
-            aria-label="Time window"
+            aria-label={t("window")}
             className="flex rounded-sm border border-line"
           >
             {WINDOWS.map((s) => (
@@ -244,9 +252,10 @@ export function LiveTelemetryChart() {
         ref={canvasRef}
         className="block h-40 w-full cursor-crosshair sm:h-48"
         role="img"
-        aria-label={`Live telemetry, ${windowSec} second window, channels: ${active
-          .map((id) => channelById(id).label)
-          .join(", ")}`}
+        aria-label={t("chartAria", {
+          sec: windowSec,
+          list: active.map((id) => t(`channelNames.${id}`)).join(", "),
+        })}
         onPointerMove={(e) => {
           if (e.pointerType === "touch") return;
           const r = e.currentTarget.getBoundingClientRect();
@@ -270,7 +279,7 @@ export function LiveTelemetryChart() {
         className={cn("border-t border-line px-4 py-2 font-mono text-[11px] text-text-secondary")}
       />
       <p className="border-t border-line px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-text-muted">
-        Simulated drive cycle · deterministic sample data
+        {t("footerNote")}
       </p>
     </div>
   );

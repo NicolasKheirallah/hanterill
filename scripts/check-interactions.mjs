@@ -43,16 +43,33 @@ const bh = read(join(root, "src/components/battery/BatteryHealthPanel.tsx"));
 if (/0x[0-9A-Fa-f]{2,}/.test(bh))
   problems.push("BatteryHealthPanel: still contains a hex identifier in the primary view");
 
-// Scan simulator: deterministic clock, controls, faults, simulated label.
+// Scan simulator: deterministic clock, controls, faults, simulated label,
+// and translated chrome (no hardcoded English).
 need(
   "src/components/features/ScanSimulator.tsx",
   "requestAnimationFrame",
-  "Replay",
+  'useTranslations("scan")',
+  "replayScanAria",
   /pause/i,
-  "Simulated session",
+  "footerNote",
   "useInView",
 );
-need("src/lib/scan-sim.ts", "SCAN_END", "stageAt", "SimFault");
+need("src/lib/scan-sim.ts", "SCAN_END", "stageAt", "SimFault", "stageKey");
+// The panel renders t("footerNote"); its value in every catalog must carry a
+// "simulated" / "representative" label (brief section 40: never present the
+// scan as a live vehicle). Also require the session-shell label to survive.
+for (const loc of ["en", "sv"]) {
+  const cat = JSON.parse(read(join(root, `src/messages/${loc}.json`)));
+  const foot = cat.scan?.footerNote;
+  if (!foot) {
+    problems.push(`${loc}.json: scan.footerNote missing`);
+  } else if (!/simulated|simulerad|representative|representativ/i.test(foot)) {
+    problems.push(`${loc}.json: scan.footerNote does not label the session as simulated: "${foot}"`);
+  }
+  const sessLabel = cat.session?.label;
+  if (sessLabel && !/simulated|simulerad|representative|representativ/i.test(sessLabel))
+    problems.push(`${loc}.json: session.label no longer says simulated/representative: "${sessLabel}"`);
+}
 
 // Live telemetry: real moving canvas, decoupled loop, controls, reduced motion.
 need(
