@@ -244,6 +244,7 @@
     "resumeAria": "Återuppta telemetri",
     "pauseAria": "Pausa telemetri",
     "chartAria": "Realtidstelemetri, {sec} sekunders fönster, kanaler: {list}",
+    "chartKeyboardHint": "Fokusera och använd piltangenterna för att granska värden längs serien; Escape återupptar.",
     "channelNames": {
       "pack_v": "Packspänning",
       "pack_a": "Packström",

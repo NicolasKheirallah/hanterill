@@ -7,6 +7,7 @@ import { ContactShadows, Environment, Lightformer, OrbitControls } from "@react-
 import { useReducedMotion } from "motion/react";
 import * as THREE from "three";
 import { batteryDemo, moduleStats } from "@/lib/demo-data";
+import { useModuleSelection } from "./selection-context";
 
 type Mode = "deviation" | "temperature";
 
@@ -143,7 +144,8 @@ export function BatteryPack3D({
 }) {
   const reduce = useReducedMotion();
   const t = useTranslations("battery");
-  const [selected, setSelected] = useState<number | null>(14);
+  // Shared with the 2D potential matrix on /features/battery-health.
+  const { module: selected, setModule: setSelected } = useModuleSelection();
   const [hover, setHover] = useState<number | null>(null);
   const shown = hover ?? selected;
   const s = shown ? moduleStats(shown) : null;

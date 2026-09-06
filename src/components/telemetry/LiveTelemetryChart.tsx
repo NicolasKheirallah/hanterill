@@ -47,8 +47,40 @@ export function LiveTelemetryChart() {
   const clock = useRef({ t: 0, last: 0 });
   const raf = useRef<number | null>(null);
   const hoverX = useRef<number | null>(null);
+  const liveRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
   const windowRef = useRef(windowSec);
+
+  // Keyboard point inspection. Moves `hoverX` in ~80 steps across the canvas,
+  // freezes the loop for reading, and mirrors the readout into an aria-live
+  // region. The pointer path is untouched.
+  function inspectByKey(e: React.KeyboardEvent<HTMLCanvasElement>) {
+    const w = canvasRef.current?.clientWidth ?? 0;
+    if (!w) return;
+    const step = w / 80;
+    const cur = hoverX.current ?? w;
+    let next: number | null = cur;
+    switch (e.key) {
+      case "ArrowRight": next = Math.min(w, cur + step); break;
+      case "ArrowLeft": next = Math.max(0, cur - step); break;
+      case "Home": next = 0; break;
+      case "End": next = w; break;
+      case "Escape":
+        hoverX.current = null;
+        setPaused(false);
+        if (liveRef.current) liveRef.current.textContent = "";
+        return;
+      default:
+        return;
+    }
+    e.preventDefault();
+    hoverX.current = next;
+    setPaused(true);
+    draw();
+    if (liveRef.current && readoutRef.current) {
+      liveRef.current.textContent = readoutRef.current.textContent;
+    }
+  }
 
   useEffect(() => {
     activeRef.current = active;
@@ -250,12 +282,18 @@ export function LiveTelemetryChart() {
 
       <canvas
         ref={canvasRef}
-        className="block h-40 w-full cursor-crosshair sm:h-48"
+        tabIndex={0}
+        className="block h-40 w-full cursor-crosshair outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset sm:h-48"
         role="img"
-        aria-label={t("chartAria", {
+        aria-label={`${t("chartAria", {
           sec: windowSec,
           list: active.map((id) => t(`channelNames.${id}`)).join(", "),
-        })}
+        })} ${t("chartKeyboardHint")}`}
+        onKeyDown={inspectByKey}
+        onBlur={() => {
+          hoverX.current = null;
+          if (paused || reduce || !inView) draw();
+        }}
         onPointerMove={(e) => {
           if (e.pointerType === "touch") return;
           const r = e.currentTarget.getBoundingClientRect();
@@ -278,6 +316,7 @@ export function LiveTelemetryChart() {
         aria-live="off"
         className={cn("border-t border-line px-4 py-2 font-mono text-[11px] text-text-secondary")}
       />
+      <div ref={liveRef} aria-live="polite" className="sr-only" />
       <p className="border-t border-line px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-text-muted">
         {t("footerNote")}
       </p>

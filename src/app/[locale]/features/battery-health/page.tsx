@@ -7,6 +7,7 @@ import { Prose } from "@/components/ui/Prose";
 import { BatteryMatrixSection } from "@/components/battery/BatteryMatrixSection";
 import { BatteryHealthPanel } from "@/components/battery/BatteryHealthPanel";
 import { BatteryPackView } from "@/components/battery/BatteryPackView";
+import { ModuleSelectionProvider } from "@/components/battery/selection-context";
 
 export const metadata: Metadata = {
   title: "Battery health",
@@ -18,7 +19,7 @@ export default async function BatteryHealthPage({ params }: { params: Promise<{ 
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <>
+    <ModuleSelectionProvider>
       <LocalizedPageHeader id="batteryHealth" />
 
       <Container className="py-14 sm:py-20">
@@ -57,6 +58,6 @@ export default async function BatteryHealthPage({ params }: { params: Promise<{ 
       </Container>
 
       <BatteryMatrixSection />
-    </>
+    </ModuleSelectionProvider>
   );
 }

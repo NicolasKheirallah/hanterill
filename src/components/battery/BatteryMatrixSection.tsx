@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -8,6 +8,7 @@ import { Container, SectionHeading } from "@/components/ui/layout";
 import { batteryDemo, cellOffsets, cellVoltage, moduleStats, type ModuleStats } from "@/lib/demo-data";
 import { DUR, EASE, SPRING } from "@/lib/motion";
 import { cn } from "@/lib/cn";
+import { useModuleSelection } from "./selection-context";
 
 type ViewMode = "voltage" | "deviation" | "module";
 /** m or g of -1 means "whole row" / "whole column". */
@@ -55,6 +56,43 @@ export function BatteryMatrixSection() {
   const [mobileModule, setMobileModule] = useState(14);
   const gridRef = useRef<HTMLDivElement>(null);
 
+  // Shared module selection with the optional 3D pack view on
+  // /features/battery-health. Falls back to local state elsewhere.
+  const { module: extModule, setModule: setExtModule } = useModuleSelection();
+  const selectedRef = useRef(selected);
+  useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
+
+  // Select a cell and mirror its module to the shared selection.
+  const pick = useCallback(
+    (coord: Coord | null) => {
+      setSelected(coord);
+      setExtModule(coord && coord.m > 0 ? coord.m : null);
+    },
+    [setExtModule],
+  );
+  const pickMobile = useCallback(
+    (m: number) => {
+      setMobileModule(m);
+      setExtModule(m);
+    },
+    [setExtModule],
+  );
+
+  // React to an external module selection (from the 3D pack).
+  useEffect(() => {
+    const cur = selectedRef.current;
+    if (extModule == null) {
+      if (cur) setSelected(null);
+      return;
+    }
+    if (extModule !== cur?.m) {
+      setSelected({ m: extModule, g: cur?.g ?? 1 });
+      setMobileModule(extModule);
+    }
+  }, [extModule]);
+
   const focusCell = useCallback((m: number, g: number) => {
     gridRef.current?.querySelector<HTMLButtonElement>(`[data-cell="${m}-${g}"]`)?.focus();
   }, []);
@@ -70,10 +108,10 @@ export function BatteryMatrixSection() {
       case "Enter":
       case " ":
         e.preventDefault();
-        setSelected({ m, g });
+        pick({ m, g });
         return;
       case "Escape":
-        setSelected(null);
+        pick(null);
         setHover(null);
         return;
       default:
@@ -172,7 +210,7 @@ export function BatteryMatrixSection() {
                         type="button"
                         onMouseEnter={() => setHover({ m, g: -1 })}
                         onFocus={() => setHover({ m, g: -1 })}
-                        onClick={() => setSelected({ m, g: selected?.m === m ? selected.g : 1 })}
+                        onClick={() => pick({ m, g: selected?.m === m ? selected.g : 1 })}
                         className={cn(
                           "flex items-center pr-2 font-mono text-[10px] transition-colors",
                           rowActive ? "text-text-primary" : "text-text-muted hover:text-text-secondary",
@@ -202,7 +240,7 @@ export function BatteryMatrixSection() {
                             aria-selected={isSelected}
                             onMouseEnter={() => setHover({ m, g })}
                             onFocus={() => setHover({ m, g })}
-                            onClick={() => setSelected({ m, g })}
+                            onClick={() => pick({ m, g })}
                             onKeyDown={(e) => onCellKey(e, m, g)}
                             className={cn(
                               "h-5 rounded-[2px] outline-none transition-[opacity,box-shadow] duration-150",
@@ -223,7 +261,7 @@ export function BatteryMatrixSection() {
           </div>
 
           <div className="sm:hidden">
-            <MobileModules selected={mobileModule} onSelect={setMobileModule} mode={mode} />
+            <MobileModules selected={mobileModule} onSelect={pickMobile} mode={mode} />
           </div>
 
           <div className="rounded-lg border border-line bg-surface p-6">
@@ -233,7 +271,7 @@ export function BatteryMatrixSection() {
                 <button
                   type="button"
                   onClick={() => {
-                    setSelected(null);
+                    pick(null);
                     setHover(null);
                   }}
                   className="font-mono text-[11px] text-text-secondary transition-colors hover:text-text-primary"
@@ -285,7 +323,7 @@ export function BatteryMatrixSection() {
                 <button
                   type="button"
                   disabled={mobileModule <= 1}
-                  onClick={() => setMobileModule((m) => Math.max(1, m - 1))}
+                  onClick={() => pickMobile(Math.max(1, mobileModule - 1))}
                   className="text-text-secondary transition-colors hover:text-text-primary disabled:opacity-40"
                 >
                   {t("previousModule")}
@@ -293,7 +331,7 @@ export function BatteryMatrixSection() {
                 <button
                   type="button"
                   disabled={mobileModule >= M}
-                  onClick={() => setMobileModule((m) => Math.min(M, m + 1))}
+                  onClick={() => pickMobile(Math.min(M, mobileModule + 1))}
                   className="text-text-secondary transition-colors hover:text-text-primary disabled:opacity-40"
                 >
                   {t("nextModule")}

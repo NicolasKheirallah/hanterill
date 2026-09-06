@@ -244,6 +244,7 @@
     "resumeAria": "Resume telemetry",
     "pauseAria": "Pause telemetry",
     "chartAria": "Live telemetry, {sec} second window, channels: {list}",
+    "chartKeyboardHint": "Focus and use the arrow keys to inspect values along the series; Escape resumes.",
     "channelNames": {
       "pack_v": "Pack voltage",
       "pack_a": "Pack current",

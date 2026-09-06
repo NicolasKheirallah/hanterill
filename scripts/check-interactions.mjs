@@ -71,7 +71,8 @@ for (const loc of ["en", "sv"]) {
     problems.push(`${loc}.json: session.label no longer says simulated/representative: "${sessLabel}"`);
 }
 
-// Live telemetry: real moving canvas, decoupled loop, controls, reduced motion.
+// Live telemetry: real moving canvas, decoupled loop, controls, reduced motion,
+// and keyboard point-inspection (brief sections 92-93 / gate G27).
 need(
   "src/components/telemetry/LiveTelemetryChart.tsx",
   "<canvas",
@@ -79,6 +80,11 @@ need(
   "useReducedMotion",
   "visibilitychange",
   "useInView",
+  "tabIndex={0}",
+  "onKeyDown",
+  'aria-live="polite"',
+  /ArrowRight/,
+  /ArrowLeft/,
 );
 need("src/lib/telemetry-sim.ts", "drivePhase", "sample");
 
