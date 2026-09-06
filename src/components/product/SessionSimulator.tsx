@@ -49,7 +49,7 @@ export function SessionSimulator() {
       className="scroll-mt-20 border-y border-line bg-bg-secondary py-20 sm:py-28 lg:py-32"
     >
       <Container>
-        <SectionHeading eyebrow={ts("eyebrow")} title={ts("title")} lead={ts("lead")} />
+        <SectionHeading title={ts("title")} lead={ts("lead")} />
 
         {/* Timeline */}
         <ol

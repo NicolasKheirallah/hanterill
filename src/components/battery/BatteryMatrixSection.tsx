@@ -138,7 +138,7 @@ export function BatteryMatrixSection() {
     <section className="border-b border-line bg-bg-secondary py-20 sm:py-28 lg:py-32">
       <Container>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <SectionHeading eyebrow={t("eyebrow")} title={t("matrixTitle")} lead={t("matrixLead")} />
+          <SectionHeading title={t("matrixTitle")} lead={t("matrixLead")} />
           <ToggleGroup.Root
             type="single"
             value={mode}

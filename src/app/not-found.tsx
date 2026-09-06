@@ -8,7 +8,7 @@ export default function GlobalNotFound() {
       <body
         style={{
           margin: 0,
-          minHeight: "100vh",
+          minHeight: "70vh",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",

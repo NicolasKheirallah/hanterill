@@ -3,8 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { Container } from "./layout";
 
 /**
- * Translated page header. `id` selects `pages.{id}Eyebrow/Title/Lead` from the
- * message catalog, so interior pages stay one line and follow the locale.
+ * Translated page header. `id` selects `pages.{id}Title/Lead` from the message
+ * catalog, so interior pages stay one line and follow the locale.
  */
 export async function LocalizedPageHeader({
   id,
@@ -15,7 +15,7 @@ export async function LocalizedPageHeader({
 }) {
   const t = await getTranslations("pages");
   return (
-    <PageHeader eyebrow={t(`${id}Eyebrow`)} title={t(`${id}Title`)} lead={t(`${id}Lead`)}>
+    <PageHeader title={t(`${id}Title`)} lead={t(`${id}Lead`)}>
       {children}
     </PageHeader>
   );

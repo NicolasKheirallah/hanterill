@@ -7,11 +7,10 @@ import { LiveTelemetryChart } from "@/components/telemetry/LiveTelemetryChart";
 import { batteryDemo, cellOffsets, evidenceDemo } from "@/lib/demo-data";
 import { cn } from "@/lib/cn";
 
-function BlockHeader({ index, title, body, cta }: { index: string; title: string; body: string; cta?: ReactNode }) {
+function BlockHeader({ title, body, cta }: { title: string; body: string; cta?: ReactNode }) {
   return (
     <div className="max-w-md">
-      <span className="font-mono text-[12px] text-text-muted">{index}</span>
-      <h3 className="mt-2 text-2xl font-medium tracking-tight sm:text-[1.75rem]">{title}</h3>
+      <h3 className="text-2xl font-medium tracking-tight sm:text-[1.75rem]">{title}</h3>
       <p className="mt-3 text-[16px] leading-relaxed text-text-secondary">{body}</p>
       {cta ? <div className="mt-5">{cta}</div> : null}
     </div>
@@ -96,7 +95,7 @@ function DtcRecord() {
   ];
   return (
     <div className="grid items-start gap-6 border-b border-line py-14 lg:grid-cols-[1fr_1.3fr] lg:gap-16 lg:py-20">
-      <BlockHeader index="03" title={t("faultTitle")} body={t("faultBody")} />
+      <BlockHeader title={t("faultTitle")} body={t("faultBody")} />
       <div className="grid gap-3 sm:grid-cols-2">
         {rows.map((d) => (
           <div key={d.code} className="rounded-md border border-line bg-surface p-4">
@@ -150,7 +149,6 @@ function EvidenceCompare() {
   return (
     <div className="grid items-start gap-6 py-14 lg:grid-cols-[1fr_1.3fr] lg:gap-16 lg:py-20">
       <BlockHeader
-        index="06"
         title={t("evidenceTitle")}
         body={t("evidenceBody")}
         cta={<MoreLink href="/features/vehicle-diagnostics">{t("evidenceCta")}</MoreLink>}
@@ -194,7 +192,6 @@ export function FeatureBlocks() {
           <Split
             text={
               <BlockHeader
-                index="01"
                 title={t("batteryTitle")}
                 body={t("batteryBody")}
                 cta={<MoreLink href="/features/battery-health">{t("batteryCta")}</MoreLink>}
@@ -206,7 +203,6 @@ export function FeatureBlocks() {
             reverse
             text={
               <BlockHeader
-                index="02"
                 title={t("scanTitle")}
                 body={t("scanBody")}
                 cta={<MoreLink href="/features/vehicle-diagnostics">{t("scanCta")}</MoreLink>}
@@ -218,7 +214,6 @@ export function FeatureBlocks() {
           <Split
             text={
               <BlockHeader
-                index="04"
                 title={t("liveTitle")}
                 body={t("liveBody")}
                 cta={<MoreLink href="/features/live-data">{t("liveCta")}</MoreLink>}
@@ -230,7 +225,6 @@ export function FeatureBlocks() {
             reverse
             text={
               <BlockHeader
-                index="05"
                 title={t("serviceTitle")}
                 body={t("serviceBody")}
                 cta={<MoreLink href="/features/service-functions">{t("serviceCta")}</MoreLink>}

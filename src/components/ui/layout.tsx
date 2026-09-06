@@ -57,7 +57,7 @@ export function SectionHeading({
   return (
     <div className={cn("max-w-[46rem]", className)}>
       {eyebrow ? <Eyebrow className="mb-4">{eyebrow}</Eyebrow> : null}
-      <As className="heading-settle text-balance text-3xl font-medium tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.08]">
+      <As className="text-balance text-3xl font-medium tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.08]">
         {title}
       </As>
       {lead ? <p className="mt-5 text-lg leading-relaxed text-text-secondary">{lead}</p> : null}

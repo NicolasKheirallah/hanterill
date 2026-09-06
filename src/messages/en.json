@@ -470,6 +470,7 @@
   },
   "footer": {
     "blurb": "Dealer-grade diagnostics for Volvo and Polestar, running on your own computer.",
+    "navLabel": "Footer",
     "diagnostics": "Diagnostics",
     "developers": "Developers",
     "project": "Project",

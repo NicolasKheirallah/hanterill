@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { Prose } from "@/components/ui/Prose";
-import { DocNavLink } from "@/components/docs/DocNavLink";
 import { TableOfContents } from "@/components/docs/TableOfContents";
 import { docs, getDoc, getDocToc, docsSlugs } from "@/lib/docs";
 import { docLoaders } from "@/lib/docs-registry";
@@ -66,30 +66,28 @@ export default async function DocPage({ params }: Params) {
 
         <div className="mt-14 grid grid-cols-2 gap-4 border-t border-line pt-6 text-[13px]">
           {prev ? (
-            <DocNavLink
-              href={`/${locale}/docs/${prev.slug}`}
-              type="doc-back"
+            <Link
+              href={`/docs/${prev.slug}`}
               className="min-w-0 text-text-secondary hover:text-text-primary"
             >
               <span className="block font-mono text-[11px] uppercase tracking-wider text-text-muted">
                 {t("previous")}
               </span>
               <span className="block text-balance">{prev.title}</span>
-            </DocNavLink>
+            </Link>
           ) : (
             <span />
           )}
           {next ? (
-            <DocNavLink
-              href={`/${locale}/docs/${next.slug}`}
-              type="doc-forward"
+            <Link
+              href={`/docs/${next.slug}`}
               className="col-start-2 min-w-0 text-right text-text-secondary hover:text-text-primary"
             >
               <span className="block font-mono text-[11px] uppercase tracking-wider text-text-muted">
                 {t("next")}
               </span>
               <span className="block text-balance">{next.title}</span>
-            </DocNavLink>
+            </Link>
           ) : (
             <span />
           )}

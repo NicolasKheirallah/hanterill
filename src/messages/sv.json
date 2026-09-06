@@ -470,6 +470,7 @@
   },
   "footer": {
     "blurb": "Verkstadsklassad diagnostik för Volvo och Polestar, som körs på din egen dator.",
+    "navLabel": "Sidfot",
     "diagnostics": "Diagnostik",
     "developers": "Utvecklare",
     "project": "Projekt",

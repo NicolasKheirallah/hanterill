@@ -9,7 +9,7 @@
 :root {
   --bg-primary: #f5f5f3;
   --bg-secondary: #ececea;
-  --surface: #ffffff;
+  --surface: #fbfbf9;
   --surface-raised: #ffffff;
 
   --text-primary: #111111;
@@ -120,6 +120,7 @@
   --color-status-info: var(--status-info);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", "JetBrains Mono", "Menlo", monospace;
 
   --radius-xs: 2px;
@@ -147,6 +148,12 @@
     font-feature-settings: "cv05", "ss01";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  /* Space Grotesk carries the display voice; body and mono captions stay
+   * Inter / IBM Plex Mono. Per-component `tracking-*` utilities still win. */
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
   }
 
   a {
@@ -259,61 +266,6 @@
 }
 
 /* ------------------------------------------------------------------ *
- * View transitions. Scoped to the <main> content region so the header
- * and footer never move. Only two flows opt in: the locale switch
- * (crossfade) and docs previous/next (a short directional slide keyed
- * to a transition type). Everything else navigates instantly.
- * ------------------------------------------------------------------ */
-.page-main {
-  view-transition-name: page-main;
-}
-
-::view-transition-old(page-main),
-::view-transition-new(page-main) {
-  animation-duration: var(--motion-base);
-  animation-timing-function: var(--ease-standard);
-}
-
-/* Docs previous/next: content slides against the reading direction. */
-html:active-view-transition-type(doc-forward) {
-  &::view-transition-old(page-main) {
-    animation-name: vt-slide-out-left;
-  }
-  &::view-transition-new(page-main) {
-    animation-name: vt-slide-in-right;
-  }
-}
-html:active-view-transition-type(doc-back) {
-  &::view-transition-old(page-main) {
-    animation-name: vt-slide-out-right;
-  }
-  &::view-transition-new(page-main) {
-    animation-name: vt-slide-in-left;
-  }
-}
-
-@keyframes vt-slide-out-left {
-  to { opacity: 0; transform: translateX(-24px); }
-}
-@keyframes vt-slide-in-right {
-  from { opacity: 0; transform: translateX(24px); }
-}
-@keyframes vt-slide-out-right {
-  to { opacity: 0; transform: translateX(24px); }
-}
-@keyframes vt-slide-in-left {
-  from { opacity: 0; transform: translateX(-24px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none !important;
-  }
-}
-
-/* ------------------------------------------------------------------ *
  * Press feedback. A small physical push on click, pointer devices only
  * so it does not fire on touch tap-ghosting, and off under reduced
  * motion. Applied to buttons and toggle items that are not already
@@ -325,25 +277,6 @@ html:active-view-transition-type(doc-back) {
   }
   .press:active {
     transform: translateY(1px) scale(0.985);
-  }
-}
-
-/* ------------------------------------------------------------------ *
- * Section headings settle from a slightly lighter weight to their
- * resting weight once, on first paint. Inter is a variable face, so
- * this is a real axis interpolation, not a swap. Subliminal by intent;
- * off under reduced motion, and a no-op where `@starting-style` or a
- * variable font is unavailable.
- * ------------------------------------------------------------------ */
-@media (prefers-reduced-motion: no-preference) {
-  .heading-settle {
-    font-variation-settings: "wght" 500;
-    transition: font-variation-settings var(--motion-explain) var(--ease-standard);
-  }
-  @starting-style {
-    .heading-settle {
-      font-variation-settings: "wght" 440;
-    }
   }
 }
 

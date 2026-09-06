@@ -33,34 +33,41 @@ export function Header() {
       className="sticky top-0 z-50 border-b border-transparent transition-colors duration-200"
     >
       <div className="mx-auto flex h-15 max-w-[1200px] items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="flex items-center" aria-label="openCMA home">
-          <Wordmark />
-        </Link>
+        <div className="flex items-center gap-5">
+          <Link href="/" className="flex items-center" aria-label="openCMA home">
+            <Wordmark />
+          </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-          {nav.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "relative rounded-sm px-3 py-2 text-[14px] transition-colors",
-                  active ? "text-text-primary" : "text-text-secondary hover:text-text-primary",
-                )}
-              >
-                {t(item.key)}
-                {active ? (
-                  <motion.span
-                    layoutId={reduce ? undefined : "nav-active"}
-                    className="absolute inset-x-3 -bottom-px h-px bg-accent"
-                    transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
-                  />
-                ) : null}
-              </Link>
-            );
-          })}
+          <span aria-hidden className="hidden h-4 w-px bg-line-strong lg:block" />
+
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+            {nav.map((item) => {
+              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "relative rounded-sm px-3 py-2 text-[14px] transition-colors",
+                    active ? "text-text-primary" : "text-text-secondary hover:text-text-primary",
+                  )}
+                >
+                  {t(item.key)}
+                  {active ? (
+                    <motion.span
+                      layoutId={reduce ? undefined : "nav-active"}
+                      className="absolute inset-x-3 -bottom-px h-px bg-accent"
+                      transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
+                    />
+                  ) : null}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="hidden items-center gap-2 lg:flex">
           <a
             href={site.repoUrl}
             target="_blank"
@@ -69,9 +76,6 @@ export function Header() {
           >
             {t("github")}
           </a>
-        </nav>
-
-        <div className="hidden items-center gap-2 lg:flex">
           <LocaleSwitcher />
           <ThemeToggle />
           <Button href="/download" size="sm">

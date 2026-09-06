@@ -38,22 +38,17 @@ if (!/\.reveal\s*\{\s*opacity:\s*1/.test(css))
 if (/Reveal[\s\S]{0,400}motion\/react/.test(read("src/components/ui/Reveal.tsx")))
   problems.push("Reveal.tsx still imports motion/react (should be a plain element with the .reveal class)");
 
-// --- View transitions: scoped to the content region and two flows, not global ---
+// --- No page-transition engine, scoped or global ---
+// Scoped view transitions (P3-4) were trialled and pulled: Next 16.3.4 has no
+// experimental.viewTransition flag and the auto-VT on navigation could not be
+// verified across browsers. Guard against any of it creeping back.
 const localeLayout = read("src/app/[locale]/layout.tsx");
 if (/AnimatePresence[\s\S]{0,120}\{children\}/.test(localeLayout))
-  problems.push("[locale]/layout.tsx: children are wrapped in a global AnimatePresence page transition (view transitions must be scoped to locale + docs)");
-if (!/view-transition-name:\s*page-main/.test(css))
-  problems.push("globals.css: no scoped view-transition-name for the content region");
-if (!/@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?::view-transition/.test(css))
-  problems.push("globals.css: view transitions are not disabled under prefers-reduced-motion");
-if (!/active-view-transition-type\(doc-(forward|back)\)/.test(css))
-  problems.push("globals.css: docs previous/next directional transition types are not styled");
-const docNav = read("src/components/docs/DocNavLink.tsx");
-if (!/startTransition/.test(docNav) || !/doc-forward|doc-back/.test(docNav) || !/addTransitionType/.test(docNav))
-  problems.push("DocNavLink.tsx: docs navigation is not a typed React transition (startTransition + addTransitionType)");
-const localeSwitcher = read("src/components/layout/LocaleSwitcher.tsx");
-if (!/addTransitionType/.test(localeSwitcher))
-  problems.push("LocaleSwitcher.tsx: locale change is not tagged for the view transition");
+  problems.push("[locale]/layout.tsx: children are wrapped in a global page transition");
+if (/::view-transition|view-transition-name/.test(css))
+  problems.push("globals.css: view-transition CSS is back (P3-4 was pulled, see PREMIUM-PASS.md 4.4)");
+if (/addTransitionType/.test(read("src/components/layout/LocaleSwitcher.tsx")))
+  problems.push("LocaleSwitcher.tsx: addTransitionType is back (P3-4 was pulled)");
 
 // --- Press feedback is pointer-only and motion-gated ---
 if (!/@media\s*\(hover:\s*hover\)\s*and\s*\(prefers-reduced-motion:\s*no-preference\)[\s\S]*?\.press/.test(css))

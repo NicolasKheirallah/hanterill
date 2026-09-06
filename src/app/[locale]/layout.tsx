@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import { Inter, IBM_Plex_Mono } from "next/font/google";
+import { Inter, IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -11,6 +11,11 @@ import { site } from "@/lib/site";
 import "../globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  display: "swap",
+});
 const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
@@ -121,7 +126,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${plexMono.variable} h-full`}
+      className={`${inter.variable} ${spaceGrotesk.variable} ${plexMono.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
@@ -138,7 +143,7 @@ export default async function LocaleLayout({
             {t("skipToContent")}
           </a>
           <Header />
-          <main id="main-content" className="page-main flex-1">
+          <main id="main-content" className="flex-1">
             {children}
           </main>
           <Footer />
