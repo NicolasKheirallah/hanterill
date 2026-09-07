@@ -35,7 +35,7 @@
 
 Modern electric vehicles built on Geely/Volvo's **Compact Modular Architecture (CMA)** and **Scalable Product Architecture (SPA2)** communicate over high-speed Ethernet using standard automotive **Diagnostic over IP (DoIP)** protocols. However, accessing high-voltage battery health, live cell potentials, thermal sensors, or module fault codes has traditionally required expensive proprietary dealer subscriptions (such as VIDA), closed commercial scan tools, or cloud logins.
 
-**openCMA** solves this. It is a free, fully local, source-available diagnostic application and CLI that talks directly to your car over a standard Ethernet cable, decoding raw vehicle network traffic into readable diagnostic telemetry. It is licensed for personal, non-commercial use only.
+**openCMA** solves this. It is a free, fully local, source-available desktop diagnostic application that talks directly to your car over a standard Ethernet cable, decoding raw vehicle network traffic into readable diagnostic telemetry. It is licensed for personal, non-commercial use only.
 
 ---
 
@@ -62,27 +62,27 @@ openCMA maps and probes up to **43 Electronic Control Units (ECUs)** communicati
                       [ Physical Ethernet Port (ENET) ]
                                       │
                                       ▼
-                        0x1A01 Central Electronic Module (CEM)
+                        Central Electronic Module (CEM)
                                 [ Master Gateway ]
                                       │
        ┌──────────────────────────────┼──────────────────────────────┐
        ▼                              ▼                              ▼
 High-Voltage / Energy          Chassis & Drive                Safety, Body & Cabin
-├─ 0x1635 BECM (BMS)           ├─ 0x16A1 BCM2 (Brakes/EPB)    ├─ 0x1A11 CCM (Climate)
-├─ 0x1602 VCU1 (Drive Ctrl)    ├─ 0x1616 SAS (Steering Angle) ├─ 0x1801 DIM (Driver Cluster)
-├─ 0x1634 OBC (On-Board Chg)   ├─ 0x1612 PSCM (Pwr Steering)  ├─ 0x1021 TCAM (Telematics/LTE)
-├─ 0x1692 IHFA (Front Inv)     ├─ 0x1451 FLR (Forward Radar)  ├─ 0x1C01 SRS (Airbag / Safety)
-└─ 0x1637 IEM (ERAD Inv)       └─ 0x1431 WAM (Wide-Angle Cam) └─ 0x1A15 POT (Power Tailgate)
+├─ BECM (BMS)                 ├─ BCM2 (Brakes/EPB)         ├─ CCM (Climate)
+├─ VCU1 (Drive Ctrl)          ├─ SAS (Steering Angle)      ├─ DIM (Driver Cluster)
+├─ OBC (On-Board Chg)         ├─ PSCM (Pwr Steering)       ├─ TCAM (Telematics/LTE)
+├─ IHFA (Front Inv)           ├─ FLR (Forward Radar)       ├─ SRS (Airbag / Safety)
+└─ IEM (ERAD Inv)             └─ WAM (Wide-Angle Cam)      └─ POT (Power Tailgate)
 ```
 
-- **`0x1A01` CEM (Central Electronic Module)**: Master security gateway, 12V low-voltage power distribution, sleep manager.
-- **`0x1635` BECM (Battery Energy Control Module)**: Traction battery BMS, 27 modules × 4 series cell groups (108 potentials), pack temperature channels, State of Health (SoH), State of Charge (SoC), contactor status.
-- **`0x16A1` BCM2 (Brake Control Module 2)**: Integrated Power Brake (IPB), ABS, Stability Control, Electric Parking Brake (EPB) calipers.
-- **`0x1602` VCU1 (Vehicle Control Unit)**: Drive coordination and torque delivery for the front and rear permanent magnet synchronous motors. The inverters themselves are addressed separately as `0x1692` IHFA (front axle) and `0x1637` IEM (rear/ERAD).
-- **`0x1021` TCAM (Telematics & Connectivity Antenna Module)**: LTE modem, GNSS positioning, emergency backup battery, Bluetooth key transceiver.
-- **`0x1401` ASDM (Active Safety Domain Master)**: Pilot Assist forward camera, emergency collision avoidance, radar/vision fusion.
-- **`0x1A11` CCM (Climate Control Module)**: Heat pump thermal loop, PTC cabin heater, 8 blend door damper actuators, A/C compressor.
-- **`0x1801` DIM (Driver Information Module)**: 12.3-inch driver instrument cluster, Service Reminder Indicator (SRI), odometer sync.
+- **CEM (Central Electronic Module)**: Master security gateway, 12V low-voltage power distribution, sleep manager.
+- **BECM (Battery Energy Control Module)**: Traction battery BMS, 27 modules × 4 series cell groups (108 potentials), pack temperature channels, State of Health (SoH), State of Charge (SoC), contactor status.
+- **BCM2 (Brake Control Module 2)**: Integrated Power Brake (IPB), ABS, Stability Control, Electric Parking Brake (EPB) calipers.
+- **VCU1 (Vehicle Control Unit)**: Drive coordination and torque delivery for the front and rear permanent magnet synchronous motors. The inverters themselves are addressed separately as IHFA (front axle) and IEM (rear/ERAD).
+- **TCAM (Telematics & Connectivity Antenna Module)**: LTE modem, GNSS positioning, emergency backup battery, Bluetooth key transceiver.
+- **ASDM (Active Safety Domain Master)**: Pilot Assist forward camera, emergency collision avoidance, radar/vision fusion.
+- **CCM (Climate Control Module)**: Heat pump thermal loop, PTC cabin heater, 8 blend door damper actuators, A/C compressor.
+- **DIM (Driver Information Module)**: 12.3-inch driver instrument cluster, Service Reminder Indicator (SRI), odometer sync.
 
 ---
 
@@ -99,16 +99,16 @@ openCMA implements the full automotive open networking stack:
 | **UDS 0x19** | `ReadDTCInformation` | Sub-functions `0x02` (ReportByStatusMask) and `0x04` (ReportDTCSnapshotRecordByDTCNumber) for freeze-frame triage. |
 | **UDS 0x22** | `ReadDataByIdentifier` | Reads high-resolution telemetry, BMS cell arrays, thermal matrices, VIN, and part numbers. |
 | **UDS 0x31** | `RoutineControl` | Executes non-gated vehicle service routines (EPB retract, damper calibration, BMS reset). |
-| **SAE J2012** | Diagnostic Trouble Code Standard | Decodes 7-character DTCs (`P0A80-00`, `U0100-00`, `B10A2-15`) with full byte-level status bitmasks (`Active`, `Pending`, `Stored Historical`, `Warning Indicator Requested`). |
+| **SAE J2012** | Diagnostic Trouble Code Standard | Decodes 7-character DTCs with full byte-level status bitmasks (`Active`, `Pending`, `Stored Historical`, `Warning Indicator Requested`). |
 
 ---
 
 ## What You Can Do With openCMA
 
 ### 1. Traction Battery Health & Degradation Check
-- **True State of Health (SoH)**: Read the exact BMS battery degradation percentage directly from BECM `0x1635` DID `0x496D` (u32 big-endian, hundredths of a percent) without guesswork.
-- **108-Potential Cell Breakdown**: Visualize all 108 series cell-group voltages (27 modules × 4 groups), read from the governed DID range `0x4B10..0x4B2A`. Highlight groups with >25 mV delta imbalance to catch weak or degraded cell groups before they cause battery failure.
-- **Pack Thermal Channels** *(provisional)*: Monitor the three pack temperature channels from DID `0x4980` to detect cooling channel restrictions or thermal gradient anomalies. Sensor-to-module placement is not yet established, and the per-module blocks `0x49E1` / `0x49E2` read as unsupported on the reference vehicle.
+- **True State of Health (SoH)**: Read the exact BMS battery degradation percentage directly from the BECM, without guesswork.
+- **108-Potential Cell Breakdown**: Visualize all 108 series cell-group voltages (27 modules × 4 groups), read from the governed BMS identifier range. Highlight groups with >25 mV delta imbalance to catch weak or degraded cell groups before they cause battery failure.
+- **Pack Thermal Channels** *(provisional)*: Monitor the three pack temperature channels to detect cooling channel restrictions or thermal gradient anomalies. Sensor-to-module placement is not yet established, and the per-module temperature blocks read as unsupported on the reference vehicle.
 
 ### 2. Full-Vehicle Fault Code (DTC) Triage
 - Scan the full 43-ECU catalogue in under 5 seconds over high-speed DoIP. 34 of those ECUs advertise DTC support.
@@ -210,12 +210,6 @@ The script produces a double-clickable native bundle and launches it:
 Useful npm equivalents (run inside `apps/desktop/ui`): `npm run app:dev`
 (live-reload desktop shell) and `npm run app:build` (same bundle).
 
-### Option B2: Building the bare CLI only
-
-```sh
-cargo run -p opencma-cli -- help
-```
-
 ### Option C: Web Preview (Dev Mode)
 To inspect the interface directly in your web browser with the embedded CMA vehicle simulator:
 
@@ -224,22 +218,6 @@ cd apps/desktop/ui
 npm install
 npm run dev
 # Open http://localhost:5173
-```
-
-### Option D: Command-Line Interface (CLI)
-
-```sh
-# Read traction battery State of Health and pack telemetry
-cargo run -p opencma-cli -- battery --discover
-
-# Perform full 43-ECU trouble code scan
-cargo run -p opencma-cli -- scan --discover
-
-# Decode a specific DTC code offline
-cargo run -p opencma-cli -- show 0x1A01 97 1D 57 2F
-
-# Export full vehicle health snapshot to JSON
-cargo run -p opencma-cli -- report --discover --format json
 ```
 
 ---
@@ -273,7 +251,6 @@ openCMA-main/
 │   ├── transport/             # ISO 13400 (DoIP) and ISO 14229 (UDS) protocol implementations
 │   ├── uds_dtc/               # SAE J2012 / ISO 14229 DTC status-byte decoding
 │   ├── storage/               # SQLite diagnostic session evidence store
-│   ├── cli/                   # Command-line tool (opencma)
 │   └── ffi/                   # UniFFI cross-platform bindings
 └── docs/                      # Technical specifications, platform guides, & safety rules
 ```
