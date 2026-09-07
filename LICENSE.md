@@ -1,147 +1,56 @@
 # License
 
-openCMA is **source-available for private use**, licensed under the
-**PolyForm Noncommercial License 1.0.0**.
-
 Copyright 2026 Nicolas Kheirallah
 
-Required Notice: Copyright 2026 Nicolas Kheirallah (https://github.com/nicolaskheirallah/openCMA-main)
+openCMA is made available under the **Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International License**
+(CC BY-NC-ND 4.0).
 
-This is not an OSI-approved open-source license. You may read, build, modify,
-run and share openCMA for any **non-commercial** purpose. **Commercial use is
-not permitted.** A plain-language summary is in the project documentation; the
-license text below is authoritative.
+SPDX-License-Identifier: CC-BY-NC-ND-4.0
+
+- Human-readable summary: <https://creativecommons.org/licenses/by-nc-nd/4.0/>
+- Full legal code (authoritative): <https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode>
+
+The full legal code at the link above governs. The summary below is provided for
+convenience only and is not a substitute for it.
 
 ---
 
-# PolyForm Noncommercial License 1.0.0
+## What you may do
 
-<https://polyformproject.org/licenses/noncommercial/1.0.0>
+- **Read, download, run and share openCMA** for private, non-commercial
+  purposes: personal diagnostics on vehicles you own or are authorised to work
+  on, research, and education.
+- Share the work in its **unmodified** form, with attribution and this license
+  notice kept intact.
 
-## Acceptance
+## What you may not do
 
-In order to get any license under these terms, you must agree
-to them as both strict obligations and conditions to all
-your licenses.
+- **No commercial use.** You may not use openCMA, in whole or in part, primarily
+  for commercial advantage or monetary compensation. This includes resale, paid
+  support, diagnostics offered as a paid service, and use inside a business whose
+  purpose is commercial.
+- **No derivatives.** If you remix, transform, or build upon openCMA, you may not
+  distribute the modified material. You may make private modifications for your
+  own non-commercial use.
+- No additional restrictions: you may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
 
-## Copyright License
+## Attribution
 
-The licensor grants you a copyright license for the
-software to do everything you might do with the software
-that would otherwise infringe the licensor's copyright
-in it for any permitted purpose.  However, you may
-only distribute the software according to [Distribution
-License](#distribution-license) and make changes or new works
-based on the software according to [Changes and New Works
-License](#changes-and-new-works-license).
+When you share openCMA, keep this notice and credit:
 
-## Distribution License
+> openCMA by Nicolas Kheirallah — <https://github.com/nicolaskheirallah/openCMA>
+> Licensed under CC BY-NC-ND 4.0.
 
-The licensor grants you an additional copyright license
-to distribute copies of the software.  Your license
-to distribute covers distributing the software with
-changes and new works permitted by [Changes and New Works
-License](#changes-and-new-works-license).
+## Notes
 
-## Notices
-
-You must ensure that anyone who gets a copy of any part of
-the software from you also gets a copy of these terms or the
-URL for them above, as well as copies of any plain-text lines
-beginning with `Required Notice:` that the licensor provided
-with the software.  For example:
-
-> Required Notice: Copyright Yoyodyne, Inc. (http://example.com)
-
-## Changes and New Works License
-
-The licensor grants you an additional copyright license to
-make changes and new works based on the software for any
-permitted purpose.
-
-## Patent License
-
-The licensor grants you a patent license for the software that
-covers patent claims the licensor can license, or becomes able
-to license, that you would infringe by using the software.
-
-## Noncommercial Purposes
-
-Any noncommercial purpose is a permitted purpose.
-
-## Personal Uses
-
-Personal use for research, experiment, and testing for
-the benefit of public knowledge, personal study, private
-entertainment, hobby projects, amateur pursuits, or religious
-observance, without any anticipated commercial application,
-is use for a permitted purpose.
-
-## Noncommercial Organizations
-
-Use by any charitable organization, educational institution,
-public research organization, public safety or health
-organization, environmental protection organization,
-or government institution is use for a permitted purpose
-regardless of the source of funding or obligations resulting
-from the funding.
-
-## Fair Use
-
-You may have "fair use" rights for the software under the
-law. These terms do not limit them.
-
-## No Other Rights
-
-These terms do not allow you to sublicense or transfer any of
-your licenses to anyone else, or prevent the licensor from
-granting licenses to anyone else.  These terms do not imply
-any other licenses.
-
-## Patent Defense
-
-If you make any written claim that the software infringes or
-contributes to infringement of any patent, your patent license
-for the software granted under these terms ends immediately. If
-your company makes such a claim, your patent license ends
-immediately for work on behalf of your company.
-
-## Violations
-
-The first time you are notified in writing that you have
-violated any of these terms, or done anything with the software
-not covered by your licenses, your licenses can nonetheless
-continue if you come into full compliance with these terms,
-and take practical steps to correct past violations, within
-32 days of receiving notice.  Otherwise, all your licenses
-end immediately.
-
-## No Liability
-
-***As far as the law allows, the software comes as is, without
-any warranty or condition, and the licensor will not be liable
-to you for any damages arising out of these terms or the use
-or nature of the software, under any kind of legal claim.***
-
-## Definitions
-
-The **licensor** is the individual or entity offering these
-terms, and the **software** is the software the licensor makes
-available under these terms.
-
-**You** refers to the individual or entity agreeing to these
-terms.
-
-**Your company** is any legal entity, sole proprietorship,
-or other kind of organization that you work for, plus all
-organizations that have control over, are under the control of,
-or are under common control with that organization.  **Control**
-means ownership of substantially all the assets of an entity,
-or the power to direct its management and policies by vote,
-contract, or otherwise.  Control can be direct or indirect.
-
-**Your licenses** are all the licenses granted to you for the
-software under these terms.
-
-**Use** means anything you do with the software requiring one
-of your licenses.
+- This is **not** an OSI-approved open-source license. "Source-available" and
+  "open source" are not the same thing.
+- Creative Commons does not recommend its licenses for software; this project
+  uses CC BY-NC-ND 4.0 deliberately to keep openCMA a read-and-run,
+  non-commercial tool rather than a product or a fork base.
+- Contributions are accepted under the same license. See the project
+  documentation for what helps most.
+- Nothing here is legal advice. If you are unsure whether a use is permitted,
+  ask in the project's discussions before relying on openCMA for it.

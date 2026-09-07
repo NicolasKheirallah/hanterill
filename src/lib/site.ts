@@ -17,8 +17,8 @@ export const site = {
    * licence.
    */
   license: {
-    short: "Private use only",
-    line: "openCMA is provided for personal, non-commercial use under the project license.",
+    short: "CC BY-NC-ND 4.0",
+    line: "openCMA is licensed CC BY-NC-ND 4.0: read, run and share it for personal, non-commercial use. No commercial use, and no distributing modified versions.",
   },
   get repoUrl() {
     return `https://github.com/${this.repo}`;

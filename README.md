@@ -2,7 +2,7 @@
 
 > **Source-available, dealer-grade vehicle diagnostics & high-voltage telemetry for Polestar and Volvo electric vehicles over DoIP/UDS.**
 
-[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm_Noncommercial_1.0.0-lightgrey.svg)](LICENSE.md)
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC_BY--NC--ND_4.0-lightgrey.svg)](LICENSE.md)
 [![Platform: macOS · Windows · Linux](https://img.shields.io/badge/Platform-macOS_%7C_Windows_%7C_Linux-lightgrey.svg)](docs/platform/macos.md)
 [![Rust: 1.92+](https://img.shields.io/badge/Rust-1.92%2B-orange.svg)](https://www.rust-lang.org)
 [![Tauri: v2](https://img.shields.io/badge/Tauri-v2-24C8D8.svg)](https://tauri.app)
@@ -278,4 +278,4 @@ All product names, logos, brands, and vehicle models are trademarks or registere
 
 For the full legal disclaimer, warranty limitations, and automotive safety notices, see **[DISCLAIMER.md](DISCLAIMER.md)**.
 
-**Private use only.** openCMA is provided for personal, non-commercial use under the **PolyForm Noncommercial License 1.0.0**. The source is available to read; it is not OSI open source. See [LICENSE.md](LICENSE.md) for the full terms.
+**Private use only.** openCMA is licensed **CC BY-NC-ND 4.0**: read, run and share it for personal, non-commercial use, with no commercial use and no distributing modified versions. The source is available to read; it is not OSI open source. See [LICENSE.md](LICENSE.md) for the full terms.

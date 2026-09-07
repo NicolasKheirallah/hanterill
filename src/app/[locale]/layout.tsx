@@ -103,7 +103,7 @@ const ldJson = {
       description: site.description,
       url: site.url,
       isAccessibleForFree: true,
-      license: `${site.repoUrl}/blob/main/LICENSE`,
+      license: "https://creativecommons.org/licenses/by-nc-nd/4.0/",
     },
     {
       "@type": "SoftwareSourceCode",
@@ -111,7 +111,7 @@ const ldJson = {
       codeRepository: site.repoUrl,
       programmingLanguage: ["Rust", "TypeScript"],
       runtimePlatform: "Tauri",
-      license: `${site.repoUrl}/blob/main/LICENSE`,
+      license: "https://creativecommons.org/licenses/by-nc-nd/4.0/",
       about: "DoIP and UDS vehicle diagnostics for Volvo and Polestar",
     },
   ],
