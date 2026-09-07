@@ -40,7 +40,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           <p>
             The diagnostic data a modern EV holds about its own battery and drivetrain is detailed and
             useful, and most of it is readable with standard protocols. Hanterill makes that data
-            available to owners and independent workshops without a proprietary interface or a
+            available to owners without a proprietary interface or a
             recurring fee.
           </p>
 

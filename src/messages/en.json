@@ -32,7 +32,7 @@
   },
   "hero": {
     "eyebrow": "Open vehicle diagnostics",
-    "title": "Read your Volvo or Polestar the way a workshop does.",
+    "title": "Read your Volvo or Polestar the way you want to.",
     "lead": "Connect to a supported Volvo or Polestar over Ethernet. Read battery health, ECU faults and live telemetry. No cloud, no subscription.",
     "platforms": "Windows, macOS, Linux",
     "principles": "Source-available, local only, no telemetry"
@@ -477,7 +477,7 @@
     "developers": "Developers",
     "project": "Project",
     "disclaimer": "Hanterill is an independent project, not affiliated with, maintained by, sponsored by or authorised by Volvo Cars, Polestar or Geely. Manufacturer names are used only to describe compatibility. Source-available, private use only.",
-    "tagline": "For owners and independent workshops.",
+    "tagline": "For owners who want control over their car.",
     "links": {
       "batteryHealth": "Battery health",
       "vehicleDiagnostics": "Vehicle diagnostics",
