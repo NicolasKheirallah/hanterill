@@ -9,7 +9,7 @@ export const site = {
   description:
     "Vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and cross-platform. Source-available, for private use.",
   url: "https://hanterill.org",
-  repo: "hanterill/hanterill", // placeholder owner/name
+  repo: "nicolaskheirallah/hanterill", // placeholder owner/name
   /**
    * License summary. The LICENSE file in the source repository is the source of
    * truth; this is the plain-language summary shown on the site. Hanterill is
@@ -26,7 +26,7 @@ export const site = {
   get releasesUrl() {
     return `https://github.com/${this.repo}/releases`;
   },
-  docsRepoPath: "https://github.com/hanterill/hanterill/tree/main/docs",
+  docsRepoPath: "https://github.com/nicolaskheirallah/hanterill/tree/main/docs",
 } as const;
 
 /** Primary nav. `key` resolves against the `nav` message namespace. */
