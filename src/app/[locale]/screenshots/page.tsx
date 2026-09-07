@@ -10,27 +10,27 @@ export const metadata: Metadata = {
     "The openCMA app on a supported Volvo and Polestar: overview, battery health, fault codes, live telemetry and service routines.",
 };
 
-// Files live in public/assets. Spaces are pre-encoded so the paths are valid in
-// an <img src> under the static export.
+// Files live in public/assets (kebab-case; no spaces so the paths resolve in
+// `next dev`, the static export, and under a GitHub Pages basePath alike).
 const shots: Shot[] = [
-  { src: "/assets/Overwiew.png", label: "Overview" },
-  { src: "/assets/Veichle%20Info.png", label: "Vehicle info" },
-  { src: "/assets/Veichle%20Info%202.png", label: "Vehicle info" },
-  { src: "/assets/Connections.png", label: "Connections" },
-  { src: "/assets/Battery%20Health.png", label: "Battery health" },
-  { src: "/assets/Battery%20Health%202.png", label: "Battery health" },
-  { src: "/assets/Cell%20Map.png", label: "Cell map" },
-  { src: "/assets/12V%20Draw%20Sleep.png", label: "12 V sleep draw" },
-  { src: "/assets/Heatpump.png", label: "Heat pump" },
-  { src: "/assets/TCAM%20GPS.png", label: "TCAM GPS" },
-  { src: "/assets/Drive%20Units.png", label: "Drive units" },
-  { src: "/assets/Fault%20codes.png", label: "Fault codes" },
-  { src: "/assets/Fault%20codes%202.png", label: "Fault codes" },
-  { src: "/assets/Service%20Routines.png", label: "Service routines" },
-  { src: "/assets/Service%20Routines%202.png", label: "Service routines" },
-  { src: "/assets/PPI.png", label: "PPI" },
-  { src: "/assets/PPI%202.png", label: "PPI" },
-  { src: "/assets/PPI%203.png", label: "PPI" },
+  { src: "/assets/overview.png", label: "Overview" },
+  { src: "/assets/vehicle-info.png", label: "Vehicle info" },
+  { src: "/assets/vehicle-info-2.png", label: "Vehicle info" },
+  { src: "/assets/connections.png", label: "Connections" },
+  { src: "/assets/battery-health.png", label: "Battery health" },
+  { src: "/assets/battery-health-2.png", label: "Battery health" },
+  { src: "/assets/cell-map.png", label: "Cell map" },
+  { src: "/assets/12v-sleep-draw.png", label: "12 V sleep draw" },
+  { src: "/assets/heat-pump.png", label: "Heat pump" },
+  { src: "/assets/tcam-gps.png", label: "TCAM GPS" },
+  { src: "/assets/drive-units.png", label: "Drive units" },
+  { src: "/assets/fault-codes.png", label: "Fault codes" },
+  { src: "/assets/fault-codes-2.png", label: "Fault codes" },
+  { src: "/assets/service-routines.png", label: "Service routines" },
+  { src: "/assets/service-routines-2.png", label: "Service routines" },
+  { src: "/assets/ppi.png", label: "PPI" },
+  { src: "/assets/ppi-2.png", label: "PPI" },
+  { src: "/assets/ppi-3.png", label: "PPI" },
 ];
 
 export default async function ScreenshotsPage({ params }: { params: Promise<{ locale: string }> }) {
