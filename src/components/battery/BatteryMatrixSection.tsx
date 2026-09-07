@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { Container, SectionHeading } from "@/components/ui/layout";
 import { batteryDemo, cellOffsets, cellVoltage, moduleStats, type ModuleStats } from "@/lib/demo-data";
 import { DUR, EASE, SPRING } from "@/lib/motion";
@@ -18,6 +18,8 @@ type T = ReturnType<typeof useTranslations<"battery">>;
 const M = batteryDemo.modules;
 const G = batteryDemo.groupsPerModule;
 const idx = (m: number, g: number) => (m - 1) * G + (g - 1);
+/** Per-module spread in mV, fixed for the sample data. */
+const moduleDeltas: number[] = Array.from({ length: M }, (_, i) => moduleStats(i + 1).delta);
 
 const VIEW_KEY: Record<ViewMode, "viewVoltage" | "viewDeviation" | "viewModule"> = {
   voltage: "viewVoltage",
@@ -25,12 +27,27 @@ const VIEW_KEY: Record<ViewMode, "viewVoltage" | "viewDeviation" | "viewModule">
   module: "viewModule",
 };
 
-function fill(offset: number, mode: ViewMode): string {
+const WARN_FILL = "color-mix(in srgb, var(--status-warning) 45%, var(--line))";
+const OVER_FILL = "color-mix(in srgb, var(--status-error) 50%, var(--line))";
+
+/**
+ * Cell fill by view mode:
+ * - voltage: flat neutral, the matrix is just a picker for exact values
+ * - deviation: heat by this potential's offset from the pack mean
+ * - module: heat by the whole module's spread, so imbalanced modules read as
+ *   vertical bands
+ */
+function fill(offset: number, mode: ViewMode, moduleDelta: number): string {
   if (mode === "voltage") return "var(--line-strong)";
+  if (mode === "module") {
+    if (moduleDelta <= 5) return "var(--line-strong)";
+    if (moduleDelta <= 8) return WARN_FILL;
+    return OVER_FILL;
+  }
   const a = Math.abs(offset);
   if (a <= 3) return "var(--line-strong)";
-  if (a <= 5) return "color-mix(in srgb, var(--status-warning) 45%, var(--line))";
-  return "color-mix(in srgb, var(--status-error) 50%, var(--line))";
+  if (a <= 5) return WARN_FILL;
+  return OVER_FILL;
 }
 
 function srText(t: T, m: number, g: number) {
@@ -55,6 +72,9 @@ export function BatteryMatrixSection() {
   const [hover, setHover] = useState<Coord | null>(null);
   const [mobileModule, setMobileModule] = useState(14);
   const gridRef = useRef<HTMLDivElement>(null);
+  // One-shot: the cells sweep in across the pack the first time the grid enters
+  // view. CSS carries the stagger; this only arms it.
+  const revealed = useInView(gridRef, { once: true, amount: 0.15 });
 
   // Shared module selection with the optional 3D pack view on
   // /features/battery-health. Falls back to local state elsewhere.
@@ -101,10 +121,11 @@ export function BatteryMatrixSection() {
     let nm = m;
     let ng = g;
     switch (e.key) {
-      case "ArrowRight": ng = Math.min(G, g + 1); break;
-      case "ArrowLeft": ng = Math.max(1, g - 1); break;
-      case "ArrowDown": nm = Math.min(M, m + 1); break;
-      case "ArrowUp": nm = Math.max(1, m - 1); break;
+      // Modules run left to right (pack position); groups stack top to bottom.
+      case "ArrowRight": nm = Math.min(M, m + 1); break;
+      case "ArrowLeft": nm = Math.max(1, m - 1); break;
+      case "ArrowDown": ng = Math.min(G, g + 1); break;
+      case "ArrowUp": ng = Math.max(1, g - 1); break;
       case "Enter":
       case " ":
         e.preventDefault();
@@ -127,6 +148,10 @@ export function BatteryMatrixSection() {
   // selection just rings its cell so the matrix stays readable at rest.
   const exploring = hover;
   const activeModule = active && active.m > 0 ? active.m : null;
+  // A pointed-at (or selected) individual potential - not a whole row/column.
+  const activeCell =
+    active && active.m > 0 && active.g > 0 ? { m: active.m, g: active.g } : null;
+  const activeOffset = activeCell ? cellOffsets[idx(activeCell.m, activeCell.g)] : 0;
   const detail = useMemo<ModuleStats | null>(
     () => (selected ? moduleStats(selected.m) : activeModule ? moduleStats(activeModule) : null),
     [selected, activeModule],
@@ -135,7 +160,7 @@ export function BatteryMatrixSection() {
     detail && (selected || (active && (active.m === -1 || active.g === -1))) ? detail.avg : null;
 
   return (
-    <section className="border-b border-line bg-bg-secondary py-20 sm:py-28 lg:py-32">
+    <section className="border-b border-line bg-bg-secondary py-2xl lg:py-3xl">
       <Container>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeading title={t("matrixTitle")} lead={t("matrixLead")} />
@@ -158,78 +183,116 @@ export function BatteryMatrixSection() {
           </ToggleGroup.Root>
         </div>
 
-        <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1.55fr_1fr] lg:gap-14">
+        <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1.85fr_1fr] lg:gap-14">
           <div className="hidden min-w-0 sm:block">
-            <div className="overflow-x-auto rounded-lg border border-line bg-surface p-4 sm:p-6">
+            <div className="bezel bg-surface p-4 sm:p-5">
+              {/* Live read-out: the pointed-at potential, right where you are
+                  looking, so you never have to track the side panel. */}
+              <div className="mb-3 flex items-baseline justify-between gap-4 border-b border-line pb-2 font-mono text-[11px]">
+                <span className="uppercase tracking-wider text-text-muted">{t("spread")}</span>
+                <span aria-live="polite" className="tnum text-right">
+                  {activeCell ? (
+                    <>
+                      <span className="text-text-primary">
+                        M{String(activeCell.m).padStart(2, "0")} G{activeCell.g}
+                      </span>
+                      <span className="mx-2 text-text-secondary">
+                        {cellVoltage(idx(activeCell.m, activeCell.g)).toFixed(3)} V
+                      </span>
+                      <span
+                        className={cn(
+                          Math.abs(activeOffset) > 5
+                            ? "text-status-error"
+                            : Math.abs(activeOffset) > 3
+                              ? "text-status-warning"
+                              : "text-text-muted",
+                        )}
+                      >
+                        {activeOffset >= 0 ? "+" : ""}
+                        {activeOffset} mV
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-text-muted">
+                      &Delta; {batteryDemo.cellDelta} mV / {M * G}
+                    </span>
+                  )}
+                </span>
+              </div>
+              <div className="overflow-x-auto">
               <div
                 ref={gridRef}
                 role="grid"
                 aria-label={t("gridAria")}
-                className="min-w-[440px]"
+                className="min-w-[620px]"
+                data-mx-reveal={revealed ? "" : undefined}
                 onMouseLeave={() => setHover(null)}
                 onBlur={(e) => {
                   if (!e.currentTarget.contains(e.relatedTarget as Node)) setHover(null);
                 }}
+                style={{ ["--mx-cols" as string]: `2rem repeat(${M}, minmax(0, 1fr))` }}
               >
+                {/* Module-number header. Modules run left to right along the pack. */}
                 <div
                   role="row"
-                  className="grid gap-[3px] pb-1"
-                  style={{ gridTemplateColumns: `2.5rem repeat(${G}, 1fr)` }}
+                  className="grid gap-[2px] pb-1"
+                  style={{ gridTemplateColumns: "var(--mx-cols)" }}
                 >
                   <span />
-                  {Array.from({ length: G }, (_, gi) => {
-                    const g = gi + 1;
+                  {Array.from({ length: M }, (_, mi) => {
+                    const m = mi + 1;
                     return (
                       <button
-                        key={g}
-                        type="button"
-                        onMouseEnter={() => setHover({ m: -1, g })}
-                        onFocus={() => setHover({ m: -1, g })}
-                        className={cn(
-                          "rounded-[2px] py-0.5 text-center font-mono text-[10px] uppercase tracking-wider transition-colors",
-                          active?.g === g ? "text-text-primary" : "text-text-muted hover:text-text-secondary",
-                        )}
-                      >
-                        G{g}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {Array.from({ length: M }, (_, mi) => {
-                  const m = mi + 1;
-                  const rowActive = exploring?.m === m;
-                  return (
-                    <div
-                      key={m}
-                      role="row"
-                      className={cn("grid gap-[3px]", mode === "module" && "mb-1 last:mb-0")}
-                      style={{ gridTemplateColumns: `2.5rem repeat(${G}, 1fr)` }}
-                    >
-                      <button
+                        key={m}
                         type="button"
                         onMouseEnter={() => setHover({ m, g: -1 })}
                         onFocus={() => setHover({ m, g: -1 })}
                         onClick={() => pick({ m, g: selected?.m === m ? selected.g : 1 })}
                         className={cn(
-                          "flex items-center pr-2 font-mono text-[10px] transition-colors",
+                          "min-w-0 py-0.5 text-center font-mono text-[9px] tabular-nums leading-none transition-colors",
+                          active?.m === m ? "text-text-primary" : "text-text-muted hover:text-text-secondary",
+                        )}
+                      >
+                        {String(m).padStart(2, "0")}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* One row per cell group. */}
+                {Array.from({ length: G }, (_, gi) => {
+                  const g = gi + 1;
+                  const rowActive = exploring?.g === g;
+                  return (
+                    <div
+                      key={g}
+                      role="row"
+                      className="grid gap-[2px] pb-[2px]"
+                      style={{ gridTemplateColumns: "var(--mx-cols)" }}
+                    >
+                      <button
+                        type="button"
+                        onMouseEnter={() => setHover({ m: -1, g })}
+                        onFocus={() => setHover({ m: -1, g })}
+                        onClick={() => pick({ m: selected?.g === g ? selected.m : 1, g })}
+                        className={cn(
+                          "flex items-center pr-2 font-mono text-[10px] uppercase tracking-wider transition-colors",
                           rowActive ? "text-text-primary" : "text-text-muted hover:text-text-secondary",
                         )}
                       >
-                        M{String(m).padStart(2, "0")}
+                        G{g}
                       </button>
-                      {Array.from({ length: G }, (_, gi) => {
-                        const g = gi + 1;
+                      {Array.from({ length: M }, (_, mi) => {
+                        const m = mi + 1;
                         const i = idx(m, g);
                         const off = cellOffsets[i];
-                        const colActive = exploring?.g === g;
+                        const colActive = exploring?.m === m;
                         const isCell = active?.m === m && active?.g === g;
                         const isSelected = selected?.m === m && selected?.g === g;
                         const emphasised = rowActive || colActive;
-                        const dimmed = Boolean(exploring) && !emphasised;
                         return (
                           <button
-                            key={g}
+                            key={m}
                             type="button"
                             role="gridcell"
                             data-cell={`${m}-${g}`}
@@ -243,18 +306,23 @@ export function BatteryMatrixSection() {
                             onClick={() => pick({ m, g })}
                             onKeyDown={(e) => onCellKey(e, m, g)}
                             className={cn(
-                              "h-5 rounded-[2px] outline-none transition-[opacity,box-shadow] duration-150",
-                              dimmed && "opacity-35",
-                              isSelected && "ring-2 ring-accent ring-offset-1 ring-offset-surface",
+                              "mx-cell h-6 min-w-0 rounded-[1px] outline-none ring-inset transition-[box-shadow,transform] duration-150 will-change-transform",
+                              emphasised && !isCell && !isSelected && "ring-1 ring-text-primary/25",
+                              isCell && "relative z-10 scale-[1.14]",
+                              isSelected && "ring-2 ring-accent",
                               isCell && !isSelected && "ring-1 ring-text-primary",
                             )}
-                            style={{ background: fill(off, mode) }}
+                            style={{
+                              background: fill(off, mode, moduleDeltas[m - 1]),
+                              ["--mx-d" as string]: `${(m - 1) * 9 + (g - 1) * 22}ms`,
+                            }}
                           />
                         );
                       })}
                     </div>
                   );
                 })}
+              </div>
               </div>
             </div>
             <Legend mode={mode} />
@@ -264,7 +332,7 @@ export function BatteryMatrixSection() {
             <MobileModules selected={mobileModule} onSelect={pickMobile} mode={mode} />
           </div>
 
-          <div className="rounded-lg border border-line bg-surface p-6">
+          <div className="bezel bg-surface p-6">
             <div className="flex items-baseline justify-between">
               <div className="font-mono text-[11px] uppercase tracking-wider text-text-muted">{t("pack")}</div>
               {selected ? (
@@ -282,7 +350,9 @@ export function BatteryMatrixSection() {
             </div>
             <PackScale mean={batteryDemo.avgCellGroup} value={scaleValue} />
 
-            <div className="mt-5 hidden sm:block">
+            {/* Height is reserved so the panel does not collapse (and the bezel
+                notch does not jump) as you move between pack / module / cell. */}
+            <div className="mt-5 hidden min-h-[15.5rem] sm:block">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={
@@ -349,13 +419,21 @@ function Legend({ mode }: { mode: ViewMode }) {
   const t = useTranslations("battery");
   if (mode === "voltage")
     return <p className="mt-3 font-mono text-[11px] text-text-muted">{t("voltageLegend")}</p>;
+  const swatches: [string, string][] =
+    mode === "module"
+      ? [
+          ["var(--line-strong)", `${t("moduleSpread")}, within 5 mV`],
+          [WARN_FILL, "5 to 8 mV"],
+          [OVER_FILL, "over 8 mV"],
+        ]
+      : [
+          ["var(--line-strong)", t("withinLegend")],
+          [WARN_FILL, t("midLegend")],
+          [OVER_FILL, t("overLegend")],
+        ];
   return (
     <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[11px] text-text-muted">
-      {[
-        ["var(--line-strong)", t("withinLegend")],
-        ["color-mix(in srgb, var(--status-warning) 45%, var(--line))", t("midLegend")],
-        ["color-mix(in srgb, var(--status-error) 50%, var(--line))", t("overLegend")],
-      ].map(([sw, label]) => (
+      {swatches.map(([sw, label]) => (
         <span key={label} className="inline-flex items-center gap-1.5">
           <span className="inline-block h-2 w-2 rounded-[1px]" style={{ background: sw }} />
           {label}
@@ -376,7 +454,7 @@ function MobileModules({
 }) {
   const t = useTranslations("battery");
   return (
-    <div className="rounded-lg border border-line bg-surface">
+    <div className="rounded-sm border border-line bg-surface">
       <ul className="max-h-[19rem] divide-y divide-line overflow-y-auto">
         {Array.from({ length: M }, (_, mi) => {
           const m = mi + 1;
@@ -427,7 +505,11 @@ function PackScale({ mean, value }: { mean: number; value: number | null }) {
             animate={{ left: `${pct}%` }}
             transition={SPRING}
           />
-        ) : null}
+        ) : (
+          // Idle: a muted marker sits on the mean so the scale reads as
+          // complete rather than an empty track.
+          <span className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-line-strong" />
+        )}
       </div>
       <div className="mt-1 flex justify-between font-mono text-[10px] text-text-muted">
         <span>-12 mV</span>

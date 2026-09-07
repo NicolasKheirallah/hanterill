@@ -6,7 +6,8 @@
 
 export const demoVehicle = {
   model: "Polestar 2",
-  variant: "Long range, dual motor",
+  /** Display text resolved from the `demo.vehicleVariant` message key. */
+  variantKey: "vehicleVariant",
   modelYear: 2022,
   vin: "YV1ZZ••••••••••••",
   odometer: "41 208 km",
@@ -89,55 +90,33 @@ export function moduleStats(module: number): ModuleStats {
   };
 }
 
+/**
+ * Fault records for the simulated panels. Title and detail text is resolved
+ * from the `demo.faultTitles` / `demo.faultDetails` message keys by `code`.
+ */
 export const dtcDemo = [
-  {
-    ecu: "BECM",
-    code: "P0A80-00",
-    description: "Replace hybrid/EV battery pack",
-    state: "stored" as const,
-    snapshot: true,
-    detail: "Capacity throughput threshold reached on module string 3. Recorded once, not currently active.",
-  },
-  {
-    ecu: "BECM",
-    code: "P1AF0-71",
-    description: "Battery energy control module, cell balancing performance",
-    state: "historical" as const,
-    snapshot: false,
-    detail: "Cleared after a balancing session. Retained in the historical log for evidence.",
-  },
-  {
-    ecu: "CCM",
-    code: "B1B25-13",
-    description: "Evaporator temperature sensor, circuit open",
-    state: "active" as const,
-    snapshot: true,
-    detail: "Present at time of scan. Confirmed on two consecutive drive cycles.",
-  },
-  {
-    ecu: "TCAM",
-    code: "U3003-16",
-    description: "Battery voltage below threshold during telematics session",
-    state: "pending" as const,
-    snapshot: false,
-    detail: "Seen once. Not yet matured to a confirmed fault.",
-  },
+  { ecu: "BECM", code: "P0A80-00", state: "stored" as const, snapshot: true },
+  { ecu: "BECM", code: "P1AF0-71", state: "historical" as const, snapshot: false },
+  { ecu: "CCM", code: "B1B25-13", state: "active" as const, snapshot: true },
+  { ecu: "TCAM", code: "U3003-16", state: "pending" as const, snapshot: false },
 ];
 
+/** Tone only; label and note text come from the `demo.state*` message keys. */
 export const dtcStateMeta = {
-  active: { label: "Active", tone: "error", note: "Present now" },
-  pending: { label: "Pending", tone: "warning", note: "Seen once, not confirmed" },
-  stored: { label: "Stored", tone: "info", note: "Confirmed, recorded" },
-  historical: { label: "Historical", tone: "muted", note: "Cleared, kept for evidence" },
+  active: { tone: "error" },
+  pending: { tone: "warning" },
+  stored: { tone: "info" },
+  historical: { tone: "muted" },
 } as const;
 
+/** Channel display names come from the `telemetry.channelNames` message keys by `id`. */
 export const liveChannels = [
-  { id: "pack_v", label: "Pack voltage", unit: "V", value: 398.6, min: 360, max: 410 },
-  { id: "pack_a", label: "Pack current", unit: "A", value: -1.4, min: -220, max: 260 },
-  { id: "batt_t", label: "Battery temperature", unit: "°C", value: 23.1, min: 10, max: 45 },
-  { id: "inv_t", label: "Inverter temperature", unit: "°C", value: 34.7, min: 10, max: 80 },
-  { id: "mot_nm", label: "Motor torque", unit: "N·m", value: 0, min: -120, max: 330 },
-  { id: "lv_v", label: "12 V system", unit: "V", value: 14.2, min: 11, max: 15 },
+  { id: "pack_v", unit: "V", value: 398.6, min: 360, max: 410 },
+  { id: "pack_a", unit: "A", value: -1.4, min: -220, max: 260 },
+  { id: "batt_t", unit: "°C", value: 23.1, min: 10, max: 45 },
+  { id: "inv_t", unit: "°C", value: 34.7, min: 10, max: 80 },
+  { id: "motor_nm", unit: "N·m", value: 0, min: -120, max: 330 },
+  { id: "lv_v", unit: "V", value: 14.2, min: 11, max: 15 },
 ];
 
 /** One-minute trace for the live chart. Deterministic pseudo-random walk. */

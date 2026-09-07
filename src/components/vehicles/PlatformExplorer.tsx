@@ -64,7 +64,7 @@ export function PlatformExplorer({ defaultPlatform = "CMA" as Platform }) {
 
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1">
         <StatusMarker tone={statusMeta[pm.status].tone}>{t(`status.${pm.status}`)}</StatusMarker>
-        <p className="max-w-xl text-[14px] leading-relaxed text-text-secondary">{t(`blurbs.${platform}`)}</p>
+        <p className="max-w-[36rem] text-[14px] leading-relaxed text-text-secondary">{t(`blurbs.${platform}`)}</p>
       </div>
 
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_1fr] lg:gap-12">
@@ -100,7 +100,7 @@ export function PlatformExplorer({ defaultPlatform = "CMA" as Platform }) {
                       <span>
                         <span className="text-[15px] text-text-primary">{v.model}</span>
                         <span className="block font-mono text-[12px] text-text-muted">
-                          {v.manufacturer} &middot; {v.powertrain} &middot; {v.years}
+                          {v.manufacturer} / {v.powertrain} / {v.years}
                         </span>
                       </span>
                       <StatusMarker tone={statusMeta[v.status].tone}>
@@ -115,7 +115,7 @@ export function PlatformExplorer({ defaultPlatform = "CMA" as Platform }) {
         </div>
 
         {/* Capability breakdown */}
-        <div className="rounded-lg border border-line bg-surface p-6">
+        <div className="rounded-sm border border-line bg-surface p-6">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={active?.model ?? "none"}

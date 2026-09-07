@@ -7,7 +7,6 @@ import { ProtocolStack } from "@/components/architecture/ProtocolStack";
 import { EcuTopology } from "@/components/architecture/EcuTopology";
 import { SessionSimulator } from "@/components/product/SessionSimulator";
 import { PrivacySection } from "@/components/sections/PrivacySection";
-import { OpenSourceSection } from "@/components/opensource/OpenSourceSection";
 import { VehicleCompatibility } from "@/components/vehicles/VehicleCompatibility";
 import { HardwareChain } from "@/components/sections/HardwareChain";
 import { DownloadSection } from "@/components/download/DownloadSection";
@@ -31,7 +30,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <EcuTopology />
       <SessionSimulator />
       <PrivacySection />
-      <OpenSourceSection />
       <VehicleCompatibility />
       <HardwareChain />
       <DownloadSection />

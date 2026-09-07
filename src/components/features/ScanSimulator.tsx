@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
-import { Pause, Play, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { StatusMarker } from "@/components/ui/StatusBadge";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { DUR, EASE } from "@/lib/motion";
@@ -32,28 +32,29 @@ const statusKey: Record<SimFault["status"], "statusStored" | "statusHistorical" 
 
 export function ScanSimulator({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("scan");
+  const td = useTranslations("demo");
   const reduce = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { amount: 0.4 });
 
   const [elapsed, setElapsed] = useState(reduce ? SCAN_END : 0);
-  const [paused, setPaused] = useState(false);
-  const [speed, setSpeed] = useState<1 | 2>(1);
   const [openEcu, setOpenEcu] = useState<string | null>(null);
   const raf = useRef<number | null>(null);
   const last = useRef<number>(0);
 
   const stage: ScanStage = stageAt(elapsed);
   const done = stage === "complete";
-  // Auto-runs while on screen and not paused. Scrolling away or hiding the tab
-  // just freezes the clock; no state changes from an effect.
-  const running = inView && !paused && !reduce && !done;
+  // The scan runs itself once the section is on screen. No start control -
+  // scrolling away freezes the clock, scrolling back resumes it.
+  const running = inView && !reduce && !done;
 
   useEffect(() => {
     if (!running) return;
     const tick = (now: number) => {
       if (!last.current) last.current = now;
-      const dt = (now - last.current) * speed;
+      // Cap the per-frame step so a backgrounded tab does not fast-forward the
+      // whole scan on return.
+      const dt = Math.min(now - last.current, 100);
       last.current = now;
       setElapsed((e) => Math.min(SCAN_END, e + dt));
       raf.current = requestAnimationFrame(tick);
@@ -63,27 +64,19 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
       if (raf.current) cancelAnimationFrame(raf.current);
       last.current = 0;
     };
-  }, [running, speed]);
-
-  useEffect(() => {
-    const onVis = () => {
-      if (document.hidden) setPaused(true);
-    };
-    document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, []);
+  }, [running]);
 
   const visibleEcus = simEcus.filter((e) => elapsed >= e.at);
   const faultCount = visibleEcus.reduce((n, e) => n + e.faults.length, 0);
 
   function replay() {
+    last.current = 0;
     setElapsed(0);
     setOpenEcu(null);
-    setPaused(false);
   }
 
   return (
-    <div ref={rootRef} className="rounded-lg border border-line bg-surface">
+    <div ref={rootRef} className="bezel bg-surface">
       {/* Header: stage + controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3">
         <div className="flex items-center gap-2.5">
@@ -91,46 +84,16 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
             <span aria-live="polite">{t(stageKey[stage])}</span>
           </StatusMarker>
         </div>
-        <div className="flex items-center gap-1 font-mono text-[12px]">
+        {done ? (
           <button
             type="button"
-            aria-label={
-              running
-                ? t("pauseScanAria")
-                : done
-                  ? t("replayScanAria")
-                  : elapsed > 0
-                    ? t("resumeScanAria")
-                    : t("startScanAria")
-            }
-            onClick={() => (done ? replay() : setPaused((p) => !p))}
-            className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-line px-2.5 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
+            aria-label={t("replayScanAria")}
+            onClick={replay}
+            className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-line px-2.5 font-mono text-[12px] text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
           >
-            {done ? (
-              <>
-                <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} /> {t("replay")}
-              </>
-            ) : running ? (
-              <>
-                <Pause className="h-3.5 w-3.5" strokeWidth={1.75} /> {t("pause")}
-              </>
-            ) : (
-              <>
-                <Play className="h-3.5 w-3.5" strokeWidth={1.75} /> {elapsed > 0 ? t("resume") : t("start")}
-              </>
-            )}
+            <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} /> {t("replay")}
           </button>
-          {!done ? (
-            <button
-              type="button"
-              onClick={() => setSpeed((s) => (s === 1 ? 2 : 1))}
-              aria-label={t("speedAria", { n: speed })}
-              className="inline-flex h-8 w-9 items-center justify-center rounded-sm border border-line text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
-            >
-              {speed}&times;
-            </button>
-          ) : null}
-        </div>
+        ) : null}
       </div>
 
       {/* Vehicle line */}
@@ -202,9 +165,11 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
                               {t(statusKey[f.status])}
                             </span>
                           </div>
-                          <p className="mt-1 text-[13px] text-text-secondary">{f.title}</p>
+                          <p className="mt-1 text-[13px] text-text-secondary">
+                            {td(`faultTitles.${f.code}`)}
+                          </p>
                           <p className="mt-1 font-mono text-[11px] text-text-muted">
-                            {t("lastObserved")} {f.lastSeen}
+                            {t("lastObserved")} {td(f.lastSeenKey)}
                             {f.snapshot ? ` · ${t("snapshotAvailable")}` : ""}
                           </p>
                         </div>

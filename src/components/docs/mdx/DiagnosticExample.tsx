@@ -18,7 +18,7 @@ export function DiagnosticExample({
     <div className="my-5 overflow-hidden rounded-md border border-line">
       {service ? (
         <div className="border-b border-line bg-bg-secondary px-3 py-1.5">
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
+          <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
             {service}
           </span>
         </div>

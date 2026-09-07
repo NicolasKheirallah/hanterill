@@ -21,7 +21,7 @@ Everything on this page is a read. openCMA queries the BECM and decodes the resp
 ## Reading it
 
 After routing activation, openCMA enters an extended session with the BECM
-(`0x10 0x03`) and reads each identifier:
+and reads each identifier:
 
 <DidReference
   rows={[
@@ -31,18 +31,18 @@ After routing activation, openCMA enters an extended session with the BECM
   ]}
 />
 
-The state-of-health read on the wire:
+The state-of-health read, with the bytes on the wire:
 
 <DiagnosticExample
-  service="ReadDataByIdentifier, 0x22"
+  service="ReadDataByIdentifier"
   request="22 49 6D"
   response="62 49 6D 03 E6"
-  note="0x03E6 is 998 raw. Scaled by 0.1 that is 99.8, then offset against nominal capacity to the reported SoH. The scaling lives in the CMA decoder map, not in the ECU response."
+  note="The raw value 03E6 is 998. Scaled by 0.1 that is 99.8, then offset against nominal capacity to the reported SoH. The scaling lives in the CMA decoder map, not in the ECU response."
 />
 
 Cell-group potentials are read as a block and mapped to module and group
 positions, not derived from a single summary field. DTCs come from the same
-session with `0x19 0x02 0xFF`.
+session with a ReadDTCInformation request.
 
 ## Reading the cell matrix
 

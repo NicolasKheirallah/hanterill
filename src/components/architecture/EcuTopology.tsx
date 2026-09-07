@@ -18,18 +18,18 @@ export function EcuTopology() {
   const [selected, setSelected] = useState<Ecu>(ecus.find((e) => e.code === "BECM") ?? ecus[0]);
 
   return (
-    <section className="border-b border-line bg-bg-secondary py-20 sm:py-28 lg:py-32">
+    <section className="border-b border-line bg-bg-secondary py-2xl lg:py-3xl">
       <Container>
         <SectionHeading title={t("title")} lead={t("lead")} />
 
         <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
-          <div className="rounded-lg border border-line bg-surface p-5 sm:p-6">
+          <div className="rounded-sm border border-line bg-surface p-5 sm:p-6">
             <div className="grid gap-6 sm:grid-cols-2">
               {domains.map((d) => {
                 const list = ecus.filter((e) => e.domain === d);
                 return (
                   <div key={d}>
-                    <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-text-muted">
+                    <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
                       {t(`domains.${d}`)}
                     </div>
                     <p className="mt-0.5 text-[11px] text-text-secondary">{t(`domainBlurbs.${d}`)}</p>
@@ -64,7 +64,7 @@ export function EcuTopology() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-line bg-surface p-6">
+          <div className="rounded-sm border border-line bg-surface p-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selected.code}

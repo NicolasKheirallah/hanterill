@@ -22,12 +22,12 @@ const CAP_STATUS_LABEL: Record<CapStatus, string> = {
 
 // English labels for docs, which are English-only for now. The marketing site
 // reads these from the message catalog; when docs gain Swedish this should move
-// there too. See AUDIT.md, doc i18n gap.
+// there too.
 const STATUS_LABEL: Record<string, string> = {
   supported: "Supported",
   partial: "Partial",
   testing: "Testing",
-  wip: "Work in progress",
+  wip: "WIP",
   research: "Research",
   planned: "Planned",
 };
@@ -63,7 +63,7 @@ export function VehicleSupport({ model }: { model: string }) {
   return (
     <div className="my-5 overflow-hidden rounded-md border border-line">
       <div className="border-b border-line bg-bg-secondary px-4 py-3">
-        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
+        <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
           {v.manufacturer}
         </p>
         <p className="mt-0.5 text-[15px] font-medium text-text-primary">{v.model}</p>
@@ -77,7 +77,7 @@ export function VehicleSupport({ model }: { model: string }) {
           ["Model years", v.years],
         ].map(([k, val]) => (
           <div key={k} className="bg-surface px-4 py-2.5">
-            <dt className="text-[11px] uppercase tracking-[0.1em] text-text-muted">{k}</dt>
+            <dt className="text-[11px] uppercase tracking-[0.12em] text-text-muted">{k}</dt>
             <dd className="mt-0.5 text-[13px] text-text-primary">{val}</dd>
           </div>
         ))}
@@ -106,7 +106,7 @@ export function VehicleSupport({ model }: { model: string }) {
 
       {v.research?.length ? (
         <div className="border-t border-line bg-bg-secondary px-4 py-3">
-          <p className="text-[11px] uppercase tracking-[0.1em] text-text-muted">Current research</p>
+          <p className="text-[11px] text-text-muted">Current research</p>
           <ul className="mt-1 list-disc pl-4 text-[13px] text-text-secondary [&_li]:my-0.5">
             {v.research.map((r) => (
               <li key={r}>{r}</li>

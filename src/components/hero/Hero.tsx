@@ -5,23 +5,27 @@ import { Container } from "@/components/ui/layout";
 import { HeroInterface } from "./HeroInterface";
 import { site } from "@/lib/site";
 
+/**
+ * Split diptych on the Workbench shape: the argument on the left, the live
+ * interface on the right. One orchestrated entrance (.hero-seq), skipped under
+ * reduced motion. The measurement grid sits behind the instrument only - it
+ * frames a readout, it is not a page-wide texture.
+ */
 export function Hero() {
   const t = useTranslations("hero");
   const tc = useTranslations("common");
 
   return (
-    <section className="relative border-b border-line">
-      <div
-        aria-hidden
-        className="hairline-grid absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_82%)]"
-      />
-      <Container className="relative py-16 sm:py-20 lg:py-28">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
+    <section className="border-b border-line-strong">
+      <Container className="py-lg pt-xl lg:py-2xl lg:pt-2xl">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-14">
           <div className="hero-seq">
-            <h1 className="text-balance text-4xl font-medium tracking-tight sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
+            <h1 className="max-w-[13ch] text-[2.5rem] leading-[1.05] tracking-[-0.026em] sm:text-[2.75rem] lg:max-w-[24ch] lg:text-[2.75rem]">
               {t("title")}
             </h1>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-text-secondary">{t("lead")}</p>
+            <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-text-secondary">
+              {t("lead")}
+            </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button href="/download">
                 {tc("downloadApp")}
@@ -31,21 +35,16 @@ export function Hero() {
                 {tc("viewSource")}
               </Button>
             </div>
-            <dl className="mt-8 flex flex-col gap-2 font-mono text-[12px] text-text-muted sm:flex-row sm:items-center sm:gap-5">
-              <div>
-                <dt className="sr-only">Platforms</dt>
-                <dd>{t("platforms")}</dd>
-              </div>
-              <span aria-hidden className="hidden h-3 w-px bg-line-strong sm:block" />
-              <div>
-                <dt className="sr-only">Principles</dt>
-                <dd>{t("principles")}</dd>
-              </div>
-            </dl>
           </div>
 
-          <div className="lg:pl-4">
-            <HeroInterface />
+          <div className="relative lg:pl-2">
+            <div
+              aria-hidden
+              className="hairline-grid pointer-events-none absolute -inset-x-4 -inset-y-6 [mask-image:radial-gradient(120%_120%_at_60%_40%,black,transparent_78%)] lg:-inset-x-8"
+            />
+            <div className="relative">
+              <HeroInterface />
+            </div>
           </div>
         </div>
       </Container>

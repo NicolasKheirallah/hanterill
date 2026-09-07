@@ -21,12 +21,12 @@ export default async function DocsIndex({ params }: { params: Promise<{ locale: 
   return (
     <div>
       <h1 className="text-balance text-3xl font-medium tracking-tight sm:text-4xl">{t("title")}</h1>
-      <p className="mt-4 max-w-2xl text-lg leading-relaxed text-text-secondary">{t("lead")}</p>
+      <p className="mt-4 max-w-[42rem] text-lg leading-relaxed text-text-secondary">{t("lead")}</p>
 
       <div className="mt-10 space-y-10">
         {docGroups.map((group) => (
           <section key={group}>
-            <h2 className="font-mono text-[12px] uppercase tracking-[0.16em] text-text-muted">
+            <h2 className="font-mono text-[12px] text-text-muted">
               {t(`groups.${group}`)}
             </h2>
             <ul className="mt-3 divide-y divide-line border-y border-line">
@@ -50,3 +50,4 @@ export default async function DocsIndex({ params }: { params: Promise<{ locale: 
     </div>
   );
 }
+

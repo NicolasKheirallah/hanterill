@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "openCMA | Fordonsdiagnostik för Volvo och Polestar",
+    "title": "openCMA | Fordonsdiagnostik för Volvo & Polestar",
     "description": "Källkodstillgänglig fordonsdiagnostik, batterihälsa och realtidstelemetri för Volvo- och Polestar-bilar som stöds, via DoIP och UDS. Lokalt, privat och för personligt bruk."
   },
   "common": {
@@ -14,28 +14,34 @@
     "theme": "Tema",
     "simulated": "Simulerad session",
     "sampleData": "Fasta exempelvärden, inte en avläsning från ett fordon",
-    "representative": "Representativt gränssnitt med exempelvärden. Inte en avläsning i realtid från ett fordon.",
-    "privateUse": "Källkodstillgänglig, för privat bruk"
+    "representative": "Representativt gränssnitt med exempelvärden. Inte en avläsning från ett fordon i realtid.",
+    "privateUse": "Källkodstillgänglig, för privat bruk",
+    "rangeTo": "till",
+    "mainNav": "Huvudmeny",
+    "menu": "Meny",
+    "openMenu": "Öppna menyn",
+    "closeMenu": "Stäng menyn"
   },
   "nav": {
     "features": "Funktioner",
     "vehicles": "Fordon",
     "docs": "Dokumentation",
     "safety": "Säkerhet",
+    "screenshots": "Skärmbilder",
     "github": "GitHub"
   },
   "hero": {
     "eyebrow": "Öppen fordonsdiagnostik",
-    "title": "Verkstadsklassad diagnostik. Direkt från fordonet.",
-    "lead": "Anslut till en Volvo eller Polestar som stöds via Ethernet och läs batterihälsa, styrenhetsfel och realtidstelemetri. Ingen prenumeration, ingen egenutvecklad adapter, inget moln.",
+    "title": "Läs din Volvo eller Polestar som en verkstad gör.",
+    "lead": "Anslut till en Volvo eller Polestar som stöds via Ethernet. Läs batterihälsa, styrenhetsfel och realtidstelemetri. Inget moln, ingen prenumeration.",
     "platforms": "Windows, macOS, Linux",
     "principles": "Källkodstillgänglig, endast lokalt, ingen telemetri"
   },
   "connection": {
-    "title": "Inget egenutvecklat diagnosgränssnitt krävs.",
+    "title": "En passiv kabel är hela gränssnittet.",
     "lead": "En passiv ENET-kabel och valfritt Ethernet-gränssnitt räcker för att nå ett fordon som stöds. Välj en del av kedjan för att se vad den gör.",
-    "requestLabel": "Begäran, läs data",
-    "responseLabel": "Svar, 398,6 V",
+    "requestLabel": "Begäran: läs data",
+    "responseLabel": "Svar: 398,6 V",
     "protocolDetails": "Protokolldetaljer",
     "nodes": {
       "vehicleLabel": "Fordon",
@@ -51,7 +57,7 @@
       "vehicle": ["Diagnostikgateway", "DoIP-kapabel", "TCP / UDP på port 13400"],
       "enet": ["Passiv Ethernet-kabel", "Ingen aktiv elektronik", "Ingen drivrutin krävs"],
       "computer": ["Windows, macOS, Linux", "Valfritt trådbundet Ethernet-gränssnitt", "USB-C-adapter fungerar"],
-      "opencma": ["Talar DoIP och UDS", "Skriver resultat till lokal lagring", "Inget moln i vägen"]
+      "opencma": ["Talar DoIP och UDS", "Skriver resultat till lokal lagring", "Ingenting lämnar din dator"]
     },
     "linkObd": "OBD-II",
     "linkEthernet": "Ethernet",
@@ -59,35 +65,39 @@
     "wire": {
       "udp": "Fordonsidentifiering",
       "tcp": "Kanal för diagnostikmeddelanden",
-      "routing": "0x0005, före varje UDS-begäran",
+      "routing": "Skickas före varje UDS-begäran",
       "read": "Läs data via identifierare",
       "dtc": "Läs DTC-information",
       "standards": "DoIP och UDS"
     },
-    "routingLabel": "Routningsaktivering"
+    "routingLabel": "Routningsaktivering",
+    "wireTerms": {
+      "identifierRead": "Identifierarläsning",
+      "dtcRead": "DTC-läsning"
+    }
   },
   "features": {
-    "title": "Allt fordonet exponerar. På ett ställe.",
-    "lead": "Sex delar av fordonet, avlästa via samma anslutning. Inget lägesbyte mellan verktyg.",
+    "title": "Allt som fordonet kan berätta, över en anslutning.",
+    "lead": "Batteriet, varje styrenhet, fel, realtidsdata och servicerutiner, avlästa via en anslutning. Inget lägesbyte mellan verktyg.",
     "batteryTitle": "Batterihälsa",
-    "batteryBody": "Hälsotillstånd och laddning, packspänning, fördelning mellan cellgrupper, min och max, differens och packtemperatur. Den enskilda procentsatsen, och siffrorna bakom den.",
+    "batteryBody": "Hälsotillstånd och laddning, paketspänning, spridning mellan cellgrupper, min, max och differens, samt pakettemperatur. Procentsatsen som instrumentpanelen visar, och siffrorna bakom den.",
     "batteryCta": "Batteridiagnostik",
     "scanTitle": "Fullständig fordonsskanning",
-    "scanBody": "openCMA upptäcker styrenheter via DoIP, identifierar vilka som talar UDS och hämtar identifiering, hård- och mjukvarudata från var och en.",
+    "scanBody": "openCMA upptäcker styrenheter via DoIP, identifierar vilka som talar UDS och läser identifierings-, hårdvaru- och mjukvarudata från var och en.",
     "scanCta": "Fordonsdiagnostik",
-    "faultTitle": "Förstå felet, inte bara varningslampan",
-    "faultBody": "openCMA läser felkoder (DTC) med status: aktiv nu, väntande, lagrad eller historisk. Om styrenheten sparat en frysram följer ögonblicksbilden med.",
+    "faultTitle": "Felkoder efter status",
+    "faultBody": "openCMA läser felkoder med status: aktiv nu, väntande, lagrad eller historisk. Om styrenheten sparade en ögonblicksbild när felet uppstod får du med den också.",
     "liveTitle": "Realtidstelemetri",
-    "liveBody": "Packspänning och ström, batteri- och växelriktartemperatur, motormoment, 12 V-system. Samplat och ritat som ingenjörsprogramvara, inte ett marknadsföringsdiagram.",
+    "liveBody": "Paketspänning och -ström, batteri- och växelriktartemperatur, motormoment, 12 V-systemet. Samplat i en slinga och ritat på fasta axlar.",
     "liveCta": "Realtidsdata",
     "serviceTitle": "Serviceåtgärder",
     "serviceBody": "EPB-serviceläge, adaptation av 12 V-batteri, återställning av servicepåminnelse, kalibrering av HVAC-spjäll och utvalda UDS-rutiner, där plattformen stöder dem.",
     "serviceCta": "Servicefunktioner",
-    "evidenceTitle": "Bevis, före och efter",
-    "evidenceBody": "Exportera en session till JSON eller CSV, gör arbetet, skanna igen och jämför. Skillnaden är dokumentationen.",
+    "evidenceTitle": "Före och efter, sida vid sida",
+    "evidenceBody": "Exportera en session till JSON eller CSV, gör reparationen, skanna igen och jämför de två exporterna.",
     "evidenceCta": "Jämför diagnossessioner",
     "writeAccess": "Uttrycklig skrivbehörighet krävs",
-    "readOnlyNote": "Skrivskyddad diagnostik förblir skrivskyddad. Skrivbara rutiner är åtskilda i gränssnittet och nekas som standard tills du aktiverar dem för sessionen.",
+    "readOnlyNote": "Skrivskyddad diagnostik förblir skrivskyddad. Skrivbara rutiner hålls åtskilda och är inaktiverade tills du aktiverar dem för sessionen.",
     "sohLabel": "Batteriets hälsotillstånd",
     "spreadLabel": "Spridning mellan cellgrupper",
     "spreadWithin": "inom 2 mV",
@@ -98,7 +108,7 @@
     "dtcStored": "Lagrad",
     "dtcHistorical": "Historisk",
     "dtcSnapshot": "Ögonblicksbild finns",
-    "dtcPresent": "Närvarande vid skanning",
+    "dtcPresent": "Fanns vid skanning",
     "dtcSeenOnce": "Sedd en gång",
     "dtcRetained": "Raderad, bevarad",
     "routineEpb": "Elektrisk parkeringsbroms",
@@ -111,21 +121,21 @@
     "routineSunroofAction": "Normalisering",
     "beforeRepair": "Före reparation",
     "afterRepair": "Efter reparation",
-    "totalDtcs": "totalt antal felkoder"
+    "totalDtcs": "felkoder totalt"
   },
   "battery": {
     "eyebrow": "Batteri",
-    "matrixTitle": "108 potentialer. Ett batteri.",
-    "matrixLead": "27 moduler, fyra cellgruppspotentialer var. Peka, fokusera eller välj valfri potential för att jämföra den med packen.",
+    "matrixTitle": "Varje cellgruppspotential i batteripaketet.",
+    "matrixLead": "27 moduler, fyra cellgruppspotentialer var. Peka på någon av dem för att jämföra den med paketet.",
     "viewVoltage": "Spänning",
     "viewDeviation": "Avvikelse",
     "viewModule": "Modul",
-    "pack": "Pack",
+    "pack": "Paket",
     "clearSelection": "Rensa val",
-    "packMean": "Packmedel",
+    "packMean": "Paketmedel",
     "spread": "Spridning",
     "minMax": "Min / Max",
-    "packTemp": "Packtemp",
+    "packTemp": "Pakettemp",
     "module": "Modul",
     "group": "Grupp",
     "average": "Medel",
@@ -135,28 +145,28 @@
     "temperature": "Temperatur",
     "moduleAverage": "Modulmedel",
     "moduleDelta": "Moduldifferens",
-    "fromPackMean": "från packmedel",
-    "hoverHint": "Peka, fokusera eller välj en potential. På en CMA-bil som stöds är detta realtidsvärden avlästa från BECM; här är de fasta exempelvärden.",
+    "fromPackMean": "från paketmedel",
+    "hoverHint": "Peka på eller fokusera en cellgrupp för att granska den. På en CMA-bil som stöds är detta realtidsvärden från batterimodulen; här är de fasta exempelvärden.",
     "withinLegend": "inom 3 mV",
     "midLegend": "3 till 5 mV",
     "overLegend": "över 5 mV",
-    "voltageLegend": "Absolut cellgruppsspänning. Fyllningen förblir neutral; välj en potential för det exakta värdet.",
+    "voltageLegend": "Absolut cellgruppsspänning. Fyllningsfärgen är enhetlig i den här vyn; välj en cellgrupp för dess exakta värde.",
     "tapModule": "Tryck på en modul för att granska den.",
     "previousModule": "Föregående modul",
     "nextModule": "Nästa modul",
-    "stateOfHealth": "Hälsotillstånd (SoH)",
+    "stateOfHealth": "Hälsotillstånd",
     "source": "Källa",
     "vehicleBms": "Fordonets BMS",
-    "updated": "Uppdaterat",
+    "updated": "Uppdaterad",
     "live": "Realtid",
     "condition": "Skick",
     "conditionGood": "Bra",
     "levelSimple": "Enkel",
     "levelDetailed": "Detaljerad",
     "levelEngineering": "Teknisk",
-    "stateOfCharge": "Laddningsnivå (SoC)",
+    "stateOfCharge": "Laddningsnivå",
     "cellDelta": "Celldifferens",
-    "packVoltage": "Packspänning",
+    "packVoltage": "Paketspänning",
     "usableCapacity": "Användbar kapacitet",
     "controlModule": "Styrenhet",
     "transport": "Transport",
@@ -164,9 +174,9 @@
     "service": "Tjänst",
     "identifiersNote": "Identifierare är representativa för CMA-batteriet. Exakta DID:er finns i styrenhetsreferensen.",
     "matrixViewAria": "Matrisvyläge",
-    "gridAria": "Potentialer per cellgrupp, 27 moduler gånger 4 grupper",
-    "srAtAverage": "vid packens medelvärde",
-    "srOffset": "{mv} millivolt {direction} packens medelvärde",
+    "gridAria": "Cellgruppspotentialer i batteriet, 27 moduler gånger 4 grupper",
+    "srAtAverage": "vid paketets medelvärde",
+    "srOffset": "{mv} millivolt {direction} paketets medelvärde",
     "srAbove": "över",
     "srBelow": "under",
     "srCell": "Modul {module}, grupp {group}, {volts} volt, {relation}",
@@ -183,7 +193,7 @@
     "provBms": "Batterihanteringssystem",
     "provReadVia": "Avläst via",
     "provUdsDoip": "UDS över DoIP",
-    "provSession": "utökad diagnostiksession, läsning via identifierare",
+    "provSession": "utökad diagnostiksession, avläst via identifierare",
     "provDecodedAgainst": "Avkodat mot",
     "provCmaMap": "CMA-batterikarta",
     "provNotScaled": "inte skalat från ett enda fält",
@@ -191,7 +201,7 @@
     "provOnDemand": "Vid behov",
     "provPolled": "avläst medan vyn är öppen",
     "didReference": "Fullständig referens för dataidentifierare i dokumentationen",
-    "pack3dModules": "Pack, 27 moduler",
+    "pack3dModules": "Paket, 27 moduler",
     "pack3dColourMode": "3D-färgläge",
     "pack3dChecking": "Kontrollerar enhet…",
     "pack3dLoading": "Laddar 3D-vy…",
@@ -209,7 +219,7 @@
     "start": "Starta",
     "pause": "Pausa",
     "resume": "Återuppta",
-    "replay": "Spela igen",
+    "replay": "Spela upp igen",
     "vehicle": "Fordon",
     "detecting": "söker",
     "ecus": "Styrenheter",
@@ -221,16 +231,16 @@
     "storedFaults": "lagrade fel",
     "lastObserved": "Senast observerat",
     "snapshotAvailable": "ögonblicksbild finns",
-    "statusStored": "lagrat",
-    "statusHistorical": "historiskt",
+    "statusStored": "lagrade",
+    "statusHistorical": "historiska",
     "statusPending": "väntande",
     "faultLine": "{count, plural, one {# {status} fel} other {# {status} fel}}",
     "vehicleId": "Polestar 2 · CMA",
-    "footerNote": "Simulerad session · fasta exempelvärden, inte en fordonsavläsning",
+    "footerNote": "Simulerad session · fasta exempelvärden, inte en avläsning från ett fordon",
     "startScanAria": "Starta skanning",
     "resumeScanAria": "Återuppta skanning",
     "pauseScanAria": "Pausa skanning",
-    "replayScanAria": "Spela skanning igen",
+    "replayScanAria": "Spela upp skanningen igen",
     "speedAria": "Uppspelningshastighet {n} gånger"
   },
   "telemetry": {
@@ -246,8 +256,8 @@
     "chartAria": "Realtidstelemetri, {sec} sekunders fönster, kanaler: {list}",
     "chartKeyboardHint": "Fokusera och använd piltangenterna för att granska värden längs serien; Escape återupptar.",
     "channelNames": {
-      "pack_v": "Packspänning",
-      "pack_a": "Packström",
+      "pack_v": "Paketspänning",
+      "pack_a": "Paketström",
       "batt_t": "Batteritemperatur",
       "inv_t": "Växelriktartemperatur",
       "motor_nm": "Motormoment",
@@ -256,9 +266,9 @@
   },
   "platforms": {
     "title": "CMA först, med växande DoIP-stöd.",
-    "lead": "Polestar 2 och CMA-Volvorna är de testade plattformarna. SPA-hybrider och nyare SEA- och SPA2-bilar ansluter, men avkodningen bearbetas fortfarande. Plattformskompatibilitet är inte samma sak som verifierat stöd.",
+    "lead": "Polestar 2 och CMA-Volvorna är de testade plattformarna. SPA-hybrider och nyare SEA- och SPA2-bilar ansluter, men openCMA kan ännu inte tolka allt de skickar. Att nå en bil är inte samma sak som att stödja den.",
     "moreLink": "Fullständig kompatibilitet och status",
-    "disclaimer": "Kompatibilitet är inte ett påstående om tillverkarstöd. openCMA är ett oberoende projekt och är inte anslutet till Volvo Cars, Polestar eller Geely.",
+    "disclaimer": "Kompatibilitet är inget påstående om tillverkarstöd. openCMA är ett oberoende projekt och är inte anslutet till Volvo Cars, Polestar eller Geely.",
     "verifiedFunctions": "Verifierade funktioner",
     "currentResearch": "Pågående utredning",
     "labelsHeading": "Vad etiketterna betyder",
@@ -271,21 +281,21 @@
       "supported": "Stöds",
       "partial": "Delvis",
       "testing": "Testas",
-      "wip": "Pågår",
+      "wip": "WIP",
       "research": "Utreds",
       "planned": "Planerat"
     },
     "blurbs": {
       "CMA": "Compact Modular Architecture. Den testade plattformen: Polestar 2 och de mindre eldrivna Volvo-modellerna.",
-      "SPA": "Scalable Product Architecture. Första generationens Recharge-laddhybrider. Plattformen igenkänd; diagnostikkartläggning pågår.",
-      "SEA": "Sustainable Experience Architecture. Nyare elbilar inklusive Zeekr. Plattformskartläggning under verifiering.",
+      "SPA": "Scalable Product Architecture. Första generationens Recharge-laddhybrider. openCMA känner igen plattformen men kartlägger den fortfarande.",
+      "SEA": "Sustainable Experience Architecture. Nyare elbilar, inklusive Zeekr. Plattformskartläggning under verifiering.",
       "SPA2": "Andra generationens SPA. Annan gateway- och säkerhetsmodell. Under utredning."
     },
     "statusNotes": {
       "supported": "Verifierad implementation i drift. Batteri, felkoder, styrenhetsidentifiering och realtidsdata testas regelbundet.",
-      "partial": "Vissa funktioner är implementerade och verifierade; andra täcks ännu inte på detta fordon.",
-      "testing": "Implementation finns men behöver fortfarande valideras mot kända, korrekta referenser.",
-      "wip": "Under aktiv utveckling. Ansluter, men avkodningen är ofullständig och ändras mellan versioner.",
+      "partial": "Vissa funktioner är implementerade och verifierade. Andra täcks ännu inte på detta fordon.",
+      "testing": "Koden finns, men den har ännu inte kontrollerats mot en känd, korrekt referens.",
+      "wip": "Under aktiv utveckling. Den ansluter, men avkodningen är ofullständig och ändras från version till version.",
       "research": "Arkitekturen undersöks. Inte användbar för diagnostik.",
       "planned": "På färdplanen. Ingen implementation ännu."
     },
@@ -294,22 +304,22 @@
       "ecu-discovery": "Upptäckt av styrenheter",
       "dtc-scan": "Felkodsskanning",
       "battery-soh": "Batteriets hälsotillstånd",
-      "cell-potentials": "Potentialer per cellgrupp",
+      "cell-potentials": "Cellgruppspotentialer",
       "live-data": "Realtidsdata",
       "service-routines": "Servicerutiner"
     },
     "capStatus": {
       "supported": "Stöds",
       "partial": "Delvis",
-      "in-progress": "Pågår",
+      "in-progress": "Pågående",
       "not-verified": "Ej verifierad",
       "none": "Ej påbörjad"
     }
   },
   "protocolStack": {
     "title": "Byggd på fordonsstandarder.",
-    "lead": "openCMA talar med fordonets diagnostiknätverk med samma protokoll som ett verkstadsverktyg använder. Det finns inget egenutvecklat moln-API i vägen.",
-    "paragraph": "En session börjar med UDP-upptäckt på port 13400, öppnar en TCP-kanal, aktiverar routning och utbyter sedan UDS-begäranden. Läsningar använder tjänst 0x22 och 0x19; sessioner och rutiner använder 0x10 och 0x31.",
+    "lead": "openCMA kommunicerar med bilens diagnostiknätverk med samma protokoll som ett verkstadsverktyg. Ingenting däremellan är en egenutvecklad molntjänst.",
+    "paragraph": "En session börjar med UDP-upptäckt på port 13400, öppnar en TCP-kanal, aktiverar routning och utbyter sedan UDS-begäranden: läsning via identifierare, läsning av DTC-information, sessionsstyrning och rutinstyrning.",
     "layers": {
       "opencma": "Skrivbordsapplikation, Rust och Tauri",
       "engine": "Sessioner, rutiner, avkodare",
@@ -326,44 +336,36 @@
     "wire": {
       "udp": "Fordonsidentifiering och annonsering",
       "tcp": "Kanal för diagnostikmeddelanden",
-      "routing": "0x0005 före varje UDS-begäran",
+      "routing": "Skickas före varje UDS-begäran",
       "session": "Styrning av diagnostiksession",
       "read": "Läs data via identifierare",
       "dtc": "Läs DTC-information"
     },
     "wireLabels": {
-      "routing": "Routningsaktivering"
+      "routing": "Routningsaktivering",
+      "sessionControl": "Sessionsstyrning",
+      "identifierRead": "Identifierarläsning",
+      "dtcRead": "DTC-läsning"
     }
   },
   "privacy": {
     "title": "Din fordonsdata stannar hos dig.",
-    "lead": "openCMA talar med fordonet och skriver diagnosdata till din disk. Det finns ingen backend som krävs, ingen prenumeration att köpa och ingen fordonstelemetri att tjäna pengar på. VIN maskeras i loggar och exporter där det inte behövs.",
+    "lead": "openCMA kommunicerar med fordonet och skriver diagnosdata till din disk. Det finns ingen backend och ingen prenumeration, och ingenting om din bil laddas upp eller säljs. VIN tas bort från loggar och exporter som inte behöver det.",
     "moreLink": "Så hanterar openCMA data",
-    "directLink": "Direkt länk. Inget annat i vägen.",
+    "directLink": "Direkt länk. Inget annat däremellan.",
     "vehicle": "Fordon",
     "computer": "Dator",
     "absent": {
-      "cloud": "Molntjänst",
+      "cloud": "Molnbackend",
       "account": "Konto",
       "analytics": "Analys",
       "telemetry": "Telemetri",
       "upload": "Datauppladdning"
     }
   },
-  "opensource": {
-    "title": "Granska allt.",
-    "lead": "Varje begäran openCMA skickar till ett fordon finns i källkoden: avkodarna, routningen, säkerhetsspärrarna. Koden går att läsa; openCMA är för privat bruk.",
-    "viewRepo": "Visa repositoriet",
-    "readArch": "Läs om arkitekturen",
-    "statsUnavailable": "Realtidsstatistik för repositoriet är inte tillgänglig just nu.",
-    "openRepo": "Öppna repositoriet",
-    "stackRustDesc": "Diagnostikmotor, DoIP- och UDS-stack, avkodare",
-    "stackTauriDesc": "Nativt skal, ingen medföljande webbläsarmotor",
-    "stackUiDesc": "Gränssnitt, typat mot motorn"
-  },
   "hardware": {
     "title": "Adaptern är bara en kabel.",
-    "lead": "En passiv ENET-kabel kopplar fordonets OBD-II-stift till en RJ45-kontakt. Därifrån är det vanlig Ethernet in i din dator.",
+    "lead": "En passiv ENET-kabel kopplar fordonets OBD-II-stift till en RJ45-kontakt. Därifrån är det vanlig Ethernet till din dator.",
     "connectionGuide": "Anslutningsguide",
     "chain": {
       "obd": "OBD-II-kontakt",
@@ -374,19 +376,19 @@
     },
     "notWanted": {
       "elm": "Ingen ELM327 eller generisk OBD-dongel",
-      "j2534": "Inget J2534-gränssnitt för vanlig DoIP",
+      "j2534": "Inget J2534-genomgångsgränssnitt för vanlig DoIP",
       "bluetooth": "Ingen egenutvecklad Bluetooth-adapter",
       "driver": "Ingen drivrutinsinstallation för en passiv ENET-kabel"
     }
   },
   "download": {
     "title": "Fungerar på macOS, Windows och Linux.",
-    "lead": "En applikation, byggd native för varje plattform. Ingen installerare paketerar en webbläsarmotor. Nedladdningar startar aldrig av sig själva.",
+    "lead": "En applikation, byggd nativt för varje plattform. Ingenting paketerar en webbläsarmotor, och ingen nedladdning startar av sig själv.",
     "heading": "Ladda ner openCMA",
     "latestRelease": "senaste utgåvan på GitHub",
     "releases": "Utgåvor",
     "download": "Ladda ner",
-    "detected": "Upptäckt",
+    "detected": "Identifierad",
     "buildYourself": "Vill du bygga den själv?",
     "buildFromSource": "Bygg från källkod",
     "unavailable": "Utgåvedetaljer kunde inte hämtas från GitHub. Länkarna ovan öppnar utgåvesidan.",
@@ -394,13 +396,13 @@
     "readLicense": "Läs licensvillkoren"
   },
   "safety": {
-    "title": "Skrivskyddad som standard. Skrivning är spärrad.",
-    "lead": "Det mesta openCMA gör är att läsa. Åtgärderna som ändrar fordonet är åtskilda i gränssnittet och nekas som standard tills du aktiverar skrivbehörighet för sessionen.",
-    "readOnly": "Skrivskyddat",
+    "title": "Skrivskyddad som standard. Skrivningar är spärrade.",
+    "lead": "openCMA läser mest. Åtgärderna som ändrar fordonet hålls åtskilda och är avstängda tills du slår på skrivbehörighet för sessionen.",
+    "readOnly": "Skrivskyddad",
     "changesVehicle": "Ändrar fordonet",
     "writeAccess": "Uttrycklig skrivbehörighet krävs",
     "highVoltageTitle": "Högspänning.",
-    "highVoltageBody": "Elbilar har farliga högspänningssystem. Diagnostisk mjukvaruåtkomst gör inte fysiskt HV-arbete säkert, och openCMA ersätter inte tillverkarens serviceprocedurer.",
+    "highVoltageBody": "Elbilar har farliga högspänningssystem. Att läsa data via en kabel gör det inte säkert att arbeta med dem, och openCMA ersätter inte tillverkarens serviceanvisningar.",
     "safetyDocs": "Säkerhetsdokumentation",
     "readOnlyItems": {
       "battery": "Batteridata",
@@ -413,50 +415,50 @@
       "clear": "Radera diagnosinformation",
       "routines": "Servicerutiner",
       "adaptations": "Adaptationer",
-      "udsWrite": "UDS-skrivning per identifierare"
+      "udsWrite": "UDS-skrivning via identifierare"
     }
   },
   "faq": {
-    "title": "Frågor folk faktiskt ställer",
+    "title": "Frågor folk ställer",
     "compatTitle": "Frågor om kompatibilitet",
     "home": [
       {
         "q": "Behöver jag ett särskilt diagnosverktyg eller en dongel?",
-        "a": "Nej. En passiv ENET-kabel (OBD-II till RJ45) och valfritt Ethernet-gränssnitt på datorn räcker för DoIP på fordon som stöds. Det finns ingen ELM327, ingen J2534-box och ingen Bluetooth-adapter i vägen."
+        "a": "Nej. En passiv ENET-kabel (OBD-II till RJ45) och valfritt Ethernet-gränssnitt på datorn räcker för DoIP på fordon som stöds. Ingen av de vanliga OBD-donglarna är inblandad."
       },
       {
         "q": "Skickar openCMA någon data någonstans?",
-        "a": "Nej. Det kommunicerar bara med fordonet och skriver resultat till din disk. Det finns inget konto, ingen backend, ingen analys och ingen telemetri. VIN maskeras i loggar och export där det inte behövs."
+        "a": "Nej. Programmet kommunicerar bara med fordonet och skriver resultat till din disk. Det finns inget konto, ingen backend, ingen analys och ingen telemetri. VIN hålls utanför loggar och exporter om inte något behöver det."
       },
       {
         "q": "Vilka fordon stöds egentligen?",
-        "a": "Polestar 2 och CMA-plattformens Volvo-modeller (XC40/EX40, C40/EC40) är de testade plattformarna. Nyare SEA- och SPA2-bilar ansluter via DoIP, men deras styrenhetskartor och batteriavkodning verifieras fortfarande och är markerade som pågående (WIP) eller under utredning."
+        "a": "Polestar 2 och CMA-plattformens Volvo-modeller (XC40/EX40, C40/EC40) är de testade plattformarna. Nyare SEA- och SPA2-bilar ansluter via DoIP, men deras styrenhetskartor och batteriavkodning verifieras fortfarande och är markerade som experimentella eller under utredning."
       },
       {
         "q": "Kan openCMA skada min bil?",
-        "a": "Normal användning är skrivskyddad. Åtgärder som ändrar fordonet (radering av felkoder, servicerutiner, adaptationer) är åtskilda i gränssnittet och inaktiverade tills du aktiverar skrivbehörighet för sessionen. Högspänningsservice kräver fortfarande tillverkarens rutiner."
+        "a": "Normal användning är skrivskyddad. Åtgärder som ändrar fordonet (radering av felkoder, servicerutiner, adaptationer) är åtskilda i gränssnittet och inaktiverade tills du aktiverar skrivbehörighet för sessionen. Högspänningsservice kräver fortfarande tillverkarens anvisningar."
       },
       {
-        "q": "Är detta ett officiellt Volvo- eller Polestar-verktyg?",
-        "a": "Nej. openCMA är ett oberoende projekt. Det är inte anslutet till, underhållet av eller godkänt av Volvo Cars, Polestar eller Geely. Källkoden går att läsa; den tillhandahålls för personligt, icke-kommersiellt bruk."
+        "q": "Är detta ett officiellt verktyg från Volvo eller Polestar?",
+        "a": "Nej. openCMA är ett oberoende projekt. Det är inte anslutet till, underhållet av eller godkänt av Volvo Cars, Polestar eller Geely. Källkoden går att läsa. Den tillhandahålls för personligt, icke-kommersiellt bruk."
       },
       {
         "q": "Vad kan jag göra med batteridatan?",
-        "a": "Läs hälsotillstånd och laddning, packspänning, potentialer per cellgrupp för alla 108 positioner på CMA, min/max/differens och packtemperatur, och exportera en session för att jämföra före och efter en reparation."
+        "a": "Läs hälsotillstånd och laddning, paketspänning, potentialer per cellgrupp för alla 108 positioner på CMA, min/max/differens och pakettemperatur, och exportera en session för att jämföra före och efter en reparation."
       }
     ],
     "compat": [
       {
         "q": "Fungerar openCMA med vilken Volvo eller Polestar som helst?",
-        "a": "Nej. openCMA är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA-laddhybrider och nyare SEA- och SPA2-bilar ansluter via DoIP, men deras avkodning är fortfarande under arbete och markerad som pågående (WIP) eller under utredning."
+        "a": "Nej. openCMA är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA-laddhybrider och nyare SEA- och SPA2-bilar ansluter via DoIP, men deras avkodning är fortfarande under arbete och markerad som WIP eller under utredning."
       },
       {
         "q": "Vad är skillnaden mellan plattformskompatibilitet och stöd?",
-        "a": "Plattformskompatibilitet betyder att openCMA kan nå fordonet via DoIP. Stöd betyder att diagnostikfunktionerna är implementerade och verifierade mot kända, korrekta referenser. En bil kan vara nåbar och ändå visa nästan inget användbart, vilket är varför WIP- och utredningsplattformar märks separat."
+        "a": "Plattformskompatibilitet betyder att openCMA kan nå fordonet via DoIP. Stöd betyder att diagnostikfunktionerna är implementerade och verifierade mot kända, korrekta referenser. Att vara nåbar gör inte datan tillförlitlig, och därför märks WIP- och utredningsplattformar separat."
       },
       {
-        "q": "Min bil står som WIP eller under utredning. Kan jag använda den?",
-        "a": "Du kan ansluta och, på vissa, läsa identifieringsdata. Lita inte på batterivärden eller feltolkning, och kör inga servicerutiner. Pågående (WIP) och utredning betyder att avkodningen inte är verifierad."
+        "q": "Min bil är märkt WIP eller Utreds. Kan jag använda den?",
+        "a": "Du kan ansluta och, på vissa, läsa identifieringsdata. Lita inte på batterivärden eller feltolkning, och kör inga servicerutiner. Etiketterna WIP och Utreds betyder att avkodningen inte är verifierad."
       },
       {
         "q": "Är detta godkänt av Volvo eller Polestar?",
@@ -465,17 +467,17 @@
     ]
   },
   "cta": {
-    "title": "Ladda ner openCMA och se vad din bil vet.",
-    "body": "Källkodstillgänglig, för privat bruk. Körs på din dator. Läser fordonet direkt."
+    "title": "Ladda ner openCMA och se vad ditt fordon har registrerat.",
+    "body": "Källkodstillgänglig och för privat bruk. Den körs på din dator och läser fordonet direkt."
   },
   "footer": {
-    "blurb": "Verkstadsklassad diagnostik för Volvo och Polestar, som körs på din egen dator.",
+    "blurb": "Fullständig diagnostik för Volvo och Polestar, som körs på din egen dator.",
     "navLabel": "Sidfot",
     "diagnostics": "Diagnostik",
     "developers": "Utvecklare",
     "project": "Projekt",
-    "disclaimer": "openCMA är ett oberoende projekt, inte anslutet till, underhållet av, sponsrat av eller auktoriserat av Volvo Cars, Polestar eller Geely. Tillverkarnamn används endast för att beskriva kompatibilitet. Källkodstillgänglig; endast privat bruk.",
-    "tagline": "Byggd för dem som vill förstå sina fordon.",
+    "disclaimer": "openCMA är ett oberoende projekt, inte anslutet till, underhållet av, sponsrat av eller auktoriserat av Volvo Cars, Polestar eller Geely. Tillverkarnamn används endast för att beskriva kompatibilitet. Källkodstillgänglig, endast privat bruk.",
+    "tagline": "För bilägare och fristående verkstäder.",
     "links": {
       "batteryHealth": "Batterihälsa",
       "vehicleDiagnostics": "Fordonsdiagnostik",
@@ -497,7 +499,7 @@
     "title": "Hur openCMA fungerar, i detalj.",
     "lead": "Från att koppla in en kabel till att avkoda ett batteriblock. Skrivet för ägare som vill ha detaljerna och ingenjörer som vill ha protokollet.",
     "search": "Sök i dokumentationen",
-    "searchPlaceholder": "Sök dokument, protokoll, identifierare…",
+    "searchPlaceholder": "Sök i dokument, protokoll, identifierare…",
     "searchHint": "för att söka",
     "noResults": "Inga träffar.",
     "onThisPage": "På den här sidan",
@@ -518,15 +520,15 @@
     "vehicle": "Fordon",
     "batteryHealth": "Batterihälsa",
     "cellDelta": "Celldifferens",
-    "packVoltage": "Packspänning",
-    "stateOfCharge": "Laddningsnivå (SoC)",
-    "stateOfHealth": "Hälsotillstånd (SoH)",
-    "packCurrent": "Packström",
-    "avgCellGroup": "Medel cellgrupp",
+    "packVoltage": "Paketspänning",
+    "stateOfCharge": "Laddningsnivå",
+    "stateOfHealth": "Hälsotillstånd",
+    "packCurrent": "Paketström",
+    "avgCellGroup": "Cellgruppsmedel",
     "minMax": "Min / Max",
-    "packTemp": "Packtemp",
-    "packVoltage60s": "Packspänning, 60 s",
-    "potentialsCaption": "108 potentialer per cellgrupp, avvikelse från medel",
+    "packTemp": "Pakettemp",
+    "packVoltage60s": "Paketspänning, 60 s",
+    "potentialsCaption": "108 cellgruppspotentialer, avvikelse från medel",
     "moduleGroupTitle": "Modul {module}, grupp {group}: {value} mV",
     "discovered": "upptäckta",
     "diagnosticCapable": "diagnostikkapabla",
@@ -543,8 +545,8 @@
     "panelLogs": "Loggar"
   },
   "ecuTopology": {
-    "title": "Ett fordonsnätverk, kartlagt.",
-    "lead": "En förenklad vy av den elektriska CMA-plattformen kring dess gateway. Välj en styrenhet för dess detaljer.",
+    "title": "Fordonsnätverket kring dess gateway.",
+    "lead": "En förenklad vy av den elektriska CMA-plattformen. Välj en styrenhet för att se dess detaljer.",
     "noUds": "ingen uds",
     "domain": "Domän",
     "partNumber": "Artikelnummer",
@@ -562,18 +564,46 @@
     "domainBlurbs": {
       "gateway": "Routning och central styrning",
       "energy": "Högspänningsbatteri, laddning och drivlina",
-      "chassis": "Styrning, bromsning och rörelseavkänning",
+      "chassis": "Styrning, bromsar och rörelseavkänning",
       "cabin": "Skärmar, komfort, telematik och krockskydd"
     }
   },
   "session": {
     "eyebrow": "Interaktivt",
     "title": "Klicka dig igenom en representativ session",
-    "lead": "Fasta exempelvärden, valda för webbplatsen. Varje panel här speglar en verklig openCMA-vy; ingenting ansluter till ett fordon.",
+    "lead": "Värdena här är fasta exempel. Varje panel speglar en verklig openCMA-vy, men ingenting är anslutet till en bil.",
     "label": "Representativ session, simulerat fordon",
     "previous": "Föregående",
     "next": "Nästa",
-    "replay": "Spela igen",
+    "replay": "Spela upp igen",
+    "stagesAria": "Sessionssteg",
+    "walkthroughAria": "Sessionsgenomgång",
+    "connectLink": "Ethernet-länk",
+    "connectGateway": "DoIP-gateway",
+    "connectRouting": "Routningsaktivering",
+    "connectStateLinked": "Ansluten",
+    "connectStateDetected": "Hittad",
+    "connectStateAccepted": "Accepterad",
+    "connectNote": "openCMA nådde fordonet via den lokala Ethernet-länken och öppnade en diagnostikkanal.",
+    "idVehicle": "Fordon",
+    "idPlatform": "Plattform",
+    "idPowertrain": "Drivlina",
+    "idModelYear": "Modellår",
+    "idVin": "VIN",
+    "vinNote": "VIN döljs här och i exporter om inte en åtgärd behöver det.",
+    "scanEcus": "Styrenheter",
+    "scanWithFaults": "med fel",
+    "scanFault": "{n, plural, one {# fel} other {# fel}}",
+    "scanReady": "KLAR",
+    "scanShortened": "Förkortad skanning för den här genomgången.",
+    "inspectStatus": "Status",
+    "inspectControlModule": "Styrenhet",
+    "inspectSnapshot": "Ögonblicksbild",
+    "inspectTimestamp": "Tidsstämpel",
+    "liveVoltage": "Paketspänning",
+    "liveCurrent": "Paketström",
+    "liveBatteryTemp": "Batteritemp",
+    "liveLvSystem": "12 V-system",
     "stages": {
       "connect": "Anslut",
       "identify": "Identifiera",
@@ -594,34 +624,66 @@
       "cellDelta": "Celldifferens"
     }
   },
+  "demo": {
+    "vehicleVariant": "Long range, dual motor",
+    "powertrain": "Dubbelmotor",
+    "snapshotAvailable": "Finns",
+    "lastSeen12Min": "för 12 minuter sedan",
+    "lastSeen3Cycles": "för 3 körcykler sedan",
+    "lastSeenThisCycle": "denna körcykel",
+    "faultTitles": {
+      "P0A80-00": "Byt hybrid-/elbilsbatteripaket",
+      "P1AF0-71": "Batteriets cellbalanseringsprestanda",
+      "B1B25-13": "Förångartemperaturgivare, avbrott i krets",
+      "U3003-16": "Batterispänning under tröskelvärde under telematiksession",
+      "P1A2E-71": "Högspänningsbatteri, intern kommunikation",
+      "U110B-87": "Förlorad kommunikation med telematikmodul",
+      "B1C15-13": "Kupétemperaturgivare, avbrott i krets"
+    },
+    "faultDetails": {
+      "P0A80-00": "Tröskelvärde för kapacitetsgenomströmning uppnått på modulsträng 3. Registrerat en gång, inte aktivt just nu.",
+      "P1AF0-71": "Rensat efter en balanseringssession. Sparat i den historiska loggen.",
+      "B1B25-13": "Fanns vid skanningstillfället. Bekräftat under två på varandra följande körcykler.",
+      "U3003-16": "Sedd en gång. Ännu inte mognat till ett bekräftat fel.",
+      "P1A2E-71": "Registrerat en gång på modulsträng 3, inte aktivt just nu. En ögonblicksbild av paketspänning, ström och temperatur togs när det uppstod."
+    },
+    "stateActive": "Aktiv",
+    "stateActiveNote": "Fanns vid skanning",
+    "statePending": "Väntande",
+    "statePendingNote": "Sedd en gång, inte bekräftad",
+    "stateStored": "Lagrad",
+    "stateStoredNote": "Bekräftad och registrerad",
+    "stateHistorical": "Historisk",
+    "stateHistoricalNote": "Raderad, bevarad"
+  },
   "pages": {
     "featuresEyebrow": "Funktioner",
-    "featuresTitle": "Allt fordonet exponerar. På ett ställe.",
+    "featuresTitle": "Vad openCMA täcker.",
     "featuresLead": "Fyra täckningsområden, avlästa via samma anslutning. Vanlig diagnostik förblir skrivskyddad; skrivbara funktioner är åtskilda och spärrade.",
     "batteryHealthEyebrow": "Funktioner / Batterihälsa",
     "batteryHealthTitle": "Procentsatsen, och siffrorna bakom den.",
-    "batteryHealthLead": "openCMA läser högspänningsbatteridata som fordonet rapporterar: hälsotillstånd och laddning, packspänning, fördelning mellan cellgrupper, obalans och temperatur.",
+    "batteryHealthLead": "openCMA läser högspänningsbatteridata som fordonet rapporterar: hälsotillstånd och laddning, paketspänning, fördelning mellan cellgrupper, obalans och temperatur.",
     "vehicleDiagnosticsEyebrow": "Funktioner / Fordonsdiagnostik",
     "vehicleDiagnosticsTitle": "Varje styrenhet i nätverket, inte bara den med lampan tänd.",
     "vehicleDiagnosticsLead": "openCMA upptäcker fordonets styrenheter via DoIP, identifierar vilka som talar UDS och läser fel- och identifieringsdata från var och en.",
     "liveDataEyebrow": "Funktioner / Realtidsdata",
-    "liveDataTitle": "Ingenjörstelemetri, samplat och ritat.",
+    "liveDataTitle": "Ingenjörstelemetri i en pollningsslinga.",
     "liveDataLead": "openCMA pollar dataidentifierare i en slinga och ritar dem som instrumentprogramvara: fasta axlar, tunna linjer, ingen dekoration.",
     "serviceFunctionsEyebrow": "Funktioner / Servicefunktioner",
-    "serviceFunctionsTitle": "Åtgärderna som ändrar fordonet, hållna åtskilda.",
+    "serviceFunctionsTitle": "Åtgärderna som ändrar fordonet hålls åtskilda.",
     "serviceFunctionsLead": "Där plattformen stöder dem kan openCMA köra servicerutiner och adaptationer. Dessa ingår inte i vanlig diagnostik och är avstängda tills du aktiverar skrivbehörighet.",
     "vehiclesEyebrow": "Fordon",
     "vehiclesTitle": "CMA först, med växande DoIP-plattformsstöd.",
-    "vehiclesLead": "Välj en plattform och ett fordon för att se exakt vilka funktioner som är verifierade. Statusetiketter speglar alltid verifierat stöd, aldrig plattformstillhörighet.",
+    "vehiclesLead": "Välj en plattform och ett fordon för att se exakt vilka funktioner som är verifierade. Varje statusetikett speglar vad som har kontrollerats på just den bilen, inte bara plattformen den bygger på.",
     "downloadEyebrow": "Ladda ner",
     "downloadTitle": "Skaffa openCMA.",
-    "downloadLead": "Native-byggen för varje skrivbordsplattform. Ingenting installeras automatiskt och ingenting ringer hem.",
+    "downloadLead": "Nativa byggen för varje skrivbordsplattform. Ingenting installeras automatiskt och ingenting ringer hem.",
     "safetyEyebrow": "Säkerhet",
     "safetyTitle": "Vad som är säkert, och vad som inte är det.",
-    "safetyLead": "Diagnostisk fordonsmjukvara kan läsa mycket och ändra vissa saker. openCMA är byggd så att skillnaden är tydlig.",
+    "safetyLead": "Diagnostikmjukvara kan läsa väldigt mycket och ändra några saker. openCMA är byggd så att du alltid vet vilket som är vilket.",
     "privacyEyebrow": "Integritet",
-    "privacyTitle": "100 % lokalt.",
-    "privacyLead": "openCMA har ingen backend och inget kontosystem. Den talar med fordonet och skriver till din disk. Det är hela dataflödet.",
+    "privacyTitle": "Helt lokalt.",
+    "privacyLead": "openCMA har ingen backend och inget kontosystem. Programmet kommunicerar med fordonet och skriver till din disk. Det är hela dataflödet.",
     "aboutEyebrow": "Om",
     "aboutTitle": "Ett projekt för dem som vill förstå sina fordon.",
     "aboutLead": "openCMA började som ett sätt att läsa CMA-batteridata utan en verkstadsprenumeration. Det växte till ett allmänt DoIP- och UDS-diagnosverktyg."

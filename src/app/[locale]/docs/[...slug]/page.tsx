@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!doc) return {};
   const t = await getTranslations({ locale, namespace: "docs" });
   return {
-    title: `${doc.title} · ${t("eyebrow")}`,
+    title: `${doc.title} - ${t("eyebrow")}`,
     description: doc.summary,
     alternates: { canonical: `/${locale}/docs/${doc.slug}` },
   };
@@ -48,7 +48,7 @@ export default async function DocPage({ params }: Params) {
   return (
     <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_180px] xl:gap-10">
       <article>
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-text-muted">{t(`groups.${doc.group}`)}</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">{t(`groups.${doc.group}`)}</p>
         <h1 className="mt-3 text-3xl font-medium tracking-tight sm:text-4xl">{doc.title}</h1>
         <p className="mt-3 text-lg text-text-secondary">{doc.summary}</p>
 

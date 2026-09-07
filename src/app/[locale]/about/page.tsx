@@ -19,7 +19,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     <>
       <LocalizedPageHeader id="about" />
 
-      <Container className="py-14 sm:py-20">
+      <Container className="py-xl lg:py-2xl">
         <Prose>
           <h2>Independence</h2>
           <p>
@@ -53,8 +53,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
           <h2>Contributing</h2>
           <p>
-            Protocol traces, ECU maps and decoder corrections for supported and provisional platforms
-            are the most useful contributions. The repository has the details.
+            The most useful contributions are protocol traces, ECU maps and decoder corrections. The
+            repository has the details.
           </p>
         </Prose>
 

@@ -10,10 +10,10 @@ export function DocsSidebar() {
   const t = useTranslations("docs");
 
   return (
-    <nav aria-label="Documentation" className="text-[13px]">
+    <nav aria-label={t("eyebrow")} className="text-[13px]">
       {docGroups.map((group) => (
         <div key={group} className="mb-6">
-          <h2 className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-text-muted">
+          <h2 className="mb-2 font-mono text-[11px] text-text-muted">
             {t(`groups.${group}`)}
           </h2>
           <ul className="border-l border-line">

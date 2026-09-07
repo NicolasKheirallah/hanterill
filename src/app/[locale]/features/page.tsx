@@ -40,8 +40,8 @@ export default async function FeaturesIndex({ params }: { params: Promise<{ loca
   return (
     <>
       <LocalizedPageHeader id="features" />
-      <Container className="py-14 sm:py-20">
-        <ul className="grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+      <Container className="py-xl lg:py-2xl">
+        <ul className="grid gap-px overflow-hidden rounded-sm border border-line bg-line sm:grid-cols-2">
           {features.map((f) => (
             <li key={f.href} className="bg-surface">
               <Link href={f.href} className="group flex h-full flex-col p-6 transition-colors hover:bg-bg-secondary">

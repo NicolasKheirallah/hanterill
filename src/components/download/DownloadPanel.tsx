@@ -15,7 +15,7 @@ export function DownloadPanel({ release }: { release: Release | null }) {
   const t = useTranslations("download");
 
   return (
-    <div className="rounded-lg border border-line bg-surface">
+    <div className="rounded-sm border border-line bg-surface">
       <div className="flex flex-col gap-1 border-b border-line px-5 py-4 sm:flex-row sm:items-baseline sm:justify-between">
         <span className="text-[15px] font-medium text-text-primary">{t("heading")}</span>
         <span className="font-mono text-[12px] text-text-muted">

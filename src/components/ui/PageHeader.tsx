@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
-import { Container } from "./layout";
+import { Container, Eyebrow } from "./layout";
 
 /**
  * Translated page header. `id` selects `pages.{id}Title/Lead` from the message
@@ -33,16 +33,14 @@ export function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <header className="border-b border-line">
-      <Container className="py-14 sm:py-20">
-        {eyebrow ? (
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-text-muted">{eyebrow}</p>
-        ) : null}
-        <h1 className="mt-4 max-w-3xl text-balance text-4xl font-medium tracking-tight sm:text-5xl">
+    <header className="border-b border-line-strong">
+      <Container className="py-xl lg:py-2xl">
+        {eyebrow ? <Eyebrow className="mb-3">{eyebrow}</Eyebrow> : null}
+        <h1 className="max-w-[20ch] text-[2.5rem] leading-[1.04] tracking-[-0.024em] sm:text-[3.25rem] lg:text-[3.75rem]">
           {title}
         </h1>
         {lead ? (
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-text-secondary">{lead}</p>
+          <p className="mt-5 max-w-[58ch] text-[1.125rem] leading-relaxed text-text-secondary">{lead}</p>
         ) : null}
         {children ? <div className="mt-7">{children}</div> : null}
       </Container>

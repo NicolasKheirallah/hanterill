@@ -23,7 +23,7 @@ export function Wip({
   }
   return (
     <div className="my-5 rounded-md border border-status-info/40 bg-status-info/8 px-4 py-3">
-      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-status-info">Work in progress</p>
+      <p className="font-mono text-[11px] text-status-info">Work in progress</p>
       <div className="mt-1 text-[14px] leading-relaxed text-text-primary [&_a]:underline [&_p]:my-1.5 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0">
         {children ?? <p>{note ?? "This area is being built and verified. Details may still change."}</p>}
       </div>

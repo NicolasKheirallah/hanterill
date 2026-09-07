@@ -35,7 +35,7 @@ export function TableOfContents({ headings }: { headings: DocHeading[] }) {
 
   return (
     <nav aria-label={t("onThisPage")} className="text-[12px]">
-      <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-text-muted">
+      <p className="mb-2 font-mono text-[11px] text-text-muted">
         {t("onThisPage")}
       </p>
       <ul className="border-l border-line">

@@ -88,7 +88,7 @@ export function DocsSearch({ index }: { index: DocIndexEntry[] }) {
             onKeyDown={(e) => {
               if (e.key === "Escape") setOpen(false);
             }}
-            className="w-full max-w-lg overflow-hidden rounded-lg border border-line-strong bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.24)]"
+            className="w-full max-w-[32rem] overflow-hidden rounded-lg border border-line-strong bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.24)]"
           >
             <div className="flex items-center gap-2 border-b border-line px-3">
               <Search className="h-4 w-4 shrink-0 text-text-muted" strokeWidth={1.75} />
@@ -137,3 +137,4 @@ export function DocsSearch({ index }: { index: DocIndexEntry[] }) {
     </>
   );
 }
+

@@ -18,20 +18,22 @@ export type SessionStageId = (typeof sessionStages)[number]["id"];
 export const identify = {
   model: demoVehicle.model,
   platform: "CMA",
-  powertrain: "Dual motor",
+  /** Display text from the `demo.powertrain` message key. */
+  powertrainKey: "powertrain",
   modelYear: demoVehicle.modelYear,
   vin: "••••••••••••1234",
 };
 
+/**
+ * The inspected fault. Title and detail come from `demo.faultTitles` /
+ * `demo.faultDetails` by `code`; the rest from the named `demo` keys.
+ */
 export const inspectFault = {
   code: "P1A2E-71",
   ecu: "BECM",
-  title: "High-voltage battery, internal communication",
-  status: "Stored" as const,
-  snapshot: "Available",
-  timestamp: "12 minutes ago",
-  detail:
-    "Recorded once on module string 3, not currently active. A snapshot of pack voltage, current and temperature was captured when it set.",
+  stateKey: "stateStored",
+  snapshotKey: "snapshotAvailable",
+  timestampKey: "lastSeen12Min",
 };
 
 export const report = {

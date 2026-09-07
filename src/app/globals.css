@@ -1,35 +1,62 @@
+/* genre: dark-tech instrument panel · macrostructure: Workbench (marketing) + Long Document (content)
+ * theme: openCMA - deep ink · bronze instrument backlight · Geist / Inter / IBM Plex Mono
+ * design-system: design.md · nav: N9 edge rail · footer: statement · enrichment: none
+ *
+ * Not an official design system. A web treatment inspired by oscilloscope /
+ * ECU-tool chrome: hairline rules, tick marks, mono channel legends, bezel
+ * frames around live instruments. No glow, no gradient, no SaaS gloss.
+ */
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ *
- * Design tokens. Light is the base; dark is a deliberate re-map,
- * not an inversion. The toggle stamps data-theme on <html>; with no
- * stamp the page follows prefers-color-scheme.
+ * Design tokens. Dark is the base - a deep ink panel, never pure
+ * black. Light is a deliberate re-map, not an inversion. The toggle
+ * stamps data-theme on <html>; with no stamp the page follows
+ * prefers-color-scheme. Values are OKLCH so lightness moves are
+ * perceptually even across the re-map. Every text/surface pair was
+ * verified at >= 4.5:1 (3:1 for UI) against the lightest surface it
+ * sits on, in both themes. See design.md.
  * ------------------------------------------------------------------ */
 
 :root {
-  --bg-primary: #f5f5f3;
-  --bg-secondary: #ececea;
-  --surface: #fbfbf9;
-  --surface-raised: #ffffff;
+  --bg-primary: oklch(19.5% 0.012 265);
+  --bg-secondary: oklch(23% 0.012 265);
+  --surface: oklch(25.5% 0.011 265);
+  --surface-raised: oklch(28.5% 0.011 265);
 
-  --text-primary: #111111;
-  --text-secondary: #686866;
-  --text-muted: #65655f;
+  --text-primary: oklch(94% 0.006 85);
+  --text-secondary: oklch(78% 0.007 85);
+  --text-muted: oklch(66.5% 0.008 85);
 
-  --line: #d8d8d4;
-  --line-strong: #babab5;
+  --line: oklch(31% 0.011 265);
+  --line-strong: oklch(41% 0.013 265);
 
-  --accent: #3557e0;
-  --accent-hover: #2a48c8;
-  --accent-fg: #ffffff;
-  --accent-tint: #edf0fd;
+  --accent: oklch(70% 0.085 45);
+  --accent-hover: oklch(76% 0.08 45);
+  --accent-fg: oklch(16% 0.02 45);
+  --accent-tint: oklch(29% 0.035 45);
 
-  --status-ok: #2f7d4f;
-  --status-warning: #855a1b;
-  --status-error: #b64a45;
-  --status-info: #4e72a2;
+  --status-ok: oklch(74% 0.13 150);
+  --status-warning: oklch(78% 0.13 80);
+  --status-error: oklch(70% 0.14 25);
+  --status-info: oklch(72% 0.09 250);
 
-  --grid-line: rgba(17, 17, 17, 0.05);
+  --grid-line: oklch(93% 0.008 85 / 0.045);
+
+  /* 4-point named spacing scale (mirrored to Tailwind --spacing-* below) */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4.5rem;
+  --space-3xl: 7rem;
+  --space-4xl: 10rem;
+
+  --measure: 68ch;
+  --text-display: clamp(2.5rem, 4.5vw + 1rem, 4.25rem);
 
   --motion-instant: 100ms;
   --motion-fast: 160ms;
@@ -39,64 +66,76 @@
   --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
+/* Explicit dark choice - same values as the base, declared so the intent
+ * survives an OS-level light preference. */
 :root[data-theme="dark"] {
-  --bg-primary: #111211;
-  --bg-secondary: #171817;
-  --surface: #1c1d1c;
-  --surface-raised: #222322;
-
-  --text-primary: #f4f4f1;
-  --text-secondary: #a6a6a0;
-  --text-muted: #8a8a83;
-
-  --line: #30312f;
-  --line-strong: #454642;
-
-  --accent: #5a7bff;
-  --accent-hover: #7089ff;
-  --accent-fg: #0c0d0c;
-  --accent-tint: #1a1f33;
-
-  --status-ok: #4f9d70;
-  --status-warning: #c8944a;
-  --status-error: #cf6560;
-  --status-info: #6f97c9;
-
-  --grid-line: rgba(255, 255, 255, 0.045);
-
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg-primary: oklch(96.2% 0.006 80);
+  --bg-secondary: oklch(93.5% 0.007 80);
+  --surface: oklch(98% 0.004 80);
+  --surface-raised: oklch(99.2% 0.002 80);
+
+  --text-primary: oklch(23% 0.012 265);
+  --text-secondary: oklch(42% 0.011 265);
+  --text-muted: oklch(50% 0.011 265);
+
+  --line: oklch(87.5% 0.008 80);
+  --line-strong: oklch(79% 0.01 80);
+
+  --accent: oklch(50% 0.1 45);
+  --accent-hover: oklch(43% 0.095 45);
+  --accent-fg: oklch(98.5% 0.008 80);
+  --accent-tint: oklch(94% 0.03 45);
+
+  --status-ok: oklch(50% 0.12 150);
+  --status-warning: oklch(55% 0.12 75);
+  --status-error: oklch(52% 0.16 25);
+  --status-info: oklch(50% 0.09 250);
+
+  --grid-line: oklch(24% 0.012 265 / 0.05);
+
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-primary: #111211;
-    --bg-secondary: #171817;
-    --surface: #1c1d1c;
-    --surface-raised: #222322;
-
-    --text-primary: #f4f4f1;
-    --text-secondary: #a6a6a0;
-    --text-muted: #8a8a83;
-
-    --line: #30312f;
-    --line-strong: #454642;
-
-    --accent: #5a7bff;
-    --accent-hover: #7089ff;
-    --accent-fg: #0c0d0c;
-    --accent-tint: #1a1f33;
-
-    --status-ok: #4f9d70;
-    --status-warning: #c8944a;
-    --status-error: #cf6560;
-    --status-info: #6f97c9;
-
-    --grid-line: rgba(255, 255, 255, 0.045);
-
     color-scheme: dark;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg-primary: oklch(96.2% 0.006 80);
+    --bg-secondary: oklch(93.5% 0.007 80);
+    --surface: oklch(98% 0.004 80);
+    --surface-raised: oklch(99.2% 0.002 80);
+
+    --text-primary: oklch(23% 0.012 265);
+    --text-secondary: oklch(42% 0.011 265);
+    --text-muted: oklch(50% 0.011 265);
+
+    --line: oklch(87.5% 0.008 80);
+    --line-strong: oklch(79% 0.01 80);
+
+    --accent: oklch(52% 0.115 55);
+    --accent-hover: oklch(45% 0.11 55);
+    --accent-fg: oklch(98.5% 0.008 80);
+    --accent-tint: oklch(94% 0.035 60);
+
+    --status-ok: oklch(50% 0.12 150);
+    --status-warning: oklch(55% 0.12 75);
+    --status-error: oklch(52% 0.16 25);
+    --status-info: oklch(50% 0.09 250);
+
+    --grid-line: oklch(24% 0.012 265 / 0.05);
+
+    color-scheme: light;
   }
 }
 
@@ -119,15 +158,31 @@
   --color-status-error: var(--status-error);
   --color-status-info: var(--status-info);
 
+  /* Geist carries the display voice - a precision grotesk, the instrument-
+   * panel register; no serif anywhere. Inter is the body. IBM Plex Mono is
+   * every number, protocol identifier (DoIP, UDS, ISO 13400/14229, DIDs, DTC
+   * codes), the nav link row, instrument channel legends and the footer meta
+   * row - the identifier face, IBM drafting heritage. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", "JetBrains Mono", "Menlo", monospace;
 
-  --radius-xs: 2px;
-  --radius-sm: 3px;
-  --radius: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
+  --spacing-3xs: var(--space-3xs);
+  --spacing-2xs: var(--space-2xs);
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+  --spacing-2xl: var(--space-2xl);
+  --spacing-3xl: var(--space-3xl);
+  --spacing-4xl: var(--space-4xl);
+
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
 
   --default-transition-timing-function: var(--ease-out);
 }
@@ -146,15 +201,37 @@
     color: var(--text-primary);
     font-family: var(--font-sans);
     font-feature-settings: "cv05", "ss01";
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
-  /* Space Grotesk carries the display voice; body and mono captions stay
-   * Inter / IBM Plex Mono. Per-component `tracking-*` utilities still win. */
+  /* Light text spreads on dark surfaces: a hair of tracking and a taller
+   * measure of air keeps body copy legible on the ink paper. Display type
+   * sets its own tracking below. */
+  :root[data-theme="dark"] body {
+    letter-spacing: 0.011em;
+    line-height: 1.65;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) body {
+      letter-spacing: 0.011em;
+      line-height: 1.65;
+    }
+  }
+
+  /* Geist on every heading; emphasis is weight or accent. Grotesk display
+   * tightens harder than a serif would. Per-component tracking utilities
+   * still win. */
   h1, h2, h3, h4 {
     font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.017em;
   }
+
+  h1 { letter-spacing: -0.022em; text-wrap: balance; }
+  h2 { letter-spacing: -0.019em; }
 
   a {
     color: inherit;
@@ -179,13 +256,17 @@
   font-feature-settings: "tnum";
 }
 
+/* The nav band gains a wash + hairline once the page has scrolled. */
 :root[data-scrolled] [data-site-header],
 [data-site-header][data-menu-open] {
-  border-bottom-color: var(--line);
-  background: color-mix(in srgb, var(--bg-primary) 85%, transparent);
-  backdrop-filter: blur(10px);
+  border-bottom-color: var(--line-strong);
+  background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
+  backdrop-filter: blur(8px);
 }
 
+/* The measurement plane. Ink-on-ink drafting grid, only ever placed behind a
+ * live instrument figure to frame it as a readout - never as a page-wide
+ * "feel technical" texture. Callers mask it. */
 .hairline-grid {
   background-image:
     linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
@@ -193,17 +274,72 @@
   background-size: 64px 64px;
 }
 
+/* Instrument bezel. A 1px hairline frame with the top-left and bottom-right
+ * corners notched, the way a screwed-down panel meets its housing. One
+ * treatment, applied only to instrument figures and interactive panels. */
+.bezel {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  clip-path: polygon(
+    10px 0, 100% 0, 100% calc(100% - 10px),
+    calc(100% - 10px) 100%, 0 100%, 0 10px
+  );
+}
+
+/* Ruler-edge divider. A hairline carrying minor tick marks at a fixed pitch -
+ * replaces a plain <hr> between instrument-panel sections. */
+.rule-ticks {
+  height: 1px;
+  border: 0;
+  background: var(--line);
+  position: relative;
+}
+.rule-ticks::before {
+  content: "";
+  position: absolute;
+  inset: -3px 0 auto 0;
+  height: 4px;
+  background-image: linear-gradient(to right, var(--line-strong) 1px, transparent 1px);
+  background-size: 48px 4px;
+  background-repeat: repeat-x;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+/* A drawn 1px underline for the C3 typographic-link CTA voice. Visible at
+ * rest by default; `rule-link-off` hides it until hover (higher specificity
+ * than the base class - plain utilities cannot override this unlayered rule). */
+.rule-link {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  transition: background-size var(--motion-fast) var(--ease-out);
+}
+.rule-link:hover {
+  background-size: 100% 2px;
+}
+.rule-link.rule-link-off {
+  background-size: 0% 1px;
+}
+.rule-link.rule-link-off:hover {
+  background-size: 100% 2px;
+}
+
 .shiki {
   background: transparent !important;
 }
-:root[data-theme="dark"] .shiki,
-:root[data-theme="dark"] .shiki span {
+/* Dark ink is the base: code defaults to the dark token set and swaps to
+ * the light set only under the gallery-daylight re-map. */
+.shiki span {
   color: var(--shiki-dark) !important;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .shiki,
-  :root:not([data-theme="light"]) .shiki span {
-    color: var(--shiki-dark) !important;
+:root[data-theme="light"] .shiki span {
+  color: var(--shiki-light) !important;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .shiki span {
+    color: var(--shiki-light) !important;
   }
 }
 
@@ -277,6 +413,27 @@
   }
   .press:active {
     transform: translateY(1px) scale(0.985);
+  }
+}
+
+/* Battery matrix: the 108 cells sweep in on a short diagonal stagger the first
+ * time the grid is seen - a "reading the pack" moment. Only opacity and
+ * clip-path animate, so the pointer scale on a hovered cell is never fought
+ * over. Armed by data-mx-reveal; skipped under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-mx-reveal] .mx-cell {
+    animation: mx-cell-in var(--motion-slow) var(--ease-out) both;
+    animation-delay: var(--mx-d, 0ms);
+  }
+}
+@keyframes mx-cell-in {
+  from {
+    opacity: 0;
+    clip-path: inset(55% 0 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
   }
 }
 

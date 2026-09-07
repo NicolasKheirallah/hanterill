@@ -26,9 +26,9 @@ export default async function DownloadPage({ params }: { params: Promise<{ local
     <>
       <LocalizedPageHeader id="download" />
 
-      <Container className="py-14 sm:py-20">
+      <Container className="py-xl lg:py-2xl">
         <div className="grid items-start gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-          <Suspense fallback={<div className="h-72 rounded-lg border border-line bg-surface" aria-hidden />}>
+          <Suspense fallback={<div className="h-72 rounded-sm border border-line bg-surface" aria-hidden />}>
             <Panel />
           </Suspense>
 
@@ -59,11 +59,11 @@ export default async function DownloadPage({ params }: { params: Promise<{ local
           </MoreLink>
         </div>
 
-        <div className="mt-12 max-w-xl rounded-lg border border-line bg-surface p-6">
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.16em] text-text-muted">
+        <div className="mt-2xl max-w-[36rem] border-t border-line-strong pt-6">
+          <h2 className="font-[family-name:var(--font-display)] text-[1.375rem] text-text-primary">
             License
           </h2>
-          <p className="mt-3 text-[15px] font-medium text-text-primary">{site.license.short}</p>
+          <p className="mt-2 text-[15px] font-medium text-text-primary">{site.license.short}</p>
           <p className="mt-1.5 text-[14px] leading-relaxed text-text-secondary">{site.license.line}</p>
           <div className="mt-4">
             <MoreLink href="/docs/license">Read license terms</MoreLink>

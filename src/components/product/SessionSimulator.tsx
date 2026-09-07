@@ -46,7 +46,7 @@ export function SessionSimulator() {
   return (
     <section
       id="session"
-      className="scroll-mt-20 border-y border-line bg-bg-secondary py-20 sm:py-28 lg:py-32"
+      className="scroll-mt-24 border-y border-line bg-bg-secondary py-2xl lg:py-3xl"
     >
       <Container>
         <SectionHeading title={ts("title")} lead={ts("lead")} />
@@ -54,7 +54,7 @@ export function SessionSimulator() {
         {/* Timeline */}
         <ol
           className="mt-10 flex gap-1 overflow-x-auto pb-1 font-mono text-[12px]"
-          aria-label="Session stages"
+          aria-label={ts("stagesAria")}
         >
           {sessionStages.map((s, idx) => {
             const done = idx < i;
@@ -91,10 +91,10 @@ export function SessionSimulator() {
         <div
           ref={regionRef}
           role="group"
-          aria-roledescription="Session walkthrough"
+          aria-roledescription={ts("walkthroughAria")}
           tabIndex={0}
           onKeyDown={onKeyDown}
-          className="mt-4 rounded-lg border border-line bg-surface outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="mt-4 rounded-sm border border-line bg-surface outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           <div className="flex items-center justify-between border-b border-line px-4 py-2.5 font-mono text-[11px] uppercase tracking-wider text-text-muted">
             <span>{ts("label")}</span>
@@ -174,13 +174,15 @@ function StagePanel({ id }: { id: SessionStageId }) {
 
 function ConnectStage() {
   const reduce = useReducedMotion();
+  const ts = useTranslations("session");
+  const rows = [
+    [ts("connectLink"), ts("connectStateLinked")],
+    [ts("connectGateway"), ts("connectStateDetected")],
+    [ts("connectRouting"), ts("connectStateAccepted")],
+  ];
   return (
     <div className="space-y-4">
-      {[
-        ["Ethernet link", "Connected"],
-        ["DoIP gateway", "Detected"],
-        ["Routing activation", "Accepted"],
-      ].map(([label, state], idx) => (
+      {rows.map(([label, state], idx) => (
         <motion.div
           key={label}
           initial={reduce ? false : { opacity: 0, x: -8 }}
@@ -194,39 +196,37 @@ function ConnectStage() {
           </StatusMarker>
         </motion.div>
       ))}
-      <p className="pt-2 text-[13px] leading-relaxed text-text-secondary">
-        openCMA reached the vehicle over the local Ethernet link and opened a diagnostic channel. No
-        cloud service is involved.
-      </p>
+      <p className="pt-2 text-[13px] leading-relaxed text-text-secondary">{ts("connectNote")}</p>
     </div>
   );
 }
 
 function IdentifyStage() {
+  const ts = useTranslations("session");
+  const td = useTranslations("demo");
   return (
     <dl>
-      <Row label="Vehicle" value={identify.model} />
-      <Row label="Platform" value={identify.platform} />
-      <Row label="Powertrain" value={identify.powertrain} />
-      <Row label="Model year" value={identify.modelYear} />
-      <Row label="VIN" value={<span className="text-text-muted">{identify.vin}</span>} />
-      <p className="pt-3 font-mono text-[11px] text-text-muted">
-        VIN is redacted here and in exports where it is not needed.
-      </p>
+      <Row label={ts("idVehicle")} value={identify.model} />
+      <Row label={ts("idPlatform")} value={identify.platform} />
+      <Row label={ts("idPowertrain")} value={td(identify.powertrainKey)} />
+      <Row label={ts("idModelYear")} value={identify.modelYear} />
+      <Row label={ts("idVin")} value={<span className="text-text-muted">{identify.vin}</span>} />
+      <p className="pt-3 font-mono text-[11px] text-text-muted">{ts("vinNote")}</p>
     </dl>
   );
 }
 
 function ScanStage() {
+  const ts = useTranslations("session");
   const rows = ["CEM", "VGM", "VCU1", "BECM", "OBC", "IHFA", "BCM", "DIM", "TCAM", "CCM"];
   return (
     <div>
       <div className="mb-2 flex gap-6 font-mono text-[12px] text-text-secondary">
         <span>
-          <span className="tnum text-text-primary">{report.ecusDiscovered}</span> ECUs
+          <span className="tnum text-text-primary">{report.ecusDiscovered}</span> {ts("scanEcus")}
         </span>
         <span>
-          <span className="tnum text-text-primary">2</span> with faults
+          <span className="tnum text-text-primary">2</span> {ts("scanWithFaults")}
         </span>
       </div>
       <ul className="grid grid-cols-2 gap-x-6">
@@ -234,45 +234,54 @@ function ScanStage() {
           <li key={code} className="flex items-center justify-between border-b border-line py-1.5">
             <span className="font-mono text-[12px] text-text-primary">{code}</span>
             {code === "BECM" || code === "TCAM" ? (
-              <span className="font-mono text-[11px] text-status-warning">1 fault</span>
+              <span className="font-mono text-[11px] text-status-warning">{ts("scanFault", { n: 1 })}</span>
             ) : (
-              <StatusMarker tone="ok">READY</StatusMarker>
+              <StatusMarker tone="ok">{ts("scanReady")}</StatusMarker>
             )}
           </li>
         ))}
       </ul>
-      <p className="pt-3 font-mono text-[11px] text-text-muted">Shortened scan for this walkthrough.</p>
+      <p className="pt-3 font-mono text-[11px] text-text-muted">{ts("scanShortened")}</p>
     </div>
   );
 }
 
 function InspectStage() {
+  const ts = useTranslations("session");
+  const td = useTranslations("demo");
   return (
     <div>
       <div className="font-mono text-[13px] text-text-primary">
         <span className="text-text-muted">{inspectFault.ecu}</span> {inspectFault.code}
       </div>
-      <p className="mt-1 text-[14px] text-text-secondary">{inspectFault.title}</p>
+      <p className="mt-1 text-[14px] text-text-secondary">{td(`faultTitles.${inspectFault.code}`)}</p>
       <dl className="mt-4">
-        <Row label="Status" value={inspectFault.status} tone="text-status-info" />
-        <Row label="Control module" value={inspectFault.ecu} />
-        <Row label="Snapshot" value={inspectFault.snapshot} />
-        <Row label="Timestamp" value={inspectFault.timestamp} />
+        <Row label={ts("inspectStatus")} value={td(inspectFault.stateKey)} tone="text-status-info" />
+        <Row label={ts("inspectControlModule")} value={inspectFault.ecu} />
+        <Row label={ts("inspectSnapshot")} value={td(inspectFault.snapshotKey)} />
+        <Row label={ts("inspectTimestamp")} value={td(inspectFault.timestampKey)} />
       </dl>
-      <p className="mt-3 text-[13px] leading-relaxed text-text-secondary">{inspectFault.detail}</p>
+      <p className="mt-3 text-[13px] leading-relaxed text-text-secondary">
+        {td(`faultDetails.${inspectFault.code}`)}
+      </p>
     </div>
   );
 }
 
 function LiveStage() {
+  const ts = useTranslations("session");
+  const tr = useTranslations("common");
   return (
     <div className="space-y-4">
-      <MiniChart data={liveTrace(100)} min={392} max={404} unit="V" label="Pack voltage" height={130} live />
+      <MiniChart data={liveTrace(100)} min={392} max={404} unit="V" label={ts("liveVoltage")} height={130} live />
       <div className="grid grid-cols-2 gap-x-6">
-        <Row label="Pack voltage" value={`${batteryDemo.packVoltage.toFixed(1)} V`} />
-        <Row label="Pack current" value={`${batteryDemo.packCurrent.toFixed(1)} A`} />
-        <Row label="Battery temp" value={`${batteryDemo.tempMin.toFixed(1)} to ${batteryDemo.tempMax.toFixed(1)} °C`} />
-        <Row label="12 V system" value="14.2 V" />
+        <Row label={ts("liveVoltage")} value={`${batteryDemo.packVoltage.toFixed(1)} V`} />
+        <Row label={ts("liveCurrent")} value={`${batteryDemo.packCurrent.toFixed(1)} A`} />
+        <Row
+          label={ts("liveBatteryTemp")}
+          value={`${batteryDemo.tempMin.toFixed(1)} ${tr("rangeTo")} ${batteryDemo.tempMax.toFixed(1)} °C`}
+        />
+        <Row label={ts("liveLvSystem")} value="14.2 V" />
       </div>
     </div>
   );

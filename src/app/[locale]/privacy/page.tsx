@@ -7,7 +7,7 @@ import { Prose } from "@/components/ui/Prose";
 export const metadata: Metadata = {
   title: "Privacy",
   description:
-    "openCMA is 100% local. No telemetry, no analytics, no account, no backend, no diagnostic data uploaded. VIN is redacted where it is not needed.",
+    "openCMA is entirely local. No telemetry, no analytics, no account, no backend, no diagnostic data uploaded. VIN is redacted where it is not needed.",
 };
 
 export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -17,7 +17,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
     <>
       <LocalizedPageHeader id="privacy" />
 
-      <Container className="py-14 sm:py-20">
+      <Container className="py-xl lg:py-2xl">
         <Prose>
           <h2>What stays on your machine</h2>
           <ul>

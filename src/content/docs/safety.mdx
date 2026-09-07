@@ -1,20 +1,20 @@
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 
-openCMA separates reading from changing. Most of what it does is reads. The parts that change the vehicle are grouped, labelled, and off by default.
+openCMA separates reading from changing. It mostly reads. The parts that change the vehicle are grouped, labelled, and off by default.
 
 ## Read-only
 
-Battery data, ECU identification, fault codes and live telemetry are reads. Running them cannot change vehicle configuration.
+Battery data, ECU identification, fault codes and live telemetry are all read operations. Running them cannot change vehicle configuration.
 
 ## Operations that change the vehicle
 
-- Clearing diagnostic information (`0x14`)
-- Writing data by identifier (`0x2E`)
-- Running routines (`0x31`)
-- Input/output control (`0x2F`)
+- Clearing diagnostic information
+- Writing data by identifier
+- Running routines
+- Input/output control
 
 <SafetyNotice level="adaptation" title="Off by default">
-In openCMA these require enabling write access for the session. They fail closed: if the opt-in is not present, the request is not sent. There is no hidden path around the gate.
+In openCMA these require you to enable write access for the session. If you have not, the request is simply not sent. There is no hidden way around it.
 </SafetyNotice>
 
 ## High voltage

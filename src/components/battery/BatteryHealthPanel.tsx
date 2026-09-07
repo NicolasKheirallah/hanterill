@@ -1,20 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { Link } from "@/i18n/navigation";
 import { batteryDemo } from "@/lib/demo-data";
 import { DUR, EASE } from "@/lib/motion";
-import { cn } from "@/lib/cn";
+import { Provenance, SohGauge } from "./SohGauge";
 
 type Level = "simple" | "detailed" | "engineering";
 
 /**
- * Battery Health, shown at three levels of detail. Raw data identifiers are not
- * in the UI at all; the Engineering level explains where the value comes from
- * and links to the identifier reference in the docs.
+ * Battery Health, shown at three levels of detail. The state-of-health figure
+ * is a dial that sweeps in on first view; clicking it opens where the value
+ * comes from. Raw data identifiers are not in the UI - the Engineering level
+ * and the provenance popover link to the identifier reference in the docs.
  */
 const LEVEL_KEY: Record<Level, "levelSimple" | "levelDetailed" | "levelEngineering"> = {
   simple: "levelSimple",
@@ -22,13 +23,16 @@ const LEVEL_KEY: Record<Level, "levelSimple" | "levelDetailed" | "levelEngineeri
   engineering: "levelEngineering",
 };
 
+const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
+
 export function BatteryHealthPanel() {
   const t = useTranslations("battery");
+  const tc = useTranslations("common");
   const [level, setLevel] = useState<Level>("simple");
   const reduce = useReducedMotion();
 
   return (
-    <div className="rounded-lg border border-line bg-surface">
+    <div className="bezel bg-surface">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3">
         <span className="font-mono text-[11px] uppercase tracking-wider text-text-muted">
           {t("stateOfHealth")}
@@ -53,15 +57,14 @@ export function BatteryHealthPanel() {
       </div>
 
       <div className="p-5">
-        <div className="tnum font-mono text-[3rem] leading-none text-text-primary">
-          {batteryDemo.soh.toFixed(1)}
-          <span className="ml-1 align-top text-xl text-text-secondary">%</span>
+        <div className="flex items-center gap-5">
+          <SohGauge value={batteryDemo.soh} />
+          <dl className="min-w-0 flex-1 font-mono text-[12px]">
+            <Field label={t("source")} value={t("vehicleBms")} />
+            <Field label={t("updated")} value={t("live")} />
+            <Field label={t("condition")} value={t("conditionGood")} />
+          </dl>
         </div>
-
-        <dl className="mt-4 grid grid-cols-2 gap-x-8 border-t border-line pt-3 font-mono text-[12px]">
-          <Field label={t("source")} value={t("vehicleBms")} />
-          <Field label={t("updated")} value={t("live")} />
-        </dl>
 
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -71,27 +74,25 @@ export function BatteryHealthPanel() {
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
             transition={{ duration: DUR.base, ease: EASE.standard }}
           >
-            {level === "simple" ? (
-              <dl className="mt-4 border-t border-line pt-3 font-mono text-[12px]">
-                <Field label={t("condition")} value={t("conditionGood")} wide />
-              </dl>
-            ) : null}
-
             {level === "detailed" ? (
-              <dl className="mt-4 grid grid-cols-2 gap-x-8 border-t border-line pt-3 font-mono text-[12px]">
-                <Field label={t("stateOfCharge")} value={`${batteryDemo.soc} %`} />
-                <Field label={t("cellDelta")} value={`${batteryDemo.cellDelta} mV`} />
-                <Field label={t("packVoltage")} value={`${batteryDemo.packVoltage.toFixed(1)} V`} />
-                <Field
+              <div className="mt-4 border-t border-line pt-3">
+                <dl className="grid grid-cols-2 gap-x-8 font-mono text-[12px]">
+                  <Field label={t("stateOfCharge")} value={`${batteryDemo.soc} %`} />
+                  <Field label={t("cellDelta")} value={`${batteryDemo.cellDelta} mV`} />
+                  <Field label={t("packVoltage")} value={`${batteryDemo.packVoltage.toFixed(1)} V`} />
+                  <Field label={t("stateOfHealth")} value={`${batteryDemo.soh.toFixed(1)} %`} />
+                </dl>
+                <CapacityBar
                   label={t("usableCapacity")}
-                  value={`${batteryDemo.capacityEstimated} / ${batteryDemo.capacityNominal} kWh`}
+                  est={batteryDemo.capacityEstimated}
+                  nominal={batteryDemo.capacityNominal}
                 />
-                <Field
+                <TempStrip
                   label={t("packTemp")}
-                  value={`${batteryDemo.tempMin.toFixed(1)} to ${batteryDemo.tempMax.toFixed(1)} °C`}
-                  wide
+                  min={batteryDemo.tempMin}
+                  max={batteryDemo.tempMax}
                 />
-              </dl>
+              </div>
             ) : null}
 
             {level === "engineering" ? (
@@ -99,12 +100,7 @@ export function BatteryHealthPanel() {
                 <div className="mb-2 font-mono text-[10.5px] uppercase tracking-wider text-text-muted">
                   {t("howRead")}
                 </div>
-                <ol className="space-y-0 font-mono text-[12px]">
-                  <ProvenanceStep label={t("provReportedBy")} value={t("provBms")} sub="BECM" />
-                  <ProvenanceStep label={t("provReadVia")} value={t("provUdsDoip")} sub={t("provSession")} />
-                  <ProvenanceStep label={t("provDecodedAgainst")} value={t("provCmaMap")} sub={t("provNotScaled")} />
-                  <ProvenanceStep label={t("provRefresh")} value={t("provOnDemand")} sub={t("provPolled")} last />
-                </ol>
+                <Provenance t={t} />
                 <Link
                   href="/docs/battery-diagnostics"
                   className="mt-3 inline-block font-mono text-[11px] text-accent transition-colors hover:text-accent-hover"
@@ -115,42 +111,74 @@ export function BatteryHealthPanel() {
             ) : null}
           </motion.div>
         </AnimatePresence>
+
+        <p className="mt-4 border-t border-line pt-3 font-mono text-[10.5px] leading-relaxed text-text-muted">
+          {tc("representative")}
+        </p>
       </div>
     </div>
   );
 }
 
-function Field({ label, value, wide }: { label: string; value: string; wide?: boolean }) {
+function CapacityBar({ label, est, nominal }: { label: string; est: number; nominal: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.8 });
+  const reduce = useReducedMotion();
+  const frac = clamp01(est / nominal);
   return (
-    <div className={cn("flex items-baseline justify-between border-b border-line py-1.5 last:border-0", wide && "col-span-2")}>
-      <dt className="text-text-secondary">{label}</dt>
-      <dd className="tnum text-text-primary">{value}</dd>
+    <div ref={ref} className="mt-4 border-t border-line pt-3 font-mono text-[12px]">
+      <div className="flex items-baseline justify-between">
+        <span className="text-text-secondary">{label}</span>
+        <span className="tnum text-text-primary">
+          {est} / {nominal} kWh
+        </span>
+      </div>
+      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-[1px] bg-line">
+        <motion.div
+          className="h-full bg-accent"
+          initial={reduce ? false : { scaleX: 0 }}
+          animate={{ scaleX: reduce || inView ? frac : 0 }}
+          transition={{ duration: 0.7, ease: EASE.out }}
+          style={{ transformOrigin: "left" }}
+        />
+      </div>
     </div>
   );
 }
 
-function ProvenanceStep({
-  label,
-  value,
-  sub,
-  last,
-}: {
-  label: string;
-  value: string;
-  sub: string;
-  last?: boolean;
-}) {
+function TempStrip({ label, min, max }: { label: string; min: number; max: number }) {
+  // Fixed reference window for the sample data; the band shows where the pack sits.
+  const LO = 15;
+  const HI = 35;
+  const l = clamp01((min - LO) / (HI - LO)) * 100;
+  const r = clamp01((max - LO) / (HI - LO)) * 100;
   return (
-    <li className="flex gap-3 py-1.5">
-      <span aria-hidden className="mt-1 flex flex-col items-center">
-        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-        {!last ? <span className="mt-0.5 h-4 w-px bg-line-strong" /> : null}
-      </span>
-      <span>
-        <span className="text-text-muted">{label}</span>{" "}
-        <span className="text-text-primary">{value}</span>
-        <span className="block text-[10.5px] text-text-muted">{sub}</span>
-      </span>
-    </li>
+    <div className="mt-4 border-t border-line pt-3 font-mono text-[12px]">
+      <div className="flex items-baseline justify-between">
+        <span className="text-text-secondary">{label}</span>
+        <span className="tnum text-text-primary">
+          {min.toFixed(1)} to {max.toFixed(1)} °C
+        </span>
+      </div>
+      <div className="relative mt-2 h-1.5 w-full rounded-[1px] bg-line">
+        <span
+          className="absolute inset-y-0 rounded-[1px] bg-accent"
+          style={{ left: `${l}%`, right: `${100 - r}%` }}
+        />
+      </div>
+      <div className="mt-1 flex justify-between text-[10px] text-text-muted">
+        <span>{LO} °C</span>
+        <span>{HI} °C</span>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between border-b border-line py-1.5 last:border-0">
+      <dt className="text-text-secondary">{label}</dt>
+      <dd className="tnum text-text-primary">{value}</dd>
+    </div>
   );
 }

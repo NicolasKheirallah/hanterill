@@ -36,7 +36,7 @@ export function SafetyNotice({
     >
       <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", toneText[tone])} strokeWidth={1.75} aria-hidden />
       <div className="min-w-0">
-        <p className={cn("font-mono text-[11px] uppercase tracking-[0.14em]", toneText[tone])}>
+        <p className={cn("font-mono text-[11px] uppercase tracking-[0.12em]", toneText[tone])}>
           {title ?? label}
         </p>
         <div className="mt-1 [&_a]:underline [&_p]:my-1.5 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0">

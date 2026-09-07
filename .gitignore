@@ -22,7 +22,17 @@
 
 # misc
 .DS_Store
+Thumbs.db
 *.pem
+
+# editors
+/.vscode/
+/.idea/
+*.swp
+
+# stray screenshot / CLI output dumped at the repo root
+/--*
+/screenshot*.png
 
 # debug
 npm-debug.log*
@@ -39,8 +49,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.eslintcache
 
 # local tooling
 /.unlazy/
 /.claude/
 /.unlazy-hook-state.json
+/.hallmark/

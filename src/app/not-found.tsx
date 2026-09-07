@@ -13,21 +13,39 @@ export default function GlobalNotFound() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#f5f5f3",
-          color: "#111111",
-          fontFamily: "ui-sans-serif, system-ui, sans-serif",
+          background: "var(--bg-primary)",
+          color: "var(--text-primary)",
+          fontFamily: "var(--font-inter), ui-sans-serif, system-ui, sans-serif",
           gap: "0.75rem",
           padding: "2rem",
           textAlign: "center",
         }}
       >
-        <p style={{ fontFamily: "ui-monospace, monospace", fontSize: 12, letterSpacing: "0.2em", color: "#92928e" }}>
-          ERROR 404
+        <p
+          style={{
+            fontFamily: "var(--font-plex-mono), ui-monospace, monospace",
+            fontSize: 11,
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "var(--text-muted)",
+          }}
+        >
+          Error 404
         </p>
-        <h1 style={{ fontSize: "1.75rem", fontWeight: 500, margin: 0 }}>No route to that page.</h1>
-        <p style={{ color: "#686866", maxWidth: "22rem" }}>
+        <h1
+          style={{
+            fontFamily: "var(--font-geist), ui-sans-serif, system-ui, sans-serif",
+            fontSize: "2rem",
+            fontWeight: 500,
+            letterSpacing: "-0.022em",
+            margin: 0,
+          }}
+        >
+          No route to that page.
+        </h1>
+        <p style={{ color: "var(--text-secondary)", maxWidth: "24rem" }}>
           The address did not resolve.{" "}
-          <Link href="/en" style={{ color: "#3557e0" }}>
+          <Link href="/en" style={{ color: "var(--accent)", textDecoration: "underline" }}>
             Back to home
           </Link>
           .

@@ -32,11 +32,11 @@ export function ConnectionDiagram() {
   const animate = inView && !reduce;
 
   return (
-    <section className="border-b border-line py-20 sm:py-28 lg:py-32">
+    <section className="border-b border-line py-2xl lg:py-3xl">
       <Container>
         <SectionHeading title={tt("title")} lead={tt("lead")} />
 
-        <div className="mt-12 rounded-lg border border-line bg-surface p-6 sm:p-10">
+        <div className="bezel mt-12 bg-surface p-6 sm:p-10">
           {/* Mobile: vertical list of poppable nodes */}
           <ol className="flex flex-col sm:hidden">
             {nodes.map((n, i) => (
@@ -101,8 +101,8 @@ export function ConnectionDiagram() {
                 ["UDP 13400", tt("wire.udp")],
                 ["TCP 13400", tt("wire.tcp")],
                 [tt("routingLabel"), tt("wire.routing")],
-                ["UDS 0x22", tt("wire.read")],
-                ["UDS 0x19", tt("wire.dtc")],
+                [tt("wireTerms.identifierRead"), tt("wire.read")],
+                [tt("wireTerms.dtcRead"), tt("wire.dtc")],
                 ["ISO 13400 / 14229", tt("wire.standards")],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between border-b border-line py-1.5">

@@ -19,9 +19,9 @@ export const stageKey: Record<ScanStage, string> = {
 
 export type SimFault = {
   code: string;
-  title: string;
+  /** `demo.faultTitles` key is the `code`; `demo.<lastSeenKey>` gives the age text. */
   status: "stored" | "historical" | "pending";
-  lastSeen: string;
+  lastSeenKey: "lastSeen12Min" | "lastSeen3Cycles" | "lastSeenThisCycle";
   snapshot: boolean;
 };
 
@@ -38,33 +38,9 @@ const ORDER = ["CEM", "VGM", "VCU1", "BECM", "OBC", "IHFA", "IEM", "BCM", "EPAS"
 const JITTER = [0, 40, 20, 90, 55, 30, 70, 25, 60, 15, 80, 35, 50, 20, 45];
 
 const FAULTS: Record<string, SimFault[]> = {
-  BECM: [
-    {
-      code: "P1A2E-71",
-      title: "High-voltage battery, internal communication",
-      status: "stored",
-      lastSeen: "12 minutes ago",
-      snapshot: true,
-    },
-  ],
-  TCAM: [
-    {
-      code: "U110B-87",
-      title: "Lost communication with telematics module",
-      status: "historical",
-      lastSeen: "3 drive cycles ago",
-      snapshot: false,
-    },
-  ],
-  CCM: [
-    {
-      code: "B1C15-13",
-      title: "Cabin temperature sensor, circuit open",
-      status: "pending",
-      lastSeen: "this drive cycle",
-      snapshot: true,
-    },
-  ],
+  BECM: [{ code: "P1A2E-71", status: "stored", lastSeenKey: "lastSeen12Min", snapshot: true }],
+  TCAM: [{ code: "U110B-87", status: "historical", lastSeenKey: "lastSeen3Cycles", snapshot: false }],
+  CCM: [{ code: "B1C15-13", status: "pending", lastSeenKey: "lastSeenThisCycle", snapshot: true }],
 };
 
 export const STAGE_TIMES = {

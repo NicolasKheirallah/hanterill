@@ -32,7 +32,7 @@ export default async function DocsLayout({
           <div className="mb-6 lg:hidden">
             <DocsSearch index={index} />
           </div>
-          <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-text-muted">
+          <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
             {t("eyebrow")}
           </p>
           {children}

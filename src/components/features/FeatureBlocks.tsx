@@ -1,114 +1,98 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { ShieldAlert } from "lucide-react";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Container, MoreLink, SectionHeading } from "@/components/ui/layout";
 import { ScanSimulator } from "./ScanSimulator";
 import { LiveTelemetryChart } from "@/components/telemetry/LiveTelemetryChart";
-import { batteryDemo, cellOffsets, evidenceDemo } from "@/lib/demo-data";
+import { BatteryReadout } from "@/components/battery/BatteryReadout";
+import { evidenceDemo } from "@/lib/demo-data";
 import { cn } from "@/lib/cn";
 
-function BlockHeader({ title, body, cta }: { title: string; body: string; cta?: ReactNode }) {
-  return (
-    <div className="max-w-md">
-      <h3 className="text-2xl font-medium tracking-tight sm:text-[1.75rem]">{title}</h3>
-      <p className="mt-3 text-[16px] leading-relaxed text-text-secondary">{body}</p>
-      {cta ? <div className="mt-5">{cta}</div> : null}
-    </div>
-  );
-}
-
-function Split({ reverse, text, visual }: { reverse?: boolean; text: ReactNode; visual: ReactNode }) {
-  return (
-    <div
-      className={cn(
-        "grid items-center gap-8 border-b border-line py-14 lg:grid-cols-2 lg:gap-16 lg:py-20",
-        reverse && "lg:[&>*:first-child]:order-2",
-      )}
-    >
-      {text}
-      <div>{visual}</div>
-    </div>
-  );
-}
-
-function BatteryReadout() {
-  const t = useTranslations("features");
-  const heat = cellOffsets;
-  return (
-    <div className="rounded-lg border border-line bg-surface p-6">
-      <div className="tnum font-mono text-[2.5rem] leading-none text-text-primary">
-        {batteryDemo.soh.toFixed(2)}
-        <span className="ml-1 text-lg text-text-secondary">%</span>
-      </div>
-      <div className="mt-1 text-[13px] text-text-secondary">{t("sohLabel")}</div>
-
-      <dl className="mt-6 grid grid-cols-3 gap-4 border-t border-line pt-4 font-mono text-[12px]">
-        {[
-          ["Min", `${batteryDemo.minCellGroup.toFixed(3)} V`],
-          ["Max", `${batteryDemo.maxCellGroup.toFixed(3)} V`],
-          ["Delta", `${batteryDemo.cellDelta} mV`],
-        ].map(([k, v]) => (
-          <div key={k}>
-            <dt className="uppercase tracking-wider text-text-muted">{k}</dt>
-            <dd className="tnum mt-1 text-text-primary">{v}</dd>
+/**
+ * Workbench section. Each entry is an instrument in a hairline-framed figure
+ * with a short "what you do with it" line; the marketing copy is the minority.
+ * The layout alternates between a text/instrument split and a full-width stack
+ * so the section never runs more than two splits in a row.
+ */
+function Entry({
+  title,
+  body,
+  cta,
+  caption,
+  visual,
+  reverse,
+  layout = "split",
+}: {
+  title: string;
+  body: string;
+  cta?: ReactNode;
+  caption: string;
+  visual: ReactNode;
+  reverse?: boolean;
+  layout?: "split" | "stack";
+}) {
+  if (layout === "stack") {
+    return (
+      <div className="border-t border-line py-12 lg:py-16">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-[38ch]">
+            <h3 className="font-[family-name:var(--font-display)] text-[1.6rem] font-medium leading-tight tracking-[-0.02em] text-text-primary">
+              {title}
+            </h3>
+            <p className="mt-3 text-[15px] leading-relaxed text-text-secondary">{body}</p>
           </div>
-        ))}
-      </dl>
-
-      <div className="mt-5">
-        <div className="mb-1.5 font-mono text-[10.5px] uppercase tracking-wider text-text-muted">
-          {t("spreadLabel")}
+          {cta ? <div className="shrink-0">{cta}</div> : null}
         </div>
-        <div className="flex h-8 gap-px overflow-hidden rounded-sm">
-          {heat.map((off, i) => (
-            <span
-              key={i}
-              className="flex-1"
-              style={{
-                background:
-                  Math.abs(off) <= 2
-                    ? "var(--line)"
-                    : Math.abs(off) <= 4
-                      ? "color-mix(in srgb, var(--accent) 40%, var(--line))"
-                      : "color-mix(in srgb, var(--status-warning) 55%, var(--line))",
-              }}
-            />
-          ))}
-        </div>
-        <div className="mt-1.5 flex justify-between font-mono text-[10px] text-text-muted">
-          <span>{t("spreadWithin")}</span>
-          <span>{t("spreadMid")}</span>
-          <span>{t("spreadOver")}</span>
-        </div>
+        <figure className="m-0 mt-8">{visual}</figure>
       </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-6 border-t border-line py-12 lg:grid-cols-12 lg:gap-10 lg:py-16">
+      <div className={cn("lg:col-span-4", reverse && "lg:order-2")}>
+        <h3 className="font-[family-name:var(--font-display)] text-[1.6rem] font-medium leading-tight tracking-[-0.02em] text-text-primary">
+          {title}
+        </h3>
+        <p className="mt-3 max-w-[42ch] text-[15px] leading-relaxed text-text-secondary">{body}</p>
+        {cta ? <div className="mt-4">{cta}</div> : null}
+      </div>
+      <figure className={cn("m-0 lg:col-span-8", reverse && "lg:order-1")}>
+        {visual}
+        <figcaption className="mt-3 border-t border-line pt-2 font-mono text-[11px] text-text-muted">
+          {caption}
+        </figcaption>
+      </figure>
     </div>
   );
 }
 
 function DtcRecord() {
   const t = useTranslations("features");
+  const td = useTranslations("demo");
   const rows = [
-    { ecu: "BECM", code: "P0A80-00", desc: "Replace hybrid/EV battery pack", state: t("dtcStored"), note: t("dtcSnapshot"), tone: "text-status-info" },
-    { ecu: "CCM", code: "B1B25-13", desc: "Evaporator temperature sensor, circuit open", state: t("dtcActive"), note: t("dtcPresent"), tone: "text-status-error" },
-    { ecu: "TCAM", code: "U3003-16", desc: "Battery voltage below threshold", state: t("dtcPending"), note: t("dtcSeenOnce"), tone: "text-status-warning" },
-    { ecu: "BECM", code: "P1AF0-71", desc: "Cell balancing performance", state: t("dtcHistorical"), note: t("dtcRetained"), tone: "text-text-muted" },
+    { ecu: "BECM", code: "P0A80-00", state: t("dtcStored"), note: t("dtcSnapshot"), tone: "text-status-info" },
+    { ecu: "CCM", code: "B1B25-13", state: t("dtcActive"), note: t("dtcPresent"), tone: "text-status-error" },
+    { ecu: "TCAM", code: "U3003-16", state: t("dtcPending"), note: t("dtcSeenOnce"), tone: "text-status-warning" },
+    { ecu: "BECM", code: "P1AF0-71", state: t("dtcHistorical"), note: t("dtcRetained"), tone: "text-text-muted" },
   ];
   return (
-    <div className="grid items-start gap-6 border-b border-line py-14 lg:grid-cols-[1fr_1.3fr] lg:gap-16 lg:py-20">
-      <BlockHeader title={t("faultTitle")} body={t("faultBody")} />
-      <div className="grid gap-3 sm:grid-cols-2">
+    <div className="border border-line bg-surface">
+      <ul className="divide-y divide-line">
         {rows.map((d) => (
-          <div key={d.code} className="rounded-md border border-line bg-surface p-4">
+          <li key={d.code} className="grid gap-1 p-4 sm:grid-cols-[9rem_1fr] sm:gap-4">
             <div className="font-mono text-[13px] text-text-primary">
               <span className="text-text-muted">{d.ecu}</span> {d.code}
             </div>
-            <p className="mt-1 text-[13px] text-text-secondary">{d.desc}</p>
-            <p className={cn("mt-2 font-mono text-[11px]", d.tone)}>
-              {d.state} · {d.note}
-            </p>
-          </div>
+            <div>
+              <p className="text-[13px] text-text-secondary">{td(`faultTitles.${d.code}`)}</p>
+              <p className={cn("mt-1 font-mono text-[11px]", d.tone)}>
+                {d.state} · {d.note}
+              </p>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
@@ -122,7 +106,7 @@ function ServiceRoutines() {
     [t("routineSunroof"), t("routineSunroofAction")],
   ];
   return (
-    <div className="rounded-lg border border-line bg-surface p-6">
+    <div className="border border-line bg-surface p-6">
       <div className="inline-flex items-center gap-2 rounded-sm border border-status-warning/40 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-status-warning">
         <ShieldAlert className="h-3.5 w-3.5" strokeWidth={1.75} />
         {t("writeAccess")}
@@ -147,31 +131,24 @@ function EvidenceCompare() {
     { label: t("afterRepair"), d: evidenceDemo.after },
   ];
   return (
-    <div className="grid items-start gap-6 py-14 lg:grid-cols-[1fr_1.3fr] lg:gap-16 lg:py-20">
-      <BlockHeader
-        title={t("evidenceTitle")}
-        body={t("evidenceBody")}
-        cta={<MoreLink href="/features/vehicle-diagnostics">{t("evidenceCta")}</MoreLink>}
-      />
-      <div className="grid grid-cols-2 gap-4">
-        {cols.map((c) => (
-          <div key={c.label} className="rounded-md border border-line bg-surface p-5">
-            <div className="font-mono text-[11px] uppercase tracking-wider text-text-muted">{c.label}</div>
-            <div className="tnum mt-3 font-mono text-[2rem] leading-none text-text-primary">{c.d.total}</div>
-            <div className="text-[12px] text-text-secondary">{t("totalDtcs")}</div>
-            <dl className="mt-4 space-y-1 border-t border-line pt-3 font-mono text-[12px]">
-              <div className="flex justify-between">
-                <dt className="text-text-secondary">active</dt>
-                <dd className="tnum text-text-primary">{c.d.active}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-text-secondary">historical</dt>
-                <dd className="tnum text-text-primary">{c.d.historical}</dd>
-              </div>
-            </dl>
-          </div>
-        ))}
-      </div>
+    <div className="grid grid-cols-2">
+      {cols.map((c, i) => (
+        <div key={c.label} className={cn("border border-line bg-surface p-5", i === 1 && "border-l-0")}>
+          <div className="font-mono text-[11px] uppercase tracking-wider text-text-muted">{c.label}</div>
+          <div className="tnum mt-3 font-mono text-[2rem] leading-none text-text-primary">{c.d.total}</div>
+          <div className="text-[12px] text-text-secondary">{t("totalDtcs")}</div>
+          <dl className="mt-4 space-y-1 border-t border-line pt-3 font-mono text-[12px]">
+            <div className="flex justify-between">
+              <dt className="text-text-secondary">active</dt>
+              <dd className="tnum text-text-primary">{c.d.active}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-text-secondary">historical</dt>
+              <dd className="tnum text-text-primary">{c.d.historical}</dd>
+            </div>
+          </dl>
+        </div>
+      ))}
     </div>
   );
 }
@@ -179,60 +156,56 @@ function EvidenceCompare() {
 export function FeatureBlocks() {
   const t = useTranslations("features");
   return (
-    <section id="features" className="scroll-mt-20 border-b border-line py-20 sm:py-24">
+    <section id="features" className="scroll-mt-24 border-b border-line-strong py-2xl lg:py-3xl">
       <Container>
-        <div className="max-w-2xl">
-          <h2 className="text-balance text-3xl font-medium tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.08]">
-            {t("title")}
-          </h2>
-          <p className="mt-5 text-lg leading-relaxed text-text-secondary">{t("lead")}</p>
-        </div>
+        <SectionHeading title={t("title")} lead={t("lead")} />
 
-        <div className="mt-6">
-          <Split
-            text={
-              <BlockHeader
-                title={t("batteryTitle")}
-                body={t("batteryBody")}
-                cta={<MoreLink href="/features/battery-health">{t("batteryCta")}</MoreLink>}
-              />
-            }
+        <div className="mt-10">
+          <Entry
+            title={t("batteryTitle")}
+            body={t("batteryBody")}
+            cta={<MoreLink href="/features/battery-health">{t("batteryCta")}</MoreLink>}
+            caption={t("sohLabel")}
             visual={<BatteryReadout />}
           />
-          <Split
+          <Entry
             reverse
-            text={
-              <BlockHeader
-                title={t("scanTitle")}
-                body={t("scanBody")}
-                cta={<MoreLink href="/features/vehicle-diagnostics">{t("scanCta")}</MoreLink>}
-              />
-            }
+            title={t("scanTitle")}
+            body={t("scanBody")}
+            cta={<MoreLink href="/features/vehicle-diagnostics">{t("scanCta")}</MoreLink>}
+            caption={t("scanCta")}
             visual={<ScanSimulator compact />}
           />
-          <DtcRecord />
-          <Split
-            text={
-              <BlockHeader
-                title={t("liveTitle")}
-                body={t("liveBody")}
-                cta={<MoreLink href="/features/live-data">{t("liveCta")}</MoreLink>}
-              />
-            }
+          <Entry
+            layout="stack"
+            title={t("faultTitle")}
+            body={t("faultBody")}
+            caption={t("faultTitle")}
+            visual={<DtcRecord />}
+          />
+          <Entry
+            reverse
+            title={t("liveTitle")}
+            body={t("liveBody")}
+            cta={<MoreLink href="/features/live-data">{t("liveCta")}</MoreLink>}
+            caption={t("liveCta")}
             visual={<LiveTelemetryChart />}
           />
-          <Split
-            reverse
-            text={
-              <BlockHeader
-                title={t("serviceTitle")}
-                body={t("serviceBody")}
-                cta={<MoreLink href="/features/service-functions">{t("serviceCta")}</MoreLink>}
-              />
-            }
+          <Entry
+            title={t("serviceTitle")}
+            body={t("serviceBody")}
+            cta={<MoreLink href="/features/service-functions">{t("serviceCta")}</MoreLink>}
+            caption={t("writeAccess")}
             visual={<ServiceRoutines />}
           />
-          <EvidenceCompare />
+          <Entry
+            layout="stack"
+            title={t("evidenceTitle")}
+            body={t("evidenceBody")}
+            cta={<MoreLink href="/features/vehicle-diagnostics">{t("evidenceCta")}</MoreLink>}
+            caption={t("totalDtcs")}
+            visual={<EvidenceCompare />}
+          />
         </div>
       </Container>
     </section>

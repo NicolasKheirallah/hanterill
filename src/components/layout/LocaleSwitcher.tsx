@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
@@ -14,6 +14,7 @@ export function LocaleSwitcher() {
   const active = useLocale() as Locale;
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations("common");
   const [pending, startTransition] = useTransition();
 
   function set(locale: Locale) {
@@ -30,7 +31,7 @@ export function LocaleSwitcher() {
         pending && "opacity-60",
       )}
       role="group"
-      aria-label="Language"
+      aria-label={t("language")}
     >
       {routing.locales.map((l) => (
         <button

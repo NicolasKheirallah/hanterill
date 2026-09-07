@@ -22,14 +22,14 @@ export default async function BatteryHealthPage({ params }: { params: Promise<{ 
     <ModuleSelectionProvider>
       <LocalizedPageHeader id="batteryHealth" />
 
-      <Container className="py-14 sm:py-20">
+      <Container className="py-xl lg:py-2xl">
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <BatteryHealthPanel />
           <Prose>
             <h2>Where the number comes from</h2>
             <p>
-              State of health is reported by the battery management system, not calculated by openCMA
-              from a guess. openCMA reads it, and the values behind it, directly from the vehicle.
+              State of health is reported by the battery management system, not calculated by openCMA.
+              openCMA reads it, and the values behind it, directly from the vehicle.
             </p>
             <h2>What openCMA reads</h2>
             <ul>

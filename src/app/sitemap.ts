@@ -3,6 +3,9 @@ import { site } from "@/lib/site";
 import { docsSlugs } from "@/lib/docs";
 import { routing } from "@/i18n/routing";
 
+// `output: export` builds this to a static sitemap.xml at build time.
+export const dynamic = "force-static";
+
 const paths = [
   "",
   "/features",

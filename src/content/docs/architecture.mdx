@@ -1,7 +1,7 @@
 import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
 
-openCMA is a layered diagnostic stack with a native desktop shell. Nothing in the path is a proprietary cloud API.
+openCMA is a layered diagnostic stack with a native desktop shell. No part of it is a proprietary cloud API.
 
 ## Layers
 
@@ -19,8 +19,8 @@ Vehicle gateway    CEM / VGM on CMA
 
 1. UDP vehicle identification on port 13400 enumerates responders.
 2. A TCP connection opens to the vehicle on port 13400.
-3. Routing activation (`0x0005`) is sent and must be accepted before any diagnostic request.
-4. The engine opens a diagnostic session per ECU (`0x10`) and issues reads.
+3. Routing activation is sent and must be accepted before any diagnostic request.
+4. The engine opens an extended diagnostic session per ECU and issues reads.
 5. Responses are decoded against platform-specific maps.
 6. The session is held in memory and written to disk on export.
 
@@ -34,16 +34,16 @@ along it:
     { node: "Vehicle gateway", detail: "CEM / VGM, DoIP" },
     { node: "Target ECU", detail: "BECM, extended session" },
   ]}
-  request="0x22 0x49 0x6D  read battery state of health"
-  response="0x62 0x49 0x6D <scaled value>  94.7 %"
+  request="read battery state of health"
+  response="94.7 %, decoded from the raw value"
 />
 
 ## Components
 
 - **Transport**: async Rust sockets, one connection multiplexed across ECUs.
-- **UDS**: request and response framing, negative-response handling, pending-response (`0x78`) retries.
+- **UDS**: request and response framing, negative-response handling, pending-response retries.
 - **Decoders**: per-platform maps from data identifiers to typed values. CMA is complete; SEA and SPA2 are partial and flagged.
-- **Safety gate**: any service that changes ECU state (`0x14`, `0x2E`, `0x31`, `0x2F`) checks a session-scoped write flag and fails closed.
+- **Safety gate**: any service that changes ECU state (clear, write by identifier, routine control, input/output control) checks a session-scoped write flag and fails closed.
 - **Interface**: React and TypeScript, typed against the engine over Tauri commands. No bundled browser engine.
 
 ## Why Rust and Tauri

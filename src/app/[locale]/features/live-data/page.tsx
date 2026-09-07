@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
 import { Container, MoreLink } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
@@ -15,11 +15,12 @@ export const metadata: Metadata = {
 export default async function LiveDataPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const tc = await getTranslations("telemetry.channelNames");
   return (
     <>
       <LocalizedPageHeader id="liveData" />
 
-      <Container className="py-14 sm:py-20">
+      <Container className="py-xl lg:py-2xl">
         <LiveTelemetryChart />
 
         <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_1fr] lg:gap-16">
@@ -42,7 +43,7 @@ export default async function LiveDataPage({ params }: { params: Promise<{ local
           <ul className="divide-y divide-line border-y border-line">
             {liveChannels.map((c) => (
               <li key={c.id} className="flex items-baseline justify-between py-3">
-                <span className="text-[14px] text-text-secondary">{c.label}</span>
+                <span className="text-[14px] text-text-secondary">{tc(c.id)}</span>
                 <span className="tnum font-mono text-[13px] text-text-primary">
                   {c.value} {c.unit}
                 </span>

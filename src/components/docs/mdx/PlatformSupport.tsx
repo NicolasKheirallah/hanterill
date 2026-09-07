@@ -3,12 +3,12 @@ import { cn } from "@/lib/cn";
 import { toneText } from "./tone";
 
 // English labels for docs (English-only for now); the marketing site reads
-// these from the message catalog. See AUDIT.md, doc i18n gap.
+// these from the message catalog. When docs gain Swedish this should move there.
 const STATUS_LABEL: Record<string, string> = {
   supported: "Supported",
   partial: "Partial",
   testing: "Testing",
-  wip: "Work in progress",
+  wip: "WIP",
   research: "Research",
   planned: "Planned",
 };
@@ -35,7 +35,7 @@ export function PlatformSupport({ platform }: { platform: Platform }) {
         <p className="font-mono text-[13px] text-text-primary">{meta.label}</p>
         <p
           className={cn(
-            "font-mono text-[11px] uppercase tracking-[0.14em]",
+            "font-mono text-[11px] uppercase tracking-[0.12em]",
             toneText[statusMeta[meta.status].tone],
           )}
         >

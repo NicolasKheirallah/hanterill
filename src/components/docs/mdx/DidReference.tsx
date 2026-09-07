@@ -28,8 +28,8 @@ export function DidReference({
 
   return (
     <div className="my-5">
-      <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
-        {title}, read with service 0x22
+      <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
+        {title}, read with ReadDataByIdentifier
       </p>
       <dl className="grid grid-cols-1 gap-px overflow-hidden rounded-md border border-line bg-line sm:grid-cols-[minmax(7rem,max-content)_1fr]">
         {data.map(([id, name]) => (

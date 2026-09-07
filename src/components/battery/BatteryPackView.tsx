@@ -39,7 +39,7 @@ function Placeholder({ label, pulse }: { label?: string; pulse?: boolean }) {
   return (
     <div
       className={cn(
-        "flex h-72 w-full items-center justify-center rounded-lg border border-line bg-surface font-mono text-[12px] text-text-muted sm:h-80",
+        "flex h-72 w-full items-center justify-center rounded-sm border border-line bg-surface font-mono text-[12px] text-text-muted sm:h-80",
         pulse && "motion-safe:animate-pulse",
       )}
     >
@@ -94,12 +94,12 @@ export function BatteryPackView() {
       {webgl === null ? (
         <Placeholder label={t("pack3dChecking")} />
       ) : !webgl || reduce ? (
-        <div className="flex h-40 w-full flex-col items-center justify-center gap-1 rounded-lg border border-line bg-surface text-center font-mono text-[12px] text-text-muted sm:h-48">
+        <div className="flex h-40 w-full flex-col items-center justify-center gap-1 rounded-sm border border-line bg-surface text-center font-mono text-[12px] text-text-muted sm:h-48">
           <span>{t("pack3dUnavailable")}</span>
           <span className="text-[11px]">{t("pack3dFallback2d")}</span>
         </div>
       ) : mounted ? (
-        <div className="overflow-hidden rounded-lg border border-line bg-surface">
+        <div className="overflow-hidden rounded-sm border border-line bg-surface">
           <BatteryPack3D mode={mode} active={visible} hint={t("pack3dHint")} />
         </div>
       ) : (

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { notFound } from "next/navigation";
-import { Inter, IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
+import { Inter, IBM_Plex_Mono, Geist } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -11,9 +12,10 @@ import { site } from "@/lib/site";
 import "../globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 const plexMono = IBM_Plex_Mono({
@@ -70,11 +72,15 @@ export async function generateMetadata({
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f5f3" },
-    { media: "(prefers-color-scheme: dark)", color: "#111211" },
+    { media: "(prefers-color-scheme: dark)", color: "#12151a" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f2ee" },
   ],
 };
 
+// Runs before paint to stamp the stored theme on <html>, so there is no
+// flash of the wrong palette. next/script beforeInteractive hoists this into
+// <head> in the SSR HTML and does not re-run it on client navigation - a
+// plain <script> in the JSX tree is not executed on the client (React 19).
 const themeScript = `
 (function () {
   try {
@@ -126,14 +132,19 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${spaceGrotesk.variable} ${plexMono.variable} h-full`}
+      className={`${inter.variable} ${geist.variable} ${plexMono.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson).replace(/</g, "\\u003c") }}
+        />
       </head>
       <body className="flex min-h-full flex-col bg-bg-primary text-text-primary antialiased">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
         <NextIntlClientProvider>
           <ScrollSentinel />
           <a

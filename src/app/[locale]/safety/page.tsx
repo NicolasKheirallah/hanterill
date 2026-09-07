@@ -18,12 +18,13 @@ export default async function SafetyPage({ params }: { params: Promise<{ locale:
     <>
       <LocalizedPageHeader id="safety" />
 
-      <Container className="py-14 sm:py-20">
+      <Container className="py-xl lg:py-2xl">
         <Prose>
           <h2>Read-only is the default</h2>
           <p>
-            Battery data, ECU identification, fault codes and live telemetry are reads. Running them
-            cannot change vehicle configuration. This is the large majority of what openCMA does.
+            Battery data, ECU identification, fault codes and live telemetry are all read operations.
+            Running them cannot change vehicle configuration. This is the large majority of what
+            openCMA does.
           </p>
 
           <h2>Operations that change the vehicle</h2>

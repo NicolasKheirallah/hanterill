@@ -1,6 +1,6 @@
 import { EcuReference } from "@/components/docs/mdx/EcuReference";
 
-ECU codes, names and part numbers for the CMA electric platform, grouped as openCMA lays them out around the gateway. Names and numbers follow published wiring documentation. UDS means the ECU answers a diagnostic session. This table is generated from the site's ECU data, so it matches the ECU topology on the homepage exactly.
+ECU codes, names and part numbers for the CMA electric platform, grouped as openCMA lays them out around the gateway. Names and numbers follow published wiring documentation. UDS means the ECU answers a diagnostic session. The same ECU data drives the topology diagram on the home page.
 
 ## Gateway
 
@@ -16,16 +16,16 @@ ECU codes, names and part numbers for the CMA electric platform, grouped as open
 
 ## Cabin
 
-<EcuReference domain="cabin" caption="Blank part numbers are positions the public documentation does not list. openCMA still reads identification from the ECU directly with service 0x22." />
+<EcuReference domain="cabin" caption="Blank part numbers are positions the public documentation does not list. openCMA still reads identification from the ECU directly with the ReadDataByIdentifier service." />
 
 ## Common identifiers
 
 <SpecList rows={[
   ["0xF190", "VIN"],
   ["0xF18C", "ECU serial number"],
+  ["0xF193", "Supplier hardware version"],
   ["0xF194", "Supplier software number"],
-  ["0xF193", "Supplier hardware number"],
-  ["0xF195", "Software version"],
+  ["0xF195", "Supplier software version"],
 ]} />
 
 openCMA reads these from every ECU that answers, not just the battery module, so a full scan produces a hardware and software inventory of the car.

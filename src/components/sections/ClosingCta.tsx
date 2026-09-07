@@ -3,25 +3,27 @@ import { Container } from "@/components/ui/layout";
 import { Button } from "@/components/ui/Button";
 import { site } from "@/lib/site";
 
+/**
+ * Closing statement. One grotesk sentence carries the section; the two actions
+ * sit beneath it. No card, no box.
+ */
 export function ClosingCta() {
   const t = useTranslations("cta");
   const tc = useTranslations("common");
   return (
-    <section className="border-t border-line py-24 sm:py-32">
+    <section className="border-t border-line-strong py-2xl lg:py-3xl">
       <Container>
-        <div className="max-w-2xl">
-          <h2 className="text-balance text-3xl font-medium tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.08]">
-            {t("title")}
-          </h2>
-          <p className="mt-5 max-w-xl text-lg leading-relaxed text-text-secondary">
-            {t("body")}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button href="/download">{tc("downloadApp")}</Button>
-            <Button href={site.repoUrl} variant="secondary" external>
-              {tc("viewOnGitHub")}
-            </Button>
-          </div>
+        <h2 className="max-w-[24ch] text-[2.25rem] leading-[1.05] tracking-[-0.024em] sm:text-[3rem] lg:text-[3.5rem]">
+          {t("title")}
+        </h2>
+        <p className="mt-5 max-w-[52ch] text-[1.0625rem] leading-relaxed text-text-secondary">
+          {t("body")}
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Button href="/download">{tc("downloadApp")}</Button>
+          <Button href={site.repoUrl} variant="secondary" external>
+            {tc("viewSource")}
+          </Button>
         </div>
       </Container>
     </section>

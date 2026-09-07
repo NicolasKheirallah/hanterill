@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { Pause, Play } from "lucide-react";
 import { useInView, useReducedMotion } from "motion/react";
 import {
   channelById,
@@ -14,17 +13,19 @@ import {
 } from "@/lib/telemetry-sim";
 import { cn } from "@/lib/cn";
 
-const WINDOWS = [15, 30, 60] as const;
+/** Fixed 15-second window; no speed or window controls - the chart is just live. */
+const WINDOW_SEC = 15;
 const SERIES_VARS = ["--accent", "--status-info", "--status-warning"] as const;
 /** Fallbacks; the real values are read from CSS at draw time (canvas cannot resolve var()). */
-const SERIES_COLORS = ["#3557e0", "#4e72a2", "#855a1b"];
+const SERIES_COLORS = ["#cb8e72", "#79a9db", "#e3ad4b"];
 
 /**
  * Continuously moving telemetry. The render loop runs on requestAnimationFrame
- * and writes straight to a canvas, so React never re-renders per frame. The
- * loop pauses when the section is off screen, when the tab is hidden, when the
- * user pauses, and under reduced motion (which shows a static window with a
- * slow periodic tick instead).
+ * and writes straight to a canvas, so React never re-renders per frame. It
+ * starts itself when the section scrolls into view and stops when it scrolls
+ * away or under reduced motion (which shows a static window with a slow
+ * periodic tick instead). Pointer and keyboard move a read-out crosshair; they
+ * do not stop the trace.
  */
 export function LiveTelemetryChart() {
   const t = useTranslations("telemetry");
@@ -41,19 +42,15 @@ export function LiveTelemetryChart() {
   }, [label]);
 
   const [active, setActive] = useState<ChannelId[]>(defaultChannels);
-  const [windowSec, setWindowSec] = useState<(typeof WINDOWS)[number]>(30);
-  const [paused, setPaused] = useState(false);
 
   const clock = useRef({ t: 0, last: 0 });
   const raf = useRef<number | null>(null);
   const hoverX = useRef<number | null>(null);
   const liveRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
-  const windowRef = useRef(windowSec);
 
-  // Keyboard point inspection. Moves `hoverX` in ~80 steps across the canvas,
-  // freezes the loop for reading, and mirrors the readout into an aria-live
-  // region. The pointer path is untouched.
+  // Keyboard point inspection. Moves `hoverX` in ~80 steps across the canvas and
+  // mirrors the read-out into an aria-live region. The trace keeps running.
   function inspectByKey(e: React.KeyboardEvent<HTMLCanvasElement>) {
     const w = canvasRef.current?.clientWidth ?? 0;
     if (!w) return;
@@ -67,7 +64,6 @@ export function LiveTelemetryChart() {
       case "End": next = w; break;
       case "Escape":
         hoverX.current = null;
-        setPaused(false);
         if (liveRef.current) liveRef.current.textContent = "";
         return;
       default:
@@ -75,7 +71,6 @@ export function LiveTelemetryChart() {
     }
     e.preventDefault();
     hoverX.current = next;
-    setPaused(true);
     draw();
     if (liveRef.current && readoutRef.current) {
       liveRef.current.textContent = readoutRef.current.textContent;
@@ -85,9 +80,6 @@ export function LiveTelemetryChart() {
   useEffect(() => {
     activeRef.current = active;
   }, [active]);
-  useEffect(() => {
-    windowRef.current = windowSec;
-  }, [windowSec]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -104,13 +96,13 @@ export function LiveTelemetryChart() {
     ctx.clearRect(0, 0, w, h);
 
     const cs = getComputedStyle(document.documentElement);
-    const line = cs.getPropertyValue("--line").trim() || "#d8d8d4";
-    const lineStrong = cs.getPropertyValue("--line-strong").trim() || "#babab5";
+    const line = cs.getPropertyValue("--line").trim() || "#2e3036";
+    const lineStrong = cs.getPropertyValue("--line-strong").trim() || "#474a52";
     const seriesColor = (i: number) =>
       cs.getPropertyValue(SERIES_VARS[i % SERIES_VARS.length]).trim() ||
       SERIES_COLORS[i % SERIES_COLORS.length];
     const now = clock.current.t;
-    const win = windowRef.current;
+    const win = WINDOW_SEC;
     const t0 = Math.max(0, now - win);
     const pad = { l: 4, r: 4, t: 8, b: 8 };
     const px = (t: number) => pad.l + ((t - t0) / (now - t0 || 1)) * (w - pad.l - pad.r);
@@ -162,7 +154,7 @@ export function LiveTelemetryChart() {
 
       const readT = hoverX.current == null ? now : t0 + (hoverX.current / w) * (now - t0);
       readout.push(
-        `${labelRef.current(id)}  ${sample(id, readT).toFixed(ch.decimals)} ${ch.unit}`,
+        `${labelRef.current(id)}  ${sample(id, readT).toFixed(ch.decimals)} ${ch.unit}`,
       );
     });
 
@@ -177,7 +169,7 @@ export function LiveTelemetryChart() {
 
     if (readoutRef.current) {
       const tstamp = new Date(Date.now()).toLocaleTimeString("en-GB");
-      readoutRef.current.textContent = `${tstamp}  ·  ${readout.join("   ")}`;
+      readoutRef.current.textContent = `${tstamp}   ${readout.join("   ")}`;
     }
   }, []);
 
@@ -192,7 +184,7 @@ export function LiveTelemetryChart() {
       }, 2000);
       return () => clearInterval(id);
     }
-    if (paused || !inView) {
+    if (!inView) {
       draw();
       return;
     }
@@ -209,19 +201,10 @@ export function LiveTelemetryChart() {
       if (raf.current) cancelAnimationFrame(raf.current);
       c.last = 0;
     };
-  }, [paused, inView, reduce, draw]);
-
-  // Pausing on tab-hide is a courtesy; the loop also stops when off screen.
-  useEffect(() => {
-    const onVis = () => {
-      if (document.hidden) setPaused(true);
-    };
-    document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, []);
+  }, [inView, reduce, draw]);
 
   return (
-    <div ref={wrapRef} className="rounded-lg border border-line bg-surface">
+    <div ref={wrapRef} className="bezel bg-surface">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3">
         <ToggleGroup.Root
           type="multiple"
@@ -250,34 +233,9 @@ export function LiveTelemetryChart() {
           ))}
         </ToggleGroup.Root>
 
-        <div className="flex items-center gap-1 font-mono text-[12px]">
-          <button
-            type="button"
-            aria-label={paused ? t("resumeAria") : t("pauseAria")}
-            onClick={() => setPaused((p) => !p)}
-            className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-line px-2.5 text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
-          >
-            {paused ? <Play className="h-3.5 w-3.5" strokeWidth={1.75} /> : <Pause className="h-3.5 w-3.5" strokeWidth={1.75} />}
-            {paused ? t("resume") : t("live")}
-          </button>
-          <ToggleGroup.Root
-            type="single"
-            value={String(windowSec)}
-            onValueChange={(v) => v && setWindowSec(Number(v) as (typeof WINDOWS)[number])}
-            aria-label={t("window")}
-            className="flex rounded-sm border border-line"
-          >
-            {WINDOWS.map((s) => (
-              <ToggleGroup.Item
-                key={s}
-                value={String(s)}
-                className="px-2 py-1.5 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
-              >
-                {s}s
-              </ToggleGroup.Item>
-            ))}
-          </ToggleGroup.Root>
-        </div>
+        <span className="font-mono text-[11px] uppercase tracking-wider text-text-muted">
+          {WINDOW_SEC}s
+        </span>
       </div>
 
       <canvas
@@ -286,28 +244,28 @@ export function LiveTelemetryChart() {
         className="block h-40 w-full cursor-crosshair outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset sm:h-48"
         role="img"
         aria-label={`${t("chartAria", {
-          sec: windowSec,
+          sec: WINDOW_SEC,
           list: active.map((id) => t(`channelNames.${id}`)).join(", "),
         })} ${t("chartKeyboardHint")}`}
         onKeyDown={inspectByKey}
         onBlur={() => {
           hoverX.current = null;
-          if (paused || reduce || !inView) draw();
+          if (reduce || !inView) draw();
         }}
         onPointerMove={(e) => {
           if (e.pointerType === "touch") return;
           const r = e.currentTarget.getBoundingClientRect();
           hoverX.current = e.clientX - r.left;
-          if (paused || reduce || !inView) draw();
+          if (reduce || !inView) draw();
         }}
         onPointerLeave={() => {
           hoverX.current = null;
-          if (paused || reduce || !inView) draw();
+          if (reduce || !inView) draw();
         }}
         onPointerDown={(e) => {
           const r = e.currentTarget.getBoundingClientRect();
           hoverX.current = e.clientX - r.left;
-          setPaused(true);
+          if (reduce || !inView) draw();
         }}
       />
 

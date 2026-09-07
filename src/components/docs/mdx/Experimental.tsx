@@ -38,7 +38,7 @@ export function Experimental({
     <div className={cn("my-5 flex gap-3 rounded-md border px-4 py-3", ring)}>
       <FlaskConical className={cn("mt-0.5 h-4 w-4 shrink-0", text)} strokeWidth={1.75} aria-hidden />
       <div className="min-w-0">
-        <p className={cn("font-mono text-[11px] uppercase tracking-[0.14em]", text)}>{label}</p>
+        <p className={cn("font-mono text-[11px] uppercase tracking-[0.12em]", text)}>{label}</p>
         <div className="mt-1 text-[14px] leading-relaxed text-text-primary [&_a]:underline [&_p]:my-1.5 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0">
           {children ?? <p>{note ?? fallback}</p>}
         </div>

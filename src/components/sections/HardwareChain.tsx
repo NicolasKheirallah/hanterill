@@ -7,12 +7,12 @@ const notWantedKeys = ["elm", "j2534", "bluetooth", "driver"] as const;
 export function HardwareChain() {
   const t = useTranslations("hardware");
   return (
-    <section className="border-b border-line bg-bg-secondary py-20 sm:py-28 lg:py-32">
+    <section className="border-b border-line bg-bg-secondary py-2xl lg:py-3xl">
       <Container>
         <SectionHeading title={t("title")} lead={t("lead")} />
 
         <div className="mt-10 grid items-start gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
-          <ol className="overflow-hidden rounded-lg border border-line">
+          <ol className="overflow-hidden rounded-sm border border-line">
             {chainKeys.map((c, i) => (
               <li
                 key={c}

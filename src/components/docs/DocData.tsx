@@ -37,7 +37,7 @@ export function Callout({
     <div className={cn("my-5 flex gap-3 rounded-md border px-4 py-3 text-[14px] leading-relaxed", className)}>
       <Icon className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
       <div className="min-w-0">
-        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
+        <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
           {title ?? label}
         </p>
         <div className="mt-1 [&_a]:underline [&_p]:my-1.5 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0">

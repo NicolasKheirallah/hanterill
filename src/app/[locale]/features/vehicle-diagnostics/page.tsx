@@ -19,7 +19,7 @@ export default async function VehicleDiagnosticsPage({ params }: { params: Promi
     <>
       <LocalizedPageHeader id="vehicleDiagnostics" />
 
-      <Container className="py-14 sm:py-20">
+      <Container className="py-xl lg:py-2xl">
         <div className="grid items-start gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <Prose>
             <h2>Discovery</h2>
@@ -29,19 +29,19 @@ export default async function VehicleDiagnosticsPage({ params }: { params: Promi
             </p>
             <h2>Fault codes</h2>
             <p>
-              DTCs are read with service <code>0x19</code> and reported with their status: active,
-              pending, stored or historical. Where the ECU kept a freeze frame or snapshot, openCMA
-              retrieves it alongside the code.
+              DTCs are read with the ReadDTCInformation service and reported with their status:
+              active, pending, stored or historical. Where the ECU kept a freeze frame or snapshot,
+              openCMA retrieves it alongside the code.
             </p>
             <h2>Identification</h2>
             <p>
               VIN, ECU part numbers, hardware and software versions and supplier identifiers are read
-              with <code>0x22</code>. VIN is redacted in exports where it is not needed.
+              with ReadDataByIdentifier. The VIN is left out of exports that don&apos;t need it.
             </p>
             <h2>Evidence</h2>
             <p>
-              A session exports to JSON or CSV. Run one before a repair and one after, and the
-              difference is the record: fewer codes, fewer active faults.
+              A session exports to JSON or CSV. Run one before a repair and one after: the second
+              scan shows fewer codes and fewer active faults.
             </p>
           </Prose>
           <div>

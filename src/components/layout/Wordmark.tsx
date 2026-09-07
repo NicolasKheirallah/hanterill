@@ -1,12 +1,18 @@
 import { cn } from "@/lib/cn";
 
 /**
- * openCMA wordmark. The bracket glyph reads as a diagnostic connector /
- * signal boundary and is the site's one repeated identity motif.
+ * openCMA wordmark. Set in the mono identifier face. The bronze brackets are
+ * the site's one repeated identity motif - a diagnostic connector / signal
+ * boundary. Callers set the size class.
  */
 export function Wordmark({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-baseline font-mono text-[15px] font-semibold tracking-tight", className)}>
+    <span
+      className={cn(
+        "inline-flex items-baseline font-mono font-semibold tracking-tight text-text-primary",
+        className,
+      )}
+    >
       <span aria-hidden className="text-accent">[</span>
       <span className="px-0.5">
         open<span className="text-text-primary">CMA</span>

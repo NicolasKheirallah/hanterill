@@ -41,11 +41,11 @@ export function PanelChrome({
 }) {
   const t = useTranslations("views");
   return (
-    <div className="overflow-hidden rounded-[10px] border border-line-strong bg-surface shadow-[0_1px_0_var(--line)] [--panel-fg:var(--text-secondary)]">
+    <div className="overflow-hidden rounded-sm border border-line-strong bg-surface [--panel-fg:var(--text-secondary)]">
       <div className="flex items-center justify-between border-b border-line bg-bg-secondary px-3.5 py-2.5">
         <div className="flex items-center gap-2 font-mono text-[12px] text-text-secondary">
           <Gauge className="h-3.5 w-3.5 text-accent" strokeWidth={1.75} />
-          openCMA
+          <span className="tracking-tight">openCMA</span>
         </div>
         <StatusMarker tone={connection === "connected" ? "ok" : "info"} pulse>
           {connection === "connected" ? t("connected") : t("scanningShort")}

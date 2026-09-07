@@ -35,6 +35,7 @@ export const nav = [
   { key: "vehicles", href: "/vehicles" },
   { key: "docs", href: "/docs" },
   { key: "safety", href: "/safety" },
+  { key: "screenshots", href: "/screenshots" },
 ] as const;
 
 /** Footer columns. `heading` and `key` resolve against `footer` / `footer.links`. */
