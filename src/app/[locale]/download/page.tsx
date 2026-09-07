@@ -11,7 +11,7 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Download",
   description:
-    "Download openCMA for Windows, macOS or Linux, or build it from source. Release details come from GitHub Releases.",
+    "Download Hanterill for Windows, macOS or Linux, or build it from source. Release details come from GitHub Releases.",
 };
 
 async function Panel() {
@@ -35,7 +35,7 @@ export default async function DownloadPage({ params }: { params: Promise<{ local
           <Prose>
             <h2>Build from source</h2>
             <p>
-              openCMA is Rust and Tauri v2. With the Rust toolchain and Node installed, clone the
+              Hanterill is Rust and Tauri v2. With the Rust toolchain and Node installed, clone the
               repository and run the Tauri build for your platform. The full steps are in the
               development guide.
             </p>

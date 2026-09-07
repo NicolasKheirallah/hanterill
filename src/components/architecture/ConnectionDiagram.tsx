@@ -11,7 +11,7 @@ import { DUR, EASE } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 
 type Node = {
-  id: "vehicle" | "enet" | "computer" | "opencma";
+  id: "vehicle" | "enet" | "computer" | "hanterill";
   icon: typeof Car;
 };
 
@@ -19,7 +19,7 @@ const nodes: Node[] = [
   { id: "vehicle", icon: Car },
   { id: "enet", icon: Cable },
   { id: "computer", icon: Laptop },
-  { id: "opencma", icon: Gauge },
+  { id: "hanterill", icon: Gauge },
 ];
 
 export function ConnectionDiagram() {

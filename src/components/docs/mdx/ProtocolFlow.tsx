@@ -1,7 +1,7 @@
 type Step = string | { node: string; detail?: string };
 
 /**
- * A diagnostic path shown as an ordered list of hops (openCMA, Ethernet,
+ * A diagnostic path shown as an ordered list of hops (Hanterill, Ethernet,
  * gateway, target ECU) with an optional request line above and response line
  * below. Static and keyboard-neutral: it explains routing in the docs, it does
  * not animate. The connector is a hairline, not a glyph.

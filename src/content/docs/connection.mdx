@@ -1,4 +1,4 @@
-openCMA reaches the vehicle with ISO 13400 Diagnostics over IP (DoIP). Physically, that is ordinary Ethernet from your computer to a passive cable in the OBD-II port.
+Hanterill reaches the vehicle with ISO 13400 Diagnostics over IP (DoIP). Physically, that is ordinary Ethernet from your computer to a passive cable in the OBD-II port.
 
 ## The cable
 
@@ -18,7 +18,7 @@ OBD-II connector
 
 DoIP uses link-local addressing. In most cases the vehicle and adapter negotiate automatically and no manual IP configuration is needed. If your operating system holds the interface waiting for DHCP, set the adapter to link-local / automatic private addressing.
 
-openCMA discovers the vehicle with a UDP vehicle identification request on port 13400, then opens a TCP connection on the same port and performs routing activation before any diagnostic request.
+Hanterill discovers the vehicle with a UDP vehicle identification request on port 13400, then opens a TCP connection on the same port and performs routing activation before any diagnostic request.
 
 ## If the vehicle does not appear
 
@@ -30,4 +30,4 @@ openCMA discovers the vehicle with a UDP vehicle identification request on port 
 
 ## Wireless
 
-Some vehicles expose DoIP over their own Wi-Fi access point. Where that is available and openCMA supports it, the same discovery and routing steps apply over the wireless interface.
+Some vehicles expose DoIP over their own Wi-Fi access point. Where that is available and Hanterill supports it, the same discovery and routing steps apply over the wireless interface.

@@ -24,14 +24,14 @@ export default async function VehicleDiagnosticsPage({ params }: { params: Promi
           <Prose>
             <h2>Discovery</h2>
             <p>
-              A UDP identification request on port 13400 enumerates responders. openCMA then opens a
+              A UDP identification request on port 13400 enumerates responders. Hanterill then opens a
               TCP channel, activates routing, and probes each address for a UDS session.
             </p>
             <h2>Fault codes</h2>
             <p>
               DTCs are read with the ReadDTCInformation service and reported with their status:
               active, pending, stored or historical. Where the ECU kept a freeze frame or snapshot,
-              openCMA retrieves it alongside the code.
+              Hanterill retrieves it alongside the code.
             </p>
             <h2>Identification</h2>
             <p>

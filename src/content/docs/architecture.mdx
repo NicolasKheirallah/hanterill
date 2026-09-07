@@ -1,12 +1,12 @@
 import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
 
-openCMA is a layered diagnostic stack with a native desktop shell. No part of it is a proprietary cloud API.
+Hanterill is a layered diagnostic stack with a native desktop shell. No part of it is a proprietary cloud API.
 
 ## Layers
 
 ```text
-openCMA            desktop application, Rust and Tauri v2
+Hanterill            desktop application, Rust and Tauri v2
 Diagnostic engine  sessions, routines, decoders
 ISO 14229 UDS      unified diagnostic services
 ISO 13400 DoIP     diagnostics over IP
@@ -29,7 +29,7 @@ along it:
 
 <ProtocolFlow
   steps={[
-    { node: "openCMA", detail: "diagnostic engine" },
+    { node: "Hanterill", detail: "diagnostic engine" },
     { node: "Ethernet", detail: "passive ENET cable" },
     { node: "Vehicle gateway", detail: "CEM / VGM, DoIP" },
     { node: "Target ECU", detail: "BECM, extended session" },

@@ -1,5 +1,5 @@
 /**
- * Deterministic mock values for the website's simulated openCMA interface.
+ * Deterministic mock values for the website's simulated Hanterill interface.
  * These are illustrative figures chosen for the site. They are not a
  * reading from any vehicle.
  */

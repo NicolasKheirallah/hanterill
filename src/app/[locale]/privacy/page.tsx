@@ -7,7 +7,7 @@ import { Prose } from "@/components/ui/Prose";
 export const metadata: Metadata = {
   title: "Privacy",
   description:
-    "openCMA is entirely local. No telemetry, no analytics, no account, no backend, no diagnostic data uploaded. VIN is redacted where it is not needed.",
+    "Hanterill is entirely local. No telemetry, no analytics, no account, no backend, no diagnostic data uploaded. VIN is redacted where it is not needed.",
 };
 
 export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -39,14 +39,14 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
 
           <h2>VIN handling</h2>
           <p>
-            The VIN is read as part of vehicle identification. In logs and exports, openCMA redacts
+            The VIN is read as part of vehicle identification. In logs and exports, Hanterill redacts
             it where it is not required, so a shared session file does not carry a full VIN by
             default.
           </p>
 
           <h2>Network activity</h2>
           <p>
-            During a session, openCMA communicates only with the vehicle over the local Ethernet
+            During a session, Hanterill communicates only with the vehicle over the local Ethernet
             link. The website may query the GitHub API to show the latest release and repository
             stats; the application itself does not require any internet connection to run.
           </p>

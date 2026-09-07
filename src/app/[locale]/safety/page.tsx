@@ -8,7 +8,7 @@ import { SafetySection } from "@/components/sections/SafetySection";
 export const metadata: Metadata = {
   title: "Safety",
   description:
-    "How openCMA separates read-only diagnostics from operations that change the vehicle, and what software access does and does not make safe.",
+    "How Hanterill separates read-only diagnostics from operations that change the vehicle, and what software access does and does not make safe.",
 };
 
 export default async function SafetyPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -24,13 +24,13 @@ export default async function SafetyPage({ params }: { params: Promise<{ locale:
           <p>
             Battery data, ECU identification, fault codes and live telemetry are all read operations.
             Running them cannot change vehicle configuration. This is the large majority of what
-            openCMA does.
+            Hanterill does.
           </p>
 
           <h2>Operations that change the vehicle</h2>
           <p>
             Clearing diagnostic information, service routines and adaptations alter ECU state. In
-            openCMA these are grouped separately, labelled, and disabled until you explicitly enable
+            Hanterill these are grouped separately, labelled, and disabled until you explicitly enable
             write access for the session. They fail closed: if the opt-in is not present, the request
             is not sent.
           </p>
@@ -44,7 +44,7 @@ export default async function SafetyPage({ params }: { params: Promise<{ locale:
 
           <h2>Not a substitute for manufacturer tooling</h2>
           <p>
-            openCMA is an independent project. It does not replace the diagnostic system supplied by
+            Hanterill is an independent project. It does not replace the diagnostic system supplied by
             the manufacturer, and it is not affiliated with Volvo Cars, Polestar or Geely. Use it to
             understand your vehicle, not as the sole basis for a safety-critical repair decision.
           </p>

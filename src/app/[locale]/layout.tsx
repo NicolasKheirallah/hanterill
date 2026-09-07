@@ -38,10 +38,10 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "meta" });
   return {
     metadataBase: new URL(site.url),
-    title: { default: t("title"), template: `%s | openCMA` },
+    title: { default: t("title"), template: `%s | Hanterill` },
     description: t("description"),
-    applicationName: "openCMA",
-    authors: [{ name: "openCMA contributors" }],
+    applicationName: "Hanterill",
+    authors: [{ name: "Hanterill contributors" }],
     keywords: [
       "Volvo diagnostics",
       "Polestar diagnostics",
@@ -56,7 +56,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: `${site.url}/${locale}`,
-      siteName: "openCMA",
+      siteName: "Hanterill",
       title: t("title"),
       description: t("description"),
       locale: locale === "sv" ? "sv_SE" : "en",
@@ -84,7 +84,7 @@ export const viewport: Viewport = {
 const themeScript = `
 (function () {
   try {
-    var s = localStorage.getItem('opencma-theme');
+    var s = localStorage.getItem('hanterill-theme');
     if (s === 'dark' || s === 'light') document.documentElement.setAttribute('data-theme', s);
   } catch (e) {}
 })();
@@ -95,7 +95,7 @@ const ldJson = {
   "@graph": [
     {
       "@type": "SoftwareApplication",
-      name: "openCMA",
+      name: "Hanterill",
       applicationCategory: "DeveloperApplication",
       applicationSubCategory: "Vehicle diagnostics",
       operatingSystem: "Windows, macOS, Linux",
@@ -107,7 +107,7 @@ const ldJson = {
     },
     {
       "@type": "SoftwareSourceCode",
-      name: "openCMA",
+      name: "Hanterill",
       codeRepository: site.repoUrl,
       programmingLanguage: ["Rust", "TypeScript"],
       runtimePlatform: "Tauri",

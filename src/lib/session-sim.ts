@@ -67,7 +67,7 @@ export function reportCsv() {
 export function reportJson() {
   return JSON.stringify(
     {
-      note: "Example report from the openCMA website. Representative sample data, not a vehicle reading.",
+      note: "Example report from the Hanterill website. Representative sample data, not a vehicle reading.",
       vehicle: { model: identify.model, platform: identify.platform, vin: identify.vin },
       summary: report,
       generatedAt: null,

@@ -2,10 +2,10 @@ import { DidReference } from "@/components/docs/mdx/DidReference";
 import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 
-The high-voltage battery data comes from the Battery Energy Control Module (BECM) over UDS. openCMA opens an extended session with the BECM and reads by identifier.
+The high-voltage battery data comes from the Battery Energy Control Module (BECM) over UDS. Hanterill opens an extended session with the BECM and reads by identifier.
 
 <SafetyNotice level="read-only">
-Everything on this page is a read. openCMA queries the BECM and decodes the response. It does not write to the module and does not change how the pack is managed.
+Everything on this page is a read. Hanterill queries the BECM and decodes the response. It does not write to the module and does not change how the pack is managed.
 </SafetyNotice>
 
 ## What you get
@@ -20,7 +20,7 @@ Everything on this page is a read. openCMA queries the BECM and decodes the resp
 
 ## Reading it
 
-After routing activation, openCMA enters an extended session with the BECM
+After routing activation, Hanterill enters an extended session with the BECM
 and reads each identifier:
 
 <DidReference
@@ -51,5 +51,5 @@ A healthy pack sits within a few millivolts across all 108 groups. A widening de
 ## Provisional platforms
 
 <Callout kind="warning" title="Unverified on SEA and SPA2">
-On SEA and SPA2 the BECM identifiers and scaling differ and are not verified. openCMA marks battery data on those platforms as unverified and it should not be used for decisions.
+On SEA and SPA2 the BECM identifiers and scaling differ and are not verified. Hanterill marks battery data on those platforms as unverified and it should not be used for decisions.
 </Callout>

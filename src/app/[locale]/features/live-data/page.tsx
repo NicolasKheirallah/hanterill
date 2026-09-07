@@ -29,7 +29,7 @@ export default async function LiveDataPage({ params }: { params: Promise<{ local
             <p>
               Toggle channels above the chart. Any readable data identifier can be added to a live
               view; common drivetrain and battery channels are grouped by default. Sampling rate is
-              bounded by the ECU and the diagnostic session, not by openCMA.
+              bounded by the ECU and the diagnostic session, not by Hanterill.
             </p>
             <h2>Reading the chart</h2>
             <p>

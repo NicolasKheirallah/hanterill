@@ -1,4 +1,4 @@
-# Design - openCMA website
+# Design - Hanterill website
 
 A locked design system for this site. Every page reads this file before emitting
 code. Do not regenerate per page - extend or amend this file when the system
@@ -148,7 +148,7 @@ paddings; use the named tokens or the Tailwind utilities that map to them.
 ## CTA voice
 
 - **Primary**: filled rectangle, `--radius-sm` (2px), `--accent` with
-  `--accent-fg` text, weight 500, verb-led label ("Download openCMA", "Read the
+  `--accent-fg` text, weight 500, verb-led label ("Download Hanterill", "Read the
   docs"). Height 44px (`md`) / 36px (`sm`). No pill, no gradient. Label fits one
   line at desktop.
 - **Secondary**: bordered rectangle, `--line-strong` border, `--radius-sm`.
@@ -175,7 +175,7 @@ paddings; use the named tokens or the Tailwind utilities that map to them.
 
 ## What pages MUST share
 
-- The `[openCMA]` bracket wordmark and its bronze brackets.
+- The `[Hanterill]` bracket wordmark and its bronze brackets.
 - `--accent` and its `<= 5%` placement rule.
 - Geist display + Inter body + IBM Plex Mono identifier. No serif.
 - The CTA voice (filled 2px rectangle primary, typographic-link secondary).

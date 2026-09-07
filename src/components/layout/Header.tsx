@@ -80,7 +80,7 @@ export function Header() {
         <span className="absolute right-5 top-0 h-2 w-px bg-line-strong sm:right-8" />
       </div>
       <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between gap-6 px-5 sm:px-8">
-        <Link href="/" className="inline-flex shrink-0 items-center" aria-label="openCMA home">
+        <Link href="/" className="inline-flex shrink-0 items-center" aria-label="Hanterill home">
           <Wordmark className="text-[19px]" />
         </Link>
 

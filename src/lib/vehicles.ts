@@ -1,5 +1,5 @@
 /**
- * Vehicle support data. "Platform compatibility" (openCMA can reach the car over
+ * Vehicle support data. "Platform compatibility" (Hanterill can reach the car over
  * DoIP) is not the same as "verified support" (functions are implemented and
  * checked). Status labels below always reflect verified support, never platform
  * membership. No completion percentages are invented.

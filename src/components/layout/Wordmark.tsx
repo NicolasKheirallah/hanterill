@@ -1,7 +1,7 @@
 import { cn } from "@/lib/cn";
 
 /**
- * openCMA wordmark. Set in the mono identifier face. The bronze brackets are
+ * Hanterill wordmark. Set in the mono identifier face. The bronze brackets are
  * the site's one repeated identity motif - a diagnostic connector / signal
  * boundary. Callers set the size class.
  */
@@ -14,9 +14,7 @@ export function Wordmark({ className }: { className?: string }) {
       )}
     >
       <span aria-hidden className="text-accent">[</span>
-      <span className="px-0.5">
-        open<span className="text-text-primary">CMA</span>
-      </span>
+      <span className="px-0.5">Hanterill</span>
       <span aria-hidden className="text-accent">]</span>
     </span>
   );

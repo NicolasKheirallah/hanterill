@@ -296,7 +296,7 @@ function ReportStage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `opencma-example-report.${kind}`;
+    a.download = `hanterill-example-report.${kind}`;
     a.click();
     URL.revokeObjectURL(url);
   }

@@ -20,7 +20,7 @@ export default function RootRedirect() {
     <html lang={routing.defaultLocale}>
       <head>
         <meta httpEquiv="refresh" content={`0; url=${target}`} />
-        <link rel="canonical" href={`https://opencma.org/${routing.defaultLocale}/`} />
+        <link rel="canonical" href={`https://hanterill.org/${routing.defaultLocale}/`} />
         <script
           // Faster than waiting for the meta refresh, and replaces the entry so
           // Back does not land on this bounce page.
@@ -31,7 +31,7 @@ export default function RootRedirect() {
       </head>
       <body style={{ fontFamily: "system-ui, sans-serif", margin: "2rem" }}>
         <p>
-          Redirecting to <a href={target}>openCMA</a>.
+          Redirecting to <a href={target}>Hanterill</a>.
         </p>
       </body>
     </html>

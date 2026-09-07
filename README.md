@@ -1,4 +1,4 @@
-# openCMA
+# Hanterill
 
 > **Source-available, dealer-grade vehicle diagnostics & high-voltage telemetry for Polestar and Volvo electric vehicles over DoIP/UDS.**
 
@@ -17,7 +17,7 @@
 2. [Supported Vehicles & Platforms](#supported-vehicles--platforms)
 3. [Supported ECUs & Subsystems](#supported-ecus--subsystems)
 4. [Supported Diagnostic Protocols & Services](#supported-diagnostic-protocols--services)
-5. [What You Can Do With openCMA](#what-you-can-do-with-opencma)
+5. [What You Can Do With Hanterill](#what-you-can-do-with-hanterill)
 6. [Supported Hardware & Adapters](#supported-hardware--adapters)
 7. [Operating System Support](#operating-system-support)
 8. [Step-by-Step Connection Guide](#step-by-step-connection-guide)
@@ -35,13 +35,13 @@
 
 Modern electric vehicles built on Geely/Volvo's **Compact Modular Architecture (CMA)** and **Scalable Product Architecture (SPA2)** communicate over high-speed Ethernet using standard automotive **Diagnostic over IP (DoIP)** protocols. However, accessing high-voltage battery health, live cell potentials, thermal sensors, or module fault codes has traditionally required expensive proprietary dealer subscriptions (such as VIDA), closed commercial scan tools, or cloud logins.
 
-**openCMA** solves this. It is a free, fully local, source-available desktop diagnostic application that talks directly to your car over a standard Ethernet cable, decoding raw vehicle network traffic into readable diagnostic telemetry. It is licensed for personal, non-commercial use only.
+**Hanterill** solves this. It is a free, fully local, source-available desktop diagnostic application that talks directly to your car over a standard Ethernet cable, decoding raw vehicle network traffic into readable diagnostic telemetry. It is licensed for personal, non-commercial use only.
 
 ---
 
 ## Supported Vehicles & Platforms
 
-openCMA supports all electric and hybrid vehicles built on the **CMA** (Compact Modular Architecture) and **SPA2** platforms:
+Hanterill supports all electric and hybrid vehicles built on the **CMA** (Compact Modular Architecture) and **SPA2** platforms:
 
 | Vehicle | Model Years | Supported Powertrains |
 | :--- | :--- | :--- |
@@ -56,7 +56,7 @@ openCMA supports all electric and hybrid vehicles built on the **CMA** (Compact 
 
 ## Supported ECUs & Subsystems
 
-openCMA maps and probes up to **43 Electronic Control Units (ECUs)** communicating across high-speed Ethernet and gateway bridges:
+Hanterill maps and probes up to **43 Electronic Control Units (ECUs)** communicating across high-speed Ethernet and gateway bridges:
 
 ```
                       [ Physical Ethernet Port (ENET) ]
@@ -88,9 +88,9 @@ High-Voltage / Energy          Chassis & Drive                Safety, Body & Cab
 
 ## Supported Diagnostic Protocols & Services
 
-openCMA implements the full automotive open networking stack:
+Hanterill implements the full automotive open networking stack:
 
-| Protocol / Standard | Specification | Function in openCMA |
+| Protocol / Standard | Specification | Function in Hanterill |
 | :--- | :--- | :--- |
 | **ISO 13400-2 (DoIP)** | Diagnostic over IP | Auto-discovers vehicles over UDP/TCP Port 13400, negotiates vehicle announcements, handles routing activation, keepalive pinging. |
 | **ISO 14229-1 (UDS)** | Unified Diagnostic Services | Standardized diagnostic messaging layer running inside DoIP frames. |
@@ -103,7 +103,7 @@ openCMA implements the full automotive open networking stack:
 
 ---
 
-## What You Can Do With openCMA
+## What You Can Do With Hanterill
 
 ### 1. Traction Battery Health & Degradation Check
 - **True State of Health (SoH)**: Read the exact BMS battery degradation percentage directly from the BECM, without guesswork.
@@ -135,7 +135,7 @@ openCMA implements the full automotive open networking stack:
 
 ## Supported Hardware & Adapters
 
-openCMA connects over standard wired Ethernet. It does not use OBD dongles like OBDLink or ELM327: CAN-based adapters lack the bandwidth DoIP needs.
+Hanterill connects over standard wired Ethernet. It does not use OBD dongles like OBDLink or ELM327: CAN-based adapters lack the bandwidth DoIP needs.
 
 ```
 [ Car Diagnostic Port ] ──▶ [ OBD-II to RJ45 (ENET) Cable ] ──▶ [ USB-C / RJ45 Adapter ] ──▶ [ Your Computer ]
@@ -153,7 +153,7 @@ openCMA connects over standard wired Ethernet. It does not use OBD dongles like 
 
 ## Operating System Support
 
-openCMA is built with Rust and Tauri v2, providing lightweight, native performance across desktop platforms:
+Hanterill is built with Rust and Tauri v2, providing lightweight, native performance across desktop platforms:
 
 | Platform | Architecture | Status | Binary Package |
 | :--- | :--- | :--- | :--- |
@@ -169,17 +169,17 @@ openCMA is built with Rust and Tauri v2, providing lightweight, native performan
 2. **Plug In Cable**: Connect the OBD-II end of your ENET cable to the vehicle, and the Ethernet / USB-C end to your computer.
 3. **Turn On Ignition**: Sit in the driver's seat or press the brake pedal to wake the vehicle's Central Electronic Module (CEM).
 4. **Auto IP Configuration**: The vehicle's DoIP gateway will assign your computer a link-local address in the `169.254.x.x` subnet. No manual IP configuration is required.
-5. **Launch openCMA**: Open the desktop app. It will automatically detect your active Ethernet interface, negotiate DoIP routing activation on Port 13400, and show **Connected (DoIP)**.
+5. **Launch Hanterill**: Open the desktop app. It will automatically detect your active Ethernet interface, negotiate DoIP routing activation on Port 13400, and show **Connected (DoIP)**.
 
 > [!TIP]
-> **No car available?** openCMA includes **Deterministic Simulation Targets** built into the connection page. You can launch full simulated vehicle sessions (Baseline Healthy, Fault-Injected DTC Target, or Quiescent Sleep Drain) to explore every screen offline.
+> **No car available?** Hanterill includes **Deterministic Simulation Targets** built into the connection page. You can launch full simulated vehicle sessions (Baseline Healthy, Fault-Injected DTC Target, or Quiescent Sleep Drain) to explore every screen offline.
 
 ---
 
 ## Installation & Getting Started
 
 ### Option A: Pre-Built Desktop Application (Recommended)
-Download the latest pre-compiled binary for your operating system from the [Releases](https://github.com/nicolaskheirallah/openCMA-main/releases) page.
+Download the latest pre-compiled binary for your operating system from the [Releases](https://github.com/nicolaskheirallah/Hanterill-main/releases) page.
 
 ### Option B: Building from Source (One-Click Desktop App)
 
@@ -189,8 +189,8 @@ Download the latest pre-compiled binary for your operating system from the [Rele
 
 ```sh
 # 1. Clone the repository
-git clone https://github.com/nicolaskheirallah/openCMA-main.git
-cd openCMA-main
+git clone https://github.com/nicolaskheirallah/Hanterill-main.git
+cd Hanterill-main
 
 # 2. Build and launch the native app (one command)
 scripts/release/build-desktop.sh
@@ -203,9 +203,9 @@ The script produces a double-clickable native bundle and launches it:
 
 | Platform | Artifact |
 | :--- | :--- |
-| **macOS** | `apps/desktop/src-tauri/target/release/bundle/macos/openCMA.app` (ad-hoc signed; first launch: right-click → *Open*, or `xattr -cr openCMA.app`) |
-| **Linux** | `.../bundle/appimage/openCMA_*.AppImage` + `.deb` |
-| **Windows** | `.../bundle/nsis/openCMA_*-setup.exe` installer |
+| **macOS** | `apps/desktop/src-tauri/target/release/bundle/macos/Hanterill.app` (ad-hoc signed; first launch: right-click → *Open*, or `xattr -cr Hanterill.app`) |
+| **Linux** | `.../bundle/appimage/Hanterill_*.AppImage` + `.deb` |
+| **Windows** | `.../bundle/nsis/Hanterill_*-setup.exe` installer |
 
 Useful npm equivalents (run inside `apps/desktop/ui`): `npm run app:dev`
 (live-reload desktop shell) and `npm run app:build` (same bundle).
@@ -224,7 +224,7 @@ npm run dev
 
 ## User Interface & Theming
 
-openCMA's interface is deliberately plain: a Scandinavian-adjacent technical style, precise and low on visual clutter.
+Hanterill's interface is deliberately plain: a Scandinavian-adjacent technical style, precise and low on visual clutter.
 
 - **Neutral Reference**: Clean monochrome slate. Hairline rules, square corners, a single restrained accent, Archivo-class system typography.
 - **Anti-AI Design**: No consumer emojis. 16 custom stroke-based SVG icons and a compact 48px titlebar.
@@ -237,10 +237,10 @@ openCMA's interface is deliberately plain: a Scandinavian-adjacent technical sty
 
 ## Workspace Architecture
 
-The openCMA codebase is organized as a modular Rust & TypeScript monorepo:
+The Hanterill codebase is organized as a modular Rust & TypeScript monorepo:
 
 ```
-openCMA-main/
+Hanterill-main/
 ├── apps/
 │   └── desktop/
 │       ├── src-tauri/         # Tauri v2 native application runtime & IPC commands
@@ -260,7 +260,7 @@ openCMA-main/
 ## Safety, Privacy & Data Ownership
 
 - **Read-Only Safety Boundaries**: Standard diagnostics strictly use read-only UDS services (`0x22`, `0x19`). Destructive clearing (0x14) and actuations (0x31) fail closed unless compiled with `--features unsafe-write-ops` (`SAFE-001`, `DTC-002`).
-- **100% Local & Private**: openCMA contains zero analytics, zero crash telemetry, and zero cloud dependencies. Diagnostic sessions and activity logs are stored locally with automated 17-character VIN redaction (`PRIVACY.md`, `EXPORT-001`).
+- **100% Local & Private**: Hanterill contains zero analytics, zero crash telemetry, and zero cloud dependencies. Diagnostic sessions and activity logs are stored locally with automated 17-character VIN redaction (`PRIVACY.md`, `EXPORT-001`).
 - **Shipped Capabilities Manifest**: See [docs/product/capabilities.md](docs/product/capabilities.md) for the verified runtime capability and safety boundaries matrix (`DOCS-001`).
 - **Privacy Policy**: See [PRIVACY.md](PRIVACY.md) for the full Zero-Telemetry data ownership policy, storage locations, VIN redaction rules, and retention controls.
 - **Safety Guidelines**: See [docs/safety.md](docs/safety.md) for read-only diagnostic boundaries and high-voltage safety notices.
@@ -269,7 +269,7 @@ openCMA-main/
 
 ## Disclaimer & Legal Notice
 
-openCMA is an independent, source-available diagnostic project developed by the community. It is **not** affiliated with, authorized by, maintained by, or in any way officially connected with **Polestar Performance AB**, **Volvo Car Corporation**, **Geely Automobile Holdings**, or any of their subsidiaries or affiliates.
+Hanterill is an independent, source-available diagnostic project developed by the community. It is **not** affiliated with, authorized by, maintained by, or in any way officially connected with **Polestar Performance AB**, **Volvo Car Corporation**, **Geely Automobile Holdings**, or any of their subsidiaries or affiliates.
 
 > [!WARNING]
 > Electric vehicles contain high-voltage systems (400V/800V) capable of causing serious injury or death. Service routines physically actuate vehicle mechanical systems. Always follow the safety precautions documented in [DISCLAIMER.md](DISCLAIMER.md) before connecting to or servicing any vehicle.
@@ -278,4 +278,4 @@ All product names, logos, brands, and vehicle models are trademarks or registere
 
 For the full legal disclaimer, warranty limitations, and automotive safety notices, see **[DISCLAIMER.md](DISCLAIMER.md)**.
 
-**Private use only.** openCMA is licensed **CC BY-NC-ND 4.0**: read, run and share it for personal, non-commercial use, with no commercial use and no distributing modified versions. The source is available to read; it is not OSI open source. See [LICENSE.md](LICENSE.md) for the full terms.
+**Private use only.** Hanterill is licensed **CC BY-NC-ND 4.0**: read, run and share it for personal, non-commercial use, with no commercial use and no distributing modified versions. The source is available to read; it is not OSI open source. See [LICENSE.md](LICENSE.md) for the full terms.

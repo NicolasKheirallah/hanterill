@@ -7,7 +7,7 @@ import { ScreenshotGallery, type Shot } from "@/components/screenshots/Screensho
 export const metadata: Metadata = {
   title: "Screenshots",
   description:
-    "The openCMA app on a supported Volvo and Polestar: overview, battery health, fault codes, live telemetry and service routines.",
+    "The Hanterill app on a supported Volvo and Polestar: overview, battery health, fault codes, live telemetry and service routines.",
 };
 
 // Files live in public/assets (kebab-case; no spaces so the paths resolve in

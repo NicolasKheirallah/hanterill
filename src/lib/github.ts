@@ -24,7 +24,7 @@ export type RepoMeta = {
 };
 
 const API = "https://api.github.com";
-const HEADERS = { Accept: "application/vnd.github+json", "User-Agent": "opencma-website" };
+const HEADERS = { Accept: "application/vnd.github+json", "User-Agent": "hanterill-website" };
 
 async function getJson<T>(path: string): Promise<T | null> {
   try {

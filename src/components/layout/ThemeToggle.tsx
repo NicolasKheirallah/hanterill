@@ -4,8 +4,8 @@ import { useCallback, useSyncExternalStore } from "react";
 import { Monitor, Moon, Sun } from "lucide-react";
 
 type Mode = "light" | "dark" | "system";
-const KEY = "opencma-theme";
-const EVENT = "opencma-theme-change";
+const KEY = "hanterill-theme";
+const EVENT = "hanterill-theme-change";
 const order: Mode[] = ["system", "light", "dark"];
 
 function read(): Mode {

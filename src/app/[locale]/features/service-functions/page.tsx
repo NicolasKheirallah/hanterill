@@ -33,7 +33,7 @@ export default async function ServiceFunctionsPage({ params }: { params: Promise
             <span className="font-medium text-text-primary">
               Write operations are off by default.
             </span>{" "}
-            openCMA will not run a routine without your explicit, per-session go-ahead. Read-only
+            Hanterill will not run a routine without your explicit, per-session go-ahead. Read-only
             diagnostics are unaffected.
           </p>
         </div>

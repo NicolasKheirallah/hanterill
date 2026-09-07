@@ -8,7 +8,7 @@ import { Faq, type QA } from "@/components/sections/Faq";
 export const metadata: Metadata = {
   title: "Supported vehicles",
   description:
-    "openCMA is CMA-first: Polestar 2 and the CMA Volvos are the tested platforms, with SPA, SEA and SPA2 support in progress. Platform compatibility is not verified support.",
+    "Hanterill is CMA-first: Polestar 2 and the CMA Volvos are the tested platforms, with SPA, SEA and SPA2 support in progress. Platform compatibility is not verified support.",
 };
 
 export default async function VehiclesPage({ params }: { params: Promise<{ locale: string }> }) {

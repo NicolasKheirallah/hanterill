@@ -28,10 +28,10 @@ export default async function BatteryHealthPage({ params }: { params: Promise<{ 
           <Prose>
             <h2>Where the number comes from</h2>
             <p>
-              State of health is reported by the battery management system, not calculated by openCMA.
-              openCMA reads it, and the values behind it, directly from the vehicle.
+              State of health is reported by the battery management system, not calculated by Hanterill.
+              Hanterill reads it, and the values behind it, directly from the vehicle.
             </p>
-            <h2>What openCMA reads</h2>
+            <h2>What Hanterill reads</h2>
             <ul>
               <li>State of health and state of charge</li>
               <li>Pack voltage and pack current</li>

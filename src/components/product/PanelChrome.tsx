@@ -24,7 +24,7 @@ export const panelTabs = [
 export type PanelTabId = (typeof panelTabs)[number]["id"];
 
 /**
- * The openCMA application shell, rebuilt as a real component. It is a
+ * The Hanterill application shell, rebuilt as a real component. It is a
  * representative interface for the website, not a screenshot and not a
  * live diagnostic session.
  */
@@ -45,7 +45,7 @@ export function PanelChrome({
       <div className="flex items-center justify-between border-b border-line bg-bg-secondary px-3.5 py-2.5">
         <div className="flex items-center gap-2 font-mono text-[12px] text-text-secondary">
           <Gauge className="h-3.5 w-3.5 text-accent" strokeWidth={1.75} />
-          <span className="tracking-tight">openCMA</span>
+          <span className="tracking-tight">Hanterill</span>
         </div>
         <StatusMarker tone={connection === "connected" ? "ok" : "info"} pulse>
           {connection === "connected" ? t("connected") : t("scanningShort")}

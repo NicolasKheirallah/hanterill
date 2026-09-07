@@ -6,18 +6,18 @@ export type DocMeta = {
 };
 
 export const docs: DocMeta[] = [
-  { slug: "getting-started", title: "Getting started", summary: "Install openCMA and open your first session.", group: "Start" },
+  { slug: "getting-started", title: "Getting started", summary: "Install Hanterill and open your first session.", group: "Start" },
   { slug: "connection", title: "Connection", summary: "ENET cable, Ethernet interface and network setup.", group: "Start" },
   { slug: "supported-vehicles", title: "Supported vehicles", summary: "Platforms, status labels and what each one means.", group: "Start" },
   { slug: "battery-diagnostics", title: "Battery diagnostics", summary: "SOH, SOC, cell-group potentials and thermal data.", group: "Diagnostics" },
   { slug: "dtc-scanning", title: "DTC scanning", summary: "Reading fault codes by status and freeze frames.", group: "Diagnostics" },
   { slug: "ecu-reference", title: "ECU reference", summary: "CMA ECU codes, names and part numbers.", group: "Reference" },
-  { slug: "cli", title: "CLI", summary: "Scripting openCMA from the command line.", group: "Reference" },
+  { slug: "cli", title: "CLI", summary: "Scripting Hanterill from the command line.", group: "Reference" },
   { slug: "architecture", title: "Architecture", summary: "How the diagnostic engine, DoIP and UDS layers fit together.", group: "Reference" },
   { slug: "safety", title: "Safety", summary: "Read-only versus vehicle-changing operations.", group: "Project" },
   { slug: "privacy", title: "Privacy", summary: "What stays local and what is never collected.", group: "Project" },
   { slug: "license", title: "License", summary: "Source-available, for private use. What that permits.", group: "Project" },
-  { slug: "development", title: "Development", summary: "Build openCMA from source and contribute.", group: "Project" },
+  { slug: "development", title: "Development", summary: "Build Hanterill from source and contribute.", group: "Project" },
 ];
 
 export function docsSlugs() {

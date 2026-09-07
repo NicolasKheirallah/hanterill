@@ -1,10 +1,10 @@
 import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
 
-openCMA reads Diagnostic Trouble Codes with the UDS ReadDTCInformation service from every ECU that answers a diagnostic session.
+Hanterill reads Diagnostic Trouble Codes with the UDS ReadDTCInformation service from every ECU that answers a diagnostic session.
 
 ## Status, not just a code
 
-Each DTC carries a status byte. openCMA presents it as one of:
+Each DTC carries a status byte. Hanterill presents it as one of:
 
 | State | Meaning |
 | --- | --- |
@@ -17,11 +17,11 @@ A single "check engine" light can sit on top of one active code and several hist
 
 ## Freeze frames and snapshots
 
-Where the ECU stored a snapshot at the time of the fault, openCMA retrieves it with the code: the conditions recorded when the DTC matured. Not every code has one.
+Where the ECU stored a snapshot at the time of the fault, Hanterill retrieves it with the code: the conditions recorded when the DTC matured. Not every code has one.
 
 ## Scanning
 
-openCMA uses four ReadDTCInformation subfunctions: report the number of DTCs by status mask, report the DTCs by status mask, report a snapshot record for a DTC, and report an extended data record for a DTC.
+Hanterill uses four ReadDTCInformation subfunctions: report the number of DTCs by status mask, report the DTCs by status mask, report a snapshot record for a DTC, and report an extended data record for a DTC.
 
 A report-by-status-mask exchange, with the bytes on the wire:
 
@@ -29,10 +29,10 @@ A report-by-status-mask exchange, with the bytes on the wire:
   service="ReadDTCInformation, report DTCs by status mask"
   request="19 02 FF"
   response="59 02 FF <dtc><status> <dtc><status> ..."
-  note="The FF mask asks for every status. Each three-byte DTC is followed by one status byte; openCMA classifies that byte as active, pending, stored or historical."
+  note="The FF mask asks for every status. Each three-byte DTC is followed by one status byte; Hanterill classifies that byte as active, pending, stored or historical."
 />
 
-openCMA runs this per ECU and aggregates the result into one list, grouped by module.
+Hanterill runs this per ECU and aggregates the result into one list, grouped by module.
 
 ## Clearing
 

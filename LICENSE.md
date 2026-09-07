@@ -2,7 +2,7 @@
 
 Copyright 2026 Nicolas Kheirallah
 
-openCMA is made available under the **Creative Commons
+Hanterill is made available under the **Creative Commons
 Attribution-NonCommercial-NoDerivatives 4.0 International License**
 (CC BY-NC-ND 4.0).
 
@@ -18,7 +18,7 @@ convenience only and is not a substitute for it.
 
 ## What you may do
 
-- **Read, download, run and share openCMA** for private, non-commercial
+- **Read, download, run and share Hanterill** for private, non-commercial
   purposes: personal diagnostics on vehicles you own or are authorised to work
   on, research, and education.
 - Share the work in its **unmodified** form, with attribution and this license
@@ -26,11 +26,11 @@ convenience only and is not a substitute for it.
 
 ## What you may not do
 
-- **No commercial use.** You may not use openCMA, in whole or in part, primarily
+- **No commercial use.** You may not use Hanterill, in whole or in part, primarily
   for commercial advantage or monetary compensation. This includes resale, paid
   support, diagnostics offered as a paid service, and use inside a business whose
   purpose is commercial.
-- **No derivatives.** If you remix, transform, or build upon openCMA, you may not
+- **No derivatives.** If you remix, transform, or build upon Hanterill, you may not
   distribute the modified material. You may make private modifications for your
   own non-commercial use.
 - No additional restrictions: you may not apply legal terms or technological
@@ -38,9 +38,9 @@ convenience only and is not a substitute for it.
 
 ## Attribution
 
-When you share openCMA, keep this notice and credit:
+When you share Hanterill, keep this notice and credit:
 
-> openCMA by Nicolas Kheirallah — <https://github.com/nicolaskheirallah/openCMA>
+> Hanterill by Nicolas Kheirallah — <https://github.com/nicolaskheirallah/Hanterill>
 > Licensed under CC BY-NC-ND 4.0.
 
 ## Notes
@@ -48,9 +48,9 @@ When you share openCMA, keep this notice and credit:
 - This is **not** an OSI-approved open-source license. "Source-available" and
   "open source" are not the same thing.
 - Creative Commons does not recommend its licenses for software; this project
-  uses CC BY-NC-ND 4.0 deliberately to keep openCMA a read-and-run,
+  uses CC BY-NC-ND 4.0 deliberately to keep Hanterill a read-and-run,
   non-commercial tool rather than a product or a fork base.
 - Contributions are accepted under the same license. See the project
   documentation for what helps most.
 - Nothing here is legal advice. If you are unsure whether a use is permitted,
-  ask in the project's discussions before relying on openCMA for it.
+  ask in the project's discussions before relying on Hanterill for it.

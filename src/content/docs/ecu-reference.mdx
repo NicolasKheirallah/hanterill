@@ -1,6 +1,6 @@
 import { EcuReference } from "@/components/docs/mdx/EcuReference";
 
-ECU codes, names and part numbers for the CMA electric platform, grouped as openCMA lays them out around the gateway. Names and numbers follow published wiring documentation. UDS means the ECU answers a diagnostic session. The same ECU data drives the topology diagram on the home page.
+ECU codes, names and part numbers for the CMA electric platform, grouped as Hanterill lays them out around the gateway. Names and numbers follow published wiring documentation. UDS means the ECU answers a diagnostic session. The same ECU data drives the topology diagram on the home page.
 
 ## Gateway
 
@@ -16,7 +16,7 @@ ECU codes, names and part numbers for the CMA electric platform, grouped as open
 
 ## Cabin
 
-<EcuReference domain="cabin" caption="Blank part numbers are positions the public documentation does not list. openCMA still reads identification from the ECU directly with the ReadDataByIdentifier service." />
+<EcuReference domain="cabin" caption="Blank part numbers are positions the public documentation does not list. Hanterill still reads identification from the ECU directly with the ReadDataByIdentifier service." />
 
 ## Common identifiers
 
@@ -28,4 +28,4 @@ ECU codes, names and part numbers for the CMA electric platform, grouped as open
   ["0xF195", "Supplier software version"],
 ]} />
 
-openCMA reads these from every ECU that answers, not just the battery module, so a full scan produces a hardware and software inventory of the car.
+Hanterill reads these from every ECU that answers, not just the battery module, so a full scan produces a hardware and software inventory of the car.

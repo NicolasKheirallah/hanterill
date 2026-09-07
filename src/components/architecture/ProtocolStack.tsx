@@ -6,7 +6,7 @@ export function ProtocolStack() {
   const t = useTranslations("protocolStack");
 
   const layers = [
-    { name: "openCMA", note: t("layers.opencma"), tone: true },
+    { name: "Hanterill", note: t("layers.hanterill"), tone: true },
     { name: t("engineName"), note: t("layers.engine") },
     { name: "ISO 14229 UDS", note: t("layers.uds") },
     { name: "ISO 13400 DoIP", note: t("layers.doip") },

@@ -15,7 +15,7 @@ const STATUS_LABEL: Record<string, string> = {
 
 const BLURB: Record<Platform, string> = {
   CMA: "Compact Modular Architecture. The tested platform: Polestar 2 and the CMA Volvos share one high-voltage layout.",
-  SPA: "Scalable Product Architecture. Plug-in hybrids. openCMA reaches these cars over DoIP; ECU mapping and battery decoding are in progress.",
+  SPA: "Scalable Product Architecture. Plug-in hybrids. Hanterill reaches these cars over DoIP; ECU mapping and battery decoding are in progress.",
   SEA: "Sustainable Experience Architecture. Battery and ECU layout differ from CMA and are not yet verified.",
   SPA2: "Second-generation SPA. Reachable over DoIP; gateway and security model are still under study.",
 };

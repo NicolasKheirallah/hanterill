@@ -4,7 +4,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 // A GitHub Pages project site serves from `https://<user>.github.io/<repo>/`, so
 // the build needs that repo path as a prefix. A user site or a custom domain
-// (opencma.org) serves from `/` and needs none. The deploy workflow passes the
+// (hanterill.org) serves from `/` and needs none. The deploy workflow passes the
 // right value in; local builds get "".
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 

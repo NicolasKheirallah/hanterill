@@ -1,12 +1,12 @@
 {
   "meta": {
-    "title": "openCMA | Fordonsdiagnostik för Volvo & Polestar",
+    "title": "Hanterill | Fordonsdiagnostik för Volvo & Polestar",
     "description": "Källkodstillgänglig fordonsdiagnostik, batterihälsa och realtidstelemetri för Volvo- och Polestar-bilar som stöds, via DoIP och UDS. Lokalt, privat och för personligt bruk."
   },
   "common": {
     "skipToContent": "Hoppa till innehåll",
     "download": "Ladda ner",
-    "downloadApp": "Ladda ner openCMA",
+    "downloadApp": "Ladda ner Hanterill",
     "viewSource": "Visa källkod",
     "viewOnGitHub": "Visa på GitHub",
     "readMore": "Läs mer",
@@ -50,14 +50,14 @@
       "enetSub": "Passiv, OBD-II till RJ45",
       "computerLabel": "Dator",
       "computerSub": "Ethernet-gränssnitt",
-      "opencmaLabel": "openCMA",
-      "opencmaSub": "Körs lokalt"
+      "hanterillLabel": "Hanterill",
+      "hanterillSub": "Körs lokalt"
     },
     "facts": {
       "vehicle": ["Diagnostikgateway", "DoIP-kapabel", "TCP / UDP på port 13400"],
       "enet": ["Passiv Ethernet-kabel", "Ingen aktiv elektronik", "Ingen drivrutin krävs"],
       "computer": ["Windows, macOS, Linux", "Valfritt trådbundet Ethernet-gränssnitt", "USB-C-adapter fungerar"],
-      "opencma": ["Talar DoIP och UDS", "Skriver resultat till lokal lagring", "Ingenting lämnar din dator"]
+      "hanterill": ["Talar DoIP och UDS", "Skriver resultat till lokal lagring", "Ingenting lämnar din dator"]
     },
     "linkObd": "OBD-II",
     "linkEthernet": "Ethernet",
@@ -83,10 +83,10 @@
     "batteryBody": "Hälsotillstånd och laddning, paketspänning, spridning mellan cellgrupper, min, max och differens, samt pakettemperatur. Procentsatsen som instrumentpanelen visar, och siffrorna bakom den.",
     "batteryCta": "Batteridiagnostik",
     "scanTitle": "Fullständig fordonsskanning",
-    "scanBody": "openCMA upptäcker styrenheter via DoIP, identifierar vilka som talar UDS och läser identifierings-, hårdvaru- och mjukvarudata från var och en.",
+    "scanBody": "Hanterill upptäcker styrenheter via DoIP, identifierar vilka som talar UDS och läser identifierings-, hårdvaru- och mjukvarudata från var och en.",
     "scanCta": "Fordonsdiagnostik",
     "faultTitle": "Felkoder efter status",
-    "faultBody": "openCMA läser felkoder med status: aktiv nu, väntande, lagrad eller historisk. Om styrenheten sparade en ögonblicksbild när felet uppstod får du med den också.",
+    "faultBody": "Hanterill läser felkoder med status: aktiv nu, väntande, lagrad eller historisk. Om styrenheten sparade en ögonblicksbild när felet uppstod får du med den också.",
     "liveTitle": "Realtidstelemetri",
     "liveBody": "Paketspänning och -ström, batteri- och växelriktartemperatur, motormoment, 12 V-systemet. Samplat i en slinga och ritat på fasta axlar.",
     "liveCta": "Realtidsdata",
@@ -266,15 +266,15 @@
   },
   "platforms": {
     "title": "CMA först, med växande DoIP-stöd.",
-    "lead": "Polestar 2 och CMA-Volvorna är de testade plattformarna. SPA-hybrider och nyare SEA- och SPA2-bilar ansluter, men openCMA kan ännu inte tolka allt de skickar. Att nå en bil är inte samma sak som att stödja den.",
+    "lead": "Polestar 2 och CMA-Volvorna är de testade plattformarna. SPA-hybrider och nyare SEA- och SPA2-bilar ansluter, men Hanterill kan ännu inte tolka allt de skickar. Att nå en bil är inte samma sak som att stödja den.",
     "moreLink": "Fullständig kompatibilitet och status",
-    "disclaimer": "Kompatibilitet är inget påstående om tillverkarstöd. openCMA är ett oberoende projekt och är inte anslutet till Volvo Cars, Polestar eller Geely.",
+    "disclaimer": "Kompatibilitet är inget påstående om tillverkarstöd. Hanterill är ett oberoende projekt och är inte anslutet till Volvo Cars, Polestar eller Geely.",
     "verifiedFunctions": "Verifierade funktioner",
     "currentResearch": "Pågående utredning",
     "labelsHeading": "Vad etiketterna betyder",
     "platformLabel": "Plattform",
     "powertrainLabel": "Drivlina",
-    "statusLabel": "openCMA-status",
+    "statusLabel": "Hanterill-status",
     "modelYearsLabel": "Modellår",
     "platformAria": "Fordonsplattform",
     "status": {
@@ -287,7 +287,7 @@
     },
     "blurbs": {
       "CMA": "Compact Modular Architecture. Den testade plattformen: Polestar 2 och de mindre eldrivna Volvo-modellerna.",
-      "SPA": "Scalable Product Architecture. Första generationens Recharge-laddhybrider. openCMA känner igen plattformen men kartlägger den fortfarande.",
+      "SPA": "Scalable Product Architecture. Första generationens Recharge-laddhybrider. Hanterill känner igen plattformen men kartlägger den fortfarande.",
       "SEA": "Sustainable Experience Architecture. Nyare elbilar, inklusive Zeekr. Plattformskartläggning under verifiering.",
       "SPA2": "Andra generationens SPA. Annan gateway- och säkerhetsmodell. Under utredning."
     },
@@ -318,10 +318,10 @@
   },
   "protocolStack": {
     "title": "Byggd på fordonsstandarder.",
-    "lead": "openCMA kommunicerar med bilens diagnostiknätverk med samma protokoll som ett verkstadsverktyg. Ingenting däremellan är en egenutvecklad molntjänst.",
+    "lead": "Hanterill kommunicerar med bilens diagnostiknätverk med samma protokoll som ett verkstadsverktyg. Ingenting däremellan är en egenutvecklad molntjänst.",
     "paragraph": "En session börjar med UDP-upptäckt på port 13400, öppnar en TCP-kanal, aktiverar routning och utbyter sedan UDS-begäranden: läsning via identifierare, läsning av DTC-information, sessionsstyrning och rutinstyrning.",
     "layers": {
-      "opencma": "Skrivbordsapplikation, Rust och Tauri",
+      "hanterill": "Skrivbordsapplikation, Rust och Tauri",
       "engine": "Sessioner, rutiner, avkodare",
       "uds": "Unified Diagnostic Services",
       "doip": "Diagnostics over IP",
@@ -350,8 +350,8 @@
   },
   "privacy": {
     "title": "Din fordonsdata stannar hos dig.",
-    "lead": "openCMA kommunicerar med fordonet och skriver diagnosdata till din disk. Det finns ingen backend och ingen prenumeration, och ingenting om din bil laddas upp eller säljs. VIN tas bort från loggar och exporter som inte behöver det.",
-    "moreLink": "Så hanterar openCMA data",
+    "lead": "Hanterill kommunicerar med fordonet och skriver diagnosdata till din disk. Det finns ingen backend och ingen prenumeration, och ingenting om din bil laddas upp eller säljs. VIN tas bort från loggar och exporter som inte behöver det.",
+    "moreLink": "Så hanterar Hanterill data",
     "directLink": "Direkt länk. Inget annat däremellan.",
     "vehicle": "Fordon",
     "computer": "Dator",
@@ -384,7 +384,7 @@
   "download": {
     "title": "Fungerar på macOS, Windows och Linux.",
     "lead": "En applikation, byggd nativt för varje plattform. Ingenting paketerar en webbläsarmotor, och ingen nedladdning startar av sig själv.",
-    "heading": "Ladda ner openCMA",
+    "heading": "Ladda ner Hanterill",
     "latestRelease": "senaste utgåvan på GitHub",
     "releases": "Utgåvor",
     "download": "Ladda ner",
@@ -397,12 +397,12 @@
   },
   "safety": {
     "title": "Skrivskyddad som standard. Skrivningar är spärrade.",
-    "lead": "openCMA läser mest. Åtgärderna som ändrar fordonet hålls åtskilda och är avstängda tills du slår på skrivbehörighet för sessionen.",
+    "lead": "Hanterill läser mest. Åtgärderna som ändrar fordonet hålls åtskilda och är avstängda tills du slår på skrivbehörighet för sessionen.",
     "readOnly": "Skrivskyddad",
     "changesVehicle": "Ändrar fordonet",
     "writeAccess": "Uttrycklig skrivbehörighet krävs",
     "highVoltageTitle": "Högspänning.",
-    "highVoltageBody": "Elbilar har farliga högspänningssystem. Att läsa data via en kabel gör det inte säkert att arbeta med dem, och openCMA ersätter inte tillverkarens serviceanvisningar.",
+    "highVoltageBody": "Elbilar har farliga högspänningssystem. Att läsa data via en kabel gör det inte säkert att arbeta med dem, och Hanterill ersätter inte tillverkarens serviceanvisningar.",
     "safetyDocs": "Säkerhetsdokumentation",
     "readOnlyItems": {
       "battery": "Batteridata",
@@ -427,7 +427,7 @@
         "a": "Nej. En passiv ENET-kabel (OBD-II till RJ45) och valfritt Ethernet-gränssnitt på datorn räcker för DoIP på fordon som stöds. Ingen av de vanliga OBD-donglarna är inblandad."
       },
       {
-        "q": "Skickar openCMA någon data någonstans?",
+        "q": "Skickar Hanterill någon data någonstans?",
         "a": "Nej. Programmet kommunicerar bara med fordonet och skriver resultat till din disk. Det finns inget konto, ingen backend, ingen analys och ingen telemetri. VIN hålls utanför loggar och exporter om inte något behöver det."
       },
       {
@@ -435,12 +435,12 @@
         "a": "Polestar 2 och CMA-plattformens Volvo-modeller (XC40/EX40, C40/EC40) är de testade plattformarna. Nyare SEA- och SPA2-bilar ansluter via DoIP, men deras styrenhetskartor och batteriavkodning verifieras fortfarande och är markerade som experimentella eller under utredning."
       },
       {
-        "q": "Kan openCMA skada min bil?",
+        "q": "Kan Hanterill skada min bil?",
         "a": "Normal användning är skrivskyddad. Åtgärder som ändrar fordonet (radering av felkoder, servicerutiner, adaptationer) är åtskilda i gränssnittet och inaktiverade tills du aktiverar skrivbehörighet för sessionen. Högspänningsservice kräver fortfarande tillverkarens anvisningar."
       },
       {
         "q": "Är detta ett officiellt verktyg från Volvo eller Polestar?",
-        "a": "Nej. openCMA är ett oberoende projekt. Det är inte anslutet till, underhållet av eller godkänt av Volvo Cars, Polestar eller Geely. Källkoden går att läsa. Den tillhandahålls för personligt, icke-kommersiellt bruk."
+        "a": "Nej. Hanterill är ett oberoende projekt. Det är inte anslutet till, underhållet av eller godkänt av Volvo Cars, Polestar eller Geely. Källkoden går att läsa. Den tillhandahålls för personligt, icke-kommersiellt bruk."
       },
       {
         "q": "Vad kan jag göra med batteridatan?",
@@ -449,12 +449,12 @@
     ],
     "compat": [
       {
-        "q": "Fungerar openCMA med vilken Volvo eller Polestar som helst?",
-        "a": "Nej. openCMA är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA-laddhybrider och nyare SEA- och SPA2-bilar ansluter via DoIP, men deras avkodning är fortfarande under arbete och markerad som WIP eller under utredning."
+        "q": "Fungerar Hanterill med vilken Volvo eller Polestar som helst?",
+        "a": "Nej. Hanterill är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA-laddhybrider och nyare SEA- och SPA2-bilar ansluter via DoIP, men deras avkodning är fortfarande under arbete och markerad som WIP eller under utredning."
       },
       {
         "q": "Vad är skillnaden mellan plattformskompatibilitet och stöd?",
-        "a": "Plattformskompatibilitet betyder att openCMA kan nå fordonet via DoIP. Stöd betyder att diagnostikfunktionerna är implementerade och verifierade mot kända, korrekta referenser. Att vara nåbar gör inte datan tillförlitlig, och därför märks WIP- och utredningsplattformar separat."
+        "a": "Plattformskompatibilitet betyder att Hanterill kan nå fordonet via DoIP. Stöd betyder att diagnostikfunktionerna är implementerade och verifierade mot kända, korrekta referenser. Att vara nåbar gör inte datan tillförlitlig, och därför märks WIP- och utredningsplattformar separat."
       },
       {
         "q": "Min bil är märkt WIP eller Utreds. Kan jag använda den?",
@@ -462,12 +462,12 @@
       },
       {
         "q": "Är detta godkänt av Volvo eller Polestar?",
-        "a": "Nej. openCMA är ett oberoende projekt, inte anslutet till, underhållet av eller godkänt av Volvo Cars, Polestar eller Geely. Tillverkarnamn används endast för att beskriva kompatibilitet."
+        "a": "Nej. Hanterill är ett oberoende projekt, inte anslutet till, underhållet av eller godkänt av Volvo Cars, Polestar eller Geely. Tillverkarnamn används endast för att beskriva kompatibilitet."
       }
     ]
   },
   "cta": {
-    "title": "Ladda ner openCMA och se vad ditt fordon har registrerat.",
+    "title": "Ladda ner Hanterill och se vad ditt fordon har registrerat.",
     "body": "Källkodstillgänglig och för privat bruk. Den körs på din dator och läser fordonet direkt."
   },
   "footer": {
@@ -476,7 +476,7 @@
     "diagnostics": "Diagnostik",
     "developers": "Utvecklare",
     "project": "Projekt",
-    "disclaimer": "openCMA är ett oberoende projekt, inte anslutet till, underhållet av, sponsrat av eller auktoriserat av Volvo Cars, Polestar eller Geely. Tillverkarnamn används endast för att beskriva kompatibilitet. Källkodstillgänglig, endast privat bruk.",
+    "disclaimer": "Hanterill är ett oberoende projekt, inte anslutet till, underhållet av, sponsrat av eller auktoriserat av Volvo Cars, Polestar eller Geely. Tillverkarnamn används endast för att beskriva kompatibilitet. Källkodstillgänglig, endast privat bruk.",
     "tagline": "För bilägare och fristående verkstäder.",
     "links": {
       "batteryHealth": "Batterihälsa",
@@ -496,7 +496,7 @@
   },
   "docs": {
     "eyebrow": "Dokumentation",
-    "title": "Hur openCMA fungerar, i detalj.",
+    "title": "Hur Hanterill fungerar, i detalj.",
     "lead": "Från att koppla in en kabel till att avkoda ett batteriblock. Skrivet för ägare som vill ha detaljerna och ingenjörer som vill ha protokollet.",
     "search": "Sök i dokumentationen",
     "searchPlaceholder": "Sök i dokument, protokoll, identifierare…",
@@ -571,7 +571,7 @@
   "session": {
     "eyebrow": "Interaktivt",
     "title": "Klicka dig igenom en representativ session",
-    "lead": "Värdena här är fasta exempel. Varje panel speglar en verklig openCMA-vy, men ingenting är anslutet till en bil.",
+    "lead": "Värdena här är fasta exempel. Varje panel speglar en verklig Hanterill-vy, men ingenting är anslutet till en bil.",
     "label": "Representativ session, simulerat fordon",
     "previous": "Föregående",
     "next": "Nästa",
@@ -584,7 +584,7 @@
     "connectStateLinked": "Ansluten",
     "connectStateDetected": "Hittad",
     "connectStateAccepted": "Accepterad",
-    "connectNote": "openCMA nådde fordonet via den lokala Ethernet-länken och öppnade en diagnostikkanal.",
+    "connectNote": "Hanterill nådde fordonet via den lokala Ethernet-länken och öppnade en diagnostikkanal.",
     "idVehicle": "Fordon",
     "idPlatform": "Plattform",
     "idPowertrain": "Drivlina",
@@ -658,36 +658,36 @@
   },
   "pages": {
     "featuresEyebrow": "Funktioner",
-    "featuresTitle": "Vad openCMA täcker.",
+    "featuresTitle": "Vad Hanterill täcker.",
     "featuresLead": "Fyra täckningsområden, avlästa via samma anslutning. Vanlig diagnostik förblir skrivskyddad; skrivbara funktioner är åtskilda och spärrade.",
     "batteryHealthEyebrow": "Funktioner / Batterihälsa",
     "batteryHealthTitle": "Procentsatsen, och siffrorna bakom den.",
-    "batteryHealthLead": "openCMA läser högspänningsbatteridata som fordonet rapporterar: hälsotillstånd och laddning, paketspänning, fördelning mellan cellgrupper, obalans och temperatur.",
+    "batteryHealthLead": "Hanterill läser högspänningsbatteridata som fordonet rapporterar: hälsotillstånd och laddning, paketspänning, fördelning mellan cellgrupper, obalans och temperatur.",
     "vehicleDiagnosticsEyebrow": "Funktioner / Fordonsdiagnostik",
     "vehicleDiagnosticsTitle": "Varje styrenhet i nätverket, inte bara den med lampan tänd.",
-    "vehicleDiagnosticsLead": "openCMA upptäcker fordonets styrenheter via DoIP, identifierar vilka som talar UDS och läser fel- och identifieringsdata från var och en.",
+    "vehicleDiagnosticsLead": "Hanterill upptäcker fordonets styrenheter via DoIP, identifierar vilka som talar UDS och läser fel- och identifieringsdata från var och en.",
     "liveDataEyebrow": "Funktioner / Realtidsdata",
     "liveDataTitle": "Ingenjörstelemetri i en pollningsslinga.",
-    "liveDataLead": "openCMA pollar dataidentifierare i en slinga och ritar dem som instrumentprogramvara: fasta axlar, tunna linjer, ingen dekoration.",
+    "liveDataLead": "Hanterill pollar dataidentifierare i en slinga och ritar dem som instrumentprogramvara: fasta axlar, tunna linjer, ingen dekoration.",
     "serviceFunctionsEyebrow": "Funktioner / Servicefunktioner",
     "serviceFunctionsTitle": "Åtgärderna som ändrar fordonet hålls åtskilda.",
-    "serviceFunctionsLead": "Där plattformen stöder dem kan openCMA köra servicerutiner och adaptationer. Dessa ingår inte i vanlig diagnostik och är avstängda tills du aktiverar skrivbehörighet.",
+    "serviceFunctionsLead": "Där plattformen stöder dem kan Hanterill köra servicerutiner och adaptationer. Dessa ingår inte i vanlig diagnostik och är avstängda tills du aktiverar skrivbehörighet.",
     "vehiclesEyebrow": "Fordon",
     "vehiclesTitle": "CMA först, med växande DoIP-plattformsstöd.",
     "vehiclesLead": "Välj en plattform och ett fordon för att se exakt vilka funktioner som är verifierade. Varje statusetikett speglar vad som har kontrollerats på just den bilen, inte bara plattformen den bygger på.",
     "downloadEyebrow": "Ladda ner",
-    "downloadTitle": "Skaffa openCMA.",
+    "downloadTitle": "Skaffa Hanterill.",
     "downloadLead": "Nativa byggen för varje skrivbordsplattform. Ingenting installeras automatiskt och ingenting ringer hem.",
     "safetyEyebrow": "Säkerhet",
     "safetyTitle": "Vad som är säkert, och vad som inte är det.",
-    "safetyLead": "Diagnostikmjukvara kan läsa väldigt mycket och ändra några saker. openCMA är byggd så att du alltid vet vilket som är vilket.",
+    "safetyLead": "Diagnostikmjukvara kan läsa väldigt mycket och ändra några saker. Hanterill är byggd så att du alltid vet vilket som är vilket.",
     "privacyEyebrow": "Integritet",
     "privacyTitle": "Helt lokalt.",
-    "privacyLead": "openCMA har ingen backend och inget kontosystem. Programmet kommunicerar med fordonet och skriver till din disk. Det är hela dataflödet.",
+    "privacyLead": "Hanterill har ingen backend och inget kontosystem. Programmet kommunicerar med fordonet och skriver till din disk. Det är hela dataflödet.",
     "aboutEyebrow": "Om",
     "aboutTitle": "Ett projekt för dem som vill förstå sina fordon.",
-    "aboutLead": "openCMA började som ett sätt att läsa CMA-batteridata utan en verkstadsprenumeration. Det växte till ett allmänt DoIP- och UDS-diagnosverktyg.",
+    "aboutLead": "Hanterill började som ett sätt att läsa CMA-batteridata utan en verkstadsprenumeration. Det växte till ett allmänt DoIP- och UDS-diagnosverktyg.",
     "screenshotsTitle": "Appen på en riktig bil.",
-    "screenshotsLead": "openCMA på en Volvo och Polestar som stöds: översikt, batteri, felkoder, realtidsdata och servicerutiner."
+    "screenshotsLead": "Hanterill på en Volvo och Polestar som stöds: översikt, batteri, felkoder, realtidsdata och servicerutiner."
   }
 }
