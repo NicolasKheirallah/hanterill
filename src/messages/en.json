@@ -686,6 +686,8 @@
     "privacyLead": "openCMA has no backend and no account system. It talks to the vehicle and writes to your disk. That is the whole data path.",
     "aboutEyebrow": "About",
     "aboutTitle": "A project for people who want to understand their vehicles.",
-    "aboutLead": "openCMA started as a way to read CMA battery data without a dealer subscription. It grew into a general DoIP and UDS diagnostic tool."
+    "aboutLead": "openCMA started as a way to read CMA battery data without a dealer subscription. It grew into a general DoIP and UDS diagnostic tool.",
+    "screenshotsTitle": "The app on a real car.",
+    "screenshotsLead": "openCMA running on a supported Volvo and Polestar: overview, battery, fault codes, live data and service routines."
   }
 }

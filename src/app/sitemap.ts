@@ -15,6 +15,7 @@ const paths = [
   "/features/service-functions",
   "/vehicles",
   "/download",
+  "/screenshots",
   "/docs",
   "/safety",
   "/privacy",

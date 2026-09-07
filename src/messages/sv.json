@@ -686,6 +686,8 @@
     "privacyLead": "openCMA har ingen backend och inget kontosystem. Programmet kommunicerar med fordonet och skriver till din disk. Det är hela dataflödet.",
     "aboutEyebrow": "Om",
     "aboutTitle": "Ett projekt för dem som vill förstå sina fordon.",
-    "aboutLead": "openCMA började som ett sätt att läsa CMA-batteridata utan en verkstadsprenumeration. Det växte till ett allmänt DoIP- och UDS-diagnosverktyg."
+    "aboutLead": "openCMA började som ett sätt att läsa CMA-batteridata utan en verkstadsprenumeration. Det växte till ett allmänt DoIP- och UDS-diagnosverktyg.",
+    "screenshotsTitle": "Appen på en riktig bil.",
+    "screenshotsLead": "openCMA på en Volvo och Polestar som stöds: översikt, batteri, felkoder, realtidsdata och servicerutiner."
   }
 }
