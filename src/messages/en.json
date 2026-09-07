@@ -28,6 +28,7 @@
     "docs": "Docs",
     "safety": "Safety",
     "screenshots": "Screenshots",
+    "projects": "Other projects",
     "github": "GitHub"
   },
   "hero": {
@@ -491,6 +492,7 @@
       "privacy": "Privacy",
       "safety": "Safety",
       "about": "About",
+      "projects": "Other projects",
       "license": "License"
     }
   },
@@ -688,6 +690,13 @@
     "aboutTitle": "A project for people who want to understand their vehicles.",
     "aboutLead": "Hanterill started as a way to read CMA battery data without a dealer subscription. It grew into a general DoIP and UDS diagnostic tool.",
     "screenshotsTitle": "The app on a real car.",
-    "screenshotsLead": "Hanterill running on a supported Volvo and Polestar: overview, battery, fault codes, live data and service routines."
+    "screenshotsLead": "Hanterill running on a supported Volvo and Polestar: overview, battery, fault codes, live data and service routines.",
+    "projectsEyebrow": "Other projects",
+    "projectsTitle": "More tools from the same bench.",
+    "projectsLead": "Hanterill is not the only project here. These are other independent tools from the same author, built with the same local-first approach.",
+    "projectsViewRepo": "View on GitHub",
+    "projectsPlatform": "Platform",
+    "projectsLicense": "License",
+    "projectsSeparate": "Each project is maintained separately, with its own repository, license and release schedule."
   }
 }

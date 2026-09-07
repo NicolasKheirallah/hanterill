@@ -28,6 +28,7 @@
     "docs": "Dokumentation",
     "safety": "Säkerhet",
     "screenshots": "Skärmbilder",
+    "projects": "Andra projekt",
     "github": "GitHub"
   },
   "hero": {
@@ -491,6 +492,7 @@
       "privacy": "Integritet",
       "safety": "Säkerhet",
       "about": "Om",
+      "projects": "Andra projekt",
       "license": "Licens"
     }
   },
@@ -688,6 +690,13 @@
     "aboutTitle": "Ett projekt för dem som vill förstå sina fordon.",
     "aboutLead": "Hanterill började som ett sätt att läsa CMA-batteridata utan en verkstadsprenumeration. Det växte till ett allmänt DoIP- och UDS-diagnosverktyg.",
     "screenshotsTitle": "Appen på en riktig bil.",
-    "screenshotsLead": "Hanterill på en Volvo och Polestar som stöds: översikt, batteri, felkoder, realtidsdata och servicerutiner."
+    "screenshotsLead": "Hanterill på en Volvo och Polestar som stöds: översikt, batteri, felkoder, realtidsdata och servicerutiner.",
+    "projectsEyebrow": "Andra projekt",
+    "projectsTitle": "Fler verktyg från samma bänk.",
+    "projectsLead": "Hanterill är inte det enda projektet här. Det här är andra oberoende verktyg från samma upphovsman, byggda med samma lokalt-först-tänk.",
+    "projectsViewRepo": "Visa på GitHub",
+    "projectsPlatform": "Plattform",
+    "projectsLicense": "Licens",
+    "projectsSeparate": "Varje projekt underhålls separat, med eget arkiv, licens och releasefrekvens."
   }
 }

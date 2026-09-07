@@ -20,6 +20,7 @@ const paths = [
   "/safety",
   "/privacy",
   "/about",
+  "/projects",
   ...docsSlugs().map((s) => `/docs/${s}`),
 ];
 

@@ -29,6 +29,27 @@ export const site = {
   docsRepoPath: "https://github.com/nicolaskheirallah/hanterill/tree/main/docs",
 } as const;
 
+/** Other projects by the same author, shown on /projects. */
+export const otherProjects = [
+  {
+    name: "Hisingen",
+    repoUrl: "https://github.com/NicolasKheirallah/Hisingen",
+    platform: "macOS",
+    license: "MIT",
+    image: "/assets/hisingen/menubar-dashboard.png",
+    imageRatio: 591 / 757,
+    tagline: "Polestar and Volvo telemetry in the macOS menu bar.",
+    description:
+      "Battery state of charge, range, charging power, latch states, climate preconditioning and diagnostic history, native in the menu bar. Built with AppKit and SwiftUI — no Electron, no telemetry middlemen, no cloud database between you and your vehicle.",
+    highlights: [
+      "Battery, range and charging status at a glance",
+      "Remote climate, lock and charging controls",
+      "Charging history with cost tracking and CSV export",
+      "Native AppKit and SwiftUI, MIT-licensed",
+    ],
+  },
+] as const;
+
 /** Primary nav. `key` resolves against the `nav` message namespace. */
 export const nav = [
   { key: "features", href: "/features" },
@@ -36,6 +57,7 @@ export const nav = [
   { key: "docs", href: "/docs" },
   { key: "safety", href: "/safety" },
   { key: "screenshots", href: "/screenshots" },
+  { key: "projects", href: "/projects" },
 ] as const;
 
 /** Footer columns. `heading` and `key` resolve against `footer` / `footer.links`. */
@@ -65,6 +87,7 @@ export const footerNav = [
       { key: "privacy", href: "/privacy" },
       { key: "safety", href: "/safety" },
       { key: "about", href: "/about" },
+      { key: "projects", href: "/projects" },
       { key: "license", href: "/docs/license" },
     ],
   },
