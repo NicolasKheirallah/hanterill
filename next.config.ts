@@ -2,20 +2,19 @@ import type { NextConfig } from "next";
 import createMDX from "@next/mdx";
 import createNextIntlPlugin from "next-intl/plugin";
 
-// GitHub Pages serves plain files: no Node server, so the site is built as a
-// static export (`out/`). A project page lives under `https://<user>.github.io/
-// <repo>/`, so the build needs a base path; a user page or a custom domain
-// (opencma.org) serves from the root and needs none. The deploy workflow reads
-// the path from the Pages API and passes it here; local builds get "".
+// A GitHub Pages project site serves from `https://<user>.github.io/<repo>/`, so
+// the build needs that repo path as a prefix. A user site or a custom domain
+// (opencma.org) serves from `/` and needs none. The deploy workflow passes the
+// right value in; local builds get "".
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx", "md", "mdx"],
   turbopack: { root: process.cwd() },
 
-  // Static HTML/CSS/JS only. No middleware, no ISR, no image optimisation,
-  // no Route Handlers that read the request. See src/proxy.ts (removed) and
-  // src/app/page.tsx (the "/" -> "/en" redirect middleware used to do).
+  // Static HTML/CSS/JS only: no middleware, no ISR, no image optimisation, no
+  // Route Handlers that read the request. src/proxy.ts is gone and src/app/
+  // page.tsx now does the `/` -> `/en` redirect the middleware used to.
   output: "export",
 
   // GitHub Pages resolves "/docs/" to "/docs/index.html". Trailing slashes keep
@@ -26,8 +25,6 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
 
   basePath: basePath || undefined,
-  // Prefix static assets with the base path too (Next does this from basePath
-  // automatically, but be explicit so a bare-domain build stays correct).
   assetPrefix: basePath || undefined,
 
   // Next 16 blocks cross-origin requests to dev-only resources (HMR, fonts,

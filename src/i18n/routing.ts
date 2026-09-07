@@ -5,9 +5,9 @@ export const routing = defineRouting({
   defaultLocale: "en",
   // /en/... and /sv/... always in the URL, so a shared link keeps its language.
   localePrefix: "always",
-  // No Accept-Language detection: that needs middleware, which a static export
-  // has no room for. "/" is a prerendered redirect to the default locale
-  // (src/app/page.tsx); the switch in the header covers the rest.
+  // Accept-Language detection needs middleware, which a static export has none
+  // of. "/" is a prerendered redirect to the default locale (src/app/page.tsx);
+  // the header switch covers the rest.
   localeDetection: false,
 });
 

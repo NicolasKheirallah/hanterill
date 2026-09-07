@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
 
-// `output: export` builds this to a static robots.txt at build time.
+// Required under output: "export" — the build errors on this route otherwise.
 export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {

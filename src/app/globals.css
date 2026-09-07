@@ -8,15 +8,13 @@
  */
 @import "tailwindcss";
 
-/* ------------------------------------------------------------------ *
- * Design tokens. Dark is the base - a deep ink panel, never pure
+/* Design tokens. Dark is the base - a deep ink panel, never pure
  * black. Light is a deliberate re-map, not an inversion. The toggle
  * stamps data-theme on <html>; with no stamp the page follows
  * prefers-color-scheme. Values are OKLCH so lightness moves are
  * perceptually even across the re-map. Every text/surface pair was
  * verified at >= 4.5:1 (3:1 for UI) against the lightest surface it
- * sits on, in both themes. See design.md.
- * ------------------------------------------------------------------ */
+ * sits on, in both themes. See design.md. */
 
 :root {
   --bg-primary: oklch(19.5% 0.012 265);
@@ -343,12 +341,10 @@
   }
 }
 
-/* ------------------------------------------------------------------ *
- * Scroll-driven reveal. Native `animation-timeline: view()`: no JS, no
+/* Scroll-driven reveal. Native `animation-timeline: view()`: no JS, no
  * scroll observer, runs on the compositor. Base opacity stays 1 so the
  * content is visible when the animation does not run (no support, or
- * reduced motion). A stack of `.reveal` elements cascades on its own.
- * ------------------------------------------------------------------ */
+ * reduced motion). A stack of `.reveal` elements cascades on its own. */
 .reveal {
   opacity: 1;
 }
@@ -374,11 +370,9 @@
   }
 }
 
-/* ------------------------------------------------------------------ *
- * The one orchestrated page-load moment: the hero column settles in on
+/* The one orchestrated page-load moment: the hero column settles in on
  * a short stagger. Everything else on the page is calm and responds
- * only to pointer and keyboard. Skipped entirely under reduced motion.
- * ------------------------------------------------------------------ */
+ * only to pointer and keyboard. Skipped entirely under reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
   .hero-seq > * {
     animation: hero-rise var(--motion-slow) var(--ease-out) both;
@@ -401,12 +395,10 @@
   }
 }
 
-/* ------------------------------------------------------------------ *
- * Press feedback. A small physical push on click, pointer devices only
+/* Press feedback. A small physical push on click, pointer devices only
  * so it does not fire on touch tap-ghosting, and off under reduced
  * motion. Applied to buttons and toggle items that are not already
- * handling their own :active transform.
- * ------------------------------------------------------------------ */
+ * handling their own :active transform. */
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .press {
     transition: transform var(--motion-fast) var(--ease-out);

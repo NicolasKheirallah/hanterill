@@ -5,8 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "serve": "npx serve out",
     "lint": "eslint"
+  },
+  "engines": {
+    "node": ">=24"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
