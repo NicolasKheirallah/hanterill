@@ -15,6 +15,11 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Generate the build-time artifacts (docs-index.json, responsive image
+      # sets, og.png) before lint/typecheck/build. Locally `npm run build`
+      # triggers `prebuild` via the npm lifecycle, but CI runs tsc first, so
+      # the gitignored src/lib/generated/ wouldn't exist yet.
+      - run: npm run prebuild
       - run: npm run lint
       - run: npx tsc --noEmit
       - run: npm run build
