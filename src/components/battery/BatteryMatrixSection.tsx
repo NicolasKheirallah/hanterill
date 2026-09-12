@@ -40,13 +40,13 @@ const OVER_FILL = "color-mix(in srgb, var(--status-error) 50%, var(--line))";
 function fill(offset: number, mode: ViewMode, moduleDelta: number): string {
   if (mode === "voltage") return "var(--line-strong)";
   if (mode === "module") {
-    if (moduleDelta <= 5) return "var(--line-strong)";
-    if (moduleDelta <= 8) return WARN_FILL;
+    if (moduleDelta <= 2) return "var(--line-strong)";
+    if (moduleDelta <= 4) return WARN_FILL;
     return OVER_FILL;
   }
   const a = Math.abs(offset);
-  if (a <= 3) return "var(--line-strong)";
-  if (a <= 5) return WARN_FILL;
+  if (a <= 2) return "var(--line-strong)";
+  if (a <= 4) return WARN_FILL;
   return OVER_FILL;
 }
 
@@ -70,6 +70,9 @@ export function BatteryMatrixSection() {
   const [mode, setMode] = useState<ViewMode>("deviation");
   const [selected, setSelected] = useState<Coord | null>(null);
   const [hover, setHover] = useState<Coord | null>(null);
+  // Screen-reader announcement only follows keyboard focus. Driving a live
+  // region from mouse hover would spam every pointer move across 108 cells.
+  const [srFocus, setSrFocus] = useState("");
   const [mobileModule, setMobileModule] = useState(14);
   const gridRef = useRef<HTMLDivElement>(null);
   // One-shot: the cells sweep in across the pack the first time the grid enters
@@ -190,7 +193,7 @@ export function BatteryMatrixSection() {
                   looking, so you never have to track the side panel. */}
               <div className="mb-3 flex items-baseline justify-between gap-4 border-b border-line pb-2 font-mono text-[11px]">
                 <span className="uppercase tracking-wider text-text-muted">{t("spread")}</span>
-                <span aria-live="polite" className="tnum text-right">
+                <span className="tnum text-right">
                   {activeCell ? (
                     <>
                       <span className="text-text-primary">
@@ -201,9 +204,9 @@ export function BatteryMatrixSection() {
                       </span>
                       <span
                         className={cn(
-                          Math.abs(activeOffset) > 5
+                          Math.abs(activeOffset) > 4
                             ? "text-status-error"
-                            : Math.abs(activeOffset) > 3
+                            : Math.abs(activeOffset) > 2
                               ? "text-status-warning"
                               : "text-text-muted",
                         )}
@@ -219,6 +222,9 @@ export function BatteryMatrixSection() {
                   )}
                 </span>
               </div>
+              <span aria-live="polite" className="sr-only">
+                {srFocus}
+              </span>
               <div className="overflow-x-auto">
               <div
                 ref={gridRef}
@@ -302,7 +308,10 @@ export function BatteryMatrixSection() {
                             aria-label={srText(t, m, g)}
                             aria-selected={isSelected}
                             onMouseEnter={() => setHover({ m, g })}
-                            onFocus={() => setHover({ m, g })}
+                            onFocus={() => {
+                              setHover({ m, g });
+                              setSrFocus(srText(t, m, g));
+                            }}
                             onClick={() => pick({ m, g })}
                             onKeyDown={(e) => onCellKey(e, m, g)}
                             className={cn(
@@ -394,7 +403,7 @@ export function BatteryMatrixSection() {
                   type="button"
                   disabled={mobileModule <= 1}
                   onClick={() => pickMobile(Math.max(1, mobileModule - 1))}
-                  className="text-text-secondary transition-colors hover:text-text-primary disabled:opacity-40"
+                  className="py-2 text-text-secondary transition-colors hover:text-text-primary disabled:opacity-40"
                 >
                   {t("previousModule")}
                 </button>
@@ -402,7 +411,7 @@ export function BatteryMatrixSection() {
                   type="button"
                   disabled={mobileModule >= M}
                   onClick={() => pickMobile(Math.min(M, mobileModule + 1))}
-                  className="text-text-secondary transition-colors hover:text-text-primary disabled:opacity-40"
+                  className="py-2 text-text-secondary transition-colors hover:text-text-primary disabled:opacity-40"
                 >
                   {t("nextModule")}
                 </button>
@@ -422,9 +431,9 @@ function Legend({ mode }: { mode: ViewMode }) {
   const swatches: [string, string][] =
     mode === "module"
       ? [
-          ["var(--line-strong)", `${t("moduleSpread")}, within 5 mV`],
-          [WARN_FILL, "5 to 8 mV"],
-          [OVER_FILL, "over 8 mV"],
+          ["var(--line-strong)", `${t("moduleSpread")}, ${t("withinLegend")}`],
+          [WARN_FILL, `${t("moduleSpread")}, ${t("midLegend")}`],
+          [OVER_FILL, `${t("moduleSpread")}, ${t("overLegend")}`],
         ]
       : [
           ["var(--line-strong)", t("withinLegend")],
@@ -473,7 +482,7 @@ function MobileModules({
                 <span className="font-mono text-[13px] text-text-primary">M{String(m).padStart(2, "0")}</span>
                 <span className="flex items-center gap-3 font-mono text-[11px]">
                   <span className="tnum text-text-secondary">{s.avg.toFixed(3)} V</span>
-                  <span className={cn("tnum", s.delta > 8 ? "text-status-warning" : "text-text-muted")}>
+                  <span className={cn("tnum", s.delta > 4 ? "text-status-warning" : "text-text-muted")}>
                     &Delta; {s.delta} mV
                   </span>
                 </span>
@@ -491,8 +500,8 @@ function MobileModules({
 
 function PackScale({ mean, value }: { mean: number; value: number | null }) {
   const t = useTranslations("battery");
-  const lo = mean - 0.012;
-  const hi = mean + 0.012;
+  const lo = mean - 0.006;
+  const hi = mean + 0.006;
   const pct = value == null ? null : Math.max(2, Math.min(98, ((value - lo) / (hi - lo)) * 100));
   return (
     <div className="mt-3">
@@ -512,9 +521,9 @@ function PackScale({ mean, value }: { mean: number; value: number | null }) {
         )}
       </div>
       <div className="mt-1 flex justify-between font-mono text-[10px] text-text-muted">
-        <span>-12 mV</span>
+        <span>-6 mV</span>
         <span className="tnum">{t("scaleMean", { volts: mean.toFixed(3) })}</span>
-        <span>+12 mV</span>
+        <span>+6 mV</span>
       </div>
     </div>
   );

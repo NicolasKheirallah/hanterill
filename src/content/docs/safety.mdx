@@ -1,32 +1,61 @@
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 
-Hanterill separates reading from changing. It mostly reads. The parts that change the vehicle are grouped, labelled, and off by default.
+Hanterill separates reading from changing at the build level, not with a settings switch. What the
+running binary can do is reported by a capability manifest, and the interface renders only what the
+binary can execute.
 
-## Read-only
+## Read-only by construction
 
-Battery data, ECU identification, fault codes and live telemetry are all read operations. Running them cannot change vehicle configuration.
+A default build of any Hanterill artifact (desktop app, CLI, library) transmits only read-only UDS
+traffic: session control (`0x10`), read DTC information (`0x19`), read data by identifier (`0x22`),
+scaling reads (`0x24`) and tester present (`0x3E`), plus two exact carve-outs:
+
+- `0x31 0x03` request routine results, which reports the stored outcome of a routine that already
+  ran and never starts or stops anything;
+- `0x2A` periodic read send-once and stop, for one on-demand sample and its teardown.
+
+The transport layer rejects every other service and subfunction at runtime. There is no build in
+which Hanterill flashes modules, unlocks security access (`0x27`) or writes by identifier (`0x2E`).
 
 ## Operations that change the vehicle
 
-- Clearing diagnostic information
-- Writing data by identifier
-- Running routines
-- Input/output control
+- Clearing diagnostic information (`0x14`)
+- Starting routines (`0x31`), including EPB service mode and calibration helpers
+- Adaptations and writes by identifier
+- ECU reset (`0x11`), used only by the opt-in force-reset loop in the clear path
 
-<SafetyNotice level="adaptation" title="Off by default">
-In Hanterill these require you to enable write access for the session. If you have not, the request is simply not sent. There is no hidden way around it.
+<SafetyNotice level="adaptation" title="Not in released builds">
+These are compiled only with the non-default `unsafe-write-ops` feature. A released binary answers
+them with a typed refusal; there is no hidden way to turn a standard build into a write-capable
+one. The routine identifiers are reverse-engineered, and even write-capable builds keep steering
+angle and ADAS targets out of reach: those must not be actuated without the manufacturer's
+procedure. The clear path additionally captures freeze frames before erasing (the erase wipes
+them), re-reads to verify and reports the stubborn set. See the repository's `docs/safety.md` for
+the full flow.
 </SafetyNotice>
+
+## Traffic discipline
+
+Diagnostic queries use bounded loops, request budgets and cooperative cancellation, so a scan can
+not flood the gateway. Sessions run with the vehicle parked, in normal usage mode; the DTC clear
+loop refuses the force-reset step while the car reports a driving mode.
 
 ## High voltage
 
 <SafetyNotice level="high-voltage" title="High-voltage systems are hazardous">
-Electric vehicles carry hazardous high-voltage systems. Reading battery data over a diagnostic link does not de-energise anything and does not make physical high-voltage service safe. HV service requires the manufacturer's procedures, equipment and training.
+Electric vehicles carry hazardous high-voltage systems. Reading battery data over a diagnostic link
+does not de-energise anything and does not make physical high-voltage service safe. HV service
+requires the manufacturer's procedures, equipment and training.
 </SafetyNotice>
 
 ## Not a replacement for manufacturer tooling
 
-Hanterill is independent and is not affiliated with Volvo Cars, Polestar or Geely. Do not make a safety-critical repair decision on Hanterill output alone, especially on Experimental or Research platforms where decoding is not verified.
+Hanterill is independent and is not affiliated with Volvo Cars, Polestar or Geely. Do not make a
+safety-critical repair decision on Hanterill output alone, especially on Testing or Research
+platforms where decoding is not verified on a live vehicle.
 
 ## If something looks wrong
 
-Stop. Do not run routines to "fix" a reading you do not understand. Export the session and compare it against a known-good reference or ask in the project's discussions before acting.
+Stop. Do not run routines to "fix" a reading you do not understand. Export the session, compare it
+against a known-good reference or a second scan, and ask in the project's discussions before
+acting. The [support bundle](/docs/privacy) export is scrubbed for sharing.

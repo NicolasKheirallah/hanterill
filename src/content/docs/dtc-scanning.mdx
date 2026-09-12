@@ -13,7 +13,9 @@ Each DTC carries a status byte. Hanterill presents it as one of:
 | Stored | Confirmed and recorded. |
 | Historical | Previously set, since cleared, retained as a record. |
 
-A single "check engine" light can sit on top of one active code and several historical ones. The status is what tells you which is which.
+A single "check engine" light can sit on top of one active code and several historical ones. The
+status is what tells you which is which. The fault list opens filtered to what needs attention:
+active and unconfirmed codes first, the quiet history one keystroke away.
 
 ## Freeze frames and snapshots
 
@@ -36,8 +38,28 @@ Hanterill runs this per ECU and aggregates the result into one list, grouped by 
 
 ## Clearing
 
-Clearing DTCs changes ECU state and is treated as a write operation. It is disabled until you enable write access for the session. See [Safety](/docs/safety).
+Clearing diagnostic information (UDS `0x14`) changes ECU state. It is compiled out of released
+builds and exists only in builds made with the explicit `unsafe-write-ops` feature; a standard
+binary refuses with a typed response and the capability manifest reports it as unavailable. See
+[Safety](/docs/safety).
+
+Where it is compiled in, the clear follows the orchestration modelled on the reverse-engineered
+reference: enter the extended session per module, capture the freeze frames that the erase would
+destroy, run a bulk clear, wait through the pending-response window, retry per-ECU, then verify
+with a re-read and report the modules still holding codes (the stubborn set). An optional,
+opt-in force-reset loop reboots those modules, re-activates the DoIP route after the reboot and
+clears once more; it is suppressed while the vehicle reports a driving usage mode. Per-module
+selective clearing ("clear this module") uses the same tracked operation with one target, and the
+whole run is recorded as evidence in the session archive.
+
+## Diffing scans
+
+Two scans of the same car compare inside the app: codes added, codes cleared, status transitions,
+and the pre-erase snapshots kept above. The DTC diff is one of four built-in comparisons; the
+others cover cell history, firmware inventory and the full [inspection report](/docs/inspection-reports).
 
 ## Evidence workflow
 
-Export the session to JSON or CSV, do the repair, scan again, and compare the two exports. Fewer active and stored codes is the result you can point to.
+Scan, do the repair, scan again. Both sessions are already archived locally; open the diff and the
+result is two columns instead of a claim. Exports to JSON and CSV carry the same records with the
+VIN redacted by default.

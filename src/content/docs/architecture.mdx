@@ -1,19 +1,22 @@
 import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
-import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
 
-Hanterill is a layered diagnostic stack with a native desktop shell. No part of it is a proprietary cloud API.
+Hanterill is a layered diagnostic stack with a native desktop shell and a CLI over the same core.
+No part of it is a proprietary cloud API.
 
 ## Layers
 
 ```text
-Hanterill            desktop application, Rust and Tauri v2
-Diagnostic engine  sessions, routines, decoders
-ISO 14229 UDS      unified diagnostic services
-ISO 13400 DoIP     diagnostics over IP
-TCP / UDP          sockets, discovery, routing activation
-Ethernet           passive ENET cable, RJ45
-Vehicle gateway    CEM / VGM on CMA
+Hanterill            desktop app + CLI, Rust and Tauri v2
+Application layer    sessions, sweeps, policies, use cases
+ISO 14229 UDS        unified diagnostic services
+ISO 13400 DoIP       diagnostics over IP
+TCP / UDP            sockets, discovery, routing activation
+Ethernet             passive ENET cable, RJ45
+Vehicle gateway      CEM / VGM on CMA
 ```
+
+The full module-to-module wiring behind that gateway is a live map: every unit, bus
+segment and documented pin row sits in the [CMA Network Explorer](/network).
 
 ## Session lifecycle
 
@@ -21,11 +24,10 @@ Vehicle gateway    CEM / VGM on CMA
 2. A TCP connection opens to the vehicle on port 13400.
 3. Routing activation is sent and must be accepted before any diagnostic request.
 4. The engine opens an extended diagnostic session per ECU and issues reads.
-5. Responses are decoded against platform-specific maps.
-6. The session is held in memory and written to disk on export.
+5. Responses are decoded against platform-specific maps and stored as typed observations.
+6. The session is held in a durable local store and exported on demand.
 
-A single request travels the same path every time, and the response comes back
-along it:
+A single request travels the same path every time, and the response comes back along it:
 
 <ProtocolFlow
   steps={[
@@ -40,12 +42,38 @@ along it:
 
 ## Components
 
-- **Transport**: async Rust sockets, one connection multiplexed across ECUs.
-- **UDS**: request and response framing, negative-response handling, pending-response retries.
-- **Decoders**: per-platform maps from data identifiers to typed values. CMA is complete; SEA and SPA2 are partial and flagged.
-- **Safety gate**: any service that changes ECU state (clear, write by identifier, routine control, input/output control) checks a session-scoped write flag and fails closed.
-- **Interface**: React and TypeScript, typed against the engine over Tauri commands. No bundled browser engine.
+- **Transport**: async Rust sockets, one connection multiplexed across ECUs. Requests and responses
+  are matched in an atomic exchange; stale frames from a previous connection epoch are rejected,
+  and routing is re-activated automatically after a recovery.
+- **Discovery**: presence probing can address all ECUs with one functional broadcast and chase only
+  the stragglers individually. Modules absent for several sweeps drop to a shortened timeout tier,
+  and a per-vehicle profile cache (keyed by a hash of the VIN) seeds known-absent modules.
+- **UDS**: request and response framing, negative-response handling, pending-response (`0x78`)
+  retries, and the read-only allowlist described in [Safety](/docs/safety).
+- **Decoders**: per-platform, per-ECU definitions with explicit payload contracts: expected length,
+  scaling, privacy classification and maturity. A response that does not match the contract is
+  refused as a typed outcome, never coerced. CMA is verified; SPA and SEA1 definitions ship marked
+  as awaiting hardware confirmation.
+- **Pack topologies**: the cell matrix is data, not code: CMA 108S, SPA EV 96S and 108S, SPA hybrid
+  102S and SEA variants each carry their own cell count and layout.
+- **Policy**: the [inspection scoring engine](/docs/inspection-reports) and the cross-signal
+  consistency checks sit on top of the observations.
+- **Sessions**: an atomic, durable JSON-backed archive with operator notes and corrupt-file
+  recovery; comparison views read from it.
+- **Safety gate**: the running build's real boundaries are exposed as a capability manifest, and
+  the interface hides every command the binary cannot execute.
+- **IPC**: one declarative command table maps every desktop request to exactly one use case, with
+  a test asserting no orphan variants.
+
+## Build editions
+
+The engine compiles in three named editions: `standard` (the ship build: full read-only feature
+set), `production` (all-module scanner, inspector and every state-changing command compiled out)
+and `development` (everything on, including simulation scenarios). The safety gate is a build
+property, not a runtime toggle.
 
 ## Why Rust and Tauri
 
-The protocol work benefits from Rust's concurrency and error handling. Tauri keeps the binary small and avoids shipping a Chromium runtime, so the application feels native rather than like a web page in a window.
+The protocol work benefits from Rust's concurrency and error handling. Tauri keeps the binary small
+and avoids shipping a Chromium runtime, so the application feels native rather than like a web page
+in a window. The interface is React and TypeScript, typed against the engine's generated contracts.

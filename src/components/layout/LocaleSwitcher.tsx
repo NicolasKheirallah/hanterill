@@ -41,7 +41,7 @@ export function LocaleSwitcher() {
           aria-pressed={l === active}
           aria-label={l === "sv" ? "Svenska" : "English"}
           className={cn(
-            "px-2 py-1.5 uppercase transition-colors",
+            "px-2.5 py-2 uppercase transition-colors",
             l === active
               ? "bg-text-primary text-bg-primary"
               : "text-text-secondary hover:bg-bg-secondary hover:text-text-primary",

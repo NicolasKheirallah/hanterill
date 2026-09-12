@@ -460,3 +460,58 @@
     scroll-behavior: auto !important;
   }
 }
+
+
+/* Heading anchors in docs (hover/focus reveal; always visible in print). */
+.heading-anchor {
+  margin-left: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  color: var(--text-muted);
+  text-decoration: none;
+  opacity: 0;
+}
+h2:hover .heading-anchor,
+h3:hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+/* Print: the page content only. Safety and reference pages get printed
+   in workshops; chrome, navigation and the 3D view do not belong there. */
+@media print {
+  [data-site-header],
+  footer,
+  nav,
+  aside,
+  .no-print,
+  .hairline-grid {
+    display: none !important;
+  }
+  :root,
+  :root[data-theme="dark"],
+  :root[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --surface: #ffffff;
+    --bg-secondary: #ffffff;
+    --text-primary: #111417;
+    --text-secondary: #2c3036;
+    --text-muted: #4a4f57;
+    --line: #c9cdd3;
+    --line-strong: #9aa0a8;
+    color-scheme: light;
+  }
+  body {
+    background: #ffffff;
+  }
+  .bezel,
+  [role="dialog"] {
+    box-shadow: none !important;
+  }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-family: var(--font-mono);
+    font-size: 0.75em;
+    color: #4a4f57;
+  }
+}

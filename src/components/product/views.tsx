@@ -134,7 +134,7 @@ export function ModulesView() {
           <span className="tnum text-text-primary">{ecuStats.discovered}</span> {t("discovered")}
         </span>
         <span>
-          <span className="tnum text-text-primary">{ecuStats.diagnostic}</span> {t("diagnosticCapable")}
+          <span className="tnum text-text-primary">{ecuStats.dtc}</span> {t("dtcCapable")}
         </span>
       </div>
       <ul className="grid grid-cols-2 gap-x-6">

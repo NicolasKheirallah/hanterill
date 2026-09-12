@@ -1,0 +1,552 @@
+/* CMA Network Explorer — vendored from NicolasKheirallah/Polestar2 (webapp).
+ * Re-skinned for this site: the explorer's token names are aliased onto the
+ * Hanterill design tokens, so the diagram follows the site's dark base /
+ * light re-map and the shared theme toggle without owning a palette of its
+ * own. No global rules here: everything is class-scoped to the explorer. */
+
+:root {
+  --bg: var(--bg-primary);
+  --surface-2: var(--bg-secondary);
+  --ink: var(--text-primary);
+  --ink-2: var(--text-secondary);
+  --ink-3: var(--text-muted);
+  --danger: var(--status-error);
+  --glass: color-mix(in srgb, var(--surface) 86%, transparent);
+  --shadow: 0 12px 40px rgb(0 0 0 / 0.4);
+}
+
+.micro {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* ----------------- module nodes ----------------- */
+.module-node {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  padding: 4px 8px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--ink-3);
+  color: var(--ink);
+  position: relative;
+  transition: box-shadow 0.2s, border-color 0.2s, opacity 0.25s;
+}
+.module-node .nref {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+.module-node .nname {
+  font-size: 9.5px;
+  font-weight: 500;
+  line-height: 1.22;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.module-node.cat-peripheral .nname {
+  -webkit-line-clamp: 2;
+}
+.module-node .dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.module-node.cat-display {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+.module-node.cat-compute {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  border-color: var(--line-strong);
+}
+.module-node.cat-drive {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+.module-node.cat-drive .dot {
+  background: var(--accent-fg);
+}
+.module-node.cat-power {
+  border-color: var(--danger);
+  border-width: 1.5px;
+}
+.module-node.cat-peripheral {
+  border-style: dashed;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  padding: 2px 6px;
+}
+.module-node.cat-peripheral .nname {
+  font-size: 8px;
+}
+
+.react-flow__node {
+  cursor: pointer;
+}
+.react-flow__node:hover .module-node {
+  border-color: var(--accent);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.22);
+}
+.react-flow__node.selected .module-node,
+.react-flow__node.sel .module-node {
+  border-color: var(--accent);
+  border-width: 2px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 10px 28px rgb(0 0 0 / 0.28);
+}
+.react-flow__node.dim {
+  opacity: 0.13;
+}
+.react-flow__node.dim .module-node {
+  box-shadow: none;
+}
+
+/* domain cluster zones */
+.zone-node {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--ink) 2.5%, transparent);
+  position: relative;
+  transition: height 0.2s;
+}
+.zone-node::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 2px;
+  background: var(--accent);
+}
+.zone-node .ztitle {
+  position: absolute;
+  top: 7px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+.zone-node .ztitle:hover {
+  color: var(--accent);
+}
+.zone-node .zsummary {
+  position: absolute;
+  bottom: 9px;
+  left: 14px;
+  font-size: 10px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.zone-node.collapsed {
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+/* bus segment rails */
+.rail-node {
+  position: relative;
+  height: 20px;
+  pointer-events: all;
+  cursor: pointer;
+}
+.rail-node .rbar {
+  position: absolute;
+  top: 9px;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  opacity: 0.9;
+  transition: height 0.15s, opacity 0.25s;
+}
+.rail-node:hover .rbar {
+  height: 4px;
+  top: 8px;
+}
+.rail-node .rlabel {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  margin-right: 8px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rail-node .rcount {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.react-flow__node.dim .rail-node {
+  opacity: 0.1;
+}
+.react-flow__node.sel .rail-node .rbar {
+  height: 4px;
+  top: 8px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+/* edge tooltip + hot labels */
+.edge-tip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  padding: 8px 10px;
+  max-width: 280px;
+  z-index: 50;
+}
+.edge-tip .row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.edge-tip .row i {
+  width: 14px;
+  height: 3px;
+  flex: none;
+}
+.edge-tip .row .seg {
+  color: var(--ink-2);
+  font-size: 10px;
+}
+.edge-tip .lbl {
+  font-size: 10px;
+  color: var(--ink-2);
+  margin-top: 3px;
+}
+.edge-tip .nets {
+  font-size: 9.5px;
+  color: var(--ink-3);
+  margin-top: 3px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.edge-tip .inf {
+  font-size: 9px;
+  color: var(--accent);
+  margin-top: 4px;
+  letter-spacing: 0.06em;
+}
+.edge-hotlabel {
+  position: absolute;
+  pointer-events: none;
+  background: var(--surface);
+  border: 1px solid;
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+/* trace banner */
+.trace-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  padding: 9px 14px;
+  font-size: 12px;
+  max-width: min(640px, calc(100vw - 32px));
+}
+.trace-banner b {
+  font-weight: 600;
+}
+
+@keyframes dashdraw {
+  from { stroke-dashoffset: 22; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* ----------------- react flow chrome ----------------- */
+.react-flow {
+  background: var(--bg);
+}
+.react-flow__edge.faded {
+  opacity: 0.05;
+}
+.react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  min-width: 0;
+  min-height: 0;
+}
+.react-flow__controls {
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  overflow: hidden;
+}
+.react-flow__controls-button {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  width: 34px;
+  height: 34px;
+}
+.react-flow__controls-button:hover {
+  background: var(--surface-2);
+}
+.react-flow__controls-button svg {
+  fill: var(--ink);
+}
+.react-flow__minimap {
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+.react-flow__attribution {
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 9px;
+}
+.react-flow__attribution a {
+  color: var(--ink-3);
+}
+
+/* ----------------- pin table (drawer) ----------------- */
+table.pins {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+table.pins th {
+  text-align: left;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 6px 8px 6px 0;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+table.pins td {
+  padding: 6px 8px 6px 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+  color: var(--ink);
+}
+table.pins td:first-child {
+  padding-left: 8px;
+  box-shadow: inset 3px 0 0 var(--line);
+}
+table.pins tr.b-can td:first-child {
+  box-shadow: inset 3px 0 0 #e0452e;
+}
+table.pins tr.b-lin td:first-child {
+  box-shadow: inset 3px 0 0 #55a345;
+}
+table.pins tr.b-flexray td:first-child {
+  box-shadow: inset 3px 0 0 #dea012;
+}
+table.pins td.pin {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+table.pins td.mut {
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+table.pins tr.sec td {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--surface-2);
+  padding: 8px;
+}
+table.pins tr.clickable {
+  cursor: pointer;
+}
+table.pins tr.clickable:hover td {
+  background: var(--surface-2);
+}
+table.pins tr.flash td {
+  animation: rowflash 2.4s ease-out;
+}
+@keyframes rowflash {
+  0%, 40% { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+  100% { background: transparent; }
+}
+.wire {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.wire .sw {
+  display: inline-flex;
+  width: 16px;
+  height: 8px;
+  border: 1px solid var(--line);
+}
+.wire .sw i {
+  flex: 1;
+}
+
+/* ----------------- explorer command palette -----------------
+ * Scoped behind the explorer's own dialog classes: the site-wide
+ * palette shares the same cmdk primitives and must not be touched. */
+.cma-palette-overlay[cmdk-overlay] {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 90;
+}
+.cma-palette[cmdk-dialog] {
+  position: fixed;
+  top: 14vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(620px, calc(100vw - 32px));
+  z-index: 100;
+}
+.cma-palette [cmdk-root] {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.cma-palette [cmdk-root]::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: var(--accent);
+}
+.cma-palette [cmdk-input] {
+  width: 100%;
+  padding: 16px 18px;
+  font: inherit;
+  font-size: 15px;
+  background: transparent;
+  color: var(--ink);
+  border: none;
+  outline: none;
+  border-bottom: 1px solid var(--line);
+}
+.cma-palette [cmdk-list] {
+  max-height: 46vh;
+  overflow: auto;
+  padding: 8px;
+}
+.cma-palette [cmdk-group-heading] {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 10px 10px 4px;
+}
+.cma-palette [cmdk-item] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+.cma-palette [cmdk-item][data-selected='true'] {
+  background: var(--surface-2);
+  border-left-color: var(--accent);
+}
+.cma-palette [cmdk-item] .ref {
+  font-size: 10px;
+  color: var(--ink-3);
+  min-width: 44px;
+  font-variant-numeric: tabular-nums;
+}
+.cma-palette [cmdk-empty] {
+  padding: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+/* ----------------- a11y ----------------- */
+.react-flow__node:focus-visible {
+  outline: none;
+}
+.react-flow__node:focus-visible .module-node,
+.react-flow__node:focus-visible .rail-node,
+.react-flow__node:focus-visible .zone-node {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ----------------- responsive ----------------- */
+.filters-toggle {
+  display: none;
+}
+@media (max-width: 880px) {
+  .filters-toggle {
+    display: block;
+  }
+  .filters-panel {
+    display: none !important;
+  }
+  .filters-panel.open {
+    display: flex !important;
+    margin-top: 52px !important;
+  }
+  .app-minimap {
+    display: none;
+  }
+  .edge-tip {
+    max-width: 200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .module-node,
+  .rail-node .rbar {
+    transition: none;
+  }
+}

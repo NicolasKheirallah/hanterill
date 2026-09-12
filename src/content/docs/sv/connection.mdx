@@ -1,0 +1,37 @@
+Hanterill når fordonet med ISO 13400 Diagnostics over IP (DoIP). Praktiskt är det vanlig Ethernet från datorn till en passiv kabel i OBD-II-porten.
+
+## Kabeln
+
+En passiv ENET-kabel för specifika OBD-II-stift till en vanlig RJ45-kontakt. Den innehåller ingen elektronik. Det är ingen ELM327, inget J2534-gränssnitt och ingen Bluetooth-adapter. Kabeln kräver ingen drivrutin.
+
+Typisk kedja:
+
+```text
+OBD-II-kontakt
+  -> ENET-kabel
+  -> RJ45
+  -> USB-C Ethernet-adapter
+  -> Bärbar dator
+```
+
+## Nätverksinställningar
+
+DoIP använder länklokal adressering. I de flesta fall förhandlar fordonet och adaptern fram adresser automatiskt och ingen manuell IP-konfiguration behövs. Om operativsystemet håller gränssnittet väntande på DHCP, sätt adaptern på länklokal / automatisk privat adressering.
+
+Hanterill upptäcker fordonet med en UDP-begäran för fordon identifiering på port 13400, öppnar sedan en TCP-anslutning på samma port och utför routningsaktivering före varje diagnostikbegäran. Själva gränssnittet räknas upp automatiskt: virtuella adapter (VPN, loopback) filtreras bort av anslutningsrankingen, och att koppla in eller ur kabeln upptäcks utan omstart.
+
+## När länken bråkar
+
+Återhämtning finns inbyggd i transporten: en tappad TCP-session återaktiverar routningen på den överlevande anslutningen, svar från en tidigare anslutningsperiod förkastas som föråldrade, och en keepalive förhindrar att gateway:n försätter moduler i vila mitt i ett svep. Raderingsåtgärder väntar dessutom ut omstartande moduler och reparerar routen efteråt.
+
+## Om fordonet inte dyker upp
+
+- Kontrollera att fordonet är på tändning.
+- Kontrollera att RJ45 sitter i en Ethernet-port, inte en ren USB-port.
+- Inaktivera VPN- eller brandregsler som blockerar UDP 13400.
+- Testa en annan Ethernet-adapter. Vissa USB-adapter tappar länklokal trafik.
+- Kontrollera att inget annat diagnosverktyg håller DoIP-uttaget.
+
+## Trådlöst
+
+Vissa fordon exponerar DoIP över sin egen Wi-Fi-accesspunkt. Där det finns och Hanterill stöder det gäller samma steg för upptäckt och routning över det trådlösa gränssnittet.

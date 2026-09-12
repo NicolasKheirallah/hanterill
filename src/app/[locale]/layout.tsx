@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollSentinel } from "@/components/layout/ScrollSentinel";
+import { CommandProvider } from "@/components/command/SiteCommand";
 import { site } from "@/lib/site";
 import "../globals.css";
 
@@ -62,10 +63,6 @@ export async function generateMetadata({
       locale: locale === "sv" ? "sv_SE" : "en",
     },
     twitter: { card: "summary_large_image", title: t("title"), description: t("description") },
-    alternates: {
-      canonical: `/${locale}`,
-      languages: { en: "/en", sv: "/sv" },
-    },
     robots: { index: true, follow: true },
   };
 }
@@ -146,18 +143,20 @@ export default async function LocaleLayout({
           {themeScript}
         </Script>
         <NextIntlClientProvider>
-          <ScrollSentinel />
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-sm focus:bg-text-primary focus:px-4 focus:py-2 focus:text-bg-primary"
-          >
-            {t("skipToContent")}
-          </a>
-          <Header />
-          <main id="main-content" className="flex-1">
-            {children}
-          </main>
-          <Footer />
+          <CommandProvider>
+            <ScrollSentinel />
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-sm focus:bg-text-primary focus:px-4 focus:py-2 focus:text-bg-primary"
+            >
+              {t("skipToContent")}
+            </a>
+            <Header />
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </CommandProvider>
         </NextIntlClientProvider>
       </body>
     </html>

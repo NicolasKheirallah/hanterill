@@ -37,7 +37,7 @@ function targetColor(mode: Mode, m: number): THREE.Color {
     );
     return _c.copy(STEEL).lerp(BRONZE, tn).clone();
   }
-  return _c.copy(GRAPHITE).lerp(BRONZE, clamp01(s.delta / 12)).clone();
+  return _c.copy(GRAPHITE).lerp(BRONZE, clamp01(s.delta / 8)).clone();
 }
 
 type Cell = { m: number; x: number; z: number; delay: number; color: THREE.Color };

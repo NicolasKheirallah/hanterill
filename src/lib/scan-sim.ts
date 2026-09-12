@@ -1,4 +1,4 @@
-import { ecus } from "@/lib/ecus";
+import { ecus, ecuStats } from "@/lib/ecus";
 
 /**
  * Deterministic simulated diagnostic session for the website. Timings and fault
@@ -33,9 +33,11 @@ export type SimEcu = {
   faults: SimFault[];
 };
 
-// Order and cadence are fixed; the small per-ECU jitter is baked in, not random.
-const ORDER = ["CEM", "VGM", "VCU1", "BECM", "OBC", "IHFA", "IEM", "BCM", "EPAS", "SAS", "DIM", "IHU", "TCAM", "SRS", "CCM"];
-const JITTER = [0, 40, 20, 90, 55, 30, 70, 25, 60, 15, 80, 35, 50, 20, 45];
+// Every catalogued ECU answers in the simulated scan. Response order is the
+// catalogue order; the per-ECU jitter is a baked deterministic stride, not
+// random. The shortened animation cadence keeps the full sweep watchable.
+const CADENCE = 85;
+const STRIDE = 37;
 
 const FAULTS: Record<string, SimFault[]> = {
   BECM: [{ code: "P1A2E-71", status: "stored", lastSeenKey: "lastSeen12Min", snapshot: true }],
@@ -50,21 +52,18 @@ export const STAGE_TIMES = {
   scanning: 2100,
 };
 
-export const simEcus: SimEcu[] = ORDER.map((code, i) => {
-  const meta = ecus.find((e) => e.code === code);
-  return {
-    code,
-    name: meta?.name ?? code,
-    at: STAGE_TIMES.scanning + 260 + i * 230 + JITTER[i % JITTER.length],
-    faults: FAULTS[code] ?? [],
-  };
-});
+export const simEcus: SimEcu[] = ecus.map((e, i) => ({
+  code: e.code,
+  name: e.name,
+  at: STAGE_TIMES.scanning + 260 + i * CADENCE + ((i * STRIDE) % CADENCE),
+  faults: FAULTS[e.code] ?? [],
+}));
 
 export const SCAN_END = simEcus[simEcus.length - 1].at + 500;
 
 export const scanTotals = {
-  discovered: 43,
-  diagnostic: 34,
+  discovered: ecuStats.discovered,
+  dtcCapable: ecuStats.dtc,
   modulesWithFaults: Object.keys(FAULTS).length,
   faults: Object.values(FAULTS).reduce((n, f) => n + f.length, 0),
 };

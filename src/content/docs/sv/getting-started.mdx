@@ -1,0 +1,35 @@
+Hanterill är en skrivbordsapplikation. Den körs på din dator och pratar med fordonet över Ethernet. Det finns inget konto att skapa och ingen server att nå.
+
+## Innan du börjar
+
+Du behöver:
+
+- Ett fordon som stöds. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. Se [Fordon som stöds](/docs/supported-vehicles).
+- En passiv ENET-kabel (OBD-II till RJ45).
+- Ett Ethernet-gränssnitt på datorn. En USB-C till Ethernet-adapter funkar.
+- Hanterill installerat. Se [Ladda ner](/download).
+
+## Första sessionen
+
+1. Sätt fordonet på tändning. Du behöver inte starta det.
+2. Koppla ENET-kabeln till OBD-II-porten och RJ45-änden till ditt Ethernet-gränssnitt.
+3. Öppna Hanterill. Den söker efter ett fordon på länken och visar ett anslutningsläge i titelfältet.
+4. När läget visar **Ansluten**, öppna **Översikt**. Hanterill läser fordonets identifiering och en batterisammanfattning i ett svep.
+5. Öppna **Felkoder** för att köra en skanning, **Batteri** för den fullständiga högspänningsvyn, eller **Rapport** för den poängsatta besiktningen.
+6. Sessioner du öppnar arkiveras lokalt löpande; sessionssidan öppnar dem igen senare och jämför vilka två som helst.
+
+Hittills är allt skrivskyddat, och i släpptbygderna förblir det så: åtgärderna som ändrar fordonet är utkompilerade. Se [Säkerhet](/docs/safety).
+
+## Ingen bil inkopplad?
+
+Anslutningssidan innehåller deterministiska simuleringsfordon (frisk baslinje, felinjicerad, sömndrift), så varje vy kan användas offline innan du kopplar in dig. Simulerade sessioner märks som simulerade genomgående.
+
+## Vart data tar vägen
+
+Sessioner, avläsningar och exporter skrivs till din disk. Hanterill laddar inte upp något. Se [Integritetsskydd](/docs/privacy).
+
+## Nästa steg
+
+- [Anslutning](/docs/connection) om fordonet inte dyker upp.
+- [Batteridiagnostik](/docs/battery-diagnostics) för högspänningsdatan.
+- [Säkerhet](/docs/safety) innan någon skrivning alls övervägs.

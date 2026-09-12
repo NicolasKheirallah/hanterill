@@ -1,0 +1,5348 @@
+[
+ {
+  "id": "scl_swm_can",
+  "source": "swm",
+  "target": "scl",
+  "bus": "can",
+  "nets": [
+   "CAN_H",
+   "CAN_L"
+  ],
+  "notes": [
+   "1E Mid 1 CAN"
+  ],
+  "pins": [
+   "A2",
+   "A10",
+   "A3"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-mid-1-can",
+  "label": "1E Mid 1 CAN"
+ },
+ {
+  "id": "egsm_swm_can",
+  "source": "swm",
+  "target": "egsm",
+  "bus": "can",
+  "nets": [
+   "CAN_H",
+   "CAN_L"
+  ],
+  "notes": [
+   "1E Mid 1 CAN"
+  ],
+  "pins": [
+   "Y4",
+   "Y5"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-mid-1-can",
+  "label": "1E Mid 1 CAN"
+ },
+ {
+  "id": "epas_swm_can",
+  "source": "swm",
+  "target": "epas",
+  "bus": "can",
+  "nets": [
+   "CAN_H",
+   "CAN_L"
+  ],
+  "notes": [
+   "1E Mid 1 CAN"
+  ],
+  "pins": [
+   "B5",
+   "B2"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-mid-1-can",
+  "label": "1E Mid 1 CAN"
+ },
+ {
+  "id": "swm_vcu1_can",
+  "source": "swm",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_swm_lin",
+  "source": "swm",
+  "target": "cem",
+  "bus": "lin",
+  "nets": [
+   "LIN_14_SWM",
+   "LIN14",
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN Bus",
+   "LIN bus overview"
+  ],
+  "pins": [
+   "A3",
+   "IP1"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-14",
+  "label": "LIN Bus"
+ },
+ {
+  "id": "p-4-165_swm_signal",
+  "source": "swm",
+  "target": "p-4-165",
+  "bus": "signal",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "dim_swm_lin",
+  "source": "swm",
+  "target": "dim",
+  "bus": "lin",
+  "nets": [
+   "LIN_20_SWS",
+   "LIN",
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN Bus",
+   "LIN bus overview"
+  ],
+  "pins": [
+   "A4",
+   "A5"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-20",
+  "label": "LIN Bus"
+ },
+ {
+  "id": "swm_u-15-50_power",
+  "source": "swm",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "Power_SWM/SAS/SWS_KL30",
+   "HSW_Power_KL30",
+   "HSW_Ground_KL31"
+  ],
+  "notes": [
+   "Power",
+   "Ground"
+  ],
+  "pins": [
+   "A8",
+   "A1",
+   "A7"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Power"
+ },
+ {
+  "id": "cem_swm_signal",
+  "source": "swm",
+  "target": "cem",
+  "bus": "signal",
+  "nets": [
+   "Horn",
+   "HornSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "A9",
+   "IP24"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_swm_power",
+  "source": "swm",
+  "target": "cem",
+  "bus": "power",
+  "nets": [
+   "SWM/SAS/SWS/HORN_Ground"
+  ],
+  "notes": [],
+  "pins": [
+   "A14"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "swm_u-3-133_power",
+  "source": "swm",
+  "target": "u-3-133",
+  "bus": "power",
+  "nets": [
+   "Switches_Power_KL15",
+   "Switches_Ground"
+  ],
+  "notes": [],
+  "pins": [
+   "D1",
+   "D8"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "swm_u-3-133_lin",
+  "source": "swm",
+  "target": "u-3-133",
+  "bus": "lin",
+  "nets": [
+   "LIN20_SWS_OUT",
+   "wire WH"
+  ],
+  "notes": [
+   "LIN Bus",
+   "LIN bus overview"
+  ],
+  "pins": [
+   "D2"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-20",
+  "label": "LIN Bus"
+ },
+ {
+  "id": "swm_u-4-176_signal",
+  "source": "swm",
+  "target": "u-4-176",
+  "bus": "signal",
+  "nets": [
+   "DAB_Stage1+",
+   "DAB_Stage1-",
+   "DAB_Stage2+",
+   "DAB_Stage2-"
+  ],
+  "notes": [],
+  "pins": [
+   "B1",
+   "B2",
+   "B3",
+   "B4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-8-30_swm_power",
+  "source": "swm",
+  "target": "p-8-30",
+  "bus": "power",
+  "nets": [
+   "Inflator_GND"
+  ],
+  "notes": [],
+  "pins": [
+   "C1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-8-30_swm_signal",
+  "source": "swm",
+  "target": "p-8-30",
+  "bus": "signal",
+  "nets": [
+   "DAB_Stage1+_OUT",
+   "DAB_Stage1-_OUT",
+   "DAB_Stage2+_OUT",
+   "DAB_Stage2-_OUT"
+  ],
+  "notes": [],
+  "pins": [
+   "C8",
+   "C7",
+   "C6",
+   "C5"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-3-37_swm_signal",
+  "source": "swm",
+  "target": "p-3-37",
+  "bus": "signal",
+  "nets": [
+   "HORN_Signal"
+  ],
+  "notes": [],
+  "pins": [
+   "C2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-3-37_swm_power",
+  "source": "swm",
+  "target": "p-3-37",
+  "bus": "power",
+  "nets": [
+   "Switches_Ground"
+  ],
+  "notes": [],
+  "pins": [
+   "D8"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-9-55_swm_power",
+  "source": "swm",
+  "target": "p-9-55",
+  "bus": "power",
+  "nets": [
+   "+Heat_power",
+   "Ground_heat"
+  ],
+  "notes": [],
+  "pins": [
+   "E1",
+   "E4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-9-55_swm_signal",
+  "source": "swm",
+  "target": "p-9-55",
+  "bus": "signal",
+  "nets": [
+   "+Tempsensor",
+   "-Tempsensor"
+  ],
+  "notes": [],
+  "pins": [
+   "E2",
+   "E3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "swm_u-4-68_signal",
+  "source": "swm",
+  "target": "u-4-68",
+  "bus": "signal",
+  "nets": [
+   "SAS_P",
+   "SAS_N"
+  ],
+  "notes": [],
+  "pins": [
+   "F1",
+   "F2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "egsm_scl_can",
+  "source": "scl",
+  "target": "egsm",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "epas_scl_can",
+  "source": "scl",
+  "target": "epas",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "scl_vcu1_can",
+  "source": "scl",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [
+   "CAN_4_L",
+   "CAN_4_H"
+  ],
+  "notes": [
+   "1E Mid 1 CAN"
+  ],
+  "pins": [
+   "EB 19",
+   "EB 20"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-mid-1-can",
+  "label": "1E Mid 1 CAN"
+ },
+ {
+  "id": "scl_u-15-50_power",
+  "source": "scl",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "SCL_Power",
+   "SCL_GND"
+  ],
+  "notes": [
+   "power",
+   "ground"
+  ],
+  "pins": [
+   "A4",
+   "A1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "power"
+ },
+ {
+  "id": "egsm_epas_can",
+  "source": "epas",
+  "target": "egsm",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "epas_vcu1_can",
+  "source": "epas",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "epas_p-torque-sensor_signal",
+  "source": "epas",
+  "target": "p-torque-sensor",
+  "bus": "signal",
+  "nets": [
+   "TSU_Signal_B",
+   "TSU_Signal_A"
+  ],
+  "notes": [],
+  "pins": [
+   "C1",
+   "C2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "epas_p-torque-sensor_power",
+  "source": "epas",
+  "target": "p-torque-sensor",
+  "bus": "power",
+  "nets": [
+   "TSU_Ground",
+   "TSU_supply"
+  ],
+  "notes": [],
+  "pins": [
+   "C4",
+   "C5"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "epas_p-15-42_power",
+  "source": "epas",
+  "target": "p-15-42",
+  "bus": "power",
+  "nets": [
+   "Power"
+  ],
+  "notes": [
+   "motor +"
+  ],
+  "pins": [
+   "A1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "motor +"
+ },
+ {
+  "id": "egsm_vcu1_can",
+  "source": "egsm",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "egsm_vcu1_lin",
+  "source": "egsm",
+  "target": "vcu1",
+  "bus": "lin",
+  "nets": [
+   "LIN",
+   "LIN26",
+   "wire WH/GN"
+  ],
+  "notes": [
+   "Lin Bus",
+   "LIN bus overview"
+  ],
+  "pins": [
+   "Y6",
+   "EB 2"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-26",
+  "label": "Lin Bus"
+ },
+ {
+  "id": "egsm_u-4-475_lin",
+  "source": "egsm",
+  "target": "u-4-475",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "egsm_u-6-195_lin",
+  "source": "egsm",
+  "target": "u-6-195",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "egsm_u-4-694_lin",
+  "source": "egsm",
+  "target": "u-4-694",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "egsm_u-4-17_signal",
+  "source": "egsm",
+  "target": "u-4-17",
+  "bus": "signal",
+  "nets": [
+   "EPB_SW1",
+   "EPB_SW6",
+   "EPB_SW4"
+  ],
+  "notes": [
+   "Shift-by-wire interlock — Block diagram"
+  ],
+  "pins": [
+   "Y12",
+   "Y11",
+   "Y3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Shift-by-wire interlock — Block diagram"
+ },
+ {
+  "id": "egsm_u-15-50_power",
+  "source": "egsm",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "KL30",
+   "KL15"
+  ],
+  "notes": [
+   "Start_switch"
+  ],
+  "pins": [
+   "Y1",
+   "Y2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Start_switch"
+ },
+ {
+  "id": "ccd_ihu_video",
+  "source": "ccd",
+  "target": "ihu",
+  "bus": "video",
+  "nets": [
+   "LVDS+",
+   "LVDS-",
+   "CSD_No_Function2",
+   "CSD_LVDS",
+   "CSD_No_Function1",
+   "CSD_LVDS+",
+   "CSD_Shield"
+  ],
+  "notes": [
+   "LVDS"
+  ],
+  "pins": [
+   "A1",
+   "A3",
+   "I1",
+   "I2",
+   "I3",
+   "I4",
+   "I5S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "LVDS"
+ },
+ {
+  "id": "ccd_ihu_power",
+  "source": "ccd",
+  "target": "ihu",
+  "bus": "power",
+  "nets": [
+   "Unused_grounded2",
+   "Unused_grounded4"
+  ],
+  "notes": [],
+  "pins": [
+   "A2",
+   "A4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ccd_ihu_signal",
+  "source": "ccd",
+  "target": "ihu",
+  "bus": "signal",
+  "nets": [
+   "Shield",
+   "HB_gn",
+   "Wake-up",
+   "HB_sw",
+   "HB_led",
+   "CSD_Wake_up",
+   "HB+",
+   "HB",
+   "HB-"
+  ],
+  "notes": [],
+  "pins": [
+   "A4S",
+   "B6",
+   "B9",
+   "B11",
+   "B12",
+   "B5",
+   "B7",
+   "B8"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ccd_u-15-50_power",
+  "source": "ccd",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "Battery+_1",
+   "Battery-_1"
+  ],
+  "notes": [
+   "power",
+   "ground"
+  ],
+  "pins": [
+   "B1",
+   "B5"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "power"
+ },
+ {
+  "id": "dim_u-4-176_flexray",
+  "source": "dim",
+  "target": "u-4-176",
+  "bus": "flexray",
+  "nets": [
+   "Flexray_BP1",
+   "Flexray_BM1"
+  ],
+  "notes": [
+   "Flexray"
+  ],
+  "pins": [
+   "A7",
+   "A8"
+  ],
+  "inferred": false,
+  "segment": "seg-flexray-backbone",
+  "label": "Flexray"
+ },
+ {
+  "id": "dim_u-15-50_power",
+  "source": "dim",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "Power_supply",
+   "Ground"
+  ],
+  "notes": [],
+  "pins": [
+   "A9",
+   "A11"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "dim_ihu_flexray",
+  "source": "dim",
+  "target": "ihu",
+  "bus": "flexray",
+  "nets": [
+   "Flexray_BP2",
+   "Flexray_BM2",
+   "Flexray_P_B16",
+   "Flexray_M_B17"
+  ],
+  "notes": [
+   "Flexray"
+  ],
+  "pins": [
+   "A15",
+   "A16",
+   "B16",
+   "B17"
+  ],
+  "inferred": false,
+  "segment": "seg-flexray-backbone",
+  "label": "Flexray"
+ },
+ {
+  "id": "dim_ihu_video",
+  "source": "dim",
+  "target": "ihu",
+  "bus": "video",
+  "nets": [
+   "APIX2_PixelData_Down-",
+   "APIX2_ControlData_Up+",
+   "APIX2_PixelData_Down+",
+   "APIX2_ControlData_Up-",
+   "APIX2_Shield_B5S",
+   "APIX2_Down-",
+   "APIX2_Up+",
+   "APIX2_Down+",
+   "APIX2_Up-",
+   "APIX2_Shield"
+  ],
+  "notes": [
+   "APIX2 PixelData",
+   "APIX2 ControlData"
+  ],
+  "pins": [
+   "B4",
+   "B3",
+   "B2",
+   "B1",
+   "B5S",
+   "K1",
+   "K2",
+   "K3",
+   "K4",
+   "K5S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "APIX2 PixelData"
+ },
+ {
+  "id": "ihu_u-15-50_power",
+  "source": "ihu",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "K30_Power_Battery+"
+  ],
+  "notes": [
+   "Power"
+  ],
+  "pins": [
+   "B1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Power"
+ },
+ {
+  "id": "ihu_u-16-237_signal",
+  "source": "ihu",
+  "target": "u-16-237",
+  "bus": "signal",
+  "nets": [
+   "A2B+",
+   "A2B-"
+  ],
+  "notes": [],
+  "pins": [
+   "B12",
+   "B13"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_ihu_flexray",
+  "source": "ihu",
+  "target": "cem",
+  "bus": "flexray",
+  "nets": [
+   "Flexray_P_B31",
+   "Flexray_M_B32",
+   "FlexRayBM-IP",
+   "FlexRayBP-IP"
+  ],
+  "notes": [
+   "Flexray"
+  ],
+  "pins": [
+   "B31",
+   "B32",
+   "IP20",
+   "IP21"
+  ],
+  "inferred": false,
+  "segment": "seg-flexray-backbone",
+  "label": "Flexray"
+ },
+ {
+  "id": "ihu_p-4-222_lin",
+  "source": "ihu",
+  "target": "p-4-222",
+  "bus": "lin",
+  "nets": [
+   "LIN19"
+  ],
+  "notes": [
+   "Lin"
+  ],
+  "pins": [
+   "B22"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-19",
+  "label": "Lin"
+ },
+ {
+  "id": "ihu_u-16-214_signal",
+  "source": "ihu",
+  "target": "u-16-214",
+  "bus": "signal",
+  "nets": [
+   "FM2/TMC",
+   "FM2/TMC_Shield",
+   "DAB_Band_III+L-Band",
+   "DAB_Shield"
+  ],
+  "notes": [],
+  "pins": [
+   "C2",
+   "C2S",
+   "O1",
+   "O1S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ihu_p-16-73_signal",
+  "source": "ihu",
+  "target": "p-16-73",
+  "bus": "signal",
+  "nets": [
+   "AM/FM",
+   "AM/FM_Shield"
+  ],
+  "notes": [],
+  "pins": [
+   "C1",
+   "C1S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ihu_wam_video",
+  "source": "ihu",
+  "target": "wam",
+  "bus": "video",
+  "nets": [
+   "GND",
+   "LVDS-",
+   "Power",
+   "LVDS+",
+   "Cam_Shield",
+   "LVDS_B_-",
+   "LVDS_B_+"
+  ],
+  "notes": [
+   "LVDS"
+  ],
+  "pins": [
+   "F1",
+   "F2",
+   "F3",
+   "F4",
+   "F5S",
+   "B2",
+   "B3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "LVDS"
+ },
+ {
+  "id": "ihu_u-17-42_signal",
+  "source": "ihu",
+  "target": "u-17-42",
+  "bus": "signal",
+  "nets": [
+   "Jack_VBus2_5V",
+   "Jack_Data-",
+   "Jack_VBus1_5V",
+   "Jack_Data+",
+   "Diagnostic_PWR"
+  ],
+  "notes": [
+   "USB",
+   "Diagnostic loopback"
+  ],
+  "pins": [
+   "G1",
+   "G2",
+   "G3",
+   "G4",
+   "G6"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "USB"
+ },
+ {
+  "id": "ihu_u-17-42_power",
+  "source": "ihu",
+  "target": "u-17-42",
+  "bus": "power",
+  "nets": [
+   "Diagnostic_GND",
+   "Jack_Shield/Return_GND"
+  ],
+  "notes": [
+   "Diagnostic loopback",
+   "USB"
+  ],
+  "pins": [
+   "G5",
+   "G7S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Diagnostic loopback"
+ },
+ {
+  "id": "ihu_vgm_signal",
+  "source": "ihu",
+  "target": "vgm",
+  "bus": "signal",
+  "nets": [
+   "BI_DA",
+   "BI_DA+",
+   "BI_DA-_IHU",
+   "BI_DA+_IHU"
+  ],
+  "notes": [],
+  "pins": [
+   "H1",
+   "H2",
+   "B1",
+   "B2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_ihu_most",
+  "source": "ihu",
+  "target": "aud",
+  "bus": "most",
+  "nets": [
+   "MOST_Rx",
+   "MOST_Tx"
+  ],
+  "notes": [
+   "MOST Bus"
+  ],
+  "pins": [
+   "M1",
+   "M2",
+   "B2",
+   "B1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "MOST Bus"
+ },
+ {
+  "id": "ihu_tcam_signal",
+  "source": "ihu",
+  "target": "tcam",
+  "bus": "signal",
+  "nets": [
+   "SAT_RF_IN",
+   "SDARS_signal"
+  ],
+  "notes": [],
+  "pins": [
+   "P1",
+   "D1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ihu_tcam_power",
+  "source": "ihu",
+  "target": "tcam",
+  "bus": "power",
+  "nets": [
+   "SAT_RF_GND",
+   "SDARS_ground"
+  ],
+  "notes": [],
+  "pins": [
+   "P1S",
+   "D1S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_u-15-50_power",
+  "source": "aud",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "Feed_KL30"
+  ],
+  "notes": [
+   "Power"
+  ],
+  "pins": [
+   "A2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Power"
+ },
+ {
+  "id": "aud_p-16-235_signal",
+  "source": "aud",
+  "target": "p-16-235",
+  "bus": "signal",
+  "nets": [
+   "LFT_POS_AUD2+",
+   "LFT_NEG_AUD2+"
+  ],
+  "notes": [],
+  "pins": [
+   "D18",
+   "D6"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-16-236_signal",
+  "source": "aud",
+  "target": "p-16-236",
+  "bus": "signal",
+  "nets": [
+   "FRT_POS_AUD2+",
+   "FRT_NEG_AUD2+"
+  ],
+  "notes": [],
+  "pins": [
+   "D20",
+   "D8"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-16-4_signal",
+  "source": "aud",
+  "target": "p-16-4",
+  "bus": "signal",
+  "nets": [
+   "FLM_POS_AUD2+",
+   "FLM_NEG_AUD2+"
+  ],
+  "notes": [],
+  "pins": [
+   "C12",
+   "C4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-16-29_signal",
+  "source": "aud",
+  "target": "p-16-29",
+  "bus": "signal",
+  "nets": [
+   "FRM_POS_AUD2+",
+   "FRM_NEG_AUD2+"
+  ],
+  "notes": [],
+  "pins": [
+   "C13",
+   "C5"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-16-211_signal",
+  "source": "aud",
+  "target": "p-16-211",
+  "bus": "signal",
+  "nets": [
+   "BLW_and_BLT_POS_AUD2+",
+   "BLW_and_BLT_NEG_AUD2+"
+  ],
+  "notes": [],
+  "pins": [
+   "D11",
+   "D1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-6-137_signal",
+  "source": "aud",
+  "target": "p-6-137",
+  "bus": "signal",
+  "nets": [
+   "BRW_and_BRT_POS_AUD2",
+   "BRW_and_BRT_NEG_AUD2+"
+  ],
+  "notes": [],
+  "pins": [
+   "D22",
+   "D10"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-16-57_signal",
+  "source": "aud",
+  "target": "p-16-57",
+  "bus": "signal",
+  "nets": [
+   "TLM_POS_AUD2+",
+   "TLM_NEG_AUD2+"
+  ],
+  "notes": [],
+  "pins": [
+   "D13",
+   "D3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-16-58_signal",
+  "source": "aud",
+  "target": "p-16-58",
+  "bus": "signal",
+  "nets": [
+   "TRM_POS_AUD2",
+   "TRM_NEG_AUD2+"
+  ],
+  "notes": [],
+  "pins": [
+   "D14",
+   "D4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-16-26_signal",
+  "source": "aud",
+  "target": "p-16-26",
+  "bus": "signal",
+  "nets": [
+   "FCM_POS",
+   "FCM_NEG"
+  ],
+  "notes": [],
+  "pins": [
+   "C10",
+   "C2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-16-234_signal",
+  "source": "aud",
+  "target": "p-16-234",
+  "bus": "signal",
+  "nets": [
+   "ACW_VC2_NEG",
+   "ACW_VC2_POS",
+   "ACW_VC1_POS",
+   "ACW_VC1_NEG"
+  ],
+  "notes": [],
+  "pins": [
+   "C3",
+   "C11",
+   "C9",
+   "C1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "aud_p-16-79_signal",
+  "source": "aud",
+  "target": "p-16-79",
+  "bus": "signal",
+  "nets": [
+   "SUB_POS_AUD2+",
+   "SUB_NEG_AUD2+"
+  ],
+  "notes": [],
+  "pins": [
+   "C15",
+   "C7"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-4-184_wam_can",
+  "source": "wam",
+  "target": "u-4-184",
+  "bus": "can",
+  "nets": [
+   "CAN-H",
+   "CAN-L"
+  ],
+  "notes": [
+   "1E Safety CAN Exposed"
+  ],
+  "pins": [
+   "A2",
+   "A3"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-safety-can",
+  "label": "1E Safety CAN Exposed"
+ },
+ {
+  "id": "u-4-127_wam_can",
+  "source": "wam",
+  "target": "u-4-127",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-4-126_wam_can",
+  "source": "wam",
+  "target": "u-4-126",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-15-50_wam_power",
+  "source": "wam",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "Power_supply_A"
+  ],
+  "notes": [],
+  "pins": [
+   "A4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ihu_wam_power",
+  "source": "wam",
+  "target": "ihu",
+  "bus": "power",
+  "nets": [
+   "GND",
+   "Power"
+  ],
+  "notes": [],
+  "pins": [
+   "B1",
+   "B4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ihu_wam_signal",
+  "source": "wam",
+  "target": "ihu",
+  "bus": "signal",
+  "nets": [
+   "SCRN"
+  ],
+  "notes": [],
+  "pins": [
+   "B5S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-6_wam_power",
+  "source": "wam",
+  "target": "u-27-6",
+  "bus": "power",
+  "nets": [
+   "Ground_C",
+   "Power_supply_C"
+  ],
+  "notes": [],
+  "pins": [
+   "C1",
+   "C4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-6_wam_video",
+  "source": "wam",
+  "target": "u-27-6",
+  "bus": "video",
+  "nets": [
+   "LVDS_C_-",
+   "LVDS_C_+"
+  ],
+  "notes": [],
+  "pins": [
+   "C2",
+   "C3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-6_wam_signal",
+  "source": "wam",
+  "target": "u-27-6",
+  "bus": "signal",
+  "nets": [
+   "Front_SCRN"
+  ],
+  "notes": [],
+  "pins": [
+   "C5S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-11_wam_power",
+  "source": "wam",
+  "target": "u-27-11",
+  "bus": "power",
+  "nets": [
+   "Ground_D",
+   "Power_supply_D"
+  ],
+  "notes": [],
+  "pins": [
+   "D1",
+   "D4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-11_wam_video",
+  "source": "wam",
+  "target": "u-27-11",
+  "bus": "video",
+  "nets": [
+   "LVDS_D_-",
+   "LVDS_D_+"
+  ],
+  "notes": [],
+  "pins": [
+   "D2",
+   "D3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-11_wam_signal",
+  "source": "wam",
+  "target": "u-27-11",
+  "bus": "signal",
+  "nets": [
+   "Front_SCRN"
+  ],
+  "notes": [],
+  "pins": [
+   "D4S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-8_wam_power",
+  "source": "wam",
+  "target": "u-27-8",
+  "bus": "power",
+  "nets": [
+   "Ground_E",
+   "Power_supply_E"
+  ],
+  "notes": [],
+  "pins": [
+   "E1",
+   "E4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-8_wam_video",
+  "source": "wam",
+  "target": "u-27-8",
+  "bus": "video",
+  "nets": [
+   "LVDS_E_-",
+   "LVDS_E_+"
+  ],
+  "notes": [],
+  "pins": [
+   "E2",
+   "E3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-8_wam_signal",
+  "source": "wam",
+  "target": "u-27-8",
+  "bus": "signal",
+  "nets": [
+   "Front_SCRN"
+  ],
+  "notes": [],
+  "pins": [
+   "E5S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-7_wam_power",
+  "source": "wam",
+  "target": "u-27-7",
+  "bus": "power",
+  "nets": [
+   "Ground_F",
+   "Power_supply_F"
+  ],
+  "notes": [],
+  "pins": [
+   "F1",
+   "F4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-7_wam_video",
+  "source": "wam",
+  "target": "u-27-7",
+  "bus": "video",
+  "nets": [
+   "LVDS_F_-",
+   "LVDS_F_+"
+  ],
+  "notes": [],
+  "pins": [
+   "F2",
+   "F3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-27-7_wam_signal",
+  "source": "wam",
+  "target": "u-27-7",
+  "bus": "signal",
+  "nets": [
+   "Front_SCRN"
+  ],
+  "notes": [],
+  "pins": [
+   "F5S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "atm_becm_can",
+  "source": "becm",
+  "target": "atm",
+  "bus": "can",
+  "nets": [
+   "RMS_CAN_HIGH",
+   "RMS_CAN_LOW",
+   "CAN_H1",
+   "CAN_L1"
+  ],
+  "notes": [],
+  "pins": [
+   "LV40",
+   "LV39",
+   "A1",
+   "A2"
+  ],
+  "inferred": false,
+  "segment": "seg-rms-can",
+  "label": ""
+ },
+ {
+  "id": "becm_vcu1_can",
+  "source": "becm",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [
+   "VEHICLE_CAN_HIGH-2",
+   "VEHICLE_CAN_LOW-2",
+   "CAN_2_L",
+   "CAN_2_H"
+  ],
+  "notes": [
+   "1E Front 1 CAN"
+  ],
+  "pins": [
+   "LV44",
+   "LV45",
+   "EB 21",
+   "EB 22"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-front-1-can",
+  "label": "1E Front 1 CAN"
+ },
+ {
+  "id": "becm_ecm_can",
+  "source": "becm",
+  "target": "ecm",
+  "bus": "can",
+  "nets": [
+   "VEHICLE_CAN_HIGH-1",
+   "VEHICLE_CAN_LOW-1",
+   "B_D_CANHA",
+   "B_D_CANLA"
+  ],
+  "notes": [],
+  "pins": [
+   "LV42",
+   "LV43",
+   "B49",
+   "B36"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_p-4-286_can",
+  "source": "becm",
+  "target": "p-4-286",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_u-17-82_signal",
+  "source": "becm",
+  "target": "u-17-82",
+  "bus": "signal",
+  "nets": [
+   "DC_ChargeP1",
+   "DC_ChargeN1"
+  ],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_p-17-81_signal",
+  "source": "becm",
+  "target": "p-17-81",
+  "bus": "signal",
+  "nets": [
+   "DC_ChargeP1",
+   "DC_ChargeN1"
+  ],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_ihfa_signal",
+  "source": "becm",
+  "target": "ihfa",
+  "bus": "signal",
+  "nets": [
+   "CIDD+",
+   "CIDD",
+   "Shield_HVDC+",
+   "HVDC+",
+   "HVDC",
+   "Shield_HVDC"
+  ],
+  "notes": [],
+  "pins": [
+   "DCAS",
+   "DCA",
+   "DCB",
+   "DCBS"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_iem_signal",
+  "source": "becm",
+  "target": "iem",
+  "bus": "signal",
+  "nets": [
+   "IEM+",
+   "IEM-",
+   "Shield_HVDC+",
+   "HVDC+",
+   "HVDC",
+   "Shield_HVDC"
+  ],
+  "notes": [],
+  "pins": [
+   "DCAS",
+   "DCA",
+   "DCB",
+   "DCBS"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_hvha_hv",
+  "source": "becm",
+  "target": "hvha",
+  "bus": "hv",
+  "nets": [
+   "HVIL_2_EXT_OUT"
+  ],
+  "notes": [],
+  "pins": [
+   "LV26"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_iem_hv",
+  "source": "becm",
+  "target": "iem",
+  "bus": "hv",
+  "nets": [
+   "HVIL_2_EXT_IN"
+  ],
+  "notes": [],
+  "pins": [
+   "LV15"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_u-15-49_signal",
+  "source": "becm",
+  "target": "u-15-49",
+  "bus": "signal",
+  "nets": [
+   "PSR"
+  ],
+  "notes": [],
+  "pins": [
+   "LV24"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_u-15-49_power",
+  "source": "becm",
+  "target": "u-15-49",
+  "bus": "power",
+  "nets": [
+   "POWER_B+"
+  ],
+  "notes": [],
+  "pins": [
+   "LV33"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "becm_u-4-176_signal",
+  "source": "becm",
+  "target": "u-4-176",
+  "bus": "signal",
+  "nets": [
+   "CRASH_DISCONNECT_INPUT",
+   "CRASH_DISCONNECT_RETURN"
+  ],
+  "notes": [],
+  "pins": [
+   "LV13",
+   "LV14"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_obc_can",
+  "source": "obc",
+  "target": "ecm",
+  "bus": "can",
+  "nets": [
+   "CAN_H_A1",
+   "CAN_L_B1",
+   "B_D_CANHC",
+   "B_D_CANLC"
+  ],
+  "notes": [
+   "1E Rear 1 CAN"
+  ],
+  "pins": [
+   "SC2",
+   "SC1",
+   "B34",
+   "B47"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-rear-1-can",
+  "label": "1E Rear 1 CAN"
+ },
+ {
+  "id": "iem_obc_can",
+  "source": "obc",
+  "target": "iem",
+  "bus": "can",
+  "nets": [
+   "VEHICLE_CANHI_PAIR1",
+   "VEHICLE_CANLO_PAIR1"
+  ],
+  "notes": [
+   "1E Rear 1 CAN"
+  ],
+  "pins": [
+   "SC26",
+   "SC25"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-rear-1-can",
+  "label": "1E Rear 1 CAN"
+ },
+ {
+  "id": "obc_vcu1_can",
+  "source": "obc",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "obc_u-4-176_can",
+  "source": "obc",
+  "target": "u-4-176",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "obc_u-17-82_signal",
+  "source": "obc",
+  "target": "u-17-82",
+  "bus": "signal",
+  "nets": [
+   "AC_L1",
+   "AC_L2",
+   "AC_L3",
+   "AC_Neutral",
+   "Shield_AC",
+   "PE_for_Control_Pilot",
+   "Control_Pilot",
+   "Proximity_detection",
+   "LED_RED",
+   "LED_GREEN",
+   "LED_BLUE",
+   "Charge_inlet_temperature_NTC2_L1_AC",
+   "Charge_inlet_temperature_NTC3_N_AC",
+   "Charge_inlet_temperature_NTC1_DC1",
+   "Charge_inlet_temperature_NTC5_DC2",
+   "Locking_motor_interface_+",
+   "Locking_motor_interface__-",
+   "Locking_motor_interface_position+"
+  ],
+  "notes": [
+   "Live 240V In",
+   "Neutral 240V In"
+  ],
+  "pins": [
+   "AC4",
+   "AC3",
+   "AC2",
+   "AC5",
+   "AC8S",
+   "SC40",
+   "SC41",
+   "SC12",
+   "SC8",
+   "SC18",
+   "SC7",
+   "SC23",
+   "SC34",
+   "SC9",
+   "SC10",
+   "SC11",
+   "SC47",
+   "SC22"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Live 240V In"
+ },
+ {
+  "id": "obc_u-17-82_power",
+  "source": "obc",
+  "target": "u-17-82",
+  "bus": "power",
+  "nets": [
+   "LED_GND",
+   "NTC_AC_GND",
+   "Locking_motor_interface_position_GND"
+  ],
+  "notes": [],
+  "pins": [
+   "SC32",
+   "SC30",
+   "SC33"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "obc_p-3-447_signal",
+  "source": "obc",
+  "target": "p-3-447",
+  "bus": "signal",
+  "nets": [
+   "Unlock_Button_1",
+   "Unlock_Button_LED_1"
+  ],
+  "notes": [],
+  "pins": [
+   "SC16",
+   "SC20"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "iem_obc_hv",
+  "source": "obc",
+  "target": "iem",
+  "bus": "hv",
+  "nets": [
+   "HVIL_-"
+  ],
+  "notes": [
+   "Loops around HV modules (Out)"
+  ],
+  "pins": [
+   "SC6"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Loops around HV modules (Out)"
+ },
+ {
+  "id": "ihfa_obc_hv",
+  "source": "obc",
+  "target": "ihfa",
+  "bus": "hv",
+  "nets": [
+   "HVIL_+",
+   "HV_DC_Output_+",
+   "HV_DC_Output_-"
+  ],
+  "notes": [
+   "Loops around HV modules (Return)"
+  ],
+  "pins": [
+   "SC27",
+   "DC1",
+   "DC2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Loops around HV modules (Return)"
+ },
+ {
+  "id": "ihfa_obc_signal",
+  "source": "obc",
+  "target": "ihfa",
+  "bus": "signal",
+  "nets": [
+   "Shield_HVDC+",
+   "HVDC_-",
+   "HVDC_+",
+   "Shield_AUX_A"
+  ],
+  "notes": [],
+  "pins": [
+   "DC5S",
+   "AUX_B2",
+   "AUX_B1",
+   "AUX_B5S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ihfa_u-15-49_signal",
+  "source": "ihfa",
+  "target": "u-15-49",
+  "bus": "signal",
+  "nets": [
+   "12V+"
+  ],
+  "notes": [],
+  "pins": [
+   "LV1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ihfa_u-15-49_power",
+  "source": "ihfa",
+  "target": "u-15-49",
+  "bus": "power",
+  "nets": [
+   "PSR",
+   "Vbatt"
+  ],
+  "notes": [
+   "Power"
+  ],
+  "pins": [
+   "SC5",
+   "SC1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Power"
+ },
+ {
+  "id": "iem_ihfa_can",
+  "source": "ihfa",
+  "target": "iem",
+  "bus": "can",
+  "nets": [
+   "INSTR_CANHI",
+   "INSTR_CANLO"
+  ],
+  "notes": [],
+  "pins": [
+   "SC19",
+   "SC20"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ihfa_u-4-17_can",
+  "source": "ihfa",
+  "target": "u-4-17",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ihfa_vcu1_can",
+  "source": "ihfa",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [
+   "VEHICLE_CANHI_PAIR1",
+   "VEHICLE_CANLO_PAIR1",
+   "CAN_1_L",
+   "CAN_1_H"
+  ],
+  "notes": [
+   "1E Front 3 CAN"
+  ],
+  "pins": [
+   "SC26",
+   "SC25",
+   "EB 23",
+   "EB 24"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-front-3-can",
+  "label": "1E Front 3 CAN"
+ },
+ {
+  "id": "ecm_ihfa_can",
+  "source": "ihfa",
+  "target": "ecm",
+  "bus": "can",
+  "nets": [
+   "VEHICLE_CANHI_PAIR2",
+   "VEHICLE_CANLO_PAIR2",
+   "B_D_CANHB",
+   "B_D_CANLB"
+  ],
+  "notes": [
+   "1E Front 3 CAN"
+  ],
+  "pins": [
+   "SC27",
+   "SC28",
+   "B35",
+   "B48"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-front-3-can",
+  "label": "1E Front 3 CAN"
+ },
+ {
+  "id": "efad_ihfa_signal",
+  "source": "ihfa",
+  "target": "efad",
+  "bus": "signal",
+  "nets": [
+   "Phase_U",
+   "Phase_V",
+   "Phase_W",
+   "RES_SINLO",
+   "RES_SINHI",
+   "RES_COSHI",
+   "RES_COSLO",
+   "MTR_TEMP1+",
+   "MTR_TEMP1-",
+   "MTR_TEMP2+",
+   "MTR_TEMP2-",
+   "Screen_U",
+   "Screen_W",
+   "Resolver_sine-",
+   "Resolver_sine+",
+   "Resolver_cosine+",
+   "Resolver_cosine-",
+   "Resolver_excitation_positive",
+   "Resolver_excitation_negative",
+   "Temperature_sensor_1R1+",
+   "Temperature_sensor_1R2-",
+   "Temperature_sensor_2R1+",
+   "Temperature_sensor_2R2-"
+  ],
+  "notes": [
+   "Shaft angle positioning system",
+   "Motor temperature sensor"
+  ],
+  "pins": [
+   "AC1_Eyelet1",
+   "AC2_Eyelet1",
+   "AC3_Eyelet1",
+   "SC13",
+   "SC12",
+   "SC10",
+   "SC11",
+   "SC14",
+   "SC15",
+   "SC17",
+   "SC18",
+   "AC1",
+   "AC2",
+   "AC3",
+   "A6",
+   "A10",
+   "A12",
+   "A11",
+   "A5",
+   "A4",
+   "A1",
+   "A7",
+   "A2",
+   "A8"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Shaft angle positioning system"
+ },
+ {
+  "id": "hvha_ihfa_signal",
+  "source": "ihfa",
+  "target": "hvha",
+  "bus": "signal",
+  "nets": [
+   "HVDC_-",
+   "HVDC_+",
+   "Shield_AUX_A",
+   "HV-",
+   "HV+",
+   "shield"
+  ],
+  "notes": [],
+  "pins": [
+   "AUX_A2",
+   "AUX_A1",
+   "AUX_A5S",
+   "HV2",
+   "HV1",
+   "HV5S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "acca_ihfa_signal",
+  "source": "ihfa",
+  "target": "acca",
+  "bus": "signal",
+  "nets": [
+   "HVDC_-",
+   "HVDC_+",
+   "Shield_AUX_A",
+   "HV+",
+   "HV-"
+  ],
+  "notes": [],
+  "pins": [
+   "AUX_C2",
+   "AUX_C1",
+   "AUX_C5S",
+   "HV1",
+   "HV2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "efad_ihfa_power",
+  "source": "ihfa",
+  "target": "efad",
+  "bus": "power",
+  "nets": [
+   "RES_EXC+",
+   "RES_EXC-"
+  ],
+  "notes": [
+   "Supply to positioner"
+  ],
+  "pins": [
+   "SC6",
+   "SC7"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Supply to positioner"
+ },
+ {
+  "id": "iem_u-15-49_power",
+  "source": "iem",
+  "target": "u-15-49",
+  "bus": "power",
+  "nets": [
+   "PSR",
+   "Vbatt"
+  ],
+  "notes": [
+   "Power"
+  ],
+  "pins": [
+   "SC5",
+   "SC1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Power"
+ },
+ {
+  "id": "iem_u-4-17_can",
+  "source": "iem",
+  "target": "u-4-17",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_iem_can",
+  "source": "iem",
+  "target": "ecm",
+  "bus": "can",
+  "nets": [
+   "VEHICLE_CANHI_PAIR2"
+  ],
+  "notes": [
+   "Looks to be tied with Pair1"
+  ],
+  "pins": [
+   "SC27"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Looks to be tied with Pair1"
+ },
+ {
+  "id": "iem_vcu1_can",
+  "source": "iem",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [
+   "VEHICLE_CANLO_PAIR2"
+  ],
+  "notes": [],
+  "pins": [
+   "SC28"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "iem_u-4-176_can",
+  "source": "iem",
+  "target": "u-4-176",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "efad_iem_signal",
+  "source": "iem",
+  "target": "efad",
+  "bus": "signal",
+  "nets": [
+   "Phase_U",
+   "Phase_V",
+   "Phase_W",
+   "RES_SINLO",
+   "RES_SINHI",
+   "RES_COSHI",
+   "RES_COSLO",
+   "MTR_TEMP1+",
+   "MTR_TEMP1-",
+   "MTR_TEMP2+",
+   "MTR_TEMP2-"
+  ],
+  "notes": [
+   "Shaft angle positioning system",
+   "Motor temperature sensor"
+  ],
+  "pins": [
+   "AC1_Eyelet1",
+   "AC2_Eyelet1",
+   "AC3_Eyelet1",
+   "SC13",
+   "SC12",
+   "SC10",
+   "SC11",
+   "SC14",
+   "SC15",
+   "SC17",
+   "SC18"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Shaft angle positioning system"
+ },
+ {
+  "id": "efad_iem_power",
+  "source": "iem",
+  "target": "efad",
+  "bus": "power",
+  "nets": [
+   "RES_EXC+",
+   "RES_EXC-"
+  ],
+  "notes": [
+   "Supply to positioner"
+  ],
+  "pins": [
+   "SC6",
+   "SC7"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Supply to positioner"
+ },
+ {
+  "id": "erad_iem_signal",
+  "source": "erad",
+  "target": "iem",
+  "bus": "signal",
+  "nets": [
+   "Phase_U",
+   "Screen_U",
+   "Phase_W",
+   "Screen_W",
+   "Resolver_sine-",
+   "Resolver_sine+",
+   "Resolver_cosine+",
+   "Resolver_cosine-",
+   "Resolver_excitation_positive",
+   "Resolver_excitation_negative",
+   "Temperature_sensor_1R1+",
+   "Temperature_sensor_1R2-",
+   "Temperature_sensor_2R1+",
+   "Temperature_sensor_2R2-"
+  ],
+  "notes": [],
+  "pins": [
+   "AC1",
+   "AC2",
+   "AC3",
+   "A6",
+   "A10",
+   "A12",
+   "A11",
+   "A5",
+   "A4",
+   "A1",
+   "A7",
+   "A2",
+   "A8"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "hvha_vcu1_lin",
+  "source": "hvha",
+  "target": "vcu1",
+  "bus": "lin",
+  "nets": [
+   "LIN25"
+  ],
+  "notes": [
+   "Lin Bus"
+  ],
+  "pins": [
+   "LV5"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-25",
+  "label": "Lin Bus"
+ },
+ {
+  "id": "hvha_p-4-364_lin",
+  "source": "hvha",
+  "target": "p-4-364",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "hvha_p-4-357_lin",
+  "source": "hvha",
+  "target": "p-4-357",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "hvha_p-4-356_lin",
+  "source": "hvha",
+  "target": "p-4-356",
+  "bus": "lin",
+  "nets": [],
+  "notes": [
+   "Heatpump option"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "Heatpump option"
+ },
+ {
+  "id": "acca_hvha_lin",
+  "source": "hvha",
+  "target": "acca",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "hvha_u-15-49_power",
+  "source": "hvha",
+  "target": "u-15-49",
+  "bus": "power",
+  "nets": [
+   "BATT"
+  ],
+  "notes": [],
+  "pins": [
+   "LV3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "acca_ihfa_hv",
+  "source": "acca",
+  "target": "ihfa",
+  "bus": "hv",
+  "nets": [
+   "shield_HV"
+  ],
+  "notes": [],
+  "pins": [
+   "HV5S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "acca_vcu1_lin",
+  "source": "acca",
+  "target": "vcu1",
+  "bus": "lin",
+  "nets": [
+   "LIN25"
+  ],
+  "notes": [
+   "Lin Bus"
+  ],
+  "pins": [
+   "LV2"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-25",
+  "label": "Lin Bus"
+ },
+ {
+  "id": "acca_p-4-364_lin",
+  "source": "acca",
+  "target": "p-4-364",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "acca_p-4-357_lin",
+  "source": "acca",
+  "target": "p-4-357",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "acca_p-4-356_lin",
+  "source": "acca",
+  "target": "p-4-356",
+  "bus": "lin",
+  "nets": [],
+  "notes": [
+   "Heatpump option"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "Heatpump option"
+ },
+ {
+  "id": "acca_u-15-49_power",
+  "source": "acca",
+  "target": "u-15-49",
+  "bus": "power",
+  "nets": [
+   "Power"
+  ],
+  "notes": [],
+  "pins": [
+   "LV1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_u-15-49_signal",
+  "source": "ecm",
+  "target": "u-15-49",
+  "bus": "signal",
+  "nets": [
+   "V_V_BAT_R1",
+   "CAN_4_High",
+   "V_V_PERMBAT",
+   "O_S_FAN"
+  ],
+  "notes": [],
+  "pins": [
+   "B2",
+   "B4",
+   "B6",
+   "B17",
+   "B55",
+   "B20"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_u-7-51_signal",
+  "source": "ecm",
+  "target": "u-7-51",
+  "bus": "signal",
+  "nets": [
+   "I_A_APP1",
+   "I_A_T_APP2",
+   "O_V_5VAPP1"
+  ],
+  "notes": [
+   "Signal",
+   "PWM",
+   "5V"
+  ],
+  "pins": [
+   "B9",
+   "B12",
+   "B16"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Signal"
+ },
+ {
+  "id": "ecm_u-7-51_power",
+  "source": "ecm",
+  "target": "u-7-51",
+  "bus": "power",
+  "nets": [
+   "G_R_APP1"
+  ],
+  "notes": [
+   "Signal GND"
+  ],
+  "pins": [
+   "B10"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Signal GND"
+ },
+ {
+  "id": "ecm_p-4-286_can",
+  "source": "ecm",
+  "target": "p-4-286",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_vcu1_can",
+  "source": "ecm",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_u-4-176_can",
+  "source": "ecm",
+  "target": "u-4-176",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_ecm_signal",
+  "source": "ecm",
+  "target": "cem",
+  "bus": "signal",
+  "nets": [
+   "I_S_WAK",
+   "ECM_Wake_Up"
+  ],
+  "notes": [],
+  "pins": [
+   "B30",
+   "EN14"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_p-4-71_signal",
+  "source": "ecm",
+  "target": "p-4-71",
+  "bus": "signal",
+  "nets": [
+   "O_T_EFCM1",
+   "O_T_EFCM2"
+  ],
+  "notes": [],
+  "pins": [
+   "B18",
+   "B44"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_p-7-363_signal",
+  "source": "ecm",
+  "target": "p-7-363",
+  "bus": "signal",
+  "nets": [
+   "I_A_CLCTS"
+  ],
+  "notes": [],
+  "pins": [
+   "B21"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_p-7-363_power",
+  "source": "ecm",
+  "target": "p-7-363",
+  "bus": "power",
+  "nets": [
+   "G_R_CLCTS"
+  ],
+  "notes": [
+   "GND"
+  ],
+  "pins": [
+   "B52"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "GND"
+ },
+ {
+  "id": "ecm_p-active-spoiler-shutter-module_lin",
+  "source": "ecm",
+  "target": "p-active-spoiler-shutter-module",
+  "bus": "lin",
+  "nets": [
+   "LIN4"
+  ],
+  "notes": [],
+  "pins": [
+   "B51"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-4",
+  "label": ""
+ },
+ {
+  "id": "ecm_p-7-376_signal",
+  "source": "ecm",
+  "target": "p-7-376",
+  "bus": "signal",
+  "nets": [
+   "O_V_5VTSPARE1",
+   "I_A_TSPARE1",
+   "I_A_PSPARE1",
+   "G_R_TSPARE1"
+  ],
+  "notes": [
+   "With heatpump"
+  ],
+  "pins": [
+   "B15",
+   "B22",
+   "B8",
+   "B11"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "With heatpump"
+ },
+ {
+  "id": "ecm_p-8-262_signal",
+  "source": "ecm",
+  "target": "p-8-262",
+  "bus": "signal",
+  "nets": [
+   "O_S_ACCSOVLV",
+   "O_T_OHXSOVLV",
+   "O_T_LCSOVLV"
+  ],
+  "notes": [
+   "With heatpump"
+  ],
+  "pins": [
+   "B45",
+   "A23",
+   "A95"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "With heatpump"
+ },
+ {
+  "id": "ecm_p-7-372_power",
+  "source": "ecm",
+  "target": "p-7-372",
+  "bus": "power",
+  "nets": [
+   "O_V_5V_Supply",
+   "G_R_GND"
+  ],
+  "notes": [
+   "No Heatpump"
+  ],
+  "pins": [
+   "A8",
+   "A2"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "No Heatpump"
+ },
+ {
+  "id": "ecm_p-7-372_signal",
+  "source": "ecm",
+  "target": "p-7-372",
+  "bus": "signal",
+  "nets": [
+   "I_A_Temperature",
+   "I_A_Pressure"
+  ],
+  "notes": [
+   "No Heatpump"
+  ],
+  "pins": [
+   "A57",
+   "A59"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "No Heatpump"
+ },
+ {
+  "id": "ecm_p-7-369_signal",
+  "source": "ecm",
+  "target": "p-7-369",
+  "bus": "signal",
+  "nets": [
+   "O_V_5VPTBHE",
+   "I_A_TTBHE",
+   "I_A_PTBHE",
+   "G_R_PTBHE"
+  ],
+  "notes": [
+   "Common"
+  ],
+  "pins": [
+   "A9",
+   "A85",
+   "A31",
+   "A68"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Common"
+ },
+ {
+  "id": "ecm_p-7-377_signal",
+  "source": "ecm",
+  "target": "p-7-377",
+  "bus": "signal",
+  "nets": [
+   "O_V_5VPTSPARE2",
+   "I_A_TSPARE2",
+   "I_A_PSPARE2",
+   "G_R_PTSPARE2"
+  ],
+  "notes": [
+   "With heatpump"
+  ],
+  "pins": [
+   "A15",
+   "A38",
+   "A81",
+   "A54"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "With heatpump"
+ },
+ {
+  "id": "ecm_p-7-367_signal",
+  "source": "ecm",
+  "target": "p-7-367",
+  "bus": "signal",
+  "nets": [
+   "O_V_5VTPCOMPI",
+   "I_A_TCOMPI_A62",
+   "I_A_PCOMPI",
+   "G_R_TPCOMPI"
+  ],
+  "notes": [
+   "With heatpump"
+  ],
+  "pins": [
+   "A7",
+   "A62",
+   "A58",
+   "A1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "With heatpump"
+ },
+ {
+  "id": "ecm_p-8-178_power",
+  "source": "ecm",
+  "target": "p-8-178",
+  "bus": "power",
+  "nets": [
+   "O_S_SOVBAT"
+  ],
+  "notes": [],
+  "pins": [
+   "A22"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_p-8-261_signal",
+  "source": "ecm",
+  "target": "p-8-261",
+  "bus": "signal",
+  "nets": [
+   "O_S_CVED"
+  ],
+  "notes": [],
+  "pins": [
+   "A24"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_p-7-409_signal",
+  "source": "ecm",
+  "target": "p-7-409",
+  "bus": "signal",
+  "nets": [
+   "I_A_CTS",
+   "G_R_TLTC"
+  ],
+  "notes": [],
+  "pins": [
+   "A36",
+   "A30"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_p-7-317_signal",
+  "source": "ecm",
+  "target": "p-7-317",
+  "bus": "signal",
+  "nets": [
+   "G_R_BATCTS",
+   "I_A_BATCTS"
+  ],
+  "notes": [],
+  "pins": [
+   "A84",
+   "A87"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "ecm_p-8-250_signal",
+  "source": "ecm",
+  "target": "p-8-250",
+  "bus": "signal",
+  "nets": [
+   "O_T_EVAPSOVLV"
+  ],
+  "notes": [],
+  "pins": [
+   "A93"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-4-475_vcu1_lin",
+  "source": "vcu1",
+  "target": "u-4-475",
+  "bus": "lin",
+  "nets": [
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "u-6-195_vcu1_lin",
+  "source": "vcu1",
+  "target": "u-6-195",
+  "bus": "lin",
+  "nets": [
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "u-4-694_vcu1_lin",
+  "source": "vcu1",
+  "target": "u-4-694",
+  "bus": "lin",
+  "nets": [
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "p-4-364_vcu1_lin",
+  "source": "vcu1",
+  "target": "p-4-364",
+  "bus": "lin",
+  "nets": [
+   "LIN25"
+  ],
+  "notes": [
+   "Lin Bus"
+  ],
+  "pins": [
+   "EB 4"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-25",
+  "label": "Lin Bus"
+ },
+ {
+  "id": "p-4-357_vcu1_lin",
+  "source": "vcu1",
+  "target": "p-4-357",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-4-356_vcu1_lin",
+  "source": "vcu1",
+  "target": "p-4-356",
+  "bus": "lin",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-7-118_vcu1_signal",
+  "source": "vcu1",
+  "target": "p-7-118",
+  "bus": "signal",
+  "nets": [
+   "P5V0_LEVELLING",
+   "SIG_LEVEL_FRONT"
+  ],
+  "notes": [
+   "5V",
+   "Signal"
+  ],
+  "pins": [
+   "EB 11",
+   "EB 12"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "5V"
+ },
+ {
+  "id": "p-7-118_vcu1_power",
+  "source": "vcu1",
+  "target": "p-7-118",
+  "bus": "power",
+  "nets": [
+   "GND_SIG_LEVEL_FRONT"
+  ],
+  "notes": [
+   "GND"
+  ],
+  "pins": [
+   "EB 13"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "GND"
+ },
+ {
+  "id": "u-4-68_vcu1_can",
+  "source": "vcu1",
+  "target": "u-4-68",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-15-49_vcu1_power",
+  "source": "vcu1",
+  "target": "u-15-49",
+  "bus": "power",
+  "nets": [
+   "KL15",
+   "KL30B"
+  ],
+  "notes": [],
+  "pins": [
+   "EB 25",
+   "EB 26"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_vcu1_flexray",
+  "source": "vcu1",
+  "target": "cem",
+  "bus": "flexray",
+  "nets": [
+   "FR_BACKBONE_BP",
+   "FR_BACKBONE_BM",
+   "FlexRayBP",
+   "FlexRayBM"
+  ],
+  "notes": [
+   "Flexray",
+   "1E_Backbone_FlexRay BEV|48V KERS"
+  ],
+  "pins": [
+   "EB 29",
+   "EB 30",
+   "EN27",
+   "EN28"
+  ],
+  "inferred": false,
+  "segment": "seg-flexray-backbone",
+  "label": "Flexray"
+ },
+ {
+  "id": "p-7-276_vcu1_signal",
+  "source": "vcu1",
+  "target": "p-7-276",
+  "bus": "signal",
+  "nets": [
+   "RETURN_SIG_COOLANT_LEVEL_",
+   "SIG_COOLANT_LEVEL"
+  ],
+  "notes": [],
+  "pins": [
+   "EB2 31",
+   "EB2 32"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "obd_vcu1_can",
+  "source": "vcu1",
+  "target": "obd",
+  "bus": "can",
+  "nets": [
+   "CAN_5_H",
+   "CAN_5_L",
+   "HS-CAN+",
+   "HS-CAN"
+  ],
+  "notes": [
+   "1E Diagnostics and Connectivity CAN"
+  ],
+  "pins": [
+   "F_IP 23",
+   "F_IP 22",
+   "A6",
+   "A14"
+  ],
+  "inferred": false,
+  "segment": "seg-diagnostics-connectivity-can",
+  "label": "1E Diagnostics and Connectivity CAN"
+ },
+ {
+  "id": "vcu1_vgm_signal",
+  "source": "vcu1",
+  "target": "vgm",
+  "bus": "signal",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "atm_vcu1_signal",
+  "source": "vcu1",
+  "target": "atm",
+  "bus": "signal",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-4-176_vcu1_can",
+  "source": "vcu1",
+  "target": "u-4-176",
+  "bus": "can",
+  "nets": [
+   "CAN_3_H",
+   "CAN_3_L"
+  ],
+  "notes": [
+   "1E Rear 1 CAN"
+  ],
+  "pins": [
+   "F_IP 26",
+   "F_IP 25"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-rear-1-can",
+  "label": "1E Rear 1 CAN"
+ },
+ {
+  "id": "u-15-50_vcu1_power",
+  "source": "vcu1",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "KL30A"
+  ],
+  "notes": [],
+  "pins": [
+   "F_IP 21"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-7-120_vcu1_signal",
+  "source": "vcu1",
+  "target": "p-7-120",
+  "bus": "signal",
+  "nets": [
+   "P5V0_LEVEL_LING",
+   "SIG_LEVEL_REAR"
+  ],
+  "notes": [
+   "5V",
+   "Signal"
+  ],
+  "pins": [
+   "F_IP 5",
+   "F_IP 4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "5V"
+ },
+ {
+  "id": "p-7-120_vcu1_power",
+  "source": "vcu1",
+  "target": "p-7-120",
+  "bus": "power",
+  "nets": [
+   "GND_SIG_LEVEL_REAR"
+  ],
+  "notes": [
+   "GND"
+  ],
+  "pins": [
+   "F_IP 3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "GND"
+ },
+ {
+  "id": "cem_u-4-250_lin",
+  "source": "cem",
+  "target": "u-4-250",
+  "bus": "lin",
+  "nets": [
+   "LIN1",
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [
+   "EN1"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-1",
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_u-4-220_lin",
+  "source": "cem",
+  "target": "u-4-220",
+  "bus": "lin",
+  "nets": [
+   "LIN2",
+   "wire VT/WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [
+   "EN2"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-2",
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_u-10-319_lin",
+  "source": "cem",
+  "target": "u-10-319",
+  "bus": "lin",
+  "nets": [
+   "LIN12"
+  ],
+  "notes": [
+   "1E LIN Body Infotainment Powertrain"
+  ],
+  "pins": [
+   "EN5"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-12",
+  "label": "1E LIN Body Infotainment Powertrain"
+ },
+ {
+  "id": "cem_u-10-314_lin",
+  "source": "cem",
+  "target": "u-10-314",
+  "bus": "lin",
+  "nets": [
+   "LIN12"
+  ],
+  "notes": [
+   "1E LIN Body Infotainment Powertrain"
+  ],
+  "pins": [
+   "EN5"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-12",
+  "label": "1E LIN Body Infotainment Powertrain"
+ },
+ {
+  "id": "cem_u-10-315_lin",
+  "source": "cem",
+  "target": "u-10-315",
+  "bus": "lin",
+  "nets": [
+   "LIN12",
+   "wire WH"
+  ],
+  "notes": [
+   "1E LIN Body Infotainment Powertrain",
+   "LIN bus overview"
+  ],
+  "pins": [
+   "EN5"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-12",
+  "label": "1E LIN Body Infotainment Powertrain"
+ },
+ {
+  "id": "cem_u-4-221_lin",
+  "source": "cem",
+  "target": "u-4-221",
+  "bus": "lin",
+  "nets": [
+   "LIN16"
+  ],
+  "notes": [],
+  "pins": [
+   "EN7"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-16",
+  "label": ""
+ },
+ {
+  "id": "cem_u-15-49_power",
+  "source": "cem",
+  "target": "u-15-49",
+  "bus": "power",
+  "nets": [
+   "IgnitionPowerRelayFB",
+   "IgnitionPowerRelayCtrl",
+   "PowerOutletFrontRelayCtrl",
+   "PowerOutletFrontRelayCtrlIP"
+  ],
+  "notes": [
+   "Relays"
+  ],
+  "pins": [
+   "EN9",
+   "EN19",
+   "EN35",
+   "IP12"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Relays"
+ },
+ {
+  "id": "cem_u-15-49_signal",
+  "source": "cem",
+  "target": "u-15-49",
+  "bus": "signal",
+  "nets": [
+   "HornRelayCtrl",
+   "Exterior_Light_Relay_LED_HCM",
+   "RearWiperRelayCtrl",
+   "FuelPumpCtrl"
+  ],
+  "notes": [
+   "Relays"
+  ],
+  "pins": [
+   "EN10",
+   "EN55",
+   "FL60",
+   "IP49"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Relays"
+ },
+ {
+  "id": "cem_p-10-5_power",
+  "source": "cem",
+  "target": "p-10-5",
+  "bus": "power",
+  "nets": [
+   "FogLightLeftFrontSupply_EN12"
+  ],
+  "notes": [],
+  "pins": [
+   "EN12"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-7-124_signal",
+  "source": "cem",
+  "target": "p-7-124",
+  "bus": "signal",
+  "nets": [
+   "BrakePressureLimit"
+  ],
+  "notes": [],
+  "pins": [
+   "EN13"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-15-50_signal",
+  "source": "cem",
+  "target": "u-15-50",
+  "bus": "signal",
+  "nets": [
+   "HeadLampWashingCtrl",
+   "RearWindscreenWashingCtrl",
+   "FrontWindscreenWashingCtrl",
+   "DOLS76_Rear_Lamps_Relay",
+   "IgnitionExtendedRelayCtrl",
+   "FoldableRearSeatLeftCtrl",
+   "FoldableRearSeatRightCtrl",
+   "RearWindowDefrosterCtrl",
+   "ComfortRelayCtrl"
+  ],
+  "notes": [
+   "Relays"
+  ],
+  "pins": [
+   "EN21",
+   "EN22",
+   "EN49",
+   "FL14",
+   "FL17",
+   "FL18",
+   "FL35",
+   "FL40",
+   "FL43"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Relays"
+ },
+ {
+  "id": "cem_u-10-1_can",
+  "source": "cem",
+  "target": "u-10-1",
+  "bus": "can",
+  "nets": [
+   "Exterior_CAN_+_HCM"
+  ],
+  "notes": [
+   "1E Body CAN Exp"
+  ],
+  "pins": [
+   "EN30"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-body-can",
+  "label": "1E Body CAN Exp"
+ },
+ {
+  "id": "cem_u-10-2_can",
+  "source": "cem",
+  "target": "u-10-2",
+  "bus": "can",
+  "nets": [
+   "Exterior_CAN_-_HCM"
+  ],
+  "notes": [],
+  "pins": [
+   "EN31"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-7-5_signal",
+  "source": "cem",
+  "target": "u-7-5",
+  "bus": "signal",
+  "nets": [
+   "WasherFluidLevelSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "EN34"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-3-62_signal",
+  "source": "cem",
+  "target": "u-3-62",
+  "bus": "signal",
+  "nets": [
+   "AjarHoodSwitch1"
+  ],
+  "notes": [],
+  "pins": [
+   "EN43"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-9-81_power",
+  "source": "cem",
+  "target": "u-9-81",
+  "bus": "power",
+  "nets": [
+   "HeatedEmblemSupply"
+  ],
+  "notes": [],
+  "pins": [
+   "EN56"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-10-6_power",
+  "source": "cem",
+  "target": "p-10-6",
+  "bus": "power",
+  "nets": [
+   "FogLightRightFrontSupply_EN72"
+  ],
+  "notes": [],
+  "pins": [
+   "EN72"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-9-43_power",
+  "source": "cem",
+  "target": "u-9-43",
+  "bus": "power",
+  "nets": [
+   "HeatedNozzlesFrontSupply"
+  ],
+  "notes": [],
+  "pins": [
+   "EN75"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-16-133_signal",
+  "source": "cem",
+  "target": "p-16-133",
+  "bus": "signal",
+  "nets": [
+   "IntRearAntenna-",
+   "IntRearAntenna+"
+  ],
+  "notes": [],
+  "pins": [
+   "FL3",
+   "FL22"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-10-173_power",
+  "source": "cem",
+  "target": "p-10-173",
+  "bus": "power",
+  "nets": [
+   "IntLightLuggageSupply"
+  ],
+  "notes": [],
+  "pins": [
+   "FL5"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-6-55_signal",
+  "source": "cem",
+  "target": "u-6-55",
+  "bus": "signal",
+  "nets": [
+   "AjarRightFrontDoorSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "FL7"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-4-110_power",
+  "source": "cem",
+  "target": "u-4-110",
+  "bus": "power",
+  "nets": [
+   "CHMSL5DSupply-StopLightTrailerCtr"
+  ],
+  "notes": [],
+  "pins": [
+   "FL10"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-15-50_power",
+  "source": "cem",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "BatteryPowerSaverRelayCtrl"
+  ],
+  "notes": [
+   "Relays"
+  ],
+  "pins": [
+   "FL16"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Relays"
+ },
+ {
+  "id": "cem_u-4-116_can",
+  "source": "cem",
+  "target": "u-4-116",
+  "bus": "can",
+  "nets": [
+   "CANHS"
+  ],
+  "notes": [],
+  "pins": [
+   "FL19"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-4-213_can",
+  "source": "cem",
+  "target": "u-4-213",
+  "bus": "can",
+  "nets": [
+   "CANHS+"
+  ],
+  "notes": [
+   "1E Body-CAN"
+  ],
+  "pins": [
+   "FL20"
+  ],
+  "inferred": false,
+  "segment": "seg-1e-body-can",
+  "label": "1E Body-CAN"
+ },
+ {
+  "id": "cem_u-4-110_can",
+  "source": "cem",
+  "target": "u-4-110",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-4-214_can",
+  "source": "cem",
+  "target": "u-4-214",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-4-154_can",
+  "source": "cem",
+  "target": "u-4-154",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-6-56_signal",
+  "source": "cem",
+  "target": "p-6-56",
+  "bus": "signal",
+  "nets": [
+   "AjarRightRearDoorSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "FL25"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-6-57_signal",
+  "source": "cem",
+  "target": "p-6-57",
+  "bus": "signal",
+  "nets": [
+   "AjarLeftRearDoorSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "FL26"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-6-36_signal",
+  "source": "cem",
+  "target": "p-6-36",
+  "bus": "signal",
+  "nets": [
+   "AjarLeftFrontDoorSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "FL27"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_tcam_lin",
+  "source": "cem",
+  "target": "tcam",
+  "bus": "lin",
+  "nets": [
+   "LIN0",
+   "LIN",
+   "wire GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [
+   "FL39",
+   "A17"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-0",
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_u-4-312_lin",
+  "source": "cem",
+  "target": "u-4-312",
+  "bus": "lin",
+  "nets": [
+   "LIN15"
+  ],
+  "notes": [],
+  "pins": [
+   "FL41"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-15",
+  "label": ""
+ },
+ {
+  "id": "cem_u-4-172_lin",
+  "source": "cem",
+  "target": "u-4-172",
+  "bus": "lin",
+  "nets": [
+   "LIN16_FL42"
+  ],
+  "notes": [],
+  "pins": [
+   "FL42"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-16",
+  "label": ""
+ },
+ {
+  "id": "cem_p-10-3_signal",
+  "source": "cem",
+  "target": "p-10-3",
+  "bus": "signal",
+  "nets": [
+   "TrunkLiftgateReleaseSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "FL44"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-368_signal",
+  "source": "cem",
+  "target": "p-3-368",
+  "bus": "signal",
+  "nets": [
+   "FoldableRearSeatLockFBLeft"
+  ],
+  "notes": [],
+  "pins": [
+   "FL46"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-369_signal",
+  "source": "cem",
+  "target": "p-3-369",
+  "bus": "signal",
+  "nets": [
+   "FoldableRearSeatLockFBRight"
+  ],
+  "notes": [],
+  "pins": [
+   "FL47"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-6-8_signal",
+  "source": "cem",
+  "target": "p-6-8",
+  "bus": "signal",
+  "nets": [
+   "AjarLiftgateSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "FL53"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-6-37_power",
+  "source": "cem",
+  "target": "p-6-37",
+  "bus": "power",
+  "nets": [
+   "FuelFlapLockSupply",
+   "FuelFlapUnlockSupply"
+  ],
+  "notes": [],
+  "pins": [
+   "FL62",
+   "FL63"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-6-8_power",
+  "source": "cem",
+  "target": "p-6-8",
+  "bus": "power",
+  "nets": [
+   "TrunkLiftgateReleaseSupply"
+  ],
+  "notes": [],
+  "pins": [
+   "FL68"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-4-229_signal",
+  "source": "cem",
+  "target": "p-4-229",
+  "bus": "signal",
+  "nets": [
+   "DOWHS25"
+  ],
+  "notes": [],
+  "pins": [
+   "RO1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-10-19_signal",
+  "source": "cem",
+  "target": "p-10-19",
+  "bus": "signal",
+  "nets": [],
+  "notes": [],
+  "pins": [
+   "RO4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-4-199_lin",
+  "source": "cem",
+  "target": "u-4-199",
+  "bus": "lin",
+  "nets": [
+   "LIN_3"
+  ],
+  "notes": [],
+  "pins": [
+   "RO8"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-3",
+  "label": ""
+ },
+ {
+  "id": "cem_u-4-237_lin",
+  "source": "cem",
+  "target": "u-4-237",
+  "bus": "lin",
+  "nets": [
+   "LIN_2",
+   "wire VT/WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [
+   "RO9"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-2",
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_p-4-171_lin",
+  "source": "cem",
+  "target": "p-4-171",
+  "bus": "lin",
+  "nets": [
+   "LIN_1"
+  ],
+  "notes": [],
+  "pins": [
+   "RO10"
+  ],
+  "inferred": false,
+  "segment": "seg-lin-1",
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-347_power",
+  "source": "cem",
+  "target": "p-3-347",
+  "bus": "power",
+  "nets": [
+   "TrunkLiftgateCloseLockSwitchGND"
+  ],
+  "notes": [],
+  "pins": [
+   "FO3"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-275_power",
+  "source": "cem",
+  "target": "p-3-275",
+  "bus": "power",
+  "nets": [
+   "DoorHandleRearLeftSupplyData"
+  ],
+  "notes": [],
+  "pins": [
+   "FO7"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-276_power",
+  "source": "cem",
+  "target": "p-3-276",
+  "bus": "power",
+  "nets": [
+   "DoorHandleRearRightSupplyData"
+  ],
+  "notes": [],
+  "pins": [
+   "FO8"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-274_power",
+  "source": "cem",
+  "target": "p-3-274",
+  "bus": "power",
+  "nets": [
+   "DoorHandleFrontRightSupplyData"
+  ],
+  "notes": [],
+  "pins": [
+   "FO9"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-273_power",
+  "source": "cem",
+  "target": "p-3-273",
+  "bus": "power",
+  "nets": [
+   "DoorHandleFrontLeftSupplyData"
+  ],
+  "notes": [],
+  "pins": [
+   "FO10"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-347_signal",
+  "source": "cem",
+  "target": "p-3-347",
+  "bus": "signal",
+  "nets": [
+   "TrunkLiftgateCloseLockSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "FO12"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-16-129_signal",
+  "source": "cem",
+  "target": "p-16-129",
+  "bus": "signal",
+  "nets": [
+   "RightAntenna-",
+   "RightAntenna+"
+  ],
+  "notes": [],
+  "pins": [
+   "FO19",
+   "FO20"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-16-130_signal",
+  "source": "cem",
+  "target": "p-16-130",
+  "bus": "signal",
+  "nets": [
+   "LeftAntenna-",
+   "LeftAntenna+"
+  ],
+  "notes": [],
+  "pins": [
+   "FO21",
+   "FO22"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_u-4-176_signal",
+  "source": "cem",
+  "target": "u-4-176",
+  "bus": "signal",
+  "nets": [
+   "ITOSignalFreq-IP1"
+  ],
+  "notes": [],
+  "pins": [
+   "IP8"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_tcam_signal",
+  "source": "cem",
+  "target": "tcam",
+  "bus": "signal",
+  "nets": [
+   "ITOSignalFreq-IP2",
+   "AIRBAG"
+  ],
+  "notes": [],
+  "pins": [
+   "IP9",
+   "A11"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-16-135_signal",
+  "source": "cem",
+  "target": "p-16-135",
+  "bus": "signal",
+  "nets": [
+   "IntFrontAntenna-",
+   "IntFrontAntenna+"
+  ],
+  "notes": [],
+  "pins": [
+   "IP13",
+   "IP26"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-7-238_signal",
+  "source": "cem",
+  "target": "p-7-238",
+  "bus": "signal",
+  "nets": [
+   "AuxImmoInput_NEW",
+   "AuxImmoInput"
+  ],
+  "notes": [],
+  "pins": [
+   "IP16",
+   "IP29"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-337_signal",
+  "source": "cem",
+  "target": "p-3-337",
+  "bus": "signal",
+  "nets": [
+   "RheostatInput"
+  ],
+  "notes": [],
+  "pins": [
+   "IP17"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-3-337_power",
+  "source": "cem",
+  "target": "p-3-337",
+  "bus": "power",
+  "nets": [
+   "MyCarSwitchGND",
+   "SwitchIlluminationSupply-IP"
+  ],
+  "notes": [],
+  "pins": [
+   "IP35",
+   "IP37"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-10-335_power",
+  "source": "cem",
+  "target": "p-10-335",
+  "bus": "power",
+  "nets": [
+   "IntLightIPMoodSupply"
+  ],
+  "notes": [],
+  "pins": [
+   "IP36"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-7-411_signal",
+  "source": "cem",
+  "target": "p-7-411",
+  "bus": "signal",
+  "nets": [
+   "Driver_Seat_Occupant_Sensor_L",
+   "Driver_Seat_Occupant_Sensor_H"
+  ],
+  "notes": [],
+  "pins": [
+   "IP38",
+   "IP39"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-4-222_signal",
+  "source": "cem",
+  "target": "p-4-222",
+  "bus": "signal",
+  "nets": [
+   "HazardSwitchIllumination",
+   "HazardSwitch"
+  ],
+  "notes": [],
+  "pins": [
+   "IP40",
+   "IP50"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-10-126_power",
+  "source": "cem",
+  "target": "p-10-126",
+  "bus": "power",
+  "nets": [
+   "IntLightFootwellSupply-IP"
+  ],
+  "notes": [],
+  "pins": [
+   "IP41"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "obd_vgm_signal",
+  "source": "vgm",
+  "target": "obd",
+  "bus": "signal",
+  "nets": [
+   "DLC_Activation_Line",
+   "UART_RXD",
+   "UART_TXD"
+  ],
+  "notes": [
+   "unconnected"
+  ],
+  "pins": [
+   "A19",
+   "A9",
+   "A1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "unconnected"
+ },
+ {
+  "id": "obd_vgm_ethernet",
+  "source": "vgm",
+  "target": "obd",
+  "bus": "ethernet",
+  "nets": [
+   "OBD_ETHERNET_RX+",
+   "OBD_ETHERNET_RX-",
+   "OBD_ETHERNET_TX+",
+   "OBD_ETHERNET_TX-",
+   "Ethernet_Activation",
+   "Ethernet_Rx+",
+   "Ethernet_Rx-",
+   "Ethernet_Tx+",
+   "Ethernet_Tx-"
+  ],
+  "notes": [],
+  "pins": [
+   "A8",
+   "A3",
+   "A11",
+   "A12",
+   "A13"
+  ],
+  "inferred": false,
+  "segment": "seg-obd-ethernet",
+  "label": ""
+ },
+ {
+  "id": "atm_vgm_can",
+  "source": "vgm",
+  "target": "atm",
+  "bus": "can",
+  "nets": [
+   "CAN_L_DIAGNOSTIC",
+   "CAN_H2",
+   "CAN_L2"
+  ],
+  "notes": [],
+  "pins": [
+   "A24",
+   "A25",
+   "A3",
+   "A4"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "obd_vgm_can",
+  "source": "vgm",
+  "target": "obd",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "vcu1_vgm_can",
+  "source": "vgm",
+  "target": "vcu1",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "tcam_vgm_can",
+  "source": "vgm",
+  "target": "tcam",
+  "bus": "can",
+  "nets": [
+   "CAN_H_INFOTAINMENT",
+   "CAN_L_INFOTAINMENT",
+   "CAN_H",
+   "CAN_L"
+  ],
+  "notes": [
+   "CAN_L_INFOTAINMENT"
+  ],
+  "pins": [
+   "A22",
+   "A23",
+   "A5",
+   "A7"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "CAN_L_INFOTAINMENT"
+ },
+ {
+  "id": "u-4-176_vgm_flexray",
+  "source": "vgm",
+  "target": "u-4-176",
+  "bus": "flexray",
+  "nets": [
+   "FR_BM_2",
+   "FR_BP_2"
+  ],
+  "notes": [],
+  "pins": [
+   "A7",
+   "A6"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "u-4-184_vgm_flexray",
+  "source": "vgm",
+  "target": "u-4-184",
+  "bus": "flexray",
+  "nets": [
+   "FR_BM_1",
+   "FR_BP_1"
+  ],
+  "notes": [
+   "FlexRay backbone — Block diagram"
+  ],
+  "pins": [
+   "A26",
+   "A27"
+  ],
+  "inferred": false,
+  "segment": "seg-flexray-backbone",
+  "label": "FlexRay backbone — Block diagram"
+ },
+ {
+  "id": "u-15-50_vgm_power",
+  "source": "vgm",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "Power",
+   "Ground"
+  ],
+  "notes": [],
+  "pins": [
+   "A1",
+   "A20"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "tcam_vgm_signal",
+  "source": "vgm",
+  "target": "tcam",
+  "bus": "signal",
+  "nets": [
+   "BI_DA+_TCAM",
+   "BI_DA-_TCAM",
+   "BI_DA+",
+   "BI_DA-"
+  ],
+  "notes": [],
+  "pins": [
+   "B4",
+   "B3",
+   "C2",
+   "C1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "obd_u-15-50_power",
+  "source": "obd",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "KL30"
+  ],
+  "notes": [
+   "Power",
+   "GND"
+  ],
+  "pins": [
+   "A16",
+   "A4",
+   "A5"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Power"
+ },
+ {
+  "id": "atm_obd_can",
+  "source": "atm",
+  "target": "obd",
+  "bus": "can",
+  "nets": [],
+  "notes": [],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "atm_u-15-49_power",
+  "source": "atm",
+  "target": "u-15-49",
+  "bus": "power",
+  "nets": [
+   "Battery"
+  ],
+  "notes": [],
+  "pins": [
+   "A10"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "atm_u-16-110_signal",
+  "source": "atm",
+  "target": "u-16-110",
+  "bus": "signal",
+  "nets": [
+   "4G_LTE1_sig",
+   "4G_LTE2_sig"
+  ],
+  "notes": [],
+  "pins": [
+   "B1",
+   "C1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "atm_u-16-110_power",
+  "source": "atm",
+  "target": "u-16-110",
+  "bus": "power",
+  "nets": [
+   "4G_LTE1_gnd",
+   "4G_LTE2_gnd"
+  ],
+  "notes": [],
+  "pins": [
+   "B1S",
+   "C1S"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-1-9_tcam_signal",
+  "source": "tcam",
+  "target": "p-1-9",
+  "bus": "signal",
+  "nets": [
+   "BUB_P",
+   "BUB_N",
+   "BUB_CODE",
+   "BUB_TEMP"
+  ],
+  "notes": [],
+  "pins": [
+   "B2",
+   "B4",
+   "A15",
+   "A19"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "tcam_u-15-50_power",
+  "source": "tcam",
+  "target": "u-15-50",
+  "bus": "power",
+  "nets": [
+   "KL30"
+  ],
+  "notes": [
+   "Power"
+  ],
+  "pins": [
+   "B1"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": "Power"
+ },
+ {
+  "id": "p-4-198_tcam_signal",
+  "source": "tcam",
+  "target": "p-4-198",
+  "bus": "signal",
+  "nets": [
+   "A2B_P",
+   "A2B_M",
+   "WUP_ECALL"
+  ],
+  "notes": [],
+  "pins": [
+   "A18",
+   "A20",
+   "A9"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "p-16-210_tcam_signal",
+  "source": "tcam",
+  "target": "p-16-210",
+  "bus": "signal",
+  "nets": [
+   "SPK-",
+   "SPK+"
+  ],
+  "notes": [],
+  "pins": [
+   "A8",
+   "A6"
+  ],
+  "inferred": false,
+  "segment": null,
+  "label": ""
+ },
+ {
+  "id": "cem_p-10-416_lin",
+  "source": "cem",
+  "target": "p-10-416",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_p-overhead-console-rear-left_lin",
+  "source": "cem",
+  "target": "p-overhead-console-rear-left",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_p-4-200_lin",
+  "source": "cem",
+  "target": "p-4-200",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_p-overhead-console-ohc_lin",
+  "source": "cem",
+  "target": "p-overhead-console-ohc",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_p-overhead-console-rear-ohcr_lin",
+  "source": "cem",
+  "target": "p-overhead-console-rear-ohcr",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_p-interior-rear-view-mirror-module-irmm_lin",
+  "source": "cem",
+  "target": "p-interior-rear-view-mirror-module-irmm",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_p-rain-and-light-sensor-module-rlsm_lin",
+  "source": "cem",
+  "target": "p-rain-and-light-sensor-module-rlsm",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_p-airborne-particulate-matter-sensor-apms_lin",
+  "source": "cem",
+  "target": "p-airborne-particulate-matter-sensor-apms",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "cem_p-sun-sensor-sus_lin",
+  "source": "cem",
+  "target": "p-sun-sensor-sus",
+  "bus": "lin",
+  "nets": [
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "ihu_p-rear-console-switch-module-rcsm_lin",
+  "source": "ihu",
+  "target": "p-rear-console-switch-module-rcsm",
+  "bus": "lin",
+  "nets": [
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "ihu_p-center-console-switch-module-ccsm_lin",
+  "source": "ihu",
+  "target": "p-center-console-switch-module-ccsm",
+  "bus": "lin",
+  "nets": [
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "ecm_p-active-grillshutter-module-agm_lin",
+  "source": "ecm",
+  "target": "p-active-grillshutter-module-agm",
+  "bus": "lin",
+  "nets": [
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "p-high-voltage-coolant-heater-alfa-hvha_vcu1_lin",
+  "source": "vcu1",
+  "target": "p-high-voltage-coolant-heater-alfa-hvha",
+  "bus": "lin",
+  "nets": [
+   "wire GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "p-air-condition-compressor-module-a-acca_vcu1_lin",
+  "source": "vcu1",
+  "target": "p-air-condition-compressor-module-a-acca",
+  "bus": "lin",
+  "nets": [
+   "wire GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "p-electrical-expansion-valve-exv_vcu1_lin",
+  "source": "vcu1",
+  "target": "p-electrical-expansion-valve-exv",
+  "bus": "lin",
+  "nets": [
+   "wire GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "p-climate-coolant-valve-module-ccvm_vcu1_lin",
+  "source": "vcu1",
+  "target": "p-climate-coolant-valve-module-ccvm",
+  "bus": "lin",
+  "nets": [
+   "wire GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "p-seat-heating-module-rear-shmr_u-4-154_lin",
+  "source": "u-4-154",
+  "target": "p-seat-heating-module-rear-shmr",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "p-seat-module-left-sml_u-4-154_lin",
+  "source": "u-4-154",
+  "target": "p-seat-module-left-sml",
+  "bus": "lin",
+  "nets": [
+   "wire WH"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "p-driver-door-switches-dds_u-4-214_lin",
+  "source": "u-4-214",
+  "target": "p-driver-door-switches-dds",
+  "bus": "lin",
+  "nets": [
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "p-rear-right-door-module_u-4-214_lin",
+  "source": "u-4-214",
+  "target": "p-rear-right-door-module",
+  "bus": "lin",
+  "nets": [
+   "wire WH/GN"
+  ],
+  "notes": [
+   "LIN bus overview"
+  ],
+  "pins": [],
+  "inferred": false,
+  "segment": null,
+  "label": "LIN bus overview"
+ },
+ {
+  "id": "swm_u-3-134_lin",
+  "source": "swm",
+  "target": "u-3-134",
+  "bus": "lin",
+  "nets": [],
+  "notes": [
+   "LIN 20 steering wheel switches — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": "seg-lin-20",
+  "label": "LIN 20 steering wheel switches — Block diagram"
+ },
+ {
+  "id": "u-4-184_u-4-291_can",
+  "source": "u-4-184",
+  "target": "u-4-291",
+  "bus": "can",
+  "nets": [],
+  "notes": [
+   "Front CAN Exposed — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": "seg-front-can-exposed",
+  "label": "Front CAN Exposed — Block diagram"
+ },
+ {
+  "id": "u-4-126_u-4-184_can",
+  "source": "u-4-184",
+  "target": "u-4-126",
+  "bus": "can",
+  "nets": [],
+  "notes": [
+   "1E Safety CAN Exp — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": "seg-1e-safety-can",
+  "label": "1E Safety CAN Exp — Block diagram"
+ },
+ {
+  "id": "u-4-127_u-4-184_can",
+  "source": "u-4-184",
+  "target": "u-4-127",
+  "bus": "can",
+  "nets": [],
+  "notes": [
+   "1E Safety CAN Exp — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": "seg-1e-safety-can",
+  "label": "1E Safety CAN Exp — Block diagram"
+ },
+ {
+  "id": "obc_u-charger-lock-leds_signal",
+  "source": "obc",
+  "target": "u-charger-lock-leds",
+  "bus": "signal",
+  "nets": [],
+  "notes": [
+   "Charge port lock & LEDs — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": null,
+  "label": "Charge port lock & LEDs — Block diagram"
+ },
+ {
+  "id": "ihfa_u-12v-battery_power",
+  "source": "ihfa",
+  "target": "u-12v-battery",
+  "bus": "power",
+  "nets": [],
+  "notes": [
+   "DC/DC 12 V output — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": null,
+  "label": "DC/DC 12 V output — Block diagram"
+ },
+ {
+  "id": "u-12v-battery_u-4-221_signal",
+  "source": "u-12v-battery",
+  "target": "u-4-221",
+  "bus": "signal",
+  "nets": [],
+  "notes": [
+   "Battery monitoring sensor — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": null,
+  "label": "Battery monitoring sensor — Block diagram"
+ },
+ {
+  "id": "u-4-17_u-7-31_signal",
+  "source": "u-4-17",
+  "target": "u-7-31",
+  "bus": "signal",
+  "nets": [],
+  "notes": [
+   "Wheel speed — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": null,
+  "label": "Wheel speed — Block diagram"
+ },
+ {
+  "id": "u-4-17_u-7-32_signal",
+  "source": "u-4-17",
+  "target": "u-7-32",
+  "bus": "signal",
+  "nets": [],
+  "notes": [
+   "Wheel speed — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": null,
+  "label": "Wheel speed — Block diagram"
+ },
+ {
+  "id": "u-4-17_u-7-56_signal",
+  "source": "u-4-17",
+  "target": "u-7-56",
+  "bus": "signal",
+  "nets": [],
+  "notes": [
+   "Wheel speed — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": null,
+  "label": "Wheel speed — Block diagram"
+ },
+ {
+  "id": "u-4-17_u-7-57_signal",
+  "source": "u-4-17",
+  "target": "u-7-57",
+  "bus": "signal",
+  "nets": [],
+  "notes": [
+   "Wheel speed — Block diagram"
+  ],
+  "pins": [],
+  "inferred": true,
+  "segment": null,
+  "label": "Wheel speed — Block diagram"
+ }
+]

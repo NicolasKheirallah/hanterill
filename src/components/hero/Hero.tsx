@@ -1,8 +1,9 @@
 import { useTranslations } from "next-intl";
 import { ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/ui/layout";
+import { Container, MoreLink } from "@/components/ui/layout";
 import { HeroInterface } from "./HeroInterface";
+import { Shot } from "@/components/ui/Shot";
 import { site } from "@/lib/site";
 
 /**
@@ -10,10 +11,21 @@ import { site } from "@/lib/site";
  * interface on the right. One orchestrated entrance (.hero-seq), skipped under
  * reduced motion. The measurement grid sits behind the instrument only - it
  * frames a readout, it is not a page-wide texture.
+ *
+ * Below the fold line, three captures from the real application on the
+ * reference vehicle: evidence, not a mockup. Static by design; the replica
+ * above carries the motion, these carry the proof.
  */
+const CAPTURES = [
+  { root: "/assets/overview.png", key: "overview" },
+  { root: "/assets/cell-map.png", key: "cellMap" },
+  { root: "/assets/fault-codes.png", key: "faultCodes" },
+];
+
 export function Hero() {
   const t = useTranslations("hero");
   const tc = useTranslations("common");
+  const ts = useTranslations("shots");
 
   return (
     <section className="border-b border-line-strong">
@@ -46,6 +58,33 @@ export function Hero() {
               <HeroInterface />
             </div>
           </div>
+        </div>
+
+        <div className="mt-xl lg:mt-2xl">
+          <div className="flex items-baseline justify-between gap-6">
+            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
+              {t("captures")}
+            </p>
+            <MoreLink href="/screenshots">{t("capturesLink")}</MoreLink>
+          </div>
+          <ul className="mt-3 grid gap-4 sm:grid-cols-3">
+            {CAPTURES.map((c, i) => (
+              <li key={c.root} className="bezel overflow-hidden bg-surface">
+                <Shot
+                  root={c.root}
+                  alt={ts(c.key)}
+                  width={3456}
+                  height={2088}
+                  sizes="(min-width: 1024px) 380px, 92vw"
+                  priority={i === 0}
+                  imgClassName="block"
+                />
+                <div className="border-t border-line px-3 py-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-text-muted">
+                  {ts(c.key)}
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </Container>
     </section>

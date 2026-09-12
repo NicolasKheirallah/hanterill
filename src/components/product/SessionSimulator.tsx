@@ -11,6 +11,7 @@ import { MiniChart } from "@/components/product/MiniChart";
 import { BatteryView } from "@/components/product/views";
 import { DUR, EASE } from "@/lib/motion";
 import { batteryDemo, liveTrace } from "@/lib/demo-data";
+import { simEcus } from "@/lib/scan-sim";
 import {
   identify,
   inspectFault,
@@ -218,7 +219,9 @@ function IdentifyStage() {
 
 function ScanStage() {
   const ts = useTranslations("session");
-  const rows = ["CEM", "VGM", "VCU1", "BECM", "OBC", "IHFA", "BCM", "DIM", "TCAM", "CCM"];
+  // The walkthrough shows the first ten ECUs of the same simulated scan the
+  // landing page runs; totals still come from the full catalogue.
+  const rows = simEcus.slice(0, 10);
   return (
     <div>
       <div className="mb-2 flex gap-6 font-mono text-[12px] text-text-secondary">
@@ -226,15 +229,18 @@ function ScanStage() {
           <span className="tnum text-text-primary">{report.ecusDiscovered}</span> {ts("scanEcus")}
         </span>
         <span>
-          <span className="tnum text-text-primary">2</span> {ts("scanWithFaults")}
+          <span className="tnum text-text-primary">{rows.filter((e) => e.faults.length).length}</span>{" "}
+          {ts("scanWithFaults")}
         </span>
       </div>
       <ul className="grid grid-cols-2 gap-x-6">
-        {rows.map((code) => (
-          <li key={code} className="flex items-center justify-between border-b border-line py-1.5">
-            <span className="font-mono text-[12px] text-text-primary">{code}</span>
-            {code === "BECM" || code === "TCAM" ? (
-              <span className="font-mono text-[11px] text-status-warning">{ts("scanFault", { n: 1 })}</span>
+        {rows.map((e) => (
+          <li key={e.code} className="flex items-center justify-between border-b border-line py-1.5">
+            <span className="font-mono text-[12px] text-text-primary">{e.code}</span>
+            {e.faults.length ? (
+              <span className="font-mono text-[11px] text-status-warning">
+                {ts("scanFault", { n: e.faults.length })}
+              </span>
             ) : (
               <StatusMarker tone="ok">{ts("scanReady")}</StatusMarker>
             )}
@@ -288,7 +294,7 @@ function LiveStage() {
 }
 
 function ReportStage() {
-  const ts = useTranslations("session.report");
+  const trep = useTranslations("session.report");
 
   function download(kind: "csv" | "json") {
     const body = kind === "csv" ? reportCsv() : reportJson();
@@ -305,26 +311,26 @@ function ReportStage() {
     <div>
       <div className="flex items-center justify-between">
         <h3 className="font-mono text-[13px] uppercase tracking-wider text-text-primary">
-          {ts("title")}
+          {trep("title")}
         </h3>
         <span className="rounded-sm border border-line px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-text-muted">
-          {ts("exampleTag")}
+          {trep("exampleTag")}
         </span>
       </div>
       <dl className="mt-4">
-        <Row label={ts("ecusDiscovered")} value={<AnimatedNumber value={report.ecusDiscovered} />} />
-        <Row label={ts("modulesWithFaults")} value={<AnimatedNumber value={report.modulesWithFaults} />} />
-        <Row label={ts("activeFaults")} value={<AnimatedNumber value={report.activeFaults} />} />
-        <Row label={ts("storedFaults")} value={<AnimatedNumber value={report.storedFaults} />} />
+        <Row label={trep("ecusDiscovered")} value={<AnimatedNumber value={report.ecusDiscovered} />} />
+        <Row label={trep("modulesWithFaults")} value={<AnimatedNumber value={report.modulesWithFaults} />} />
+        <Row label={trep("activeFaults")} value={<AnimatedNumber value={report.activeFaults} />} />
+        <Row label={trep("storedFaults")} value={<AnimatedNumber value={report.storedFaults} />} />
         <Row
-          label={ts("batteryHealth")}
+          label={trep("batteryHealth")}
           value={
             <>
               <AnimatedNumber value={report.batteryHealth} decimals={2} /> %
             </>
           }
         />
-        <Row label={ts("cellDelta")} value={<><AnimatedNumber value={report.cellDelta} /> mV</>} />
+        <Row label={trep("cellDelta")} value={<><AnimatedNumber value={report.cellDelta} /> mV</>} />
       </dl>
       <div className="mt-5 flex gap-2">
         {(["csv", "json"] as const).map((kind) => (

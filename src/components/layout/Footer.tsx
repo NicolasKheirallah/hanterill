@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { footerNav, site } from "@/lib/site";
 import { Wordmark } from "./Wordmark";
+import { FooterYear } from "./FooterYear";
 
 /**
  * Statement footer. One large grotesk closing line, then a hairline, then a
@@ -12,13 +13,13 @@ import { Wordmark } from "./Wordmark";
  */
 export function Footer() {
   const t = useTranslations("footer");
+  const tm = useTranslations("footer.meta");
   const tc = useTranslations("common");
   const th = useTranslations("hero");
-  const year = new Date().getFullYear();
 
   const meta = [
     {
-      label: "Repository",
+      label: tm("repository"),
       value: (
         <a
           href={site.repoUrl}
@@ -30,9 +31,9 @@ export function Footer() {
         </a>
       ),
     },
-    { label: "Licence", value: tc("privateUse") },
-    { label: "Platforms", value: th("platforms") },
-    { label: "Year", value: <time dateTime={String(year)}>{year}</time> },
+    { label: tm("license"), value: tc("privateUse") },
+    { label: tm("platforms"), value: th("platforms") },
+    { label: tm("year"), value: <FooterYear /> },
   ];
 
   return (

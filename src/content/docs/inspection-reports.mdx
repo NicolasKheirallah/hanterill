@@ -1,0 +1,63 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+The inspection report answers a question the rest of the app deliberately does not: *what condition
+is this car in?* The answer is a score, and the score is a policy decision, so the policy is
+documented and versioned.
+
+<SafetyNotice level="read-only" title="Read inputs, written rules">
+Every input to the score comes from the read-only services described in [DTC scanning](/docs/dtc-scanning)
+and [Battery diagnostics](/docs/battery-diagnostics). The engine adds measurements, never traffic.
+</SafetyNotice>
+
+## The rule catalogue (v1.0.0)
+
+The scored domains:
+
+| Domain | Basis |
+| --- | --- |
+| Pack health degradation | BMS-reported state of health graded against documented bands, including the manufacturer warranty floor |
+| Cell voltage balance | Spread across cell groups on the topology in force, with watch bands from published community research |
+| DTC severity | Faults weighted by ISO 14229 status class and SAE J2012 code class, not counted flat |
+| Odometer consistency | Mileage cross-read across modules; disagreement between them is its own finding |
+| Overall condition | Composition of the above |
+
+Advisory, note-only rules annotate the report without touching the score: coolant temperature
+spread, overdue service intervals, and DC-DC bus voltage.
+
+## Evidence classes cap verdicts
+
+Each rule cites exactly one evidence class, and the class caps the strongest verdict the rule can
+force:
+
+| Class | Example | Ceiling |
+| --- | --- | --- |
+| Published standard | ISO 14229-1 status-bit meanings | attention |
+| Manufacturer spec | the 8-year / 160 000 km warranty floor | attention |
+| Vehicle capture | measured rest spread and sleep draw from hardware-in-the-loop sessions | advisories |
+| Community research | cell-imbalance watch bands | advisories |
+| Heuristic | charger ceiling guesses | note only |
+
+A rule keyed on a provisional decoder is automatically downgraded one class. This is why some
+findings read as observations rather than judgements.
+
+## Honest failure
+
+Missing inputs degrade toward `inconclusive`. A channel that never answered is listed as
+insufficient data; it cannot pass a check and cannot fail one. The report page prints its own
+partial-coverage tolerance, its rule version and a checksum, and re-scoring stored sessions under
+a newer rule set is a local computation.
+
+## Location privacy
+
+Pre-purchase inspection reports carry no GPS or position sections at all. Where other exports do
+carry coordinates, they are rounded to three decimals (roughly 110 metres). See
+[Privacy](/docs/privacy).
+
+## In the app
+
+- **Report page**: identity, battery, fault, ECU, service and thermal findings with the score.
+- **Print**: native browser print pipeline with styled print CSS; the paper copy matches the screen.
+- **Sessions**: stored sessions re-score under current rules without reconnecting to the vehicle.
+
+The design document lives in the repository at
+`docs/product/ppi-intelligence-and-scoring.md`, including every rule table.

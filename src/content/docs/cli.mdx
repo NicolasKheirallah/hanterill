@@ -1,36 +1,83 @@
-Hanterill ships a command-line companion for scripted reads and batch exports. It uses the same diagnostic engine as the desktop application.
+import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
 
-## Usage
+Hanterill ships a command-line companion, `hanterill`. It is an automation frontend for the same
+application layer the desktop app uses: every read goes through the shared use cases, and every
+structured document it emits is versioned.
+
+<Callout kind="note" title="Offline tooling needs no vehicle">
+Parts of the CLI (`show`, `did-analyze`, `did-kb`, `did-plan`, `did-presets`, and `did-scan
+--capture`) never contact a vehicle. The rest needs one transport source.
+</Callout>
+
+## Invocation
 
 ```text
-hanterill scan --iface eth0 --out session.json
-hanterill battery --iface eth0 --format csv
-hanterill dtc --iface eth0 --ecu BECM
-hanterill read --iface eth0 --ecu BECM --did <identifier>
+hanterill <command> [args] <transport> [--json | --format <fmt>]
 ```
 
-## Common flags
+Exactly one transport source is required for any command that talks to a car:
 
-| Flag | Purpose |
+| Flag | Meaning |
 | --- | --- |
-| `--iface` | Ethernet interface to use for DoIP |
-| `--out` | File to write the session to |
-| `--format` | `json` or `csv` |
-| `--ecu` | Restrict to one ECU by code |
-| `--did` | Read a single data identifier |
-| `--allow-write` | Required before any operation that changes the vehicle |
+| `--ip <addr>` | Connect to a DoIP entity at an explicit address |
+| `--discover` | Broadcast-discover a vehicle on the link-local network |
+| `--replay <corpus>` | Replay a recorded request/response corpus |
+| `--mock <scenario>` | Offline simulated vehicle (`healthy`, `faulty`, `tamper`), development builds |
 
-Without `--allow-write`, write operations exit without sending a request. This matches the desktop gate described in [Safety](/docs/safety).
+## Commands
 
-## Exit codes
+| Command | What it does |
+| --- | --- |
+| `scan` | Read DTCs from every catalogued DTC-capable ECU, or an explicit set (`--ecu BECM`, repeatable) |
+| `probe` | Presence pass over the catalogue; a timeout is never reported as absence |
+| `battery` | High-voltage battery report, including the cross-signal consistency checks |
+| `battery-cells` | Per-module cell-group voltages for the topology in force (`--topology` selects explicitly) |
+| `vehicle` | VIN and identity block |
+| `mileage` | Multi-ECU odometer read with tamper cross-check |
+| `service` | Service-interval schedule |
+| `report` | Composite vehicle-health report |
+| `live` | Fixed-cadence live PID sampling |
+| `snapshot` | Point-in-time capture to a file |
+| `keys`, `tcam`, `steering`, `power`, `gps`, `climate`, `motors`, `charge`, `inventory`, `config` | Read-only subsystem reports |
+| `did-scan` | Sweep a bounded identifier range on one ECU; `--capture` replays a saved CSV offline |
+| `did-scan-all` | All-module bounded sweep: presence, catalogue, optional discovery, with a request budget |
+| `did-analyze`, `did-kb`, `did-plan`, `did-presets` | Offline mining, learned-knowledge query and scan planning |
+| `dtc-detail` | Snapshot and extended records for one code |
+| `show <ecu> <dtc bytes...>` | Decode a fault code offline, no vehicle |
+| `firmware-diff`, `cells-diff`, `cross-check`, `charge-diagnosis`, `retrofit-check` | Two-session and cross-signal analysis |
+| `architecture`, `resolve-vehicle` | Platform resolution (CMA, SPA, SEA1) |
+
+## Output and exit codes
+
+Without a format flag the output is human-readable text. `--json` emits a versioned document
+(`"schema_version"` first); `--format text|json|csv` selects explicitly. Optional fields are `null`
+in JSON, never debug text. Files are written atomically, so a partial document is never published.
 
 | Code | Meaning |
 | --- | --- |
-| 0 | Completed |
-| 2 | No vehicle found on the interface |
-| 3 | Routing activation refused |
-| 4 | Requested ECU did not answer |
+| 0 | Completed with complete diagnostic coverage |
+| 1 | Invalid invocation, transport failure, or a clean result with incomplete coverage |
+
+A scan that could not reach every module exits 1 on purpose: partial coverage is reported as
+partial, with the failed and pending sets listed so `--retry-of <file>` can re-read exactly them.
+
+## Read-only, by build
+
+The scan, probe and read paths transmit only read services (`0x10`, `0x19`, `0x22`, plus the
+periodic-sample and routine-result carve-outs). Actuation subcommands (`clear-dtcs`, `epb`,
+`reset`, calibration helpers) exist only in builds compiled with the `unsafe-write-ops` feature;
+in a default build they answer `read_only_build` and exit. See [Safety](/docs/safety).
+
+<DiagnosticExample
+  service="ReadDataByIdentifier"
+  request="22 49 6D"
+  response="62 49 6D 03 E7"
+  note="hanterill battery --discover sends this itself. The CLI carries no decoding of its own: the bytes are decoded by the same catalogue the desktop app uses."
+/>
 
 ## Scripting
 
-The JSON output is stable and suitable for diffing two sessions in CI or a shop workflow. VIN is redacted in the output by default.
+The JSON documents are stable and versioned, suited to diffing two sessions in a shop workflow:
+`hanterill scan --discover --json > before.json`, repair, scan again, then
+`hanterill did-analyze`, `cells-diff` and `firmware-diff` compare the artifacts. VIN is redacted in
+exports by default.

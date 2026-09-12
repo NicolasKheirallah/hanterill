@@ -1,0 +1,1456 @@
+[
+ {
+  "id": "u-15-49",
+  "ref": "15/49",
+  "name": "ENGINE JUNCTION BOX",
+  "cat": "power",
+  "hasDetail": false,
+  "domain": "power"
+ },
+ {
+  "id": "u-15-50",
+  "ref": "15/50",
+  "name": "CENTRAL JUNCTION BOX",
+  "cat": "power",
+  "hasDetail": false,
+  "domain": "power"
+ },
+ {
+  "id": "swm",
+  "ref": "4/247",
+  "name": "STEERING WHEEL MODULE SWM",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "driver"
+ },
+ {
+  "id": "u-3-133",
+  "ref": "3/133",
+  "name": "STEERING WHEEL SWITCH LEFT",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "driver"
+ },
+ {
+  "id": "u-3-134",
+  "ref": "3/134",
+  "name": "STEERING WHEEL SWITCH RIGHT",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "driver"
+ },
+ {
+  "id": "u-4-68",
+  "ref": "4/68",
+  "name": "STEERING ANGLE SENSOR MODULE SAS",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "driver"
+ },
+ {
+  "id": "scl",
+  "ref": "4/102",
+  "name": "STEERING COLUMN LOCK SCL",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "driver"
+ },
+ {
+  "id": "epas",
+  "ref": "6/163",
+  "name": "ELECTRIC POWER ASSISTED STEERING EPAS",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "driver"
+ },
+ {
+  "id": "egsm",
+  "ref": "4/197",
+  "name": "ELECTRONIC GEAR SELECTOR MODULE EGSM",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "driver"
+ },
+ {
+  "id": "ccd",
+  "ref": "16/202",
+  "name": "CENTER CONSOLE DISPLAY",
+  "cat": "display",
+  "hasDetail": true,
+  "domain": "media"
+ },
+ {
+  "id": "dim",
+  "ref": "5/1",
+  "name": "DRIVER INFORMATION MODULE",
+  "cat": "display",
+  "hasDetail": true,
+  "domain": "media"
+ },
+ {
+  "id": "ihu",
+  "ref": "4/185",
+  "name": "INFOTAINMENT HEAD UNIT IHU",
+  "cat": "display",
+  "hasDetail": true,
+  "domain": "media"
+ },
+ {
+  "id": "aud",
+  "ref": "16/105",
+  "name": "AUDIO AMPLIFIER MODULE AUD WITH MOST",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "media"
+ },
+ {
+  "id": "u-17-42",
+  "ref": "17/42",
+  "name": "USB CONNECTION",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "media"
+ },
+ {
+  "id": "u-16-237",
+  "ref": "16/237",
+  "name": "DIGITAL MICROPHONE HANDSFREE",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "media"
+ },
+ {
+  "id": "u-16-214",
+  "ref": "16/214",
+  "name": "FM2/DAB ANTENNA AMPLIFIER",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "media"
+ },
+ {
+  "id": "wam",
+  "ref": "4/249",
+  "name": "WIDE ANGLE VISION MODULE WAM",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "adas"
+ },
+ {
+  "id": "u-4-184",
+  "ref": "4/184",
+  "name": "ACTIVE SAFETY DOMAIN MASTER ASDM",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "adas"
+ },
+ {
+  "id": "u-4-291",
+  "ref": "4/291",
+  "name": "FORWARD LOOKING RADAR FLR",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "adas"
+ },
+ {
+  "id": "u-4-126",
+  "ref": "4/126",
+  "name": "BLIND SPOT DETECTION",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "adas"
+ },
+ {
+  "id": "u-4-127",
+  "ref": "4/127",
+  "name": "BLIND SPOT DETECTION",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "adas"
+ },
+ {
+  "id": "u-4-475",
+  "ref": "4/475",
+  "name": "COOLANT PUMP ELECTRIC DRIVETRAIN CPED",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "drive"
+ },
+ {
+  "id": "u-6-195",
+  "ref": "6/195",
+  "name": "BATTERY COOLANT WATER PUMP",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "drive"
+ },
+ {
+  "id": "u-4-694",
+  "ref": "4/694",
+  "name": "COMPARTMENT COOLANT PUMP MODULE CCPM",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "drive"
+ },
+ {
+  "id": "u-27-6",
+  "ref": "27/6",
+  "name": "REAR PARK ASSIST CAMERA PAC",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "adas"
+ },
+ {
+  "id": "u-27-11",
+  "ref": "27/11",
+  "name": "DRIVER SIDE CAMERA",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "adas"
+ },
+ {
+  "id": "u-27-7",
+  "ref": "27/7",
+  "name": "PASSENGER SIDE CAMERA",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "adas"
+ },
+ {
+  "id": "u-27-8",
+  "ref": "27/8",
+  "name": "FRONT CAMERA 185deg",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "adas"
+ },
+ {
+  "id": "becm",
+  "ref": "1/4",
+  "name": "HIGH VOLTAGE BATTERY BECM",
+  "cat": "drive",
+  "hasDetail": true,
+  "domain": "drive"
+ },
+ {
+  "id": "obc",
+  "ref": "4/238",
+  "name": "ON BOARD CHARGER OBC",
+  "cat": "drive",
+  "hasDetail": true,
+  "domain": "drive"
+ },
+ {
+  "id": "ihfa",
+  "ref": "4/378",
+  "name": "INVERTER HIGH VOLTAGE FRONT AXLE IHFA DC/DC",
+  "cat": "drive",
+  "hasDetail": true,
+  "domain": "drive"
+ },
+ {
+  "id": "iem",
+  "ref": "4/235",
+  "name": "INVERTER ERAD MODULE IEM",
+  "cat": "drive",
+  "hasDetail": true,
+  "domain": "drive"
+ },
+ {
+  "id": "u-17-82",
+  "ref": "17/82",
+  "name": "ELECTRICAL VEHICLE INLET COMBO",
+  "cat": "drive",
+  "hasDetail": false,
+  "domain": "drive"
+ },
+ {
+  "id": "u-charger-lock-leds",
+  "ref": "",
+  "name": "Charger lock / LEDs",
+  "cat": "drive",
+  "hasDetail": false,
+  "domain": "drive"
+ },
+ {
+  "id": "efad",
+  "ref": "6/272",
+  "name": "ELECTRIC FRONT AXLE DRIVE EFAD",
+  "cat": "drive",
+  "hasDetail": true,
+  "domain": "drive"
+ },
+ {
+  "id": "erad",
+  "ref": "6/183",
+  "name": "ELECTRIC REAR AXLE DRIVE ERAD",
+  "cat": "drive",
+  "hasDetail": true,
+  "domain": "drive"
+ },
+ {
+  "id": "u-12v-battery",
+  "ref": "",
+  "name": "12V BATTERY",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "power"
+ },
+ {
+  "id": "hvha",
+  "ref": "4/375",
+  "name": "COOLANT HEATER",
+  "cat": "drive",
+  "hasDetail": true,
+  "domain": "drive"
+ },
+ {
+  "id": "acca",
+  "ref": "4/374",
+  "name": "A/C COMPRESSOR",
+  "cat": "drive",
+  "hasDetail": true,
+  "domain": "drive"
+ },
+ {
+  "id": "ecm",
+  "ref": "4/46",
+  "name": "ENGINE CONTROL MODULE ECM",
+  "cat": "compute",
+  "hasDetail": true,
+  "domain": "core"
+ },
+ {
+  "id": "vcu1",
+  "ref": "4/338",
+  "name": "VEHICLE COMPUTATIONAL UNIT 1 VCU1",
+  "cat": "compute",
+  "hasDetail": true,
+  "domain": "core"
+ },
+ {
+  "id": "cem",
+  "ref": "4/56",
+  "name": "CENTRAL ELECTRONIC MODULE CEM",
+  "cat": "compute",
+  "hasDetail": true,
+  "domain": "core"
+ },
+ {
+  "id": "u-7-51",
+  "ref": "7/51",
+  "name": "ACCELERATOR PEDAL SENSOR",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "driver"
+ },
+ {
+  "id": "vgm",
+  "ref": "4/314",
+  "name": "VEHICLE GATEWAY MODULE VGM",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "core"
+ },
+ {
+  "id": "obd",
+  "ref": "17/13",
+  "name": "DIAGNOSTIC SOCKET OBD II",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "connect"
+ },
+ {
+  "id": "atm",
+  "ref": "4/373",
+  "name": "AUXILIARY TELEMATICS MODULE ATM",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "connect"
+ },
+ {
+  "id": "u-16-110",
+  "ref": "16/110",
+  "name": "ANTENNA MODULE",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "connect"
+ },
+ {
+  "id": "tcam",
+  "ref": "4/313",
+  "name": "TELEMATICS AND CONNECTIVITY ANTENNA MODULE TCAM",
+  "cat": "body",
+  "hasDetail": true,
+  "domain": "connect"
+ },
+ {
+  "id": "u-4-176",
+  "ref": "4/176",
+  "name": "SUPPLEMENTARY RESTRAINT SYSTEM SRS",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "adas"
+ },
+ {
+  "id": "u-4-17",
+  "ref": "4/17",
+  "name": "BRAKE CONTROL MODULE 2 BCM2",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "chassis"
+ },
+ {
+  "id": "u-7-31",
+  "ref": "7/31",
+  "name": "WHEEL SPEED SENSOR",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "chassis"
+ },
+ {
+  "id": "u-7-32",
+  "ref": "7/32",
+  "name": "WHEEL SPEED SENSOR",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "chassis"
+ },
+ {
+  "id": "u-7-56",
+  "ref": "7/56",
+  "name": "WHEEL SPEED SENSOR",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "chassis"
+ },
+ {
+  "id": "u-7-57",
+  "ref": "7/57",
+  "name": "WHEEL SPEED SENSOR",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "chassis"
+ },
+ {
+  "id": "u-10-1",
+  "ref": "10/1",
+  "name": "LH HEADLAMP UNIT",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-10-2",
+  "ref": "10/2",
+  "name": "RH HEADLAMP UNIT",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-116",
+  "ref": "4/116",
+  "name": "POWER OPERATED TAILGATE MODULE",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-110",
+  "ref": "4/110",
+  "name": "TRAILER MODULE TRM",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-154",
+  "ref": "4/154",
+  "name": "CLIMATE CONTROL MODULE CCM",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-214",
+  "ref": "4/214",
+  "name": "FRONT RIGHT DOOR MODULE",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-213",
+  "ref": "4/213",
+  "name": "FRONT DOOR (L) MODULE",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-10-319",
+  "ref": "10/319",
+  "name": "TRUNK LID TAIL LIGHT RIGHT TTLR",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-10-314",
+  "ref": "10/314",
+  "name": "REAR LAMP UNIT BODY xxxx",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-10-315",
+  "ref": "10/315",
+  "name": "REAR LAMP UNIT BODY RIGHT",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-312",
+  "ref": "4/312",
+  "name": "WIRELESS PHONE CHARGER",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "media"
+ },
+ {
+  "id": "u-4-172",
+  "ref": "4/172",
+  "name": "FOOT MOVEMENT DETECTION FMDM",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-250",
+  "ref": "4/250",
+  "name": "WIPER MOTOR MODULE WMM",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-220",
+  "ref": "4/220",
+  "name": "BATTERY BACKED-UP SOUNDER BBS",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-221",
+  "ref": "4/221",
+  "name": "BATTERY MONITORING SENSOR BMS",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-199",
+  "ref": "4/199",
+  "name": "OVERHEAD CONSOLE READ R&L",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-4-237",
+  "ref": "4/237",
+  "name": "INTERIOR MOTION SENSOR IMS",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-3-62",
+  "ref": "3/62",
+  "name": "ENGINE LID SWITCH",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-7-5",
+  "ref": "7/5",
+  "name": "WASHER FLUID LEVEL",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-9-81",
+  "ref": "9/81",
+  "name": "HEATED RADAR COVER",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-9-43",
+  "ref": "9/43",
+  "name": "ELECTRIC HEATED WASHER NOZZLE",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "u-6-55",
+  "ref": "6/55",
+  "name": "DOOR CENTRAL LOCKING MOTORS (x4)",
+  "cat": "body",
+  "hasDetail": false,
+  "domain": "body"
+ },
+ {
+  "id": "p-4-165",
+  "ref": "4/165",
+  "name": "SUN SENSOR SUS",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-8-30",
+  "ref": "8/30",
+  "name": "DRIVER AIRBAG IGNITER",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-37",
+  "ref": "3/37",
+  "name": "HORN SWITCH",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-9-55",
+  "ref": "9/55",
+  "name": "HEATED STEERING WHEEL",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-torque-sensor",
+  "ref": "",
+  "name": "Torque Sensor",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-15-42",
+  "ref": "15/42",
+  "name": "BATTERY FUSE BOX",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-222",
+  "ref": "4/222",
+  "name": "CENTER CONSOLE SWITCH MODULE CCSM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-73",
+  "ref": "16/73",
+  "name": "AMPLIFIER WINDOW ANTENNA 3",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-235",
+  "ref": "16/235",
+  "name": "TWEETER A-PILLAR LEFT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-236",
+  "ref": "16/236",
+  "name": "TWEETER A-PILLAR RIGHT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-4",
+  "ref": "16/4",
+  "name": "LEFT FRONTDOOR SPEAKER",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-29",
+  "ref": "16/29",
+  "name": "RIGHT FRONT DOOR SPEAKER",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-211",
+  "ref": "16/211",
+  "name": "LEFT REAR TWEETER & DOOR SPEAKER",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-6-137",
+  "ref": "6/137",
+  "name": "RIGHT REAR TWEETER & DOOR SPEAKER",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-57",
+  "ref": "16/57",
+  "name": "SPEAKER LEFT D PILLAR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-58",
+  "ref": "16/58",
+  "name": "SPEAKER RIGHT D PILLAR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-26",
+  "ref": "16/26",
+  "name": "CENTRE DASHBOARD SPEAKER",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-234",
+  "ref": "16/234",
+  "name": "WOOFER FRONT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-79",
+  "ref": "16/79",
+  "name": "SUB WOOFER SUB",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-286",
+  "ref": "4/286",
+  "name": "EXTERIOR SOUND MODULE",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-17-81",
+  "ref": "17/81",
+  "name": "ELECTRICAL VEHICLE INLET DC",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-447",
+  "ref": "3/447",
+  "name": "CHARGE CABLE RELEASE SWITCH",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-364",
+  "ref": "4/364",
+  "name": "CLIMATE COOLANT VALVE MODULE CCVM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-357",
+  "ref": "4/357",
+  "name": "ELECTRICAL EXPANSION VALVE EXV",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-356",
+  "ref": "4/356",
+  "name": "OUTSIDE HEAT EXCHANGER VALVE OHXV",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-71",
+  "ref": "4/71",
+  "name": "ELECTRONIC FAN CONTROL MODULE EFCM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-363",
+  "ref": "7/363",
+  "name": "A/C COOLANT TEMPERATURE SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-active-spoiler-shutter-module",
+  "ref": "",
+  "name": "ACTIVE SPOILER SHUTTER MODULE",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-376",
+  "ref": "7/376",
+  "name": "WATER COOLED CONDENSER OUTLET SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-8-262",
+  "ref": "8/262",
+  "name": "WCOND BLOCK SHUT OFF VALVES",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-372",
+  "ref": "7/372",
+  "name": "A/C PRESSURE AND TEMPERATURE SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-369",
+  "ref": "7/369",
+  "name": "BATTERY HEAT EXCHANGER SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-377",
+  "ref": "7/377",
+  "name": "OHX OUTLET SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-367",
+  "ref": "7/367",
+  "name": "COMPRESSOR INLET SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-8-178",
+  "ref": "8/178",
+  "name": "BATTERY COOLING SHUT OF VALVE",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-8-261",
+  "ref": "8/261",
+  "name": "ELECTRIC DRIVETRAIN COOLANT SHUT OFF VALVE",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-409",
+  "ref": "7/409",
+  "name": "ELECTRIC DRIVETRAIN COOLANT TEMPERATURE SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-317",
+  "ref": "7/317",
+  "name": "BATTERY COOLANT TEMP SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-8-250",
+  "ref": "8/250",
+  "name": "SHUT OFF VALVE EVAPORATOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-118",
+  "ref": "7/118",
+  "name": "SUSPENSION VERTICAL POSITION SENSOR LH FRONT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-276",
+  "ref": "7/276",
+  "name": "EXPANSION TANK LEVEL SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-120",
+  "ref": "7/120",
+  "name": "SUSPENSION VERTICAL POSITION SENSOR LH REAR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-10-5",
+  "ref": "10/5",
+  "name": "LH FRONT FOGLAMP",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-124",
+  "ref": "7/124",
+  "name": "BRAKE PEDAL SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-10-6",
+  "ref": "10/6",
+  "name": "RH FRONT FOGLAMP",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-133",
+  "ref": "16/133",
+  "name": "KEYLESS VEHICLE ANTENNA INTERIOR LUGGAGE COMPARTMENT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-10-173",
+  "ref": "10/173",
+  "name": "LOAD SPACE ILLUMINATION LAMP TAILGATE",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-6-56",
+  "ref": "6/56",
+  "name": "RIGHT REAR DOOR CENTRAL LOCKING MOTOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-6-57",
+  "ref": "6/57",
+  "name": "LEFT REAR DOOR CENTRAL LOCKING MOTOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-6-36",
+  "ref": "6/36",
+  "name": "LEFT FRONT DOOR CENTRAL LOCKING MOTOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-10-3",
+  "ref": "10/3",
+  "name": "NUMBER PLATE UNIT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-368",
+  "ref": "3/368",
+  "name": "SWITCH BACKREST LOCK INDICATION REAR LEFT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-369",
+  "ref": "3/369",
+  "name": "SWITCH BACKREST LOCK INDICATION REAR RIGHT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-6-8",
+  "ref": "6/8",
+  "name": "TAILGATE CENTRAL UNLOCKING/ LOCKING MOTOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-6-37",
+  "ref": "6/37",
+  "name": "FUEL FLAP MOTOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-229",
+  "ref": "4/229",
+  "name": "HUMIDITY SENSOR HUS",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-10-19",
+  "ref": "10/19",
+  "name": "HIGH MOUNTED BRAKE LAMP",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-171",
+  "ref": "4/171",
+  "name": "INTERIOR REAR VIEW MIRROR MODULE IRMM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-347",
+  "ref": "3/347",
+  "name": "TAILGATE CLOSING/CAR LOCKING SWITCH",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-275",
+  "ref": "3/275",
+  "name": "REAR DOOR HANDLE SWITCH",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-276",
+  "ref": "3/276",
+  "name": "RR DOOR HANDLE SWITCH",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-274",
+  "ref": "3/274",
+  "name": "FR DOOR HANDLE SWITCH",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-273",
+  "ref": "3/273",
+  "name": "FRONT DOOR HANDLE SWITCH",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-129",
+  "ref": "16/129",
+  "name": "KEYLESS VEHICLE ANTENNA RH",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-130",
+  "ref": "16/130",
+  "name": "KEYLESS VEHICLE ANTENNA LH",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-135",
+  "ref": "16/135",
+  "name": "KEYLESS VEHICLE ANTENNA INTERIOR COUPE CENTRAL",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-238",
+  "ref": "7/238",
+  "name": "ALCO LOCK SENSOR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-3-337",
+  "ref": "3/337",
+  "name": "IP SWITCH PANEL",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-10-335",
+  "ref": "10/335",
+  "name": "INSTRUMENT PANEL ILLUMINATION DRIVER",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-7-411",
+  "ref": "7/411",
+  "name": "OCCUPANT SENSOR DRIVER SEAT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-10-126",
+  "ref": "10/126",
+  "name": "RIGHT SIDE ENTRANCE LAMP FRONT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-1-9",
+  "ref": "1/9",
+  "name": "TCAM BACKUP BATTERY",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-198",
+  "ref": "4/198",
+  "name": "OVERHEAD CONSOLE OHC",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-16-210",
+  "ref": "16/210",
+  "name": "BACKUP SPEAKER",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-10-416",
+  "ref": "10/416",
+  "name": "TRUNK LID TAIL LIGHT LOWER",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-overhead-console-rear-left",
+  "ref": "",
+  "name": "OVERHEAD CONSOLE REAR LEFT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-4-200",
+  "ref": "4/200",
+  "name": "OVERHEAD CONSOLE REAR RIGHT",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-overhead-console-ohc",
+  "ref": "",
+  "name": "OVERHEAD CONSOLE OHC",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-overhead-console-rear-ohcr",
+  "ref": "",
+  "name": "OVERHEAD CONSOLE REAR OHCR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-interior-rear-view-mirror-module-irmm",
+  "ref": "",
+  "name": "INTERIOR REAR VIEW MIRROR MODULE IRMM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-rain-and-light-sensor-module-rlsm",
+  "ref": "",
+  "name": "RAIN AND LIGHT SENSOR MODULE RLSM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-airborne-particulate-matter-sensor-apms",
+  "ref": "",
+  "name": "AIRBORNE PARTICULATE MATTER SENSOR APMS",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-sun-sensor-sus",
+  "ref": "",
+  "name": "SUN SENSOR SUS",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-rear-console-switch-module-rcsm",
+  "ref": "",
+  "name": "REAR CONSOLE SWITCH MODULE RCSM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-center-console-switch-module-ccsm",
+  "ref": "",
+  "name": "CENTER CONSOLE SWITCH MODULE CCSM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-active-grillshutter-module-agm",
+  "ref": "",
+  "name": "ACTIVE GRILLSHUTTER MODULE AGM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-high-voltage-coolant-heater-alfa-hvha",
+  "ref": "",
+  "name": "HIGH VOLTAGE COOLANT HEATER Alfa HVHA",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-air-condition-compressor-module-a-acca",
+  "ref": "",
+  "name": "AIR CONDITION COMPRESSOR MODULE A ACCA",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-electrical-expansion-valve-exv",
+  "ref": "",
+  "name": "ELECTRICAL EXPANSION VALVE EXV",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-climate-coolant-valve-module-ccvm",
+  "ref": "",
+  "name": "CLIMATE COOLANT VALVE MODULE CCVM",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-seat-heating-module-rear-shmr",
+  "ref": "",
+  "name": "SEAT HEATING MODULE REAR SHMR",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-seat-module-left-sml",
+  "ref": "",
+  "name": "SEAT MODULE LEFT SML",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-driver-door-switches-dds",
+  "ref": "",
+  "name": "DRIVER DOOR SWITCHES DDS",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ },
+ {
+  "id": "p-rear-right-door-module",
+  "ref": "",
+  "name": "REAR RIGHT DOOR MODULE",
+  "cat": "peripheral",
+  "domain": "peripheral",
+  "hasDetail": false,
+  "peripheral": true
+ }
+]

@@ -22,6 +22,8 @@ export function ProtocolStack() {
     [t("wireLabels.sessionControl"), t("wire.session")],
     [t("wireLabels.identifierRead"), t("wire.read")],
     [t("wireLabels.dtcRead"), t("wire.dtc")],
+    [t("wireLabels.periodicRead"), t("wire.periodic")],
+    [t("wireLabels.routineResultRead"), t("wire.routineResult")],
   ];
 
   return (

@@ -38,6 +38,8 @@ const subscribe = () => () => {};
 function Placeholder({ label, pulse }: { label?: string; pulse?: boolean }) {
   return (
     <div
+      role="status"
+      aria-live="polite"
       className={cn(
         "flex h-72 w-full items-center justify-center rounded-sm border border-line bg-surface font-mono text-[12px] text-text-muted sm:h-80",
         pulse && "motion-safe:animate-pulse",
@@ -55,7 +57,7 @@ function Placeholder({ label, pulse }: { label?: string; pulse?: boolean }) {
  * unavailable or reduced motion is set.
  */
 export function BatteryPackView() {
-  const t = useTranslations("battery");
+  const tb = useTranslations("battery");
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   // `mounted` latches on first view; `visible` tracks it live to pause the loop.
@@ -70,13 +72,13 @@ export function BatteryPackView() {
       <div className="mb-3 flex items-center justify-between">
         <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-text-muted">
           <Box className="h-3.5 w-3.5" strokeWidth={1.75} />
-          {t("pack3dModules")}
+          {tb("pack3dModules")}
         </span>
         <ToggleGroup.Root
           type="single"
           value={mode}
           onValueChange={(v) => v && setMode(v as Mode)}
-          aria-label={t("pack3dColourMode")}
+          aria-label={tb("pack3dColourMode")}
           className="inline-flex rounded-sm border border-line-strong bg-surface p-0.5 font-mono text-[11px]"
         >
           {(["deviation", "temperature"] as Mode[]).map((m) => (
@@ -85,25 +87,25 @@ export function BatteryPackView() {
               value={m}
               className="rounded-[2px] px-2 py-1 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
             >
-              {t(MODE_KEY[m])}
+              {tb(MODE_KEY[m])}
             </ToggleGroup.Item>
           ))}
         </ToggleGroup.Root>
       </div>
 
       {webgl === null ? (
-        <Placeholder label={t("pack3dChecking")} />
+        <Placeholder label={tb("pack3dChecking")} />
       ) : !webgl || reduce ? (
-        <div className="flex h-40 w-full flex-col items-center justify-center gap-1 rounded-sm border border-line bg-surface text-center font-mono text-[12px] text-text-muted sm:h-48">
-          <span>{t("pack3dUnavailable")}</span>
-          <span className="text-[11px]">{t("pack3dFallback2d")}</span>
+        <div role="status" className="flex h-40 w-full flex-col items-center justify-center gap-1 rounded-sm border border-line bg-surface text-center font-mono text-[12px] text-text-muted sm:h-48">
+          <span>{tb("pack3dUnavailable")}</span>
+          <span className="text-[11px]">{tb("pack3dFallback2d")}</span>
         </div>
       ) : mounted ? (
         <div className="overflow-hidden rounded-sm border border-line bg-surface">
-          <BatteryPack3D mode={mode} active={visible} hint={t("pack3dHint")} />
+          <BatteryPack3D mode={mode} active={visible} hint={tb("pack3dHint")} />
         </div>
       ) : (
-        <Placeholder label={t("pack3dLoading")} />
+        <Placeholder label={tb("pack3dLoading")} />
       )}
     </div>
   );

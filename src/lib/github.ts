@@ -11,16 +11,10 @@ export type Release = {
   name: string;
   url: string;
   publishedAt: string | null;
+  /** GitHub release body (Markdown subset). Empty for tag-only releases. */
+  body: string;
+  prerelease: boolean;
   assets: ReleaseAsset[];
-};
-
-export type RepoMeta = {
-  stars: number;
-  forks: number;
-  openIssues: number;
-  license: string | null;
-  pushedAt: string | null;
-  url: string;
 };
 
 const API = "https://api.github.com";
@@ -31,7 +25,6 @@ async function getJson<T>(path: string): Promise<T | null> {
     const res = await fetch(`${API}${path}`, {
       headers: HEADERS,
       signal: AbortSignal.timeout(4000),
-      next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
     return (await res.json()) as T;
@@ -48,6 +41,8 @@ export async function getLatestRelease(): Promise<Release | null> {
     name: string;
     html_url: string;
     published_at: string | null;
+    body: string | null;
+    prerelease: boolean;
     assets: { name: string; size: number; browser_download_url: string }[];
   }>(`/repos/${site.repo}/releases/latest`);
   if (!data) return null;
@@ -56,6 +51,8 @@ export async function getLatestRelease(): Promise<Release | null> {
     name: data.name || data.tag_name,
     url: data.html_url,
     publishedAt: data.published_at,
+    body: data.body ?? "",
+    prerelease: data.prerelease,
     assets: (data.assets ?? []).map((a) => ({
       name: a.name,
       size: a.size,
@@ -64,24 +61,42 @@ export async function getLatestRelease(): Promise<Release | null> {
   };
 }
 
-export async function getRepoMeta(): Promise<RepoMeta | null> {
-  const data = await getJson<{
-    stargazers_count: number;
-    forks_count: number;
-    open_issues_count: number;
-    license: { spdx_id: string | null } | null;
-    pushed_at: string | null;
-    html_url: string;
-  }>(`/repos/${site.repo}`);
-  if (!data) return null;
-  return {
-    stars: data.stargazers_count,
-    forks: data.forks_count,
-    openIssues: data.open_issues_count,
-    license: data.license?.spdx_id ?? null,
-    pushedAt: data.pushed_at,
-    url: data.html_url,
-  };
+/** Published releases, newest first. Drafts are not public; prereleases are. */
+export async function getReleases(limit = 30): Promise<Release[]> {
+  const data = await getJson<
+    {
+      tag_name: string;
+      name: string | null;
+      html_url: string;
+      published_at: string | null;
+      body: string | null;
+      prerelease: boolean;
+      assets: { name: string; size: number; browser_download_url: string }[];
+    }[]
+  >(`/repos/${site.repo}/releases?per_page=${limit}`);
+  if (!data) return [];
+  return data.map((r) => ({
+    version: r.tag_name,
+    name: r.name || r.tag_name,
+    url: r.html_url,
+    publishedAt: r.published_at,
+    body: r.body ?? "",
+    prerelease: r.prerelease,
+    assets: (r.assets ?? []).map((a) => ({
+      name: a.name,
+      size: a.size,
+      downloadUrl: a.browser_download_url,
+    })),
+  }));
+}
+
+/** Source tags. Published releases can lag tags; the releases page shows both. */
+export async function getTags(limit = 12): Promise<string[]> {
+  const data = await getJson<{ ref: string }[]>(
+    `/repos/${site.repo}/git/matching-refs/tags/v?per_page=${limit}`,
+  );
+  if (!data) return [];
+  return data.map((d) => d.ref.replace("refs/tags/", "")).reverse();
 }
 
 export function formatBytes(bytes: number): string {

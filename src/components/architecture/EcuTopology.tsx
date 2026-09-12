@@ -64,7 +64,7 @@ export function EcuTopology() {
             </div>
           </div>
 
-          <div className="rounded-sm border border-line bg-surface p-6">
+          <div aria-live="polite" className="rounded-sm border border-line bg-surface p-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selected.code}
@@ -87,6 +87,14 @@ export function EcuTopology() {
                     <dd>
                       <StatusMarker tone={selected.diagnostic ? "ok" : "muted"}>
                         {selected.diagnostic ? t("udsSession") : t("noUdsSession")}
+                      </StatusMarker>
+                    </dd>
+                  </div>
+                  <div className="flex items-baseline justify-between py-1.5">
+                    <dt className="text-text-secondary">{t("dtcSupport")}</dt>
+                    <dd>
+                      <StatusMarker tone={selected.dtc ? "ok" : "muted"}>
+                        {selected.dtc ? t("dtcYes") : t("dtcNo")}
                       </StatusMarker>
                     </dd>
                   </div>

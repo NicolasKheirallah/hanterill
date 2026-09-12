@@ -5,8 +5,6 @@
  * also re-export them for bare use.
  */
 export { SafetyNotice } from "./SafetyNotice";
-export { Wip } from "./Wip";
-export { Experimental } from "./Experimental";
 export { EcuReference } from "./EcuReference";
 export { VehicleSupport } from "./VehicleSupport";
 export { PlatformSupport } from "./PlatformSupport";

@@ -30,6 +30,8 @@ const statusKey: Record<SimFault["status"], "statusStored" | "statusHistorical" 
   pending: "statusPending",
 };
 
+const SCAN_STATE_STEP_MS = 100;
+
 export function ScanSimulator({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("scan");
   const td = useTranslations("demo");
@@ -41,6 +43,8 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
   const [openEcu, setOpenEcu] = useState<string | null>(null);
   const raf = useRef<number | null>(null);
   const last = useRef<number>(0);
+  const simNow = useRef<number>(0);
+  const lastFlush = useRef<number>(0);
 
   const stage: ScanStage = stageAt(elapsed);
   const done = stage === "complete";
@@ -50,19 +54,27 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
 
   useEffect(() => {
     if (!running) return;
+    // The clock advances per animation frame, but React state flushes at most
+    // every SCAN_STATE_STEP_MS: the row list only needs to change when a row
+    // appears, not 60 times a second.
     const tick = (now: number) => {
       if (!last.current) last.current = now;
       // Cap the per-frame step so a backgrounded tab does not fast-forward the
       // whole scan on return.
       const dt = Math.min(now - last.current, 100);
       last.current = now;
-      setElapsed((e) => Math.min(SCAN_END, e + dt));
+      simNow.current = Math.min(SCAN_END, simNow.current + dt);
+      if (now - lastFlush.current >= SCAN_STATE_STEP_MS) {
+        lastFlush.current = now;
+        setElapsed(simNow.current);
+      }
       raf.current = requestAnimationFrame(tick);
     };
     raf.current = requestAnimationFrame(tick);
     return () => {
       if (raf.current) cancelAnimationFrame(raf.current);
       last.current = 0;
+      setElapsed(simNow.current);
     };
   }, [running]);
 
@@ -71,6 +83,7 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
 
   function replay() {
     last.current = 0;
+    simNow.current = 0;
     setElapsed(0);
     setOpenEcu(null);
   }

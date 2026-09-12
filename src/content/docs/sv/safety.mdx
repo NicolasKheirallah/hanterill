@@ -1,0 +1,41 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+Hanterill skiljer på läsning och förändring redan på byggnivå, inte med en inställningsknapp. Vad den körande binären kan rapporteras av ett kapacitetsmanifest, och gränssnittet visar bara det binären faktiskt kan utföra.
+
+## Skrivskyddad av konstruktion
+
+Ett standardbygge av varje Hanterill-artefakt (skrivbordsapp, CLI, bibliotek) sänder endast skrivskyddad UDS-trafik: sessionsstyrning (`0x10`), läs DTC-information (`0x19`), läs data via identifierare (`0x22`), skalningsläsning (`0x24`) och tester present (`0x3E`), plus två exakta undantag:
+
+- `0x31 0x03` requestRoutineResults, som rapporterar utfallet av en rutin som redan körts och aldrig startar eller stoppar något;
+- `0x2A` periodisk läsning send-once och stop, för ett prov på begäran och avregistreringen av det.
+
+Transportlagret avvisar varje annan tjänst och delfunktion i körning. Det finns inget bygge i vilket Hanterill flashar moduler, låser security access (`0x27`) eller skriver via identifierare (`0x2E`).
+
+## Åtgärder som ändrar fordonet
+
+- Radera diagnostisk information (`0x14`)
+- Starta rutiner (`0x31`), inklusive EPB-serviceläge och kalibreringshjälpfunktioner
+- Adaptationer och skrivningar via identifierare
+- Styrenhetsåterställning (`0x11`), som endast används av den opt-in force-reset-loop som ingår i raderingsflödet
+
+<SafetyNotice level="adaptation" title="Inte i släpptbygderna">
+Dessa kompileras endast med icke-standardfunktionen `unsafe-write-ops`. En släppt binär svarar med ett typat avslag; det finns inget dolt sätt att göra ett standardbygge skrivbart. Rutinidentifierarna är reverse-enginerade, och även skrivbara byggen håller styrningsvinkel- och ADAS-mål utom räckhåll: sådana får inte doneras utan tillverkarens arbetsordning. Raderingsflödet fångar dessutom freeze frames innan radering (raderingen utplånar dem), läser om för verifiering och redovisar envetna moduler. Se repositoryts `docs/safety.md` för hela flödet.
+</SafetyNotice>
+
+## Trafikdisciplin
+
+Diagnostiska frågor använder begränsade loopar, requestbudgetar och kooperativ avbrytning, så att en skanning inte kan översvämma gateway:n. Sessioner körs med fordonet parkerat i normalt användningsläge; DTC-raderingen vägrar force-reset-steget medan bilen rapporterar körläge.
+
+## Högspänning
+
+<SafetyNotice level="high-voltage" title="Högspänningssystem är farliga">
+Elbilar har farliga högspänningssystem. Att läsa batteridata över en diagnostiklänk avenergerar inget och gör inte fysiskt högspänningsservice säkert. Högspänningsservice kräver tillverkarens arbetsordningar, utrustning och utbildning.
+</SafetyNotice>
+
+## Ingen ersättning för tillverkarens verktyg
+
+Hanterill är oberoende och inte anslutet till Volvo Cars, Polestar eller Geely. Fatta inte säkerhetskritiska reparationsbeslut enbart på Hanterills utdata, särskilt inte på plattformar märkta Testas eller Utreds där avkodning inte är verifierad mot ett levande fordon.
+
+## Om något ser fel ut
+
+Stanna. Kör inga rutiner för att "fixa" en avläsning du inte förstår. Exportera sessionen, jämför mot en verifierat fungerande referens eller en andra skanning, och fråga i projektets diskussioner innan du agerar. Exporten av supportpaket är rengjord för delning.

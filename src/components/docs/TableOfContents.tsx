@@ -43,6 +43,7 @@ export function TableOfContents({ headings }: { headings: DocHeading[] }) {
           <li key={h.id} className="-ml-px">
             <a
               href={`#${h.id}`}
+              aria-current={activeId === h.id ? "true" : undefined}
               className={cn(
                 "block border-l-2 py-1 transition-colors",
                 h.level === 3 ? "pl-6" : "pl-3",

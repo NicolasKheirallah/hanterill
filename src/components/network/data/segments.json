@@ -1,0 +1,298 @@
+[
+ {
+  "id": "seg-flexray-backbone",
+  "name": "FlexRay backbone",
+  "bus": "flexray",
+  "members": [
+   "dim",
+   "u-4-176",
+   "ihu",
+   "cem",
+   "vcu1",
+   "vgm",
+   "u-4-184"
+  ]
+ },
+ {
+  "id": "seg-1e-mid-1-can",
+  "name": "1E Mid 1 CAN",
+  "bus": "can",
+  "members": [
+   "swm",
+   "scl",
+   "egsm",
+   "epas",
+   "vcu1"
+  ],
+  "busModules": "EGSM, SWM, SCL, EPAS, VCU1",
+  "speed": "500KHz",
+  "wireH": "BN/WH",
+  "wireL": "BN/GN",
+  "messageCount": 36
+ },
+ {
+  "id": "seg-1e-rear-1-can",
+  "name": "1E Rear 1 CAN",
+  "bus": "can",
+  "members": [
+   "obc",
+   "ecm",
+   "iem",
+   "vcu1",
+   "u-4-176"
+  ],
+  "busModules": "OBC, ECM, IEM, VCU1, SRS",
+  "wireH": "PK",
+  "wireL": "BN"
+ },
+ {
+  "id": "seg-lin-20",
+  "name": "LIN 20",
+  "bus": "lin",
+  "members": [
+   "swm",
+   "dim",
+   "u-3-133",
+   "u-3-134"
+  ],
+  "messageCount": 2
+ },
+ {
+  "id": "seg-1e-safety-can",
+  "name": "1E Safety CAN",
+  "bus": "can",
+  "members": [
+   "wam",
+   "u-4-184",
+   "u-4-126",
+   "u-4-127"
+  ],
+  "busModules": "BLIS (L), BLIS (R), ASDM, WAM",
+  "wireH": "WH",
+  "wireL": "GN"
+ },
+ {
+  "id": "seg-lin-25",
+  "name": "LIN 25",
+  "bus": "lin",
+  "members": [
+   "hvha",
+   "vcu1",
+   "acca",
+   "p-4-364"
+  ]
+ },
+ {
+  "id": "seg-lin-12",
+  "name": "LIN 12",
+  "bus": "lin",
+  "members": [
+   "cem",
+   "u-10-319",
+   "u-10-314",
+   "u-10-315"
+  ]
+ },
+ {
+  "id": "seg-1e-front-3-can",
+  "name": "1E Front 3 CAN",
+  "bus": "can",
+  "members": [
+   "ihfa",
+   "vcu1",
+   "ecm"
+  ],
+  "busModules": "IHFA, ECM, VCU1",
+  "wireH": "WH/GN",
+  "wireL": "GN/YE"
+ },
+ {
+  "id": "seg-lin-1",
+  "name": "LIN 1",
+  "bus": "lin",
+  "members": [
+   "cem",
+   "u-4-250",
+   "p-4-171"
+  ]
+ },
+ {
+  "id": "seg-lin-2",
+  "name": "LIN 2",
+  "bus": "lin",
+  "members": [
+   "cem",
+   "u-4-220",
+   "u-4-237"
+  ]
+ },
+ {
+  "id": "seg-lin-16",
+  "name": "LIN 16",
+  "bus": "lin",
+  "members": [
+   "cem",
+   "u-4-221",
+   "u-4-172"
+  ]
+ },
+ {
+  "id": "seg-1e-body-can",
+  "name": "1E Body CAN",
+  "bus": "can",
+  "members": [
+   "cem",
+   "u-10-1",
+   "u-4-213"
+  ],
+  "busModules": "CCM, POT, CEM",
+  "wireH": "VT/WH",
+  "wireL": "VT/GN"
+ },
+ {
+  "id": "seg-lin-14",
+  "name": "LIN 14",
+  "bus": "lin",
+  "members": [
+   "swm",
+   "cem"
+  ]
+ },
+ {
+  "id": "seg-lin-26",
+  "name": "LIN 26",
+  "bus": "lin",
+  "members": [
+   "egsm",
+   "vcu1"
+  ],
+  "messageCount": 8
+ },
+ {
+  "id": "seg-lin-19",
+  "name": "LIN 19",
+  "bus": "lin",
+  "members": [
+   "ihu",
+   "p-4-222"
+  ]
+ },
+ {
+  "id": "seg-rms-can",
+  "name": "RMS CAN",
+  "bus": "can",
+  "members": [
+   "becm",
+   "atm"
+  ]
+ },
+ {
+  "id": "seg-1e-front-1-can",
+  "name": "1E Front 1 CAN",
+  "bus": "can",
+  "members": [
+   "becm",
+   "vcu1"
+  ],
+  "busModules": "HVB, VCU1",
+  "wireH": "BN/WH",
+  "wireL": "BN/GN"
+ },
+ {
+  "id": "seg-lin-4",
+  "name": "LIN 4",
+  "bus": "lin",
+  "members": [
+   "ecm",
+   "p-active-spoiler-shutter-module"
+  ]
+ },
+ {
+  "id": "seg-diagnostics-connectivity-can",
+  "name": "Diagnostics & Connectivity CAN",
+  "bus": "can",
+  "members": [
+   "vcu1",
+   "obd"
+  ],
+  "busModules": "VGM, VCU1, ATM, ODB",
+  "wireH": "GN",
+  "wireL": "YE"
+ },
+ {
+  "id": "seg-lin-0",
+  "name": "LIN 0",
+  "bus": "lin",
+  "members": [
+   "cem",
+   "tcam"
+  ]
+ },
+ {
+  "id": "seg-lin-15",
+  "name": "LIN 15",
+  "bus": "lin",
+  "members": [
+   "cem",
+   "u-4-312"
+  ]
+ },
+ {
+  "id": "seg-lin-3",
+  "name": "LIN 3",
+  "bus": "lin",
+  "members": [
+   "cem",
+   "u-4-199"
+  ]
+ },
+ {
+  "id": "seg-obd-ethernet",
+  "name": "OBD Ethernet",
+  "bus": "ethernet",
+  "members": [
+   "vgm",
+   "obd"
+  ]
+ },
+ {
+  "id": "seg-front-can-exposed",
+  "name": "Front CAN Exposed",
+  "bus": "can",
+  "members": [
+   "u-4-184",
+   "u-4-291"
+  ],
+  "busModules": "FLR, ASDM",
+  "wireH": "WH/GN",
+  "wireL": "PK"
+ },
+ {
+  "id": "seg-1e-front-2-can",
+  "name": "1E Front 2 CAN",
+  "bus": "can",
+  "members": [
+   "becm",
+   "ecm"
+  ],
+  "messageCount": 91,
+  "busModules": "HVB, ESM, ECM",
+  "speed": "500KHz",
+  "wireH": "BN/WH",
+  "wireL": "BN/GN"
+ },
+ {
+  "id": "seg-infotainment-can",
+  "name": "Infotainment CAN",
+  "bus": "can",
+  "members": [
+   "tcam",
+   "vgm"
+  ],
+  "messageCount": 33,
+  "busModules": "TCAM, VGM",
+  "speed": "500KHz",
+  "wireH": "GN/YE",
+  "wireL": "YE/WH"
+ }
+]

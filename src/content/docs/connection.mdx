@@ -18,7 +18,14 @@ OBD-II connector
 
 DoIP uses link-local addressing. In most cases the vehicle and adapter negotiate automatically and no manual IP configuration is needed. If your operating system holds the interface waiting for DHCP, set the adapter to link-local / automatic private addressing.
 
-Hanterill discovers the vehicle with a UDP vehicle identification request on port 13400, then opens a TCP connection on the same port and performs routing activation before any diagnostic request.
+Hanterill discovers the vehicle with a UDP vehicle identification request on port 13400, then opens a TCP connection on the same port and performs routing activation before any diagnostic request. The interface itself is enumerated automatically: virtual adapters (VPN, loopback) are filtered out by the connection ranking, and hotplugging the cable is detected without a restart.
+
+## When the link misbehaves
+
+Recovery is built into the transport: a dropped TCP session re-activates routing on the surviving
+connection, responses from a previous connection epoch are rejected as stale, and a keepalive
+keeps the gateway from putting modules to sleep mid-scan. Clearing operations additionally wait
+out modules rebooting and repair the route afterwards.
 
 ## If the vehicle does not appear
 

@@ -1,7 +1,6 @@
 /**
- * Central site configuration. The GitHub slug is a placeholder: swap
- * `repo` for the real `owner/name` and every release / source link and
- * the GitHub API calls follow.
+ * Central site configuration. Every release / source link and the GitHub
+ * API calls follow `repo`.
  */
 export const site = {
   name: "Hanterill",
@@ -9,7 +8,7 @@ export const site = {
   description:
     "Vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and cross-platform. Source-available, for private use.",
   url: "https://hanterill.org",
-  repo: "nicolaskheirallah/hanterill", // placeholder owner/name
+  repo: "NicolasKheirallah/hanterill",
   /**
    * License summary. The LICENSE file in the source repository is the source of
    * truth; this is the plain-language summary shown on the site. Hanterill is
@@ -26,27 +25,27 @@ export const site = {
   get releasesUrl() {
     return `https://github.com/${this.repo}/releases`;
   },
-  docsRepoPath: "https://github.com/nicolaskheirallah/hanterill/tree/main/docs",
+  /** This website's own repository, for "edit this page" links. */
+  websiteRepo: "NicolasKheirallah/openCMA---Website",
+  websiteBranch: "master",
+  docEditUrl(slug: string) {
+    return `https://github.com/${this.websiteRepo}/edit/${this.websiteBranch}/src/content/docs/${slug}.mdx`;
+  },
 } as const;
 
-/** Other projects by the same author, shown on /projects. */
+/** Other projects by the same author, shown on /projects. URLs derive from the repo slug. Copy lives in the `projects.<slug>` message namespace. */
 export const otherProjects = [
   {
+    slug: "hisingen",
     name: "Hisingen",
-    repoUrl: "https://github.com/NicolasKheirallah/Hisingen",
+    repo: "NicolasKheirallah/Hisingen",
+    get repoUrl() {
+      return `https://github.com/${this.repo}`;
+    },
     platform: "macOS",
     license: "MIT",
     image: "/assets/hisingen/menubar-dashboard.png",
     imageRatio: 591 / 757,
-    tagline: "Polestar and Volvo telemetry in the macOS menu bar.",
-    description:
-      "Battery state of charge, range, charging power, latch states, climate preconditioning and diagnostic history, native in the menu bar. Built with AppKit and SwiftUI — no Electron, no telemetry middlemen, no cloud database between you and your vehicle.",
-    highlights: [
-      "Battery, range and charging status at a glance",
-      "Remote climate, lock and charging controls",
-      "Charging history with cost tracking and CSV export",
-      "Native AppKit and SwiftUI, MIT-licensed",
-    ],
   },
 ] as const;
 
@@ -54,7 +53,9 @@ export const otherProjects = [
 export const nav = [
   { key: "features", href: "/features" },
   { key: "vehicles", href: "/vehicles" },
+  { key: "network", href: "/network" },
   { key: "docs", href: "/docs" },
+  { key: "changelog", href: "/changelog" },
   { key: "safety", href: "/safety" },
   { key: "screenshots", href: "/screenshots" },
   { key: "projects", href: "/projects" },
@@ -77,8 +78,9 @@ export const footerNav = [
     links: [
       { key: "documentation", href: "/docs" },
       { key: "architecture", href: "/docs/architecture" },
-      { key: "source", href: site.repoUrl, external: true },
-      { key: "buildFromSource", href: "/docs/development" },
+      { key: "network", href: "/network" },
+      { key: "changelog", href: "/changelog" },
+      { key: "releases", href: site.releasesUrl, external: true },
     ],
   },
   {
@@ -94,9 +96,9 @@ export const footerNav = [
 ] as const;
 
 export const platforms = [
-  { id: "windows", label: "Windows", arch: "x64", artifact: "Hanterill-x64-setup.exe", note: "Windows 10 and 11" },
-  { id: "macos", label: "macOS", arch: "Apple silicon / Intel", artifact: "Hanterill.dmg", note: "macOS 12 Monterey or later" },
-  { id: "linux", label: "Linux", arch: "x86_64", artifact: "Hanterill.AppImage", note: "AppImage, glibc 2.31 or later" },
+  { id: "windows", label: "Windows", arch: "x64 & ARM64", artifact: "Hanterill-setup.exe / .msi", note: "Windows 10 and 11" },
+  { id: "macos", label: "macOS", arch: "Apple silicon & Intel", artifact: "Hanterill.dmg", note: "Universal build" },
+  { id: "linux", label: "Linux", arch: "x86_64 & ARM64", artifact: ".AppImage / .deb", note: "Ubuntu, Debian, Fedora, Arch" },
 ] as const;
 
 export type PlatformId = (typeof platforms)[number]["id"];

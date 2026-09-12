@@ -9,7 +9,8 @@ export const demoVehicle = {
   /** Display text resolved from the `demo.vehicleVariant` message key. */
   variantKey: "vehicleVariant",
   modelYear: 2022,
-  vin: "YV1ZZ••••••••••••",
+  /** Same redacted tail mask the session walkthrough shows. */
+  vin: "••••••••••••1234",
   odometer: "41 208 km",
 };
 
@@ -19,9 +20,9 @@ export const batteryDemo = {
   packVoltage: 398.6,
   packCurrent: -1.4,
   avgCellGroup: 3.721,
-  minCellGroup: 3.716,
-  maxCellGroup: 3.728,
-  cellDelta: 12,
+  minCellGroup: 3.717,
+  maxCellGroup: 3.725,
+  cellDelta: 8,
   tempMin: 21.4,
   tempMax: 24.9,
   capacityNominal: 78,
@@ -30,15 +31,20 @@ export const batteryDemo = {
   groupsPerModule: 4,
 };
 
-/** 108 potentials as offset in millivolts from the pack mean. Fixed set. */
+/**
+ * 108 potentials as offset in millivolts from the pack mean. Fixed set.
+ * Bands: |offset| <= 2 ok, <= 4 watch, above 4 flagged. Module 14 carries the
+ * single imbalanced pair (-4 / +4), which is the pack delta of 8 mV quoted
+ * above.
+ */
 export const cellOffsets: number[] = (() => {
   const seed = [
-    2, -1, 0, 3, -2, 1, 4, -3, 2, 0, 1, -1, 5, -4, 2, 1, 0, -2, 3, 1,
-    -1, 2, 6, -5, 1, 0, 2, -1, 3, -2, 1, 4, 0, -3, 2, 1, -1, 0, 3, -2,
-    1, 2, -1, 5, -4, 0, 1, 2, -2, 3, 1, -1, 0, 4, -3, 1, 2, 0, -1, 3,
-    -2, 1, 0, 2, -1, 4, -5, 1, 3, 0, -2, 1, 2, -1, 0, 3, 1, -3, 2, 0,
-    -1, 1, 4, -2, 0, 2, 1, -1, 3, 0, -2, 1, 5, -4, 2, 0, 1, -1, 2, 3,
-    -2, 0, 1, 2, -1, 0, 1, -3,
+    1, 0, -1, 0, 0, 2, 1, 0, -2, 0, 1, 0, 1, 2, 0, -1, 0, -1, 0, 1,
+    2, 1, -1, 0, 0, 1, -2, 0, -1, 0, 2, 1, 0, -1, 1, 2, 1, 0, -1, 2,
+    -2, 1, 0, 1, 0, -1, 2, 0, 1, 0, -2, 1, 2, -4, 4, 1, 0, 1, -1, 2,
+    -1, 2, 0, 1, 0, -1, 1, 0, 2, 0, -1, 1, -2, 1, 0, -1, 0, 2, 1, -1,
+    1, -1, 0, 2, -1, 0, 2, -2, 0, 1, -1, 0, 2, -1, 1, 0, 0, -2, 1, 2,
+    1, 0, -1, 2, 0, 1, -1, 0,
   ];
   return seed.slice(0, 108);
 })();
@@ -132,11 +138,6 @@ export function liveTrace(points = 90): number[] {
   }
   return out;
 }
-
-export const scanEcuOrder = [
-  "CEM", "VGM", "VCU1", "BECM", "OBC", "IHFA", "IEM", "HVHA",
-  "EPAS", "SAS", "BCM", "DIM", "IHU", "TCAM", "SRS", "CCM",
-];
 
 export const evidenceDemo = {
   before: { total: 12, active: 3, pending: 2, stored: 3, historical: 4 },

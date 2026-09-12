@@ -153,6 +153,85 @@ function EvidenceCompare() {
   );
 }
 
+function ReportScore() {
+  const t = useTranslations("features");
+  const rows = t.raw("scoreRows") as [string, string, "ok" | "watch"][];
+  return (
+    <div className="border border-line bg-surface">
+      <div className="flex items-baseline justify-between border-b border-line px-5 py-4">
+        <div>
+          <div className="font-mono text-[11px] uppercase tracking-wider text-text-muted">{t("scoreLabel")}</div>
+          <div className="tnum mt-1 font-mono text-[2.4rem] leading-none text-text-primary">91<span className="text-[1.1rem] text-text-muted">/100</span></div>
+        </div>
+        <div className="rounded-sm border border-status-warning/40 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-status-warning">{t("advisoriesTag")}</div>
+      </div>
+      <ul className="divide-y divide-line">
+        {rows.map(([label, note, tone]) => (
+          <li key={label} className="flex items-baseline justify-between gap-4 px-5 py-2.5">
+            <span className="text-[14px] text-text-primary">{label}</span>
+            <span className={cn("font-mono text-[12px]", tone === "ok" ? "text-status-info" : "text-status-warning")}>
+              {note}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="border-t border-line px-5 py-2.5 font-mono text-[11px] text-text-muted">
+        {t("rulesNote")}
+      </p>
+    </div>
+  );
+}
+
+function SystemsList() {
+  const t = useTranslations("features");
+  const rows = t.raw("systemRows") as string[][];
+  return (
+    <div className="border border-line bg-surface">
+      <ul className="divide-y divide-line">
+        {rows.map(([sys, sub]) => (
+          <li key={sys} className="grid gap-0.5 px-5 py-2.5 sm:grid-cols-[10rem_1fr] sm:gap-4">
+            <span className="text-[14px] text-text-primary">{sys}</span>
+            <span className="font-mono text-[12px] text-text-secondary">{sub}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ShellCard() {
+  const t = useTranslations("features");
+  const items = t.raw("paletteItems") as string[];
+  return (
+    <div className="border border-line bg-surface p-6">
+      <div className="rounded-sm border border-line-strong bg-bg-primary px-4 py-3">
+        <div className="font-mono text-[12px] text-text-muted">{t("paletteKbd")}</div>
+        <ul className="mt-2 divide-y divide-line font-mono text-[12px]">
+          {items.map((item, i) => (
+            <li key={item} className={cn("py-1.5", i === 0 ? "text-text-primary" : "text-text-secondary")}>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <dl className="mt-5 grid gap-x-8 gap-y-2 sm:grid-cols-3">
+        <div>
+          <dt className="font-mono text-[11px] uppercase tracking-wider text-text-muted">{t("shellThemesLabel")}</dt>
+          <dd className="text-[14px] text-text-primary">{t("shellThemes")}</dd>
+        </div>
+        <div>
+          <dt className="font-mono text-[11px] uppercase tracking-wider text-text-muted">{t("shellDensityLabel")}</dt>
+          <dd className="text-[14px] text-text-primary">{t("shellDensity")}</dd>
+        </div>
+        <div>
+          <dt className="font-mono text-[11px] uppercase tracking-wider text-text-muted">{t("shellLanguagesLabel")}</dt>
+          <dd className="text-[14px] text-text-primary">{t("shellLanguages")}</dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
 export function FeatureBlocks() {
   const t = useTranslations("features");
   return (
@@ -200,11 +279,33 @@ export function FeatureBlocks() {
           />
           <Entry
             layout="stack"
+            title={t("reportsTitle")}
+            body={t("reportsBody")}
+            cta={<MoreLink href="/features/inspection-reports">{t("reportsCta")}</MoreLink>}
+            caption={t("reportsCaption")}
+            visual={<ReportScore />}
+          />
+          <Entry
+            reverse
             title={t("evidenceTitle")}
             body={t("evidenceBody")}
-            cta={<MoreLink href="/features/vehicle-diagnostics">{t("evidenceCta")}</MoreLink>}
+            cta={<MoreLink href="/features/sessions-and-evidence">{t("evidenceCta")}</MoreLink>}
             caption={t("totalDtcs")}
             visual={<EvidenceCompare />}
+          />
+          <Entry
+            layout="stack"
+            title={t("systemsTitle")}
+            body={t("systemsBody")}
+            cta={<MoreLink href="/features/system-telemetry">{t("systemsCta")}</MoreLink>}
+            caption={t("systemsCaption")}
+            visual={<SystemsList />}
+          />
+          <Entry
+            title={t("shellTitle")}
+            body={t("shellBody")}
+            caption={t("shellCaption")}
+            visual={<ShellCard />}
           />
         </div>
       </Container>

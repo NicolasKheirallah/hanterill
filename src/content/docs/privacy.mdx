@@ -2,10 +2,11 @@ Hanterill is entirely local. It talks to the vehicle and writes to your disk. Th
 
 ## Stays on your machine
 
-- Every diagnostic session, DTC read and live capture
-- Exports you create (JSON, CSV)
-- Application settings and connection profiles
+- Every diagnostic session, DTC read and live capture (a durable local archive with your notes)
+- Exports you create (JSON, CSV, ZIP bundles)
+- Application settings, themes and connection profiles
 - Logs
+- Per-vehicle performance caches, stored under a hash of the VIN so file listings expose no identity
 
 ## Never collected
 
@@ -16,9 +17,16 @@ Hanterill is entirely local. It talks to the vehicle and writes to your disk. Th
 - No diagnostic data uploaded anywhere
 - No third-party crash reporting
 
-## VIN redaction
+## VIN and coordinate redaction
 
-The VIN is read during vehicle identification. In logs and exports, Hanterill redacts it where it is not required, so a shared session file does not carry a full VIN by default. Full VIN is kept only where you explicitly ask for it.
+The VIN is read during vehicle identification. In logs and exports, Hanterill redacts it where it
+is not required, so a shared session file does not carry a full VIN by default. Full VIN is kept
+only where you explicitly ask for it.
+
+The same discipline covers position: pre-purchase inspection reports carry no GPS sections at all,
+exportable coordinates are rounded to roughly 110 metres, and the support bundle scrubs
+serial numbers, private addresses, credentials and decimal coordinates (`[REDACTED-GPS]`) before a
+file leaves the machine, while keeping genuine diagnostic readings intact.
 
 ## Network activity
 

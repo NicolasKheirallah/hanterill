@@ -1,7 +1,5 @@
 import { PlatformSupport } from "@/components/docs/mdx/PlatformSupport";
 import { VehicleSupport } from "@/components/docs/mdx/VehicleSupport";
-import { Wip } from "@/components/docs/mdx/Wip";
-import { Experimental } from "@/components/docs/mdx/Experimental";
 
 Hanterill is built CMA-first. The Compact Modular Architecture platform under Polestar 2 and the smaller electric Volvos is where battery, ECU and routine coverage was written and validated.
 
@@ -42,21 +40,46 @@ The full capability breakdown for the reference vehicle:
 
 ### SPA
 
-<Wip note="First-generation Recharge plug-in hybrids. Hanterill connects over DoIP; ECU mapping and battery decoding are incomplete. Do not rely on any figures from these vehicles." />
+<Callout kind="caution" title="Not verified on a live vehicle">
+The SPA battery catalogue ships: pack topologies for the 69 kWh and 78 kWh EV packs and the
+102-cell hybrid, the CAN-era BECM registry and its decoders, ported from community research with
+cited provenance. Nothing is verified against a live vehicle yet, and on first-generation SPA the
+battery answers over CAN-era plumbing, not today's DoIP path. Do not rely on figures from these
+cars.
+</Callout>
 
 <PlatformSupport platform="SPA" />
 
 ### SEA
 
-<Experimental kind="research" note="Newer BEVs including Zeekr. Battery and ECU layout differ from CMA. Sub-platform names such as SEA1 or SEA2 are not shown until a mapping is confirmed." />
+<Callout kind="caution" title="Hardware confirmation pending">
+SEA1 is defined in the catalogue: ECU registry, DoIP routing addresses, DID entries and battery
+cell mapping for EX30-class cars, with 107S and 110S topologies. Every definition is
+hardware-unconfirmed, held up only by synthetic fixtures. Zeekr and other sub-platforms
+deliberately do not inherit the EX30 map until their own mapping is confirmed.
+</Callout>
 
 <PlatformSupport platform="SEA" />
 
 ### SPA2
 
-<Experimental kind="research" />
+<Callout kind="note" title="Research">
+Under investigation. The gateway and security model differ; no verified implementation exists yet.
+</Callout>
 
 <PlatformSupport platform="SPA2" />
+
+## Pack topologies
+
+The cell matrix takes its topology from the catalogue, never a hard-coded constant:
+
+| Platform | Topologies | State |
+| --- | --- | --- |
+| CMA | 108S: 27 modules of 4 groups | Verified on the reference vehicle |
+| SPA | EV 96S (69 kWh), EV 108S (78 kWh), hybrid 102S | Catalogued, hardware verification pending |
+| SEA1 | 107S, 110S | Catalogued, hardware verification pending |
+
+A pack reports complete at its own cell count: a 102-cell hybrid is never judged against 108.
 
 ## Not manufacturer support
 

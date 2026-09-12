@@ -1,4 +1,4 @@
-import { demoVehicle, evidenceDemo, batteryDemo } from "@/lib/demo-data";
+import { demoVehicle, batteryDemo } from "@/lib/demo-data";
 import { scanTotals } from "@/lib/scan-sim";
 
 /** Fixed data for the 7-stage representative session. Not a vehicle reading. */
@@ -21,7 +21,7 @@ export const identify = {
   /** Display text from the `demo.powertrain` message key. */
   powertrainKey: "powertrain",
   modelYear: demoVehicle.modelYear,
-  vin: "••••••••••••1234",
+  vin: demoVehicle.vin,
 };
 
 /**
@@ -38,9 +38,9 @@ export const inspectFault = {
 
 export const report = {
   ecusDiscovered: scanTotals.discovered,
-  modulesWithFaults: evidenceDemo.before.active + evidenceDemo.before.pending,
+  modulesWithFaults: scanTotals.modulesWithFaults,
   activeFaults: 0,
-  storedFaults: 4,
+  storedFaults: scanTotals.faults,
   batteryHealth: batteryDemo.soh,
   cellDelta: batteryDemo.cellDelta,
 };

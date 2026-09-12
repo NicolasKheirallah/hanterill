@@ -1,8 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { useTranslations } from "next-intl";
-import { Download, Terminal } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { Code, Download } from "lucide-react";
 import { platforms, site } from "@/lib/site";
 import { detectPlatform } from "@/lib/platform";
 import { formatBytes, matchAssetForPlatform, type Release } from "@/lib/github";
@@ -13,6 +13,7 @@ const noop = () => () => {};
 export function DownloadPanel({ release }: { release: Release | null }) {
   const detected = useSyncExternalStore(noop, detectPlatform, () => null);
   const t = useTranslations("download");
+  const locale = useLocale();
 
   return (
     <div className="rounded-sm border border-line bg-surface">
@@ -23,7 +24,7 @@ export function DownloadPanel({ release }: { release: Release | null }) {
             <>
               {release.version}
               {release.publishedAt
-                ? ` · ${new Date(release.publishedAt).toLocaleDateString("en-CA")}`
+                ? ` · ${new Intl.DateTimeFormat(locale, { year: "numeric", month: "short", day: "numeric" }).format(new Date(release.publishedAt))}`
                 : ""}
             </>
           ) : (
@@ -75,16 +76,16 @@ export function DownloadPanel({ release }: { release: Release | null }) {
 
       <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-4">
         <span className="flex items-center gap-2 font-mono text-[12px] text-text-secondary">
-          <Terminal className="h-3.5 w-3.5" strokeWidth={1.75} />
-          {t("buildYourself")}
+          <Code className="h-3.5 w-3.5" strokeWidth={1.75} />
+          {t("sourceLine")}
         </span>
         <a
-          href={`${site.repoUrl}#build-from-source`}
+          href={site.repoUrl}
           target="_blank"
           rel="noreferrer"
           className="text-[13px] font-medium text-accent hover:text-accent-hover"
         >
-          {t("buildFromSource")}
+          {t("viewSourceOnGitHub")}
         </a>
       </div>
 

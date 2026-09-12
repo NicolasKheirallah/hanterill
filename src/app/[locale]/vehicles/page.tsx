@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
 import { Container } from "@/components/ui/layout";
 import { PlatformExplorer, StatusLegend } from "@/components/vehicles/PlatformExplorer";
 import { Faq, type QA } from "@/components/sections/Faq";
 
-export const metadata: Metadata = {
-  title: "Supported vehicles",
-  description:
-    "Hanterill is CMA-first: Polestar 2 and the CMA Volvos are the tested platforms, with SPA, SEA and SPA2 support in progress. Platform compatibility is not verified support.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMeta({ locale, path: "/vehicles", id: "vehicles" });
+}
 
 export default async function VehiclesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

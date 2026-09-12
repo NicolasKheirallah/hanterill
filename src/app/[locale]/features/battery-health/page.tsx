@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { pageMeta } from "@/lib/seo";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
 import { Container, MoreLink } from "@/components/ui/layout";
@@ -9,15 +10,15 @@ import { BatteryHealthPanel } from "@/components/battery/BatteryHealthPanel";
 import { BatteryPackView } from "@/components/battery/BatteryPackView";
 import { ModuleSelectionProvider } from "@/components/battery/selection-context";
 
-export const metadata: Metadata = {
-  title: "Battery health",
-  description:
-    "Read state of health and charge, pack voltage, per-cell-group potentials, imbalance and thermal data reported by the vehicle battery management system.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMeta({ locale, path: "/features/battery-health", id: "batteryHealth" });
+}
 
 export default async function BatteryHealthPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("body.batteryHealth");
   return (
     <ModuleSelectionProvider>
       <LocalizedPageHeader id="batteryHealth" />
@@ -26,24 +27,21 @@ export default async function BatteryHealthPage({ params }: { params: Promise<{ 
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <BatteryHealthPanel />
           <Prose>
-            <h2>Where the number comes from</h2>
-            <p>
-              State of health is reported by the battery management system, not calculated by Hanterill.
-              Hanterill reads it, and the values behind it, directly from the vehicle.
-            </p>
-            <h2>What Hanterill reads</h2>
+            <h2>{t("hWhere")}</h2>
+            <p>{t("pWhere")}</p>
+            <h2>{t("hWhat")}</h2>
             <ul>
-              <li>State of health and state of charge</li>
-              <li>Pack voltage and pack current</li>
-              <li>All 108 cell-group potentials on CMA (27 modules, 4 groups each)</li>
-              <li>Minimum, maximum and delta across cell groups</li>
-              <li>Pack and module temperatures</li>
-              <li>Estimated usable capacity against nominal</li>
+              {(t.raw("reads") as string[]).map((line) => (
+                <li key={line}>{line}</li>
+              ))}
             </ul>
+            <h2>{t("hTopologies")}</h2>
+            <p>{t("pTopologies")}</p>
             <p>
-              Switch the panel to <strong>Engineering</strong> for the control module, transport,
-              service and identifiers. <Link href="/docs/battery-diagnostics">Battery diagnostics docs</Link>{" "}
-              have the full read sequence.
+              {t.rich("pEngineering", {
+                strong: (chunks) => <strong>{chunks}</strong>,
+                docs: (chunks) => <Link href="/docs/battery-diagnostics">{chunks}</Link>,
+              })}
             </p>
           </Prose>
         </div>
@@ -53,7 +51,7 @@ export default async function BatteryHealthPage({ params }: { params: Promise<{ 
         </div>
 
         <div className="mt-8">
-          <MoreLink href="/docs/battery-diagnostics">How state of health is read</MoreLink>
+          <MoreLink href="/docs/battery-diagnostics">{t("moreSoh")}</MoreLink>
         </div>
       </Container>
 

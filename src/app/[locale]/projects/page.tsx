@@ -1,27 +1,24 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { pageMeta } from "@/lib/seo";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { GitBranch } from "lucide-react";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
 import { Container, Eyebrow } from "@/components/ui/layout";
 import { Button } from "@/components/ui/Button";
+import { Shot } from "@/components/ui/Shot";
 import { otherProjects } from "@/lib/site";
 
-// Same basePath handling as the screenshots gallery: `next/image` with
-// `unoptimized` does not prepend it to a plain string src.
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
-export const metadata: Metadata = {
-  title: "Other projects",
-  description:
-    "Other independent projects from the same author as Hanterill, including Hisingen — Polestar and Volvo vehicle telemetry, native in the macOS menu bar.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMeta({ locale, path: "/projects", id: "projects" });
+}
 
 export default async function ProjectsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("pages");
+  const tp = await getTranslations("projects");
 
   return (
     <>
@@ -35,7 +32,13 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
               : "mx-auto grid max-w-[560px] gap-10"
           }
         >
-          {otherProjects.map((project) => (
+          {otherProjects.map((project) => {
+            const copy = tp.raw(project.slug) as {
+              tagline: string;
+              description: string;
+              highlights: string[];
+            };
+            return (
             <li key={project.name}>
               <article className="bezel flex h-full flex-col bg-surface">
                 <div className="border-b border-line p-4 sm:p-6">
@@ -48,32 +51,32 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
                     </p>
                   </div>
                   <p className="mt-2 text-[1.0625rem] leading-relaxed text-text-secondary">
-                    {project.tagline}
+                    {copy.tagline}
                   </p>
                 </div>
 
                 <div className="p-4 sm:p-6">
                   <figure className="bezel overflow-hidden bg-bg-secondary">
-                    <Image
-                      src={`${BASE}${project.image}`}
-                      alt={`${project.name} — ${project.tagline}`}
+                    <Shot
+                      root={project.image}
+                      alt={`${project.name} - ${copy.tagline}`}
                       width={591}
                       height={757}
                       sizes="(min-width: 1024px) 50vw, 100vw"
-                      className="h-auto w-full object-cover object-top"
+                      imgClassName="block h-auto w-full object-cover object-top"
                     />
                   </figure>
                 </div>
 
                 <div className="flex flex-1 flex-col justify-between gap-6 px-4 pb-6 sm:px-6">
                   <p className="text-[15px] leading-relaxed text-text-secondary">
-                    {project.description}
+                    {copy.description}
                   </p>
 
                   <div>
                     <Eyebrow className="mb-3">{project.name}</Eyebrow>
                     <ul className="space-y-2">
-                      {project.highlights.map((h) => (
+                      {copy.highlights.map((h) => (
                         <li
                           key={h}
                           className="flex items-start gap-2.5 font-mono text-[12.5px] leading-relaxed text-text-secondary"
@@ -94,7 +97,8 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
                 </div>
               </article>
             </li>
-          ))}
+            );
+          })}
         </ul>
 
         <p className="mt-10 max-w-[70ch] font-mono text-[12.5px] leading-relaxed text-text-muted">

@@ -1,7 +1,22 @@
 import type { MDXComponents } from "mdx/types";
+import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { Code } from "@/components/ui/Code";
 import { Callout, SpecList } from "@/components/docs/DocData";
+
+function Heading({ tag, id, children }: { tag: "h2" | "h3"; id?: string; children?: ReactNode }) {
+  const Tag = tag;
+  return (
+    <Tag id={id}>
+      {children}
+      {id ? (
+        <a href={`#${id}`} className="heading-anchor" aria-label="Link to this section">
+          #
+        </a>
+      ) : null}
+    </Tag>
+  );
+}
 
 function textOf(node: React.ReactNode): string {
   if (typeof node === "string") return node;
@@ -16,6 +31,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     Callout,
     SpecList,
+    h2: ({ id, children }) => (
+      <Heading tag="h2" id={typeof id === "string" ? id : undefined}>
+        {children}
+      </Heading>
+    ),
+    h3: ({ id, children }) => (
+      <Heading tag="h3" id={typeof id === "string" ? id : undefined}>
+        {children}
+      </Heading>
+    ),
     a: ({ href = "", children, ...rest }) => {
       const external = /^https?:\/\//.test(href);
       if (external) {

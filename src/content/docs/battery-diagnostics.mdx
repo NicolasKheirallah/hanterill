@@ -12,10 +12,12 @@ Everything on this page is a read. Hanterill queries the BECM and decodes the re
 
 - State of Health and State of Charge
 - Pack voltage and pack current
-- All 108 cell-group potentials on CMA: 27 modules, 4 groups each
+- Cell-group potentials on the pack topology in force: 108 on CMA (27 modules, 4 groups each);
+  SPA EV 96S and 108S, SPA hybrid 102S and SEA variants are catalogued
 - Minimum, maximum and delta across cell groups
-- Pack and module temperatures
+- Pack and module temperatures, rendered as a thermal grid
 - Estimated usable capacity against nominal
+- Cross-signal consistency checks (reported pack voltage against the cell sum, and more)
 - BECM hardware and software part numbers
 
 ## Reading it
@@ -42,14 +44,20 @@ The state-of-health read, with the bytes on the wire:
 
 Cell-group potentials are read as a block and mapped to module and group
 positions, not derived from a single summary field. DTCs come from the same
-session with a ReadDTCInformation request.
+session with a ReadDTCInformation request. Live views use the periodic identifier read (0x2A)
+where the ECU supports it: one on-demand registration instead of hammering the same identifier.
 
 ## Reading the cell matrix
 
 A healthy pack sits within a few millivolts across all 108 groups. A widening delta, or one module consistently offset from the pack mean, is more informative than the SOH percentage alone. The website's [battery section](/features/battery-health) shows the same matrix with sample data.
 
-## Provisional platforms
+## Other platforms
 
-<Callout kind="warning" title="Unverified on SEA and SPA2">
-On SEA and SPA2 the BECM identifiers and scaling differ and are not verified. Hanterill marks battery data on those platforms as unverified and it should not be used for decisions.
+<Callout kind="warning" title="Not hardware-verified on SPA and SEA">
+SPA and SEA1 carry their own BECM registries: different cell counts and different payload
+contracts. The same identifier number can be a 4-byte quantity on CMA and a 2-byte one on SPA, so
+they are separate definitions, not shared ones. They ship under community-research evidence
+provenance and nothing is verified against a live SPA or SEA vehicle yet. Battery data from those
+cars is marked unverified and should not be used for decisions. Even on CMA the per-module
+temperature placement is provisional: sensor-to-module mapping is not yet established.
 </Callout>

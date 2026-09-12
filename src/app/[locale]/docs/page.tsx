@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { docGroups, docs } from "@/lib/docs";
+import { docGroups, docSummary, docTitle, docs } from "@/lib/docs";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -9,8 +10,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "docs" });
-  return { title: "Documentation", description: t("lead") };
+  return pageMeta({ locale, path: "/docs", id: "docs" });
 }
 
 export default async function DocsIndex({ params }: { params: Promise<{ locale: string }> }) {
@@ -38,8 +38,8 @@ export default async function DocsIndex({ params }: { params: Promise<{ locale: 
                       href={`/docs/${d.slug}`}
                       className="group grid gap-1 py-4 transition-colors hover:bg-bg-secondary sm:grid-cols-[1fr_1.6fr] sm:gap-8"
                     >
-                      <span className="text-[15px] font-medium text-text-primary">{d.title}</span>
-                      <span className="text-[14px] text-text-secondary">{d.summary}</span>
+                      <span className="text-[15px] font-medium text-text-primary">{docTitle(d, locale)}</span>
+                      <span className="text-[14px] text-text-secondary">{docSummary(d, locale)}</span>
                     </Link>
                   </li>
                 ))}

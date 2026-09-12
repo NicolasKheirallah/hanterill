@@ -1,0 +1,37 @@
+Versions follow [SemVer](https://semver.org/). Each release is a tag in the repository, and the
+notes for every version are kept with that version, rendered on the [changelog page](/changelog).
+
+## Where things are
+
+- **[Changelog](/changelog)**: the release notes for each version, rendered on this site.
+- **[Releases](https://github.com/NicolasKheirallah/hanterill/releases)**: tagged builds with
+  installers and checksums. The [download page](/download) reads the latest release from GitHub.
+
+## What a version contains
+
+Release notes distinguish the same three axes the [vehicles page](/vehicles) uses:
+
+1. **Verified capability** on tested platforms (CMA today),
+2. **catalogued but unverified** definitions for new platforms (SPA and SEA1 at the time of
+   writing), and
+3. **research** material: captures, provenance documents and open questions.
+
+A decoder that has not been confirmed against hardware ships marked as such, and the runtime
+capability manifest reports the difference. Compatibility work does not silently become support.
+
+## Update policy
+
+Releases are signed and checksummed (`SHA256SUMS`). The application can check for updates in-app;
+this is optional, verified against the published digest, and the Linux package-manager path defers
+to the distribution instead. On downgrade, stored session evidence stays readable: the schema is
+migrated backwards-compatibly and older versions open it read-only rather than rewriting it.
+
+## History
+
+| Version | Date | Headline |
+| --- | --- | --- |
+| 0.1.1 | 2026-09-11 | SPA and SEA1 platform scopes, DTC-clear reference parity, inspection scoring engine v1.0.0, functional-broadcast discovery, offline DID intelligence, subsystem GUI expansion, redaction hardening |
+| 0.1.0 | 2026-09-01 | First tagged release: Tauri desktop client at parity with the retired GUI harness, versioned observation envelopes, durable sessions, live telemetry lifecycle, CI regression gates |
+
+For the current list of binaries and their state, the releases page is the source of truth;
+this site reads it live.

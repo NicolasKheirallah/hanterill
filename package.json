@@ -4,10 +4,12 @@
   "private": true,
   "license": "CC-BY-NC-ND-4.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/prebuild.mjs && next dev",
+    "prebuild": "node scripts/prebuild.mjs",
     "build": "next build",
     "serve": "npx serve out",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
   },
   "engines": {
     "node": ">=24"
@@ -18,12 +20,13 @@
     "@next/mdx": "^16.3.4",
     "@radix-ui/react-popover": "^1.1.23",
     "@radix-ui/react-toggle-group": "^1.1.19",
-    "@radix-ui/react-tooltip": "^1.2.16",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
     "@types/mdx": "^2.0.14",
     "@types/three": "^0.185.4",
+    "@xyflow/react": "^12.11.6",
     "cmdk": "^1.1.1",
+    "html-to-image": "^1.11.13",
     "lucide-react": "^1.41.0",
     "motion": "^13.2.0",
     "next": "16.3.4",
@@ -42,6 +45,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.4",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4",
     "typescript": "^5.9.3"
   }

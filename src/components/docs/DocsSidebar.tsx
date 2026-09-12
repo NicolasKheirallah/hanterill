@@ -1,12 +1,13 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { docGroups, docs } from "@/lib/docs";
+import { docGroups, docTitle, docs } from "@/lib/docs";
 import { cn } from "@/lib/cn";
 
 export function DocsSidebar() {
   const pathname = usePathname();
+  const locale = useLocale();
   const t = useTranslations("docs");
 
   return (
@@ -34,7 +35,7 @@ export function DocsSidebar() {
                           : "border-transparent text-text-secondary hover:border-line-strong hover:text-text-primary",
                       )}
                     >
-                      {d.title}
+                      {docTitle(d, locale)}
                     </Link>
                   </li>
                 );

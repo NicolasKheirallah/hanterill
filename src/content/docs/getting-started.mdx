@@ -14,10 +14,18 @@ You need:
 1. Turn the vehicle to ignition-on. You do not need to start it.
 2. Connect the ENET cable to the OBD-II port and the RJ45 end to your Ethernet interface.
 3. Open Hanterill. It looks for a vehicle on the link and shows a connection state in the title bar.
-4. When the state reads **Connected**, open **Overview**. Hanterill reads vehicle identification and a battery summary.
-5. Open **DTC** to run a scan, or **Battery** for the full high-voltage view.
+4. When the state reads **Connected**, open **Overview**. Hanterill reads vehicle identification and a battery summary in one pass.
+5. Open **Fault codes** to run a scan, **Battery** for the full high-voltage view, or **Report** for the scored inspection.
+6. Sessions you open are archived locally as you go; the Sessions page reopens them later and compares any two.
 
-Everything so far is read-only. Nothing has been written to the vehicle.
+Everything so far is read-only, and in released builds it stays that way: the operations that
+change the vehicle are compiled out. See [Safety](/docs/safety).
+
+## No car attached?
+
+The connection page includes deterministic simulation vehicles (healthy baseline, fault-injected,
+sleep-drain), so every screen can be exercised offline before you plug in. Simulated sessions are
+labelled as simulated throughout.
 
 ## Where data goes
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { useInView, useReducedMotion } from "motion/react";
 import {
@@ -28,18 +28,23 @@ const SERIES_COLORS = ["#cb8e72", "#79a9db", "#e3ad4b"];
  * do not stop the trace.
  */
 export function LiveTelemetryChart() {
-  const t = useTranslations("telemetry");
+  const tl = useTranslations("telemetry");
+  const locale = useLocale();
   const reduce = useReducedMotion();
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const readoutRef = useRef<HTMLDivElement>(null);
   const inView = useInView(wrapRef, { amount: 0.3 });
 
-  const label = useCallback((id: ChannelId) => t(`channelNames.${id}`), [t]);
+  const label = useCallback((id: ChannelId) => tl(`channelNames.${id}`), [tl]);
   const labelRef = useRef(label);
   useEffect(() => {
     labelRef.current = label;
   }, [label]);
+  const localeRef = useRef(locale);
+  useEffect(() => {
+    localeRef.current = locale;
+  }, [locale]);
 
   const [active, setActive] = useState<ChannelId[]>(defaultChannels);
 
@@ -48,6 +53,28 @@ export function LiveTelemetryChart() {
   const hoverX = useRef<number | null>(null);
   const liveRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
+
+  // Theme colors are resolved once per theme change, not per frame: canvas
+  // cannot read CSS custom properties itself.
+  const palette = useRef<{ line: string; lineStrong: string; series: string[] } | null>(null);
+  useEffect(() => {
+    const read = () => {
+      const cs = getComputedStyle(document.documentElement);
+      palette.current = {
+        line: cs.getPropertyValue("--line").trim() || "#2e3036",
+        lineStrong: cs.getPropertyValue("--line-strong").trim() || "#474a52",
+        series: SERIES_VARS.map((v, i) => cs.getPropertyValue(v).trim() || SERIES_COLORS[i]),
+      };
+    };
+    read();
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    mq.addEventListener("change", read);
+    window.addEventListener("hanterill-theme-change", read);
+    return () => {
+      mq.removeEventListener("change", read);
+      window.removeEventListener("hanterill-theme-change", read);
+    };
+  }, []);
 
   // Keyboard point inspection. Moves `hoverX` in ~80 steps across the canvas and
   // mirrors the read-out into an aria-live region. The trace keeps running.
@@ -95,12 +122,14 @@ export function LiveTelemetryChart() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
 
-    const cs = getComputedStyle(document.documentElement);
-    const line = cs.getPropertyValue("--line").trim() || "#2e3036";
-    const lineStrong = cs.getPropertyValue("--line-strong").trim() || "#474a52";
-    const seriesColor = (i: number) =>
-      cs.getPropertyValue(SERIES_VARS[i % SERIES_VARS.length]).trim() ||
-      SERIES_COLORS[i % SERIES_COLORS.length];
+    const pal = palette.current ?? {
+      line: "#2e3036",
+      lineStrong: "#474a52",
+      series: [...SERIES_COLORS],
+    };
+    const line = pal.line;
+    const lineStrong = pal.lineStrong;
+    const seriesColor = (i: number) => pal.series[i % pal.series.length];
     const now = clock.current.t;
     const win = WINDOW_SEC;
     const t0 = Math.max(0, now - win);
@@ -168,7 +197,7 @@ export function LiveTelemetryChart() {
     }
 
     if (readoutRef.current) {
-      const tstamp = new Date(Date.now()).toLocaleTimeString("en-GB");
+      const tstamp = new Date().toLocaleTimeString(localeRef.current, { hour12: false });
       readoutRef.current.textContent = `${tstamp}   ${readout.join("   ")}`;
     }
   }, []);
@@ -210,7 +239,7 @@ export function LiveTelemetryChart() {
           type="multiple"
           value={active}
           onValueChange={(v) => v.length && setActive(v as ChannelId[])}
-          aria-label={t("channels")}
+          aria-label={tl("channels")}
           className="flex flex-wrap gap-1 font-mono text-[12px]"
         >
           {channels.map((c) => (
@@ -228,7 +257,7 @@ export function LiveTelemetryChart() {
                     : "var(--line-strong)",
                 }}
               />
-              {t(`channelNames.${c.id}`)}
+              {tl(`channelNames.${c.id}`)}
             </ToggleGroup.Item>
           ))}
         </ToggleGroup.Root>
@@ -243,10 +272,10 @@ export function LiveTelemetryChart() {
         tabIndex={0}
         className="block h-40 w-full cursor-crosshair outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset sm:h-48"
         role="img"
-        aria-label={`${t("chartAria", {
+        aria-label={`${tl("chartAria", {
           sec: WINDOW_SEC,
-          list: active.map((id) => t(`channelNames.${id}`)).join(", "),
-        })} ${t("chartKeyboardHint")}`}
+          list: active.map((id) => tl(`channelNames.${id}`)).join(", "),
+        })} ${tl("chartKeyboardHint")}`}
         onKeyDown={inspectByKey}
         onBlur={() => {
           hoverX.current = null;
@@ -276,7 +305,7 @@ export function LiveTelemetryChart() {
       />
       <div ref={liveRef} aria-live="polite" className="sr-only" />
       <p className="border-t border-line px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-text-muted">
-        {t("footerNote")}
+        {tl("footerNote")}
       </p>
     </div>
   );

@@ -1,0 +1,76 @@
+import { PlatformSupport } from "@/components/docs/mdx/PlatformSupport";
+import { VehicleSupport } from "@/components/docs/mdx/VehicleSupport";
+
+Hanterill är byggd CMA-först. Compact Modular Architecture under Polestar 2 och de mindre eldrivna Volvo-modellerna är den plattform där batteri-, styrenhets- och rutintäckning skrevs och validerades.
+
+## Plattformskompatibilitet är inte stöd
+
+Två olika saker:
+
+- **Plattformskompatibilitet** betyder att Hanterill kan nå fordonet via DoIP.
+- **Verifierat stöd** betyder att diagnostikfunktionerna är implementerade och kontrollerade mot kända, korrekta referenser.
+
+En bil kan vara nåbar och ändå visa nästan inget användbart. Statusetiketterna på den här sajten speglar alltid verifierat stöd.
+
+## Statusetiketter
+
+| Etikett | Betydelse |
+| --- | --- |
+| Stöds | Verifierad implementation i drift. Batteri, felkoder, styrenhetsidentifiering och realtidsdata testas regelbundet. |
+| Delvis | Vissa funktioner verifierade, andra täcks inte än på detta fordon. |
+| Testas | Implementationen finns men behöver validering. |
+| WIP | Under aktiv utveckling. Ansluter, men avkodningen är ofullständig. |
+| Utreds | Arkitekturen undersöks. Inte användbar för diagnostik. |
+| Planerat | På färdplanen. Ingen implementation ännu. |
+
+## Plattformar
+
+Tabellerna nedan genereras från samma stöddata som resten av sajten använder, så de kan inte avvika från fordonssidan.
+
+### CMA
+
+<PlatformSupport platform="CMA" />
+
+Fullständig funktionsgenomgång för referensfordonet:
+
+<VehicleSupport model="Polestar 2" />
+
+### SPA
+
+<Callout kind="caution" title="Inte verifierad mot levande fordon">
+SPA-batterikatalogen levereras: pakettopologier för 69 kWh- och 78 kWh-EV-paketen och 102-cellers-hybriden, CAN-eran av BECM-registret och dess avkodare, portade från community-research med citerad proveniens. Inget är verifierat mot ett levande fordon ännu, och på första generationens SPA svarar batteriet över CAN-eran, inte dagens DoIP-väg. Lita inte på siffror från dessa bilar.
+</Callout>
+
+<PlatformSupport platform="SPA" />
+
+### SEA
+
+<Callout kind="caution" title="Hårdvarubekräftelse återstår">
+SEA1 är definierad i katalogen: styrenhetsregister, DoIP-adresser för routning, DID-poster och cellmappning för EX30-klassen, med 107S- och 110S-topologier. Ingen definition är hårdvarubekräftad; de bärs bara av syntetiska fixtures. Zeekr och andra delplattformar ärver med flit inte EX30-kartan förrän deras egen mappning är bekräftad.
+</Callout>
+
+<PlatformSupport platform="SEA" />
+
+### SPA2
+
+<Callout kind="note" title="Utreds">
+Under utredning. Gateway- och säkerhetsmodellen skiljer sig; ingen verifierad implementation finns ännu.
+</Callout>
+
+<PlatformSupport platform="SPA2" />
+
+## Pakettopologier
+
+Cellmatrisen tar sin topologi från katalogen, aldrig en hårdkodad konstant:
+
+| Plattform | Topologier | Status |
+| --- | --- | --- |
+| CMA | 108S: 27 moduler om 4 grupper | Verifierad på referensfordonet |
+| SPA | EV 96S (69 kWh), EV 108S (78 kWh), hybrid 102S | Katalogiserad, verifiering mot hårdvara återstår |
+| SEA1 | 107S, 110S | Katalogiserad, verifiering mot hårdvara återstår |
+
+Ett paket rapporteras komplett vid sin egen cellräkning: en 102-cellers hybrid bedöms aldrig mot 108.
+
+## Inte tillverkarnas stöd
+
+Kompatibilitet beskriver vilka fordon Hanterill kan kommunicera med. Det är inget påstående om godkännande. Hanterill är ett oberoende projekt och är inte anslutet till Volvo Cars, Polestar eller Geely.

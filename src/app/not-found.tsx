@@ -44,12 +44,36 @@ export default function GlobalNotFound() {
           No route to that page.
         </h1>
         <p style={{ color: "var(--text-secondary)", maxWidth: "24rem" }}>
-          The address did not resolve.{" "}
-          <Link href="/en" style={{ color: "var(--accent)", textDecoration: "underline" }}>
-            Back to home
-          </Link>
-          .
+          The address did not resolve. The page may have moved with a release.
         </p>
+        <nav
+          aria-label="Useful pages"
+          style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1.25rem", marginTop: "0.5rem" }}
+        >
+          {[
+            ["/en", "Home"],
+            ["/sv", "Hem"],
+            ["/en/docs", "Documentation"],
+            ["/sv/docs", "Dokumentation"],
+            ["/en/vehicles", "Supported vehicles"],
+            ["/en/download", "Download"],
+          ].map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              style={{
+                fontFamily: "var(--font-plex-mono), ui-monospace, monospace",
+                fontSize: 12,
+                letterSpacing: "0.06em",
+                color: "var(--accent)",
+                textDecoration: "underline",
+                textUnderlineOffset: 3,
+              }}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
       </body>
     </html>
   );

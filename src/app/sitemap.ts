@@ -12,9 +12,14 @@ const paths = [
   "/features/battery-health",
   "/features/vehicle-diagnostics",
   "/features/live-data",
+  "/features/system-telemetry",
+  "/features/inspection-reports",
+  "/features/sessions-and-evidence",
   "/features/service-functions",
   "/vehicles",
+  "/network",
   "/download",
+  "/changelog",
   "/screenshots",
   "/docs",
   "/safety",
@@ -27,16 +32,19 @@ const paths = [
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   return paths.flatMap((path) =>
-    routing.locales.map((locale) => ({
-      url: `${site.url}/${locale}${path}`,
-      lastModified: now,
-      changeFrequency: (path === "" ? "weekly" : "monthly") as "weekly" | "monthly",
-      priority: path === "" ? 1 : path.startsWith("/docs/") ? 0.5 : 0.7,
-      alternates: {
-        languages: Object.fromEntries(
-          routing.locales.map((l) => [l, `${site.url}/${l}${path}`]),
-        ),
-      },
-    })),
+    routing.locales.map((locale) => {
+      const url = `${site.url}/${locale}${path}/`;
+      return {
+        url,
+        lastModified: now,
+        changeFrequency: (path === "" ? "weekly" : "monthly") as "weekly" | "monthly",
+        priority: path === "" ? 1 : path.startsWith("/docs/") ? 0.5 : 0.7,
+        alternates: {
+          languages: Object.fromEntries(
+            routing.locales.map((l) => [l, `${site.url}/${l}${path}/`]),
+          ),
+        },
+      };
+    }),
   );
 }

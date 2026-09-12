@@ -40,7 +40,7 @@ convenience only and is not a substitute for it.
 
 When you share Hanterill, keep this notice and credit:
 
-> Hanterill by Nicolas Kheirallah — <https://github.com/nicolaskheirallah/Hanterill>
+> Hanterill by Nicolas Kheirallah — <https://github.com/NicolasKheirallah/hanterill>
 > Licensed under CC BY-NC-ND 4.0.
 
 ## Notes

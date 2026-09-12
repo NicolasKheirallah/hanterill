@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
 import { Container, MoreLink } from "@/components/ui/layout";
@@ -6,15 +7,15 @@ import { Prose } from "@/components/ui/Prose";
 import { LiveTelemetryChart } from "@/components/telemetry/LiveTelemetryChart";
 import { liveChannels } from "@/lib/demo-data";
 
-export const metadata: Metadata = {
-  title: "Live data",
-  description:
-    "Live engineering telemetry: pack voltage and current, battery and inverter temperature, motor torque and 12 V system voltage.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMeta({ locale, path: "/features/live-data", id: "liveData" });
+}
 
 export default async function LiveDataPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("body.liveData");
   const tc = await getTranslations("telemetry.channelNames");
   return (
     <>
@@ -25,20 +26,14 @@ export default async function LiveDataPage({ params }: { params: Promise<{ local
 
         <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <Prose>
-            <h2>Channels</h2>
+            <h2>{t("hChannels")}</h2>
+            <p>{t("pChannels")}</p>
+            <h2>{t("hReading")}</h2>
             <p>
-              Toggle channels above the chart. Any readable data identifier can be added to a live
-              view; common drivetrain and battery channels are grouped by default. Sampling rate is
-              bounded by the ECU and the diagnostic session, not by Hanterill.
+              {t.rich("pReading", { strong: (chunks) => <strong>{chunks}</strong> })}
             </p>
-            <h2>Reading the chart</h2>
-            <p>
-              Hover for a synchronised crosshair. Tap or press <strong>Live</strong> to pause and
-              inspect a point. The trace here is a deterministic simulated drive cycle, not a vehicle
-              reading.
-            </p>
-            <h2>Export</h2>
-            <p>A running view can be written to CSV for offline analysis.</p>
+            <h2>{t("hExport")}</h2>
+            <p>{t("pExport")}</p>
           </Prose>
           <ul className="divide-y divide-line border-y border-line">
             {liveChannels.map((c) => (
@@ -52,7 +47,7 @@ export default async function LiveDataPage({ params }: { params: Promise<{ local
           </ul>
         </div>
         <div className="mt-6">
-          <MoreLink href="/docs/architecture">How the polling loop works</MoreLink>
+          <MoreLink href="/docs/architecture">{t("archDocs")}</MoreLink>
         </div>
       </Container>
     </>

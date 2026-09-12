@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master, main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run build
+      - name: Site gates
+        run: |
+          node scripts/gates/check-sources.mjs
+          node scripts/gates/check-i18n.mjs
+          node scripts/gates/check-a11y.mjs
+          node scripts/gates/check-out.mjs
+          node scripts/gates/check-hygiene.mjs
+          node scripts/gates/check-budget.mjs
+          node scripts/gates/check-explorer.mjs --data
+          node scripts/gates/check-explorer.mjs --css
+          node scripts/gates/check-explorer.mjs --keys
+          node scripts/gates/check-explorer.mjs --out
+          node scripts/gates/check-explorer.mjs --improve
+          node scripts/gates/check-explorer.mjs --improve2
