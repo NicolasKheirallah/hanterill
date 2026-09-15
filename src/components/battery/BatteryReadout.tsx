@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 import { batteryDemo, cellOffsets, cellVoltage } from "@/lib/demo-data";
+import { cellFill } from "@/lib/cell-scale";
 import { SohGauge } from "./SohGauge";
 
 const G = batteryDemo.groupsPerModule;
@@ -11,10 +12,7 @@ const moduleOf = (i: number) => Math.floor(i / G) + 1;
 const groupOf = (i: number) => (i % G) + 1;
 
 function segFill(off: number): string {
-  const a = Math.abs(off);
-  if (a <= 2) return "var(--line-strong)";
-  if (a <= 4) return "color-mix(in srgb, var(--accent) 55%, var(--line))";
-  return "color-mix(in srgb, var(--status-warning) 60%, var(--line))";
+  return cellFill(off);
 }
 
 /**

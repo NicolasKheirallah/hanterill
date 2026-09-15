@@ -33,10 +33,13 @@ export function Hero() {
       <Container className="py-lg pt-xl lg:py-2xl lg:pt-2xl">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-14">
           <div className="hero-seq">
-            <h1 className="max-w-[13ch] text-[2.5rem] leading-[1.05] tracking-[-0.026em] sm:text-[2.75rem] lg:max-w-[24ch] lg:text-[2.75rem]">
+            {/* The site's largest headline - the home page should not have the
+                smallest h1 on the site, which it did at 2.75rem. Same anchor
+                as every other page. */}
+            <h1 className="max-w-[15ch] text-[length:var(--text-display)] leading-[1.03] lg:max-w-[18ch]">
               {t("title")}
             </h1>
-            <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-text-secondary">
+            <p className="mt-6 max-w-[46ch] text-[length:var(--text-prose)] leading-relaxed text-text-secondary">
               {t("lead")}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">

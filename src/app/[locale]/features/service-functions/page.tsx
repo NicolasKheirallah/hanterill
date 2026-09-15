@@ -4,8 +4,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ShieldAlert } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Section, MoreLink } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
+import { FeatureShots } from "@/components/features/FeatureShots";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -21,7 +22,9 @@ export default async function ServiceFunctionsPage({ params }: { params: Promise
     <>
       <LocalizedPageHeader id="serviceFunctions" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
+        <FeatureShots href="/features/service-functions" />
+
         <div className="mb-10 flex items-start gap-3 border-l-2 border-status-warning py-1 pl-4">
           <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-status-warning" strokeWidth={1.75} />
           <p className="text-[14px] leading-relaxed text-text-secondary">
@@ -73,7 +76,7 @@ export default async function ServiceFunctionsPage({ params }: { params: Promise
         <div className="mt-4">
           <MoreLink href="/safety">{t("safetyDocs")}</MoreLink>
         </div>
-      </Container>
+      </Section>
     </>
   );
 }

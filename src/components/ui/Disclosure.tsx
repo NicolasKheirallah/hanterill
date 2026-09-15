@@ -1,7 +1,7 @@
 "use client";
-
 import { useId, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { Plus } from "lucide-react";
 import { DUR, EASE } from "@/lib/motion";
 import { cn } from "@/lib/cn";
@@ -20,7 +20,7 @@ export function Disclosure({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const id = useId();
 
   return (

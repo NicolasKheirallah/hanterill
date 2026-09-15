@@ -36,7 +36,7 @@ function Entry({
       <div className="border-t border-line py-12 lg:py-16">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-[38ch]">
-            <h3 className="font-[family-name:var(--font-display)] text-[1.6rem] font-medium leading-tight tracking-[-0.02em] text-text-primary">
+            <h3 className="text-[length:var(--text-title)] leading-tight text-text-primary">
               {title}
             </h3>
             <p className="mt-3 text-[15px] leading-relaxed text-text-secondary">{body}</p>
@@ -51,7 +51,7 @@ function Entry({
   return (
     <div className="grid gap-6 border-t border-line py-12 lg:grid-cols-12 lg:gap-10 lg:py-16">
       <div className={cn("lg:col-span-4", reverse && "lg:order-2")}>
-        <h3 className="font-[family-name:var(--font-display)] text-[1.6rem] font-medium leading-tight tracking-[-0.02em] text-text-primary">
+        <h3 className="text-[length:var(--text-title)] leading-tight text-text-primary">
           {title}
         </h3>
         <p className="mt-3 max-w-[42ch] text-[15px] leading-relaxed text-text-secondary">{body}</p>
@@ -182,7 +182,7 @@ function ReportScore() {
   );
 }
 
-function SystemsList() {
+export function SystemsList() {
   const t = useTranslations("features");
   const rows = t.raw("systemRows") as string[][];
   return (
@@ -190,8 +190,8 @@ function SystemsList() {
       <ul className="divide-y divide-line">
         {rows.map(([sys, sub]) => (
           <li key={sys} className="grid gap-0.5 px-5 py-2.5 sm:grid-cols-[10rem_1fr] sm:gap-4">
-            <span className="text-[14px] text-text-primary">{sys}</span>
-            <span className="font-mono text-[12px] text-text-secondary">{sub}</span>
+            <span className="text-[length:var(--text-body)] text-text-primary">{sys}</span>
+            <span className="font-mono text-[length:var(--text-meta)] text-text-secondary">{sub}</span>
           </li>
         ))}
       </ul>
@@ -199,7 +199,7 @@ function SystemsList() {
   );
 }
 
-function ShellCard() {
+export function ShellCard() {
   const t = useTranslations("features");
   const items = t.raw("paletteItems") as string[];
   return (
@@ -293,20 +293,25 @@ export function FeatureBlocks() {
             caption={t("totalDtcs")}
             visual={<EvidenceCompare />}
           />
-          <Entry
-            layout="stack"
-            title={t("systemsTitle")}
-            body={t("systemsBody")}
-            cta={<MoreLink href="/features/system-telemetry">{t("systemsCta")}</MoreLink>}
-            caption={t("systemsCaption")}
-            visual={<SystemsList />}
-          />
-          <Entry
-            title={t("shellTitle")}
-            body={t("shellBody")}
-            caption={t("shellCaption")}
-            visual={<ShellCard />}
-          />
+          {/* Service routines, system telemetry and the shell used to run here
+              too. Three more instruments made this one section 5,100px - 8.3
+              phone screens - and each of them already has its own feature page
+              a click away. `design.md` principle 6: show the common path first,
+              advanced options one level deeper. The hub at /features lists all
+              seven. */}
+          <div className="border-t border-line pt-8">
+            <ul className="flex flex-wrap gap-x-8 gap-y-3">
+              <li>
+                <MoreLink href="/features/service-functions">{t("serviceCta")}</MoreLink>
+              </li>
+              <li>
+                <MoreLink href="/features/system-telemetry">{t("systemsCta")}</MoreLink>
+              </li>
+              <li>
+                <MoreLink href="/features">{t("allFeatures")}</MoreLink>
+              </li>
+            </ul>
+          </div>
         </div>
       </Container>
     </section>

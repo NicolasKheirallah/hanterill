@@ -5,18 +5,30 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { docGroups, docTitle, docs } from "@/lib/docs";
 import { cn } from "@/lib/cn";
 
-export function DocsSidebar() {
-  const pathname = usePathname();
+/**
+ * The docs navigation. It used to compare `pathname === href`, which never
+ * matched: the site sets `trailingSlash: true`, so next-intl reports
+ * `/en/docs/cli/` while the link is `/docs/cli`. No page in the docs was ever
+ * marked current. Header.tsx had the correct comparison all along.
+ *
+ * Rendered twice: as the sticky sidebar from `lg`, and as a disclosure above
+ * the article below it - there was previously no way to move between the 19
+ * docs on a phone except the prev/next pair at the foot of each page.
+ */
+export function DocsSidebar({ className }: { className?: string }) {
+  const raw = usePathname();
+  const pathname = raw.endsWith("/") && raw !== "/" ? raw.slice(0, -1) : raw;
   const locale = useLocale();
   const t = useTranslations("docs");
 
+  /** The links are `<h2>`s before the article's `<h1>`; a plain list is correct. */
   return (
-    <nav aria-label={t("eyebrow")} className="text-[13px]">
+    <nav aria-label={t("eyebrow")} className={cn("text-[length:var(--text-ui)]", className)}>
       {docGroups.map((group) => (
         <div key={group} className="mb-6">
-          <h2 className="mb-2 font-mono text-[11px] text-text-muted">
+          <p className="mb-2 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
             {t(`groups.${group}`)}
-          </h2>
+          </p>
           <ul className="border-l border-line">
             {docs
               .filter((d) => d.group === group)

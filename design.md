@@ -100,7 +100,29 @@ scene background is the dark-panel anchor `#12151a`.
   Carries every number, every protocol identifier (DoIP, UDS, ISO 13400/14229,
   DIDs, DTC codes), the nav link row, instrument channel legends, status
   notices, and the footer meta row. IBM drafting heritage, not a trend pick.
+- **Type scale**: six steps plus the display anchor, all in `globals.css` and
+  mirrored to Tailwind. Every size on the site resolves to one of these.
+
+  | Token | Value | Used for |
+  | --- | --- | --- |
+  | `--text-micro` | 11px | mono channel legends, tick labels, table meta |
+  | `--text-meta` | 12px | mono row meta, status notices |
+  | `--text-ui` | 13px | dense instrument chrome |
+  | `--text-body` | 15px | UI body copy, list rows, buttons |
+  | `--text-prose` | 17px | long-form prose and leads |
+  | `--text-title` | 22px | minor section headings |
+
 - **Type scale anchor**: `--text-display = clamp(2.5rem, 4.5vw + 1rem, 4.25rem)`.
+  **Every page `h1` uses it, without exception** - home, interior pages, the
+  docs index and articles, and `/network`. Before this the home page h1 capped
+  at 2.75rem, interior pages reached 3.75rem, docs sat at 2.25rem and
+  `/network` at 1.6rem: four treatments, a 2.4x spread, and `--text-display`
+  used nowhere at all. A page that wants a smaller title does not get one; it
+  gets a shorter title.
+- **Tracking is owned by `globals.css`** for `h1`-`h4` (`-0.022em` / `-0.019em`
+  / `-0.017em`). Components do not set their own; a local override is a bug.
+  `--track-label` (`0.12em`) is the one value for every uppercase mono label.
+  11px is the floor: nothing on the site sets type below it.
 
 ## Spacing
 
@@ -118,6 +140,11 @@ Section rhythm: `--space-3xl` block padding between major sections on desktop,
 air, not more rules. `--measure: 68ch` for prose columns. No raw rem section
 paddings; use the named tokens or the Tailwind utilities that map to them.
 
+The `<Section>` primitive in `src/components/ui/layout.tsx` owns that rhythm and
+wraps a `Container`. Every page body uses it. It existed unused while twelve
+pages retyped the padding on a raw `Container`, and two rhythms had already
+grown - marketing at 7rem, every content and feature page at 4.5rem, 36% apart.
+
 ## Motion
 
 `MOTION_INTENSITY 5` - motion communicates running state only, nothing decorative.
@@ -133,8 +160,25 @@ paddings; use the named tokens or the Tailwind utilities that map to them.
   Fade + 14px rise. No JS scroll observer, ever. No `window.addEventListener("scroll")`.
 - One orchestrated entrance: `.hero-seq` load stagger (70ms step, <= 900ms total),
   skipped entirely under reduced motion.
-- Reduced-motion fallback: all animation / transition clamped to ~0ms; spatial
-  motion never carries information on its own.
+- Reduced-motion fallback: **two tiers, not one blanket kill.** Colour and
+  opacity transitions survive, capped at 200ms - they aid comprehension and
+  carry no vestibular risk. Every spatial transition (`transform`, `height`,
+  `width`, `top`, `left`) is removed by narrowing `transition-property` to an
+  allowlist; loops collapse to their end state. Global CSS is implemented in
+  `globals.css`; anything JS-driven (a canvas repaint, a `setInterval`) must
+  check `useReducedMotionSafe()` from `src/lib/use-motion-prefs.ts` itself,
+  because no CSS rule can reach it. `LiveTelemetryChart` used to keep stepping
+  its window every 2s under reduced motion for exactly that reason.
+- **Anything the clamp removes that carried meaning needs a static
+  equivalent.** A match marker that only exists as motion is not a match
+  marker; `[data-flash]` is the worked example.
+- **Anything that starts moving on its own and runs past five seconds needs a
+  pause control** (WCAG 2.2.2). The scan simulator and the telemetry chart each
+  carry one, in the panel header, using the `pause` / `resume` / `*Aria` keys
+  that already existed in both catalogs.
+- `prefers-reduced-transparency` solidifies the glass surfaces rather than
+  removing them; `prefers-contrast: more` lifts the muted text step and firms
+  the hairlines; `forced-colors` hands the palette to the OS.
 
 ## Microinteractions
 
@@ -213,10 +257,22 @@ register first.
 - **Bezel (`.bezel`).** Instrument figures and interactive panels only. One
   corner-notch treatment, `--line-strong` hairline. Prose and layout containers
   do not get a bezel.
-- **Glass.** One element: the scrolled nav wash (`backdrop-filter: blur(8px)`
-  behind an 88% panel fill). Everything else is solid.
+- **Glass.** Two sanctioned surfaces: the scrolled nav wash
+  (`backdrop-filter: blur(8px)` behind an 88% panel fill) and the scrim behind a
+  modal (the ⌘K palette, the screenshot lightbox). A modal scrim is functional,
+  not decorative - it is what separates a blocking task from the page - and both
+  carry `data-material` so `prefers-reduced-transparency` can solidify them.
+  Nothing else is translucent. The network explorer alone had five, which is why
+  "scrim" is now spelled out as its own category rather than an exception.
 - **Shadow.** One elevation: the docs search popover. Dark mode carries
-  elevation by lighter surfaces; nothing else casts a shadow.
+  elevation by lighter surfaces; nothing else casts a shadow. The network
+  explorer's private `--shadow` and its two accent glow rings were removed;
+  selection there is a border hue and a surface step, like everywhere else.
+- **Accent is not a data colour.** It never fills a category, never carries a
+  heat value, and never marks a node that is not selected. The network
+  explorer's drive-domain nodes were a solid bronze fill - so "drivetrain
+  module" and "selected module" looked identical - and its documented-pin dot
+  was bronze on all ~40 nodes.
 - **Glow.** None, by rule.
 - **Radius.** Five steps, 1-6px (`--radius-*`). Primary CTA is a 2px rectangle;
   pills are banned except genuine status dots (1.5px, functional).
@@ -229,12 +285,18 @@ register first.
   channel legends, status notices. Sentence-carrying labels ("Work in progress",
   "On this page") are sentence-case mono. No numeral prefixes outside the
   genuinely ordinal session walkthrough.
-- **Loops.** At most two looping signals per view, both functional status: the
+- **Loops.** At most two looping signals per view, all functional status: the
   ScanSimulator stage marker and the SessionSimulator live-stage marker, plus
-  one `motion-safe` shimmer on the 3D loading placeholder. Every loop
-  communicates a running state, stops when the state ends, and collapses to a
-  static dot under reduced motion.
-- **Honest data.** Every instrument runs on labelled sample data
-  ("Representative interface with sample values. Not a live vehicle reading.");
-  the download page's failed GitHub fetch names the cause and the next action;
-  no invented metrics, feeds, or testimonials anywhere.
+  one `motion-safe` shimmer on the 3D loading placeholder. The connection
+  diagram's packet is a single compositor transform on `alternate`, and the
+  hero mini-chart's live dot is a CSS animation rather than an SVG `<animate>`
+  (SMIL is invisible to the reduced-motion contract and broke hydration here).
+  Every loop communicates a running state, stops when the state ends, and
+  collapses to a static dot under reduced motion.
+- **Honest data.** Every instrument runs on labelled sample data. **One
+  formula**: "[what it is] · sample data, not a vehicle reading", and the
+  negation is never dropped. The long form is `common.representative`; the
+  instrument footers are `telemetry.footerNote`, `scan.footerNote` and
+  `features.reportsCaption`. Nine phrasings had grown, three without the
+  negation. The download page's failed GitHub fetch names the cause and the
+  next action; no invented metrics, feeds, or testimonials anywhere.

@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container } from "@/components/ui/layout";
+import { Section } from "@/components/ui/layout";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -28,7 +28,7 @@ export default async function FeaturesIndex({ params }: { params: Promise<{ loca
   return (
     <>
       <LocalizedPageHeader id="features" />
-      <Container className="py-xl lg:py-2xl">
+      <Section>
         <ul className="grid gap-px overflow-hidden rounded-sm border border-line bg-line sm:grid-cols-2">
           {hubEntries.map((f) => (
             <li key={f.href} className="bg-surface">
@@ -45,7 +45,7 @@ export default async function FeaturesIndex({ params }: { params: Promise<{ loca
             </li>
           ))}
         </ul>
-      </Container>
+      </Section>
     </>
   );
 }

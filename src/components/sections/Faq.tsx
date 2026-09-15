@@ -17,22 +17,39 @@ export function FaqJsonLd({ items }: { items: QA[] }) {
   );
 }
 
-export function Faq({ items, title }: { items: QA[]; title: string }) {
+/**
+ * One FAQPage per document. The home page used to emit the schema twice - once
+ * here and once from its own `<script>` - which is a duplicate top-level
+ * entity and trips the rich-results validator. `/vehicles` renders a second
+ * `<Faq>` with the compatibility questions, so the JSON-LD is opt-in per
+ * caller rather than automatic.
+ */
+export function Faq({
+  items,
+  title,
+  jsonLd = true,
+}: {
+  items: QA[];
+  title: string;
+  jsonLd?: boolean;
+}) {
   return (
     <section className="border-b border-line py-2xl lg:py-3xl">
       <Container>
-        <h2 className="text-[2rem] leading-[1.1] tracking-[-0.02em] sm:text-[2.5rem]">{title}</h2>
+        <h2 className="text-[clamp(1.875rem,2.2vw+1rem,2.5rem)] leading-[1.1]">{title}</h2>
         <dl className="mt-8 divide-y divide-line border-y border-line">
           {items.map((it) => (
             <div key={it.q} className="grid items-start gap-2 py-6 lg:grid-cols-[1fr_1.4fr] lg:gap-10">
               <dt className="font-[family-name:var(--font-display)] text-[1.1875rem] leading-snug text-text-primary">
                 {it.q}
               </dt>
-              <dd className="text-[15px] leading-relaxed text-text-secondary">{it.a}</dd>
+              <dd className="text-[length:var(--text-body)] leading-relaxed text-text-secondary">
+                {it.a}
+              </dd>
             </div>
           ))}
         </dl>
-        <FaqJsonLd items={items} />
+        {jsonLd ? <FaqJsonLd items={items} /> : null}
       </Container>
     </section>
   );

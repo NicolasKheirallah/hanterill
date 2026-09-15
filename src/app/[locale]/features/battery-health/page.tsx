@@ -3,8 +3,9 @@ import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Section, MoreLink } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
+import { FeatureShots } from "@/components/features/FeatureShots";
 import { BatteryMatrixSection } from "@/components/battery/BatteryMatrixSection";
 import { BatteryHealthPanel } from "@/components/battery/BatteryHealthPanel";
 import { BatteryPackView } from "@/components/battery/BatteryPackView";
@@ -23,7 +24,9 @@ export default async function BatteryHealthPage({ params }: { params: Promise<{ 
     <ModuleSelectionProvider>
       <LocalizedPageHeader id="batteryHealth" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
+        <FeatureShots href="/features/battery-health" />
+
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <BatteryHealthPanel />
           <Prose>
@@ -53,7 +56,7 @@ export default async function BatteryHealthPage({ params }: { params: Promise<{ 
         <div className="mt-8">
           <MoreLink href="/docs/battery-diagnostics">{t("moreSoh")}</MoreLink>
         </div>
-      </Container>
+      </Section>
 
       <BatteryMatrixSection />
     </ModuleSelectionProvider>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Section, MoreLink } from "@/components/ui/layout";
 import { PlatformExplorer, StatusLegend } from "@/components/vehicles/PlatformExplorer";
 import { ServiceModes } from "@/components/vehicles/ServiceModes";
 import { Faq, type QA } from "@/components/sections/Faq";
@@ -22,7 +22,7 @@ export default async function VehiclesPage({ params }: { params: Promise<{ local
     <>
       <LocalizedPageHeader id="vehicles" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
         <PlatformExplorer />
 
         <div className="mt-2xl border-t border-line-strong pt-10">
@@ -54,9 +54,9 @@ export default async function VehiclesPage({ params }: { params: Promise<{ local
           </div>
           <p className="text-[13px] leading-relaxed text-text-muted lg:pt-6">{tp("disclaimer")}</p>
         </div>
-      </Container>
+      </Section>
 
-      <Faq items={compatFaq} title={tf("compatTitle")} />
+      <Faq items={compatFaq} title={tf("compatTitle")} jsonLd={false} />
     </>
   );
 }

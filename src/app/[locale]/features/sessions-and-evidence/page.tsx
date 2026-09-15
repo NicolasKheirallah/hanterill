@@ -3,8 +3,9 @@ import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Section, MoreLink } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
+import { FeatureShots } from "@/components/features/FeatureShots";
 import { evidenceDemo } from "@/lib/demo-data";
 import { cn } from "@/lib/cn";
 
@@ -41,7 +42,9 @@ export default async function SessionsEvidencePage({ params }: { params: Promise
     <>
       <LocalizedPageHeader id="sessionsEvidence" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
+        <FeatureShots href="/features/sessions-and-evidence" />
+
         <div className="grid items-start gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <Prose>
             <h2>{t("hArchive")}</h2>
@@ -80,7 +83,7 @@ export default async function SessionsEvidencePage({ params }: { params: Promise
             })}
           </p>
         </div>
-      </Container>
+      </Section>
     </>
   );
 }

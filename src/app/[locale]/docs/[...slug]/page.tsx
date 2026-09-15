@@ -27,7 +27,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     path: `/docs/${doc.slug}`,
     title: docTitle(doc, locale),
     description: docSummary(doc, locale),
-    absoluteTitle: true,
   });
 }
 
@@ -68,7 +67,7 @@ export default async function DocPage({ params }: Params) {
       />
       <article>
         <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">{t(`groups.${doc.group}`)}</p>
-        <h1 className="mt-3 text-3xl font-medium tracking-tight sm:text-4xl">{docTitle(doc, locale)}</h1>
+        <h1 className="mt-3 max-w-[20ch] text-[length:var(--text-display)] leading-[1.02]">{docTitle(doc, locale)}</h1>
         <p className="mt-3 text-lg text-text-secondary">{docSummary(doc, locale)}</p>
 
         {locale === "sv" && !translated ? (

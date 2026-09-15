@@ -1,9 +1,9 @@
 "use client";
-
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useInView } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { Link } from "@/i18n/navigation";
 import { batteryDemo } from "@/lib/demo-data";
 import { DUR, EASE } from "@/lib/motion";
@@ -29,7 +29,7 @@ export function BatteryHealthPanel() {
   const t = useTranslations("battery");
   const tc = useTranslations("common");
   const [level, setLevel] = useState<Level>("simple");
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
 
   return (
     <div className="bezel bg-surface">
@@ -66,13 +66,13 @@ export function BatteryHealthPanel() {
           </dl>
         </div>
 
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={level}
-            initial={reduce ? false : { opacity: 0, y: 6 }}
+            initial={reduce ? false : { opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
-            transition={{ duration: DUR.base, ease: EASE.standard }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: DUR.fast, ease: EASE.standard }}
           >
             {level === "detailed" ? (
               <div className="mt-4 border-t border-line pt-3">
@@ -123,7 +123,7 @@ export function BatteryHealthPanel() {
 function CapacityBar({ label, est, nominal }: { label: string; est: number; nominal: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.8 });
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const frac = clamp01(est / nominal);
   return (
     <div ref={ref} className="mt-4 border-t border-line pt-3 font-mono text-[12px]">

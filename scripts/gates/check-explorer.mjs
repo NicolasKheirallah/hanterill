@@ -176,7 +176,18 @@ if (mode === "--data") {
   expect(/Press Enter to open details/.test(graph) && /drops\. Press Enter/.test(graph) && /Press Enter to collapse or expand/.test(graph), "labels describe the action");
 
   // reduced motion gates the JS-driven camera moves
-  expect(/const reduce = useReducedMotion\(\)/.test(exp), "explorer reads reduced motion");
+  // The hook must be the hydration-safe wrapper: the raw one resolves during
+// render, is null on the server and already true on the client's first pass,
+// and desyncs SSR. Assert the behaviour, not the bare identifier.
+expect(
+  /const reduce = useReducedMotionSafe\(\)/.test(exp) &&
+    /from ['"]@\/lib\/use-motion-prefs['"]/.test(exp),
+  "explorer reads reduced motion (hydration-safe hook)",
+);
+expect(
+  !/import\s*\{[^}]*\buseReducedMotion\b[^}]*\}\s*from\s*['"]motion\/react['"]/.test(exp),
+  "explorer does not use the raw reduced-motion hook",
+);
   expect(/duration: 600 \* motion/.test(exp) && /duration: 500 \* motion/.test(exp), "fitView durations scale with reduced motion");
   expect(/behavior: reduce \? 'auto' : 'smooth'/.test(drawer), "drawer scroll respects reduced motion");
 

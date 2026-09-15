@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { Field, Metric } from "./PanelChrome";
 import { MiniChart } from "./MiniChart";
 import { StatusMarker } from "@/components/ui/StatusBadge";
+import { cellFill } from "@/lib/cell-scale";
 import {
   batteryDemo,
   cellOffsets,
@@ -68,27 +69,28 @@ export function BatteryView() {
         <Field label={t("packTemp")} value={`${batteryDemo.tempMin.toFixed(1)} ${tr("rangeTo")} ${batteryDemo.tempMax.toFixed(1)} °C`} />
       </div>
       <div>
-        <div className="mb-1.5 font-mono text-[10.5px] uppercase tracking-wider text-text-muted">
+        <div className="mb-1.5 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
           {t("potentialsCaption")}
         </div>
-        <div className="grid grid-cols-[repeat(27,1fr)] gap-[2px]">
+        {/* A miniature of the 108-potential pack. It is a picture of the
+            battery, not a control - the interactive version lives on the
+            battery section - so it is one `role="img"` with a summary label
+            rather than 108 childless spans whose only value carrier was a
+            `title` attribute. */}
+        <div
+          role="img"
+          aria-label={t("potentialsAria", {
+            cells: cellOffsets.length,
+            spread: Math.max(...cellOffsets) - Math.min(...cellOffsets),
+          })}
+          className="grid grid-cols-[repeat(27,1fr)] gap-[2px]"
+        >
           {cellOffsets.map((off, i) => (
             <span
               key={i}
-              title={t("moduleGroupTitle", {
-                module: Math.floor(i / 4) + 1,
-                group: (i % 4) + 1,
-                value: `${off >= 0 ? "+" : ""}${off}`,
-              })}
+              aria-hidden
               className="aspect-square"
-              style={{
-                background:
-                  Math.abs(off) <= 2
-                    ? "var(--line)"
-                    : Math.abs(off) <= 4
-                      ? "color-mix(in srgb, var(--accent) 45%, var(--line))"
-                      : "color-mix(in srgb, var(--status-warning) 60%, var(--line))",
-              }}
+              style={{ background: cellFill(off) }}
             />
           ))}
         </div>

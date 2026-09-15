@@ -14,13 +14,27 @@ const read = (p) => readFile(join(ROOT, p), "utf8");
 
 const gallery = await read("src/components/screenshots/ScreenshotGallery.tsx");
 expect(/role="dialog"/.test(gallery) && /aria-modal/.test(gallery), "gallery dialog semantics", "missing");
-expect(/Tab/.test(gallery) && /trap|querySelectorAll/.test(gallery), "gallery focus trap", "no trap");
+expect(
+  /e\.key !== "Tab"|e\.key === "Tab"/.test(gallery) &&
+    /querySelectorAll/.test(gallery) &&
+    /tabIndex >= 0/.test(gallery),
+  "gallery focus trap",
+  "no trap, or not filtering to focusable nodes",
+);
 expect(/useTranslations\(/.test(gallery), "gallery localized", "hardcoded strings");
 
 const search = await read("src/components/command/SiteCommand.tsx");
 expect(/role="dialog"/.test(search) && /aria-modal/.test(search), "command palette dialog semantics", "missing");
 expect(/restore|prevActive|lastFocus/.test(search), "command palette focus restore", "no restore");
-expect(/e.key === "Tab"/.test(search), "command palette focus trap", "no trap");
+// The trap must handle Tab in both directions AND filter to nodes that can
+// actually take focus. The first version compared `document.activeElement`
+// against a cmdk `[role="option"]` div with no tabindex, so forward Tab walked
+// out of the dialog - the assertion passed while the trap was broken.
+expect(
+  /e\.key !== "Tab"|e\.key === "Tab"/.test(search) && /tabIndex >= 0/.test(search),
+  "command palette focus trap",
+  "no trap, or not filtering to focusable nodes",
+);
 
 const panel = await read("src/components/product/PanelChrome.tsx");
 expect(/role="tabpanel"/.test(panel) && /aria-controls/.test(panel), "panel tabs complete", "missing tabpanel/aria-controls");
@@ -28,6 +42,53 @@ expect(/ArrowDown|ArrowUp|ArrowRight|ArrowLeft/.test(panel), "panel tab arrow ke
 
 const toc = await read("src/components/docs/TableOfContents.tsx");
 expect(/aria-current/.test(toc), "toc aria-current", "missing");
+
+// A bezel clips its own box with `clip-path`, which also clips an outline or a
+// box-shadow drawn outside the polygon. Every focusable bezel therefore needs
+// the ring drawn inside the clip.
+const css = await read("src/app/globals.css");
+expect(
+  /\.bezel:focus-visible/.test(css) && /has\(:focus-visible\)/.test(css),
+  "focus ring survives a bezel's clip-path",
+  "no in-clip focus ring for .bezel",
+);
+
+// WCAG 2.2.2: anything that starts moving on its own and runs past five
+// seconds needs a pause control.
+const scanSrc = await read("src/components/features/ScanSimulator.tsx");
+const chartSrc = await read("src/components/telemetry/LiveTelemetryChart.tsx");
+expect(/paused/.test(scanSrc) && /pauseScanAria/.test(scanSrc), "scan simulator is pausable", "no pause control");
+expect(/paused/.test(chartSrc) && /pauseAria/.test(chartSrc), "telemetry chart is pausable", "no pause control");
+
+// Reduced motion must be resolved after mount, or the server and the client's
+// first render disagree and React throws a hydration mismatch.
+const motionPrefs = await read("src/lib/use-motion-prefs.ts");
+expect(
+  /useSyncExternalStore/.test(motionPrefs),
+  "reduced-motion hook is hydration-safe",
+  "resolves during render",
+);
+// The bare hook is allowed in exactly one file - the wrapper that makes it
+// hydration-safe. Anywhere else it resolves during render and desyncs SSR.
+const rawHook = [];
+for (const f of [
+  "src/components/product/MiniChart.tsx",
+  "src/components/features/ScanSimulator.tsx",
+  "src/components/battery/BatteryMatrixSection.tsx",
+  "src/components/telemetry/LiveTelemetryChart.tsx",
+  "src/components/screenshots/ScreenshotGallery.tsx",
+]) {
+  const src = await read(f);
+  if (/import\s*\{[^}]*\buseReducedMotion\b[^}]*\}\s*from\s*"motion\/react"/.test(src)) {
+    rawHook.push(f);
+  }
+}
+expect(rawHook.length === 0, "no component uses the raw reduced-motion hook", rawHook.join(", "));
+
+// The docs sidebar must mark the current page with trailing slashes in play.
+const sidebar = await read("src/components/docs/DocsSidebar.tsx");
+expect(/aria-current/.test(sidebar), "docs sidebar aria-current", "missing");
+expect(/endsWith\("\/"\)/.test(sidebar), "docs sidebar normalises the trailing slash", "raw comparison");
 
 const packView = await read("src/components/battery/BatteryPackView.tsx");
 expect(/role="status"/.test(packView), "3d loading placeholder announced", "missing role=status");

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container } from "@/components/ui/layout";
+import { Section } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
 import { SafetySection } from "@/components/sections/SafetySection";
 
@@ -19,7 +19,7 @@ export default async function SafetyPage({ params }: { params: Promise<{ locale:
     <>
       <LocalizedPageHeader id="safety" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
         <Prose>
           <h2>{t("hReadOnly")}</h2>
           <p>{t("pReadOnly")}</p>
@@ -36,7 +36,7 @@ export default async function SafetyPage({ params }: { params: Promise<{ locale:
           <h2>{t("hUnverified")}</h2>
           <p>{t("pUnverified")}</p>
         </Prose>
-      </Container>
+      </Section>
 
       <SafetySection />
     </>

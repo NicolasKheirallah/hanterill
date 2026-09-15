@@ -3,6 +3,10 @@ import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { Code } from "@/components/ui/Code";
 import { Callout, SpecList } from "@/components/docs/DocData";
+import { ProtocolStack } from "@/components/architecture/ProtocolStack";
+import { EcuTopology } from "@/components/architecture/EcuTopology";
+import { Figure } from "@/components/ui/layout";
+import { ShellCard } from "@/components/features/FeatureBlocks";
 
 function Heading({ tag, id, children }: { tag: "h2" | "h3"; id?: string; children?: ReactNode }) {
   const Tag = tag;
@@ -31,6 +35,15 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     Callout,
     SpecList,
+    // The two architecture instruments live in the docs, not on the home page.
+    // They document the same seven layers and the same 49-unit registry that
+    // `/docs/architecture` and `/docs/ecu-reference` already cover, and the
+    // home page was carrying them 4,300px into a page where the argument had
+    // already been made.
+    ProtocolStack,
+    EcuTopology,
+    Figure,
+    ShellCard,
     h2: ({ id, children }) => (
       <Heading tag="h2" id={typeof id === "string" ? id : undefined}>
         {children}

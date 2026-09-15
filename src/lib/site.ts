@@ -83,6 +83,7 @@ export const footerNav = [
     heading: "developers",
     links: [
       { key: "documentation", href: "/docs" },
+      { key: "troubleshooting", href: "/troubleshooting" },
       { key: "architecture", href: "/docs/architecture" },
       { key: "network", href: "/network" },
       { key: "changelog", href: "/changelog" },

@@ -3,9 +3,11 @@ import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Section, MoreLink } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
 import { DownloadPanel } from "@/components/download/DownloadPanel";
+import { Figure } from "@/components/ui/layout";
+import { RecommendedAdapters } from "@/components/download/RecommendedAdapters";
 import { getLatestRelease } from "@/lib/github";
 import { site } from "@/lib/site";
 
@@ -30,7 +32,7 @@ export default async function DownloadPage({ params }: { params: Promise<{ local
     <>
       <LocalizedPageHeader id="download" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
         <div className="grid items-start gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
           <Suspense
             fallback={
@@ -60,6 +62,19 @@ export default async function DownloadPage({ params }: { params: Promise<{ local
           </MoreLink>
         </div>
 
+        {/* The adapters question is asked before the download, not after it. */}
+        <div className="mt-2xl grid items-start gap-10 border-t border-line pt-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
+          <Prose>
+            <h2>{t("hHardware")}</h2>
+            <p>{t("pHardware")}</p>
+            <h2>{t("hBudget")}</h2>
+            <p>{t("pBudget")}</p>
+          </Prose>
+          <Figure caption={td("adaptersCaption")}>
+            <RecommendedAdapters />
+          </Figure>
+        </div>
+
         <div className="mt-2xl max-w-[36rem] border-t border-line-strong pt-6">
           <h2 className="font-[family-name:var(--font-display)] text-[1.375rem] text-text-primary">
             {td("licenseHeading")}
@@ -73,7 +88,7 @@ export default async function DownloadPage({ params }: { params: Promise<{ local
             <MoreLink href="/docs/license">{td("readLicense")}</MoreLink>
           </div>
         </div>
-      </Container>
+      </Section>
     </>
   );
 }

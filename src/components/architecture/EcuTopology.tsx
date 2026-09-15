@@ -1,8 +1,8 @@
 "use client";
-
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { Link } from "@/i18n/navigation";
 import { Container, SectionHeading } from "@/components/ui/layout";
 import { StatusMarker } from "@/components/ui/StatusBadge";
@@ -13,7 +13,7 @@ import { cn } from "@/lib/cn";
 const domains = ["gateway", "energy", "chassis", "cabin"] as const;
 
 export function EcuTopology() {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const t = useTranslations("ecuTopology");
   const [selected, setSelected] = useState<Ecu>(ecus.find((e) => e.code === "BECM") ?? ecus[0]);
 
@@ -65,13 +65,13 @@ export function EcuTopology() {
           </div>
 
           <div aria-live="polite" className="rounded-sm border border-line bg-surface p-6">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="popLayout">
               <motion.div
                 key={selected.code}
-                initial={reduce ? false : { opacity: 0, y: 6 }}
+                initial={reduce ? false : { opacity: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                transition={{ duration: DUR.base, ease: EASE.standard }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: DUR.fast, ease: EASE.standard }}
               >
                 <div className="font-mono text-[15px] text-text-primary">{selected.code}</div>
                 <div className="mt-0.5 text-[14px] text-text-secondary">{selected.name}</div>

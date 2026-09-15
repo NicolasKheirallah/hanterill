@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import type { ComponentProps, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 type Variant = "primary" | "secondary" | "ghost";
@@ -15,8 +15,8 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  md: "h-11 px-4 text-[15px]",
-  sm: "h-9 px-3 text-[13px]",
+  md: "h-11 px-4 text-[length:var(--text-body)]",
+  sm: "h-9 px-3 text-[length:var(--text-ui)]",
 };
 
 type StyleProps = { variant?: Variant; size?: Size; className?: string; children: ReactNode };
@@ -45,16 +45,3 @@ export function Button({
   );
 }
 
-export function ButtonEl({
-  variant = "primary",
-  size = "md",
-  className,
-  children,
-  ...rest
-}: StyleProps & ComponentProps<"button">) {
-  return (
-    <button className={cn(base, variants[variant], sizes[size], className)} {...rest}>
-      {children}
-    </button>
-  );
-}

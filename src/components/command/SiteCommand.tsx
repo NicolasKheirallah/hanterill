@@ -1,5 +1,4 @@
 "use client";
-
 import {
   createContext,
   useCallback,
@@ -14,10 +13,13 @@ import {
 import { Command } from "cmdk";
 import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { useRouter } from "@/i18n/navigation";
 import { ecus } from "@/lib/ecus";
 import { vehicleAnchor, vehicles } from "@/lib/vehicles";
 import { cn } from "@/lib/cn";
+import { DUR, EASE } from "@/lib/motion";
 
 /**
  * Site-wide command palette (Ctrl/Cmd+K). The app advertises its own palette
@@ -69,6 +71,7 @@ export function CommandProvider({ children }: { children: ReactNode }) {
   const prevActive = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const docsRequested = useRef(false);
+  const reduce = useReducedMotionSafe();
 
   const loadDocs = useCallback(() => {
     if (docsRequested.current) return;
@@ -191,6 +194,12 @@ export function CommandProvider({ children }: { children: ReactNode }) {
   }, [open, openDialog, closeDialog]);
 
   // Escape anywhere closes; Tab is trapped inside the dialog.
+  //
+  // The trap used to compare `document.activeElement` against the last node
+  // matching `[role="option"]`. cmdk renders those as plain divs with no
+  // tabindex, so they are never the active element and the comparison never
+  // fired - forward Tab walked out of an `aria-modal` surface into the page
+  // behind it. Only elements with tabIndex >= 0 can actually take focus.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -199,22 +208,20 @@ export function CommandProvider({ children }: { children: ReactNode }) {
         closeDialog();
         return;
       }
-      if (e.key === "Tab" && dialogRef.current) {
-        const nodes = Array.from(
-          dialogRef.current.querySelectorAll<HTMLElement>(
-            'input, button, [role="option"], a[href]',
-          ),
-        ).filter((n) => n.offsetParent !== null);
-        if (nodes.length === 0) return;
-        const first = nodes[0];
-        const last = nodes[nodes.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
+      if (e.key !== "Tab" || !dialogRef.current) return;
+      const nodes = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>('input, button, [role="option"], a[href]'),
+      ).filter((n) => n.tabIndex >= 0 && !n.hasAttribute("disabled") && n.offsetParent !== null);
+      if (nodes.length === 0) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || !dialogRef.current.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
       }
     };
     window.addEventListener("keydown", onKey);
@@ -251,67 +258,77 @@ export function CommandProvider({ children }: { children: ReactNode }) {
   return (
     <Ctx.Provider value={{ open: openDialog }}>
       {children}
-      {open ? (
-        <div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label={t("label")}
-          className="fixed inset-0 z-[80] flex items-start justify-center bg-black/30 p-4 pt-[12vh] backdrop-blur-[2px]"
-          onClick={closeDialog}
-        >
-          <Command
-            label={t("label")}
-            shouldFilter={false}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-[34rem] overflow-hidden rounded-lg border border-line-strong bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.24)]"
+      <AnimatePresence>
+        {open ? (
+          <motion.div
+            key="palette"
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("label")}
+            data-material
+            initial={reduce ? { opacity: 0 } : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: DUR.fast, ease: EASE.out }}
+            className="fixed inset-0 z-[80] flex items-start justify-center bg-black/30 p-4 pt-[12vh] backdrop-blur-[2px]"
+            onClick={closeDialog}
           >
-            <div className="flex items-center gap-2 border-b border-line px-3">
-              <Search className="h-4 w-4 shrink-0 text-text-muted" strokeWidth={1.75} />
-              <Command.Input
-                autoFocus
-                value={query}
-                onValueChange={setQuery}
-                placeholder={t("placeholder")}
-                className="h-11 flex-1 bg-transparent text-[14px] text-text-primary outline-none placeholder:text-text-muted"
-              />
-              <kbd className="rounded-[3px] border border-line px-1 py-0.5 font-mono text-[10px] text-text-muted">
-                Esc
-              </kbd>
-            </div>
-            <Command.List className="max-h-[52vh] overflow-y-auto p-1.5">
-              <Command.Empty className="px-3 py-6 text-center text-[13px] text-text-muted">
-                {t("noResults")}
-              </Command.Empty>
-              {grouped.map(([group, items]) => (
-                <Command.Group key={group} heading={group}>
-                  {items.map((hit, n) => (
-                    <Command.Item
-                      key={`${hit.href}-${n}`}
-                      value={`${hit.href}|${hit.label}|${n}`}
-                      onSelect={() => goto(hit)}
-                      className={cn(
-                        "flex cursor-pointer items-baseline justify-between gap-3 rounded-sm px-3 py-2",
-                        "data-[selected=true]:bg-bg-secondary",
-                      )}
-                    >
-                      <span className="truncate text-[13px] text-text-primary">{hit.label}</span>
-                      {hit.sub ? (
-                        <span className="hidden shrink-0 font-mono text-[10.5px] uppercase tracking-wider text-text-muted sm:block">
-                          {hit.sub}
+            <Command
+              label={t("label")}
+              shouldFilter={false}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-[34rem] overflow-hidden rounded-md border border-line-strong bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.24)]"
+            >
+              <div className="flex items-center gap-2 border-b border-line px-3 focus-within:border-accent">
+                <Search className="h-4 w-4 shrink-0 text-text-muted" strokeWidth={1.75} />
+                <Command.Input
+                  autoFocus
+                  value={query}
+                  onValueChange={setQuery}
+                  placeholder={t("placeholder")}
+                  className="h-11 flex-1 bg-transparent text-[length:var(--text-body)] text-text-primary outline-none placeholder:text-text-muted"
+                />
+                <kbd className="rounded-xs border border-line px-1 py-0.5 font-mono text-[length:var(--text-micro)] text-text-muted">
+                  Esc
+                </kbd>
+              </div>
+              <Command.List className="max-h-[52vh] overflow-y-auto p-1.5">
+                <Command.Empty className="px-3 py-6 text-center text-[length:var(--text-ui)] text-text-muted">
+                  {t("noResults")}
+                </Command.Empty>
+                {grouped.map(([group, items]) => (
+                  <Command.Group key={group} heading={group}>
+                    {items.map((hit, n) => (
+                      <Command.Item
+                        key={`${hit.href}-${n}`}
+                        value={`${hit.href}|${hit.label}|${n}`}
+                        onSelect={() => goto(hit)}
+                        className={cn(
+                          "flex cursor-pointer items-baseline justify-between gap-3 rounded-sm px-3 py-2",
+                          "data-[selected=true]:bg-bg-secondary",
+                        )}
+                      >
+                        <span className="truncate text-[length:var(--text-ui)] text-text-primary">
+                          {hit.label}
                         </span>
-                      ) : null}
-                    </Command.Item>
-                  ))}
-                </Command.Group>
-              ))}
-            </Command.List>
-            <div className="border-t border-line px-3 py-2 font-mono text-[10.5px] uppercase tracking-wider text-text-muted">
-              {t("hint")}
-            </div>
-          </Command>
-        </div>
-      ) : null}
+                        {hit.sub ? (
+                          <span className="hidden shrink-0 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted sm:block">
+                            {hit.sub}
+                          </span>
+                        ) : null}
+                      </Command.Item>
+                    ))}
+                  </Command.Group>
+                ))}
+              </Command.List>
+              <div className="border-t border-line px-3 py-2 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
+                {t("hint")}
+              </div>
+            </Command>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </Ctx.Provider>
   );
 }
@@ -325,11 +342,11 @@ export function CommandTrigger() {
     <button
       type="button"
       onClick={() => ctx?.open()}
-      className="flex w-full items-center gap-2 rounded-sm border border-line bg-surface px-3 py-2 text-left font-mono text-[12px] text-text-muted transition-colors hover:border-line-strong hover:text-text-secondary"
+      className="press flex w-full items-center gap-2 rounded-sm border border-line-strong bg-surface px-3 py-2 text-left font-mono text-[length:var(--text-meta)] text-text-muted transition-colors hover:border-line-strong hover:text-text-secondary"
     >
       <Search className="h-3.5 w-3.5" strokeWidth={1.75} />
       <span className="flex-1">{tsearch("searchPlaceholder")}</span>
-      <kbd className="rounded-[3px] border border-line px-1 py-0.5 text-[10px]">
+      <kbd className="rounded-xs border border-line px-1 py-0.5 text-[length:var(--text-micro)]">
         {mac ? "⌘" : "Ctrl"} K
       </kbd>
     </button>
@@ -346,7 +363,7 @@ export function CommandKButton() {
       type="button"
       onClick={() => ctx?.open()}
       aria-label={t("label")}
-      className="hidden h-10 items-center gap-1.5 rounded-sm border border-line px-2.5 font-mono text-[11px] text-text-muted transition-colors hover:border-line-strong hover:text-text-secondary md:inline-flex"
+      className="press hidden h-9 items-center gap-1.5 rounded-sm border border-line-strong px-2.5 font-mono text-[length:var(--text-micro)] text-text-muted transition-colors hover:border-line-strong hover:text-text-secondary md:inline-flex"
     >
       <Search className="h-3.5 w-3.5" strokeWidth={1.75} />
       {mac ? "⌘K" : "Ctrl K"}

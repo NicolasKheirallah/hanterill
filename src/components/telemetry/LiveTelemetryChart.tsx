@@ -1,9 +1,10 @@
 "use client";
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { useInView, useReducedMotion } from "motion/react";
+import { useInView } from "motion/react";
+import { Pause, Play } from "lucide-react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import {
   channelById,
   channels,
@@ -30,7 +31,7 @@ const SERIES_COLORS = ["#cb8e72", "#79a9db", "#e3ad4b"];
 export function LiveTelemetryChart() {
   const tl = useTranslations("telemetry");
   const locale = useLocale();
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const readoutRef = useRef<HTMLDivElement>(null);
@@ -47,6 +48,7 @@ export function LiveTelemetryChart() {
   }, [locale]);
 
   const [active, setActive] = useState<ChannelId[]>(defaultChannels);
+  const [paused, setPaused] = useState(false);
 
   const clock = useRef({ t: 0, last: 0 });
   const raf = useRef<number | null>(null);
@@ -202,16 +204,20 @@ export function LiveTelemetryChart() {
     }
   }, []);
 
+  /**
+   * Under reduced motion this used to keep stepping the 15-second window by
+   * two seconds every two seconds, forever: the whole trace jumped sideways on
+   * a timer, which is exactly the kind of unrequested, uncontrolled motion the
+   * setting exists to stop, and no CSS clamp can reach it because it is a
+   * canvas repaint rather than an animation. Now it draws one frozen window
+   * and only redraws on interaction.
+   */
   useEffect(() => {
     const c = clock.current;
-    if (reduce) {
-      c.t = 60;
+    if (reduce || paused) {
+      c.t = reduce ? 60 : c.t;
       draw();
-      const id = setInterval(() => {
-        c.t += 2;
-        draw();
-      }, 2000);
-      return () => clearInterval(id);
+      return;
     }
     if (!inView) {
       draw();
@@ -230,7 +236,9 @@ export function LiveTelemetryChart() {
       if (raf.current) cancelAnimationFrame(raf.current);
       c.last = 0;
     };
-  }, [inView, reduce, draw]);
+  }, [inView, reduce, paused, draw]);
+
+  const running = inView && !reduce && !paused;
 
   return (
     <div ref={wrapRef} className="bezel bg-surface">
@@ -240,13 +248,13 @@ export function LiveTelemetryChart() {
           value={active}
           onValueChange={(v) => v.length && setActive(v as ChannelId[])}
           aria-label={tl("channels")}
-          className="flex flex-wrap gap-1 font-mono text-[12px]"
+          className="flex flex-wrap gap-1 font-mono text-[length:var(--text-meta)]"
         >
           {channels.map((c) => (
             <ToggleGroup.Item
               key={c.id}
               value={c.id}
-              className="inline-flex items-center gap-1.5 rounded-sm border border-line px-2 py-1 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:border-text-primary data-[state=on]:text-text-primary"
+              className="press inline-flex items-center gap-1.5 rounded-sm border border-line-strong px-2 py-1 text-text-secondary transition-colors hover:text-text-primary data-[state=on]:border-text-primary data-[state=on]:text-text-primary"
             >
               <span
                 aria-hidden
@@ -262,9 +270,26 @@ export function LiveTelemetryChart() {
           ))}
         </ToggleGroup.Root>
 
-        <span className="font-mono text-[11px] uppercase tracking-wider text-text-muted">
-          {WINDOW_SEC}s
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
+            {WINDOW_SEC}s
+          </span>
+          {/* WCAG 2.2.2: this trace scrolls continuously on its own. */}
+          <button
+            type="button"
+            disabled={reduce}
+            onClick={() => setPaused((p) => !p)}
+            aria-label={paused || reduce ? tl("resumeAria") : tl("pauseAria")}
+            className="press inline-flex h-8 items-center gap-1.5 rounded-sm border border-line-strong px-2.5 font-mono text-[length:var(--text-meta)] text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary disabled:opacity-50"
+          >
+            {paused || reduce ? (
+              <Play className="h-3.5 w-3.5" strokeWidth={1.75} />
+            ) : (
+              <Pause className="h-3.5 w-3.5" strokeWidth={1.75} />
+            )}
+            {paused || reduce ? tl("resume") : tl("pause")}
+          </button>
+        </div>
       </div>
 
       <canvas
@@ -279,17 +304,16 @@ export function LiveTelemetryChart() {
         onKeyDown={inspectByKey}
         onBlur={() => {
           hoverX.current = null;
-          if (reduce || !inView) draw();
+          if (!running) draw();
         }}
         onPointerMove={(e) => {
-          if (e.pointerType === "touch") return;
           const r = e.currentTarget.getBoundingClientRect();
           hoverX.current = e.clientX - r.left;
-          if (reduce || !inView) draw();
+          if (!running) draw();
         }}
         onPointerLeave={() => {
           hoverX.current = null;
-          if (reduce || !inView) draw();
+          if (!running) draw();
         }}
         onPointerDown={(e) => {
           const r = e.currentTarget.getBoundingClientRect();
@@ -301,10 +325,12 @@ export function LiveTelemetryChart() {
       <div
         ref={readoutRef}
         aria-live="off"
-        className={cn("border-t border-line px-4 py-2 font-mono text-[11px] text-text-secondary")}
+        className={cn(
+          "border-t border-line px-4 py-2 font-mono text-[length:var(--text-micro)] tabular-nums text-text-secondary",
+        )}
       />
       <div ref={liveRef} aria-live="polite" className="sr-only" />
-      <p className="border-t border-line px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-text-muted">
+      <p className="border-t border-line px-4 py-2 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
         {tl("footerNote")}
       </p>
     </div>

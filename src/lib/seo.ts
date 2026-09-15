@@ -35,7 +35,17 @@ export function buildMeta(args: {
     title: absoluteTitle ? { absolute: title } : title,
     description,
     alternates: { canonical, languages },
+    // Next merges metadata shallowly: defining `openGraph` here REPLACES the
+    // one in `[locale]/layout.tsx` wholesale, so every property the layout set
+    // and this object omits is dropped from the page. That is how `og:type`,
+    // `og:site_name` and `og:locale` went missing from all 80 built pages
+    // while still being declared in the layout - the declaration looked correct
+    // and never applied. Everything the layout owns is repeated here, and
+    // `check-out.mjs` now asserts all three.
     openGraph: {
+      type: "website",
+      siteName: "Hanterill",
+      locale: locale === "sv" ? "sv_SE" : "en",
       url: canonical,
       title,
       description,

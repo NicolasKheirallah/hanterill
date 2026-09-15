@@ -4,12 +4,10 @@ import { Hero } from "@/components/hero/Hero";
 import { ConnectionDiagram } from "@/components/architecture/ConnectionDiagram";
 import { FeatureBlocks } from "@/components/features/FeatureBlocks";
 import { BatteryMatrixSection } from "@/components/battery/BatteryMatrixSection";
-import { ProtocolStack } from "@/components/architecture/ProtocolStack";
-import { EcuTopology } from "@/components/architecture/EcuTopology";
 import { SessionSimulator } from "@/components/product/SessionSimulator";
 import { PrivacySection } from "@/components/sections/PrivacySection";
 import { VehicleCompatibility } from "@/components/vehicles/VehicleCompatibility";
-import { HardwareChain } from "@/components/sections/HardwareChain";
+import { CaseStudy } from "@/components/sections/CaseStudy";
 import { DownloadSection } from "@/components/download/DownloadSection";
 import { SafetySection } from "@/components/sections/SafetySection";
 import { Faq, type QA } from "@/components/sections/Faq";
@@ -30,32 +28,17 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   setRequestLocale(locale);
   const tf = await getTranslations("faq");
   const faqItems = tf.raw("home") as QA[];
-  const faqLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqItems.map((q) => ({
-      "@type": "Question",
-      name: q.q,
-      acceptedAnswer: { "@type": "Answer", text: q.a },
-    })),
-  };
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd).replace(/</g, "\\u003c") }}
-      />
       <Hero />
       <ConnectionDiagram />
       <FeatureBlocks />
       <BatteryMatrixSection />
-      <ProtocolStack />
-      <EcuTopology />
       <SessionSimulator />
+      <CaseStudy />
       <PrivacySection />
       <VehicleCompatibility />
-      <HardwareChain />
       <DownloadSection />
       <SafetySection />
       <Faq items={faqItems} title={tf("title")} />

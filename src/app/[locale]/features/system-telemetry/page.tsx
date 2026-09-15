@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Section, MoreLink } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
+import { FeatureShots } from "@/components/features/FeatureShots";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -19,7 +20,9 @@ export default async function SystemTelemetryPage({ params }: { params: Promise<
     <>
       <LocalizedPageHeader id="systemTelemetry" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
+        <FeatureShots href="/features/system-telemetry" />
+
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
           <Prose>
             <h2>{t("hMeasured")}</h2>
@@ -43,7 +46,7 @@ export default async function SystemTelemetryPage({ params }: { params: Promise<
             ))}
           </ul>
         </div>
-      </Container>
+      </Section>
     </>
   );
 }

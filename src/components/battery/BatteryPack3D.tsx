@@ -1,10 +1,10 @@
 "use client";
 
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer, OrbitControls } from "@react-three/drei";
-import { useReducedMotion } from "motion/react";
 import * as THREE from "three";
 import { batteryDemo, moduleStats } from "@/lib/demo-data";
 import { useModuleSelection } from "./selection-context";
@@ -57,7 +57,7 @@ function Modules({
 }) {
   const group = useRef<THREE.Group>(null);
   const meshes = useRef<(THREE.Mesh | null)[]>([]);
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const invalidate = useThree((s) => s.invalidate);
   const start = useRef<number | null>(null);
 

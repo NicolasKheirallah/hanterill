@@ -40,7 +40,7 @@ export function Footer() {
     <footer data-statement-footer className="border-t border-line-strong bg-bg-primary">
       <div className="mx-auto max-w-[1200px] px-5 py-14 sm:px-8 sm:py-16">
         <div className="flex items-start justify-between gap-6">
-          <p className="max-w-[24ch] font-[family-name:var(--font-display)] text-[1.9rem] font-medium leading-[1.05] tracking-[-0.024em] sm:text-[2.4rem]">
+          <p className="max-w-[24ch] font-[family-name:var(--font-display)] text-[clamp(1.9rem,2vw+1rem,2.4rem)] font-medium leading-[1.05]">
             {t("tagline")}
           </p>
           <Wordmark className="mt-1 shrink-0 text-[15px]" />

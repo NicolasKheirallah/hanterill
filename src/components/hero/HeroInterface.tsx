@@ -1,15 +1,8 @@
 "use client";
-
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from "motion/react";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { PanelChrome, type PanelTabId } from "@/components/product/PanelChrome";
 import { demoViewMap } from "@/components/product/views";
 import { DUR, EASE, SPRING } from "@/lib/motion";
@@ -22,7 +15,7 @@ import { DUR, EASE, SPRING } from "@/lib/motion";
  */
 export function HeroInterface() {
   const tc = useTranslations("common");
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const [tab, setTab] = useState<PanelTabId>("overview");
   const frame = useRef<HTMLDivElement>(null);
 
@@ -54,13 +47,13 @@ export function HeroInterface() {
       >
         <motion.div style={reduce ? undefined : { rotateX, rotateY, transformStyle: "preserve-3d" }}>
           <PanelChrome active={tab} onSelect={setTab}>
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={tab}
-                initial={reduce ? false : { opacity: 0, y: 6 }}
+                initial={reduce ? false : { opacity: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                transition={{ duration: DUR.base, ease: EASE.standard }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: DUR.fast, ease: EASE.standard }}
               >
                 <View />
               </motion.div>

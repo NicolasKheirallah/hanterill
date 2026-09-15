@@ -1,9 +1,9 @@
 "use client";
-
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import * as Popover from "@radix-ui/react-popover";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { motion, useInView } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { Link } from "@/i18n/navigation";
 import { DUR, EASE } from "@/lib/motion";
 
@@ -16,7 +16,7 @@ const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
  */
 export function SohGauge({ value, size = 124 }: { value: number; size?: number }) {
   const t = useTranslations("battery");
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
 

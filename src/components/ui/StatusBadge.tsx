@@ -34,34 +34,11 @@ export function StatusMarker({
   className?: string;
 }) {
   return (
-    <span className={cn("inline-flex items-center gap-2 text-[13px] font-medium", toneClass[tone], className)}>
+    <span className={cn("inline-flex items-center gap-2 text-[length:var(--text-ui)] font-medium", toneClass[tone], className)}>
       <span
         aria-hidden
         className={cn("h-1.5 w-1.5 rounded-full", dotClass[tone], pulse && "animate-pulse-dot")}
       />
-      {children}
-    </span>
-  );
-}
-
-/** A tag with genuine semantic purpose: version, platform, support status. */
-export function Tag({
-  children,
-  tone = "muted",
-  className,
-}: {
-  children: ReactNode;
-  tone?: Tone;
-  className?: string;
-}) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-sm border border-line px-2 py-0.5 font-mono text-[11px] uppercase tracking-wider",
-        tone === "muted" ? "text-text-secondary" : toneClass[tone],
-        className,
-      )}
-    >
       {children}
     </span>
   );

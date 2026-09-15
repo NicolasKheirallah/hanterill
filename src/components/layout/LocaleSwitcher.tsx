@@ -27,21 +27,24 @@ export function LocaleSwitcher() {
   return (
     <div
       className={cn(
-        "inline-flex overflow-hidden rounded-sm border border-line font-mono text-[11px]",
-        pending && "opacity-60",
+        "press inline-flex h-9 overflow-hidden rounded-sm border border-line-strong font-mono text-[length:var(--text-micro)]",
+        pending && "opacity-70",
       )}
       role="group"
       aria-label={t("language")}
+      aria-busy={pending}
+      data-pending={pending ? "" : undefined}
     >
       {routing.locales.map((l) => (
         <button
           key={l}
           type="button"
           onClick={() => set(l)}
+          disabled={pending}
           aria-pressed={l === active}
           aria-label={l === "sv" ? "Svenska" : "English"}
           className={cn(
-            "px-2.5 py-2 uppercase transition-colors",
+            "min-w-9 px-2.5 uppercase transition-colors",
             l === active
               ? "bg-text-primary text-bg-primary"
               : "text-text-secondary hover:bg-bg-secondary hover:text-text-primary",

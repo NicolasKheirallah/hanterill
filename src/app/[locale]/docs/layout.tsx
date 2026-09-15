@@ -34,6 +34,17 @@ export default async function DocsLayout({
         <div className="py-8 lg:py-10">
           <div className="mb-6 lg:hidden">
             <CommandTrigger />
+            {/* Docs navigation was desktop-only: below `lg` the sidebar is
+                hidden and a phone reader could only move through the 19 pages
+                one prev/next step at a time. */}
+            <details className="mt-3 rounded-sm border border-line bg-surface">
+              <summary className="cursor-pointer px-3 py-2.5 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-secondary [&::-webkit-details-marker]:hidden">
+                {t("allDocs")}
+              </summary>
+              <div className="max-h-[60vh] overflow-y-auto border-t border-line px-3 py-3">
+                <DocsSidebar />
+              </div>
+            </details>
           </div>
           <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
             {t("eyebrow")}

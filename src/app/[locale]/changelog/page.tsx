@@ -3,8 +3,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { pageMeta } from "@/lib/seo";
 import { ExternalLink, GitCommitVertical } from "lucide-react";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Section, MoreLink } from "@/components/ui/layout";
 import { StatusMarker } from "@/components/ui/StatusBadge";
+import { ReleaseNotes } from "@/components/changelog/ReleaseNotes";
 import { getReleases, getTags, formatBytes, type Release } from "@/lib/github";
 import { site } from "@/lib/site";
 
@@ -13,66 +14,63 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageMeta({ locale, path: "/changelog", id: "changelog" });
 }
 
-/** Minimal, safe renderer for a GitHub release body: no HTML, text only. */
-function Notes({ body, fallback }: { body: string; fallback: string }) {
-  if (!body.trim()) return <p className="text-[13px] text-text-muted">{fallback}</p>;
-  const blocks: { kind: "h" | "li" | "p"; text: string }[] = [];
-  for (const raw of body.split(/\r?\n/)) {
-    const line = raw.trim();
-    if (!line) continue;
-    const h = line.match(/^#{2,4}\s+(.*)$/);
-    const li = line.match(/^[-*]\s+(.*)$/);
-    if (h) blocks.push({ kind: "h", text: h[1].replace(/[*_`]/g, "") });
-    else if (li) blocks.push({ kind: "li", text: li[1].replace(/`/g, "") });
-    else if (!line.startsWith("<") && !line.startsWith("![") && !line.startsWith("|"))
-      blocks.push({ kind: "p", text: line.replace(/[*_`]/g, "") });
-  }
-  return (
-    <div className="mt-3 space-y-1.5">
-      {blocks.map((b, i) =>
-        b.kind === "h" ? (
-          <p key={i} className="pt-2 font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
-            {b.text}
-          </p>
-        ) : b.kind === "li" ? (
-          <p key={i} className="flex gap-2 text-[13.5px] leading-relaxed text-text-secondary">
-            <span aria-hidden className="text-line-strong">
-              ─
-            </span>
-            <span>{b.text}</span>
-          </p>
-        ) : (
-          <p key={i} className="text-[13.5px] leading-relaxed text-text-secondary">
-            {b.text}
-          </p>
-        ),
-      )}
-    </div>
-  );
+/** Anchors so `/changelog#v0.2.0` resolves, and so each entry is linkable. */
+function anchor(version: string) {
+  return version.replace(/[^\w.-]/g, "-");
 }
 
-function ReleaseRow({ release, t, first }: { release: Release; t: (k: string) => string; first?: boolean }) {
-  return (
-    <li className="py-8">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-        <span className="font-mono text-[18px] text-text-primary">{release.version}</span>
-        {first || release.prerelease ? (
-          <StatusMarker tone={first ? "ok" : "warning"}>{first ? t("latest") : t("prerelease")}</StatusMarker>
-        ) : null}
-        {release.publishedAt ? (
-          <time className="font-mono text-[12px] text-text-muted" dateTime={release.publishedAt}>
-            {new Date(release.publishedAt).toLocaleDateString("en-CA")}
-          </time>
-        ) : null}
-      </div>
-      {release.name && release.name !== release.version ? (
-        <p className="mt-1 text-[14px] text-text-secondary">{release.name}</p>
+function ReleaseRow({
+  release,
+  locale,
+  t,
+  first,
+}: {
+  release: Release;
+  locale: string;
+  t: (k: string) => string;
+  first?: boolean;
+}) {
+  const date = release.publishedAt
+    ? new Date(release.publishedAt).toLocaleDateString(locale === "sv" ? "sv-SE" : "en-GB", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : null;
+
+  const head = (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+      <span className="font-mono text-[length:var(--text-title)] text-text-primary">{release.version}</span>
+      {first || release.prerelease ? (
+        <StatusMarker tone={first ? "ok" : "warning"}>
+          {first ? t("latest") : t("prerelease")}
+        </StatusMarker>
       ) : null}
-      <Notes body={release.body} fallback={t("noNotes")} />
+      {date && release.publishedAt ? (
+        <time className="font-mono text-[length:var(--text-meta)] text-text-muted" dateTime={release.publishedAt}>
+          {date}
+        </time>
+      ) : null}
+    </div>
+  );
+
+  const body = (
+    <>
+      {release.name && release.name !== release.version ? (
+        <p className="mt-1 text-[length:var(--text-body)] text-text-secondary">{release.name}</p>
+      ) : null}
+      {release.body.trim() ? (
+        <ReleaseNotes body={release.body} limit={14} moreLabel={t("showFullNotes")} />
+      ) : (
+        <p className="mt-4 text-[length:var(--text-ui)] text-text-muted">{t("noNotes")}</p>
+      )}
       {release.assets.length > 0 ? (
-        <ul className="mt-4 divide-y divide-line border-y border-line">
+        <ul className="mt-5 divide-y divide-line border-y border-line">
           {release.assets.map((a) => (
-            <li key={a.downloadUrl} className="flex items-baseline justify-between gap-4 py-1.5 font-mono text-[12px]">
+            <li
+              key={a.downloadUrl}
+              className="flex items-baseline justify-between gap-4 py-1.5 font-mono text-[length:var(--text-meta)]"
+            >
               <a
                 href={a.downloadUrl}
                 target="_blank"
@@ -86,11 +84,45 @@ function ReleaseRow({ release, t, first }: { release: Release; t: (k: string) =>
           ))}
         </ul>
       ) : null}
-      <div className="mt-3">
+      <div className="mt-4">
         <MoreLink href={release.url} external>
           {t("releaseOnGitHub")}
         </MoreLink>
       </div>
+    </>
+  );
+
+  // The newest release is open; older ones are a disclosure. Ten releases of
+  // full notes made this page 18,800px tall - the previous renderer's flat
+  // paragraph output meant nothing was scannable, so the length bought nothing.
+  if (first) {
+    return (
+      <li id={anchor(release.version)} className="scroll-mt-24 py-8">
+        {head}
+        {body}
+      </li>
+    );
+  }
+
+  return (
+    <li id={anchor(release.version)} className="scroll-mt-24">
+      <details className="group py-6">
+        <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-1 [&::-webkit-details-marker]:hidden">
+          <span className="font-mono text-[length:var(--text-body)] text-text-primary transition-colors group-hover:text-accent">
+            {release.version}
+          </span>
+          {release.prerelease ? <StatusMarker tone="warning">{t("prerelease")}</StatusMarker> : null}
+          {date && release.publishedAt ? (
+            <time className="font-mono text-[length:var(--text-micro)] text-text-muted" dateTime={release.publishedAt}>
+              {date}
+            </time>
+          ) : null}
+          <span className="ml-auto font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
+            {t("showNotes")}
+          </span>
+        </summary>
+        {body}
+      </details>
     </li>
   );
 }
@@ -105,16 +137,23 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
     <>
       <LocalizedPageHeader id="changelog" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
         {releases.length > 0 ? (
-          <ol className="divide-y divide-line border-t border-line-strong">
-            {releases.map((r, i) => (
-              <ReleaseRow key={r.version} release={r} t={t} first={i === 0} />
-            ))}
-          </ol>
+          <>
+            <ol className="divide-y divide-line border-t border-line-strong">
+              {releases.map((r, i) => (
+                <ReleaseRow key={r.version} release={r} locale={locale} t={t} first={i === 0} />
+              ))}
+            </ol>
+            <p className="mt-6 font-mono text-[length:var(--text-micro)] leading-relaxed text-text-muted">
+              {t("fetchedAt", { version: releases[0].version })}
+            </p>
+          </>
         ) : tags.length > 0 ? (
           <div>
-            <p className="text-[14px] leading-relaxed text-text-secondary">{t("noReleasesYet")}</p>
+            <p className="text-[length:var(--text-body)] leading-relaxed text-text-secondary">
+              {t("noReleasesYet")}
+            </p>
             <ul className="mt-5 flex flex-wrap gap-2">
               {tags.map((tag) => (
                 <li key={tag}>
@@ -122,7 +161,7 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
                     href={`${site.repoUrl}/releases/tag/${tag}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 border border-line bg-surface px-3 py-1.5 font-mono text-[12px] text-text-primary transition-colors hover:border-line-strong"
+                    className="inline-flex items-center gap-2 border border-line-strong bg-surface px-3 py-1.5 font-mono text-[length:var(--text-meta)] text-text-primary transition-colors hover:border-text-primary"
                   >
                     <GitCommitVertical className="h-3.5 w-3.5 text-text-muted" strokeWidth={1.75} />
                     {tag}
@@ -132,7 +171,9 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
             </ul>
           </div>
         ) : (
-          <p className="text-[14px] leading-relaxed text-text-secondary">{t("unavailable")}</p>
+          <p className="text-[length:var(--text-body)] leading-relaxed text-text-secondary">
+            {t("unavailable")}
+          </p>
         )}
 
         <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line-strong pt-6">
@@ -144,9 +185,9 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
           <MoreLink href={`${site.repoUrl}/blob/${site.websiteBranch}/CHANGELOG.md`} external>
             {t("changelogFile")}
           </MoreLink>
-          <MoreLink href="/docs/releases">How releases are made</MoreLink>
+          <MoreLink href="/docs/releases">{t("howReleasesWork")}</MoreLink>
         </div>
-      </Container>
+      </Section>
     </>
   );
 }

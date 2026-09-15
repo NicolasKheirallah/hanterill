@@ -1,7 +1,7 @@
 "use client";
-
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -15,13 +15,39 @@ const RATIO = "3456 / 2088";
 const FOCUSABLE =
   'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
+/** A flick has to beat this to advance more than one step. */
+const FLICK_VX = 500;
+/** ...or travel this far from where the drag started. */
+const FLICK_DX = 80;
+/**
+ * Screenshot gallery with a lightbox.
+ *
+ * Two things were wrong with the interaction layer:
+ *
+ *  - The tiles are `<button>`s carrying `.bezel`, and a bezel clips its own box
+ *    with `clip-path`. `outline-none` removed the fallback ring and the
+ *    `focus-visible:ring` (a box-shadow) was drawn outside the clip polygon, so
+ *    all 18 tiles had no visible focus indicator at all. `.bezel:focus-visible`
+ *    in globals.css now draws the ring inside the clip; the redundant
+ *    ring/outline utilities are gone.
+ *  - Nothing was draggable. A lightbox on a phone could only be dismissed with
+ *    the 40px ✕ button or Escape, neither of which exists on a touch device.
+ *    It now tracks the pointer 1:1, hands the release velocity to the spring
+ *    and projects momentum to decide whether a flick moves one step or throws
+ *    the image away.
+ */
 export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
   const t = useTranslations("gallery");
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const [open, setOpen] = useState<number | null>(null);
+  const [drag, setDrag] = useState(0);
   const closeRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const restoreRef = useRef<HTMLElement | null>(null);
+  const gesture = useRef<{ id: number; x: number; y: number; t: number; vx: number; active: boolean } | null>(
+    null,
+  );
+  const [velocity, setVelocity] = useState(0);
 
   const show = useCallback((i: number) => {
     restoreRef.current = document.activeElement as HTMLElement;
@@ -29,6 +55,7 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
   }, []);
   const close = useCallback(() => {
     setOpen(null);
+    setDrag(0);
     restoreRef.current?.focus?.();
   }, []);
   const step = useCallback(
@@ -49,17 +76,19 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
       if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
       else if (e.key === "Tab" && dialogRef.current) {
-        // Focus trap: cycle Tab through the dialog controls only.
-        const nodes = Array.from(
-          dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE),
-        ).filter((n) => n.offsetParent !== null);
+        // Focus trap: cycle Tab through the dialog controls only. Only nodes
+        // with tabIndex >= 0 can actually take focus.
+        const nodes = Array.from(dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+          (n) => n.tabIndex >= 0 && n.offsetParent !== null,
+        );
         if (nodes.length === 0) return;
         const first = nodes[0];
         const last = nodes[nodes.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
+        const active = document.activeElement;
+        if (e.shiftKey && (active === first || !dialogRef.current.contains(active))) {
           e.preventDefault();
           last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
+        } else if (!e.shiftKey && active === last) {
           e.preventDefault();
           first.focus();
         }
@@ -72,6 +101,48 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
     };
   }, [open, close, step]);
 
+  /**
+   * Momentum projection. Apple's deceleration form, not v^2/2a: where would
+   * this flick come to rest if it kept decelerating? The step decision is made
+   * from the projected endpoint, so a short fast flick advances and a slow
+   * long drag does not.
+   */
+  const projected = useMemo(() => {
+    const decel = 0.998;
+    return drag + (velocity / 1000) * (decel / (1 - decel));
+  }, [drag, velocity]);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (reduce) return;
+    gesture.current = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), vx: 0, active: true };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    const g = gesture.current;
+    if (!g?.active) return;
+    const now = performance.now();
+    const dt = Math.max(now - g.t, 1);
+    // Track velocity across a short history window rather than the whole drag.
+    g.vx = ((e.clientX - g.x) / dt) * 1000;
+    g.t = now;
+    setVelocity(g.vx);
+    setDrag(e.clientX - g.x + (e.clientY - g.y) * 0.35);
+  };
+
+  const onPointerUp = () => {
+    const g = gesture.current;
+    if (!g) return;
+    g.active = false;
+    const vx = g.vx;
+    gesture.current = null;
+    setDrag(0);
+    setVelocity(0);
+    if (reduce) return;
+    if (projected > FLICK_DX * 2 || vx > FLICK_VX) step(-1);
+    else if (projected < -FLICK_DX * 2 || vx < -FLICK_VX) step(1);
+  };
+
   return (
     <>
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -81,7 +152,7 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
               type="button"
               onClick={() => show(i)}
               aria-label={`${s.label} · ${t("viewLarger")}`}
-              className="press bezel group block w-full overflow-hidden bg-surface text-left outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
+              className="press bezel group block w-full overflow-hidden bg-surface text-left"
             >
               <span className="block overflow-hidden bg-surface" style={{ aspectRatio: RATIO }}>
                 <Shot
@@ -93,7 +164,7 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
                   imgClassName="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
                 />
               </span>
-              <span className="block border-t border-line px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
+              <span className="block border-t border-line px-3 py-2 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
                 {s.label}
               </span>
             </button>
@@ -108,6 +179,7 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
             role="dialog"
             aria-modal="true"
             aria-label={shots[open].label}
+            data-material
             className="fixed inset-0 z-[80] flex flex-col bg-bg-primary/95 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -116,7 +188,7 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
             onClick={close}
           >
             <div className="flex items-center justify-between border-b border-line px-4 py-3 sm:px-6">
-              <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-text-secondary">
+              <span className="font-mono text-[length:var(--text-meta)] uppercase tracking-[length:var(--track-label)] text-text-secondary">
                 {shots[open].href ? (
                   <Link href={shots[open].href} className="text-accent hover:text-accent-hover">
                     {shots[open].label}
@@ -140,8 +212,12 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
             </div>
 
             <div
-              className="relative flex flex-1 items-center justify-center overflow-hidden p-4 sm:p-8"
+              className="relative flex flex-1 touch-pan-y items-center justify-center overflow-hidden p-4 sm:p-8"
               onClick={(e) => e.stopPropagation()}
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerCancel={onPointerUp}
             >
               <button
                 type="button"
@@ -152,12 +228,17 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
                 <ChevronLeft className="h-5 w-5" strokeWidth={1.75} />
               </button>
 
+              {/* Keyed on the index with a direction, so the exit mirrors the
+                  entry. Both arrow buttons used to look identical and the
+                  image was simply swapped with no motion at all. */}
               <motion.div
                 key={shots[open].root}
+                style={drag ? { x: drag, opacity: Math.max(0.35, 1 - Math.abs(drag) / 500) } : undefined}
                 className="bezel max-h-full max-w-[min(1400px,100%)] overflow-hidden bg-surface"
                 initial={reduce ? false : { opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: DUR.base, ease: EASE.out }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
+                transition={{ duration: reduce ? DUR.fast : DUR.base, ease: EASE.out }}
               >
                 <Shot
                   root={shots[open].root}
@@ -165,7 +246,7 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
                   width={3456}
                   height={2088}
                   sizes="min(1400px, 100vw)"
-                  imgClassName="h-auto max-h-[calc(100vh-9rem)] w-auto object-contain"
+                  imgClassName="pointer-events-none h-auto max-h-[calc(100vh-9rem)] w-auto object-contain"
                   priority
                 />
               </motion.div>

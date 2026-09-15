@@ -34,6 +34,13 @@ function subscribe(cb: () => void) {
 
 function apply(mode: Mode) {
   const root = document.documentElement;
+  // Dark <-> light is the largest brightness change in the product. Flip every
+  // colour token in one frame and it reads as a flash; a short cross-fade of
+  // the colour properties only (never layout, never transform) reads as the
+  // panel lighting up. Dropped entirely under reduced motion by globals.css.
+  root.setAttribute("data-theme-switching", "");
+  window.setTimeout(() => root.removeAttribute("data-theme-switching"), 260);
+
   if (mode === "system") {
     root.removeAttribute("data-theme");
     try {
@@ -65,7 +72,7 @@ export function ThemeToggle() {
       onClick={cycle}
       aria-label={label}
       title={label}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-sm border border-line text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
+      className="press inline-flex h-9 w-9 items-center justify-center rounded-sm border border-line-strong text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
     >
       <Icon className="h-4 w-4" strokeWidth={1.75} />
     </button>

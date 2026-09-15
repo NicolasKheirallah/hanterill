@@ -117,26 +117,95 @@ function blocks(body: string): Block[] {
   return out;
 }
 
-export function ReleaseNotes({ body }: { body: string }) {
+/**
+ * Renders a GitHub release body as React elements with the site's typography.
+ *
+ * This module existed but had no call sites: the changelog page had grown its
+ * own inline renderer that stripped every marker character and flattened the
+ * whole body into paragraphs, so `# Changelog` rendered as a literal hash, a
+ * `[0.2.0] - 2026-09-13` line rendered as literal brackets, and bullet lists
+ * rendered as em-dash-prefixed lines at 13px. This one handles code spans,
+ * bold, links and autolinks, and emits real headings and lists.
+ */
+/** Renders one block. Extracted so the head and the clamped tail share it. */
+function renderBlock(block: Block, key: number): ReactNode {
+  if (block.kind === "heading") {
+    const Tag = block.level === 3 ? "h3" : "h4";
+    return (
+      <Tag
+        key={key}
+        className={
+          block.level === 3
+            ? "mt-6 text-[length:var(--text-title)] leading-tight text-text-primary first:mt-0"
+            : "mt-5 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted"
+        }
+      >
+        {inline(block.text)}
+      </Tag>
+    );
+  }
+  if (block.kind === "list") {
+    const Tag = block.ordered ? "ol" : "ul";
+    return (
+      <Tag
+        key={key}
+        className={
+          block.ordered
+            ? "mt-3 list-decimal space-y-1.5 pl-5 text-[length:var(--text-body)] leading-relaxed text-text-secondary marker:text-text-muted"
+            : "mt-3 list-disc space-y-1.5 pl-5 text-[length:var(--text-body)] leading-relaxed text-text-secondary marker:text-text-muted"
+        }
+      >
+        {block.items.map((item, j) => (
+          <li
+            key={j}
+            className="[&>code]:rounded-xs [&>code]:bg-bg-secondary [&>code]:px-1 [&>code]:py-0.5 [&>code]:font-mono [&>code]:text-[0.9em]"
+          >
+            {inline(item)}
+          </li>
+        ))}
+      </Tag>
+    );
+  }
   return (
-    <>
-      {blocks(body).map((block, i) => {
-        if (block.kind === "heading") {
-          const Tag = block.level === 3 ? "h3" : "h4";
-          return <Tag key={i}>{inline(block.text)}</Tag>;
-        }
-        if (block.kind === "list") {
-          const Tag = block.ordered ? "ol" : "ul";
-          return (
-            <Tag key={i}>
-              {block.items.map((item, j) => (
-                <li key={j}>{inline(item)}</li>
-              ))}
-            </Tag>
-          );
-        }
-        return <p key={i}>{inline(block.text)}</p>;
-      })}
-    </>
+    <p
+      key={key}
+      className="mt-3 text-[length:var(--text-body)] leading-relaxed text-text-secondary [&>code]:rounded-xs [&>code]:bg-bg-secondary [&>code]:px-1 [&>code]:py-0.5 [&>code]:font-mono [&>code]:text-[0.9em] [&>a]:text-accent [&>a]:underline [&>a]:decoration-1 [&>a]:underline-offset-2 [&>a:hover]:text-accent-hover"
+    >
+      {inline(block.text)}
+    </p>
+  );
+}
+
+/**
+ * `limit` clamps how many blocks render before the rest folds behind a
+ * disclosure. A single release body can be the whole CHANGELOG.md - the 0.2.0
+ * notes alone ran to 19,500px - so the list page shows the top of each release
+ * and keeps the remainder one click away rather than one scroll away.
+ */
+export function ReleaseNotes({
+  body,
+  limit,
+  moreLabel,
+}: {
+  body: string;
+  limit?: number;
+  moreLabel?: string;
+}) {
+  const all = blocks(body);
+  const head = limit ? all.slice(0, limit) : all;
+  const tail = limit ? all.slice(limit) : [];
+
+  return (
+    <div className="mt-4 max-w-[72ch]">
+      {head.map(renderBlock)}
+      {tail.length ? (
+        <details className="group mt-5 border-t border-line pt-3 empty:hidden">
+          <summary className="cursor-pointer font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted transition-colors hover:text-text-primary [&::-webkit-details-marker]:hidden">
+            {moreLabel ?? `Show ${tail.length} more`}
+          </summary>
+          <div className="mt-3">{tail.map((b, i) => renderBlock(b, 1000 + i))}</div>
+        </details>
+      ) : null}
+    </div>
   );
 }

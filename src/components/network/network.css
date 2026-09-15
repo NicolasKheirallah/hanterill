@@ -12,13 +12,12 @@
   --ink-3: var(--text-muted);
   --danger: var(--status-error);
   --glass: color-mix(in srgb, var(--surface) 86%, transparent);
-  --shadow: 0 12px 40px rgb(0 0 0 / 0.4);
 }
 
 .micro {
-  font-size: 10px;
+  font-size: var(--text-micro);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--ink-2);
 }
@@ -40,18 +39,18 @@
   transition: box-shadow 0.2s, border-color 0.2s, opacity 0.25s;
 }
 .module-node .nref {
-  font-size: 8px;
+  font-size: var(--text-micro);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   opacity: 0.55;
   font-variant-numeric: tabular-nums;
 }
 .module-node .nname {
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   font-weight: 500;
   line-height: 1.22;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -60,6 +59,9 @@
 .module-node.cat-peripheral .nname {
   -webkit-line-clamp: 2;
 }
+/* The documented-pin marker. It used to be bronze on every node - ~40 accent
+ * dots per view, against a rule that allows one status marker per instrument.
+ * It is a presence indicator, not a brand mark, so it reads as ink. */
 .module-node .dot {
   position: absolute;
   top: 5px;
@@ -67,7 +69,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--ink-3);
 }
 .module-node.cat-display {
   background: var(--ink);
@@ -79,13 +81,16 @@
   color: var(--text-primary);
   border-color: var(--line-strong);
 }
+/* A category, not a selection. It used to be a solid bronze fill, which made
+ * every drivetrain node read as "selected" and blew the accent budget on one
+ * domain. A tinted surface plus the left rule carries the same grouping. */
 .module-node.cat-drive {
-  background: var(--accent);
-  color: var(--accent-fg);
-  border-color: var(--accent);
+  background: var(--accent-tint);
+  color: var(--text-primary);
+  border-color: var(--line-strong);
 }
 .module-node.cat-drive .dot {
-  background: var(--accent-fg);
+  background: var(--accent);
 }
 .module-node.cat-power {
   border-color: var(--danger);
@@ -98,24 +103,25 @@
   padding: 2px 6px;
 }
 .module-node.cat-peripheral .nname {
-  font-size: 8px;
+  font-size: var(--text-micro);
 }
 
 .react-flow__node {
   cursor: pointer;
 }
 .react-flow__node:hover .module-node {
-  border-color: var(--accent);
-  box-shadow: 0 4px 14px rgb(0 0 0 / 0.22);
+  border-color: var(--line-strong);
 }
+/* Selection is a hue and a surface step, never a width change: a 2px border
+ * shifted every label inside the node by a pixel on click. */
 .react-flow__node.selected .module-node,
 .react-flow__node.sel .module-node {
   border-color: var(--accent);
-  border-width: 2px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 10px 28px rgb(0 0 0 / 0.28);
+  background: var(--surface-raised);
+  color: var(--text-primary);
 }
 .react-flow__node.dim {
-  opacity: 0.13;
+  opacity: 0.28;
 }
 .react-flow__node.dim .module-node {
   box-shadow: none;
@@ -137,7 +143,7 @@
   left: 0;
   width: 28px;
   height: 2px;
-  background: var(--accent);
+  background: var(--line-strong);
 }
 .zone-node .ztitle {
   position: absolute;
@@ -147,9 +153,9 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: var(--text-micro);
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: var(--track-label);
   color: var(--ink-2);
   white-space: nowrap;
   overflow: hidden;
@@ -162,7 +168,7 @@
   position: absolute;
   bottom: 9px;
   left: 14px;
-  font-size: 10px;
+  font-size: var(--text-micro);
   color: var(--ink-3);
   white-space: nowrap;
 }
@@ -197,7 +203,7 @@
   right: 100%;
   transform: translateY(-50%);
   margin-right: 8px;
-  font-size: 9px;
+  font-size: var(--text-micro);
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -210,16 +216,16 @@
   font-style: normal;
   font-weight: 500;
   color: var(--ink-3);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.01em;
   text-transform: none;
 }
 .react-flow__node.dim .rail-node {
   opacity: 0.1;
 }
 .react-flow__node.sel .rail-node .rbar {
-  height: 4px;
-  top: 8px;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+  height: 3px;
+  top: 9px;
+  border-color: var(--accent);
 }
 
 /* edge tooltip + hot labels */
@@ -228,7 +234,7 @@
   pointer-events: none;
   background: var(--surface);
   border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  border-color: var(--line-strong);
   padding: 8px 10px;
   max-width: 280px;
   z-index: 50;
@@ -237,7 +243,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: var(--text-meta);
 }
 .edge-tip .row i {
   width: 14px;
@@ -246,25 +252,25 @@
 }
 .edge-tip .row .seg {
   color: var(--ink-2);
-  font-size: 10px;
+  font-size: var(--text-micro);
 }
 .edge-tip .lbl {
-  font-size: 10px;
+  font-size: var(--text-micro);
   color: var(--ink-2);
   margin-top: 3px;
 }
 .edge-tip .nets {
-  font-size: 9.5px;
+  font-size: var(--text-micro);
   color: var(--ink-3);
   margin-top: 3px;
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
 .edge-tip .inf {
-  font-size: 9px;
-  color: var(--accent);
+  font-size: var(--text-micro);
+  color: var(--ink-2);
   margin-top: 4px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.01em;
 }
 .edge-hotlabel {
   position: absolute;
@@ -272,9 +278,9 @@
   background: var(--surface);
   border: 1px solid;
   color: var(--ink);
-  font-size: 9px;
+  font-size: var(--text-micro);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
   padding: 2px 6px;
   white-space: nowrap;
@@ -286,9 +292,9 @@
   align-items: center;
   gap: 8px;
   border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  border-color: var(--line-strong);
   padding: 9px 14px;
-  font-size: 12px;
+  font-size: var(--text-meta);
   max-width: min(640px, calc(100vw - 32px));
 }
 .trace-banner b {
@@ -316,7 +322,7 @@
   min-height: 0;
 }
 .react-flow__controls {
-  box-shadow: var(--shadow);
+  border-color: var(--line-strong);
   border: 1px solid var(--line);
   border-radius: 0;
   overflow: hidden;
@@ -335,12 +341,12 @@
 }
 .react-flow__minimap {
   border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  border-color: var(--line-strong);
 }
 .react-flow__attribution {
   background: transparent;
   color: var(--ink-3);
-  font-size: 9px;
+  font-size: var(--text-micro);
 }
 .react-flow__attribution a {
   color: var(--ink-3);
@@ -350,13 +356,13 @@
 table.pins {
   width: 100%;
   border-collapse: collapse;
-  font-size: 11px;
+  font-size: var(--text-meta);
 }
 table.pins th {
   text-align: left;
-  font-size: 9px;
+  font-size: var(--text-micro);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--ink-3);
   padding: 6px 8px 6px 0;
@@ -377,13 +383,13 @@ table.pins td:first-child {
   box-shadow: inset 3px 0 0 var(--line);
 }
 table.pins tr.b-can td:first-child {
-  box-shadow: inset 3px 0 0 #e0452e;
+  box-shadow: inset 3px 0 0 var(--status-error);
 }
 table.pins tr.b-lin td:first-child {
-  box-shadow: inset 3px 0 0 #55a345;
+  box-shadow: inset 3px 0 0 var(--status-ok);
 }
 table.pins tr.b-flexray td:first-child {
-  box-shadow: inset 3px 0 0 #dea012;
+  box-shadow: inset 3px 0 0 var(--status-warning);
 }
 table.pins td.pin {
   font-variant-numeric: tabular-nums;
@@ -394,9 +400,9 @@ table.pins td.mut {
   overflow-wrap: anywhere;
 }
 table.pins tr.sec td {
-  font-size: 10px;
+  font-size: var(--text-micro);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   background: var(--surface-2);
   padding: 8px;
@@ -437,7 +443,6 @@ table.pins tr.flash td {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(2px);
   z-index: 90;
 }
 .cma-palette[cmdk-dialog] {
@@ -451,20 +456,20 @@ table.pins tr.flash td {
 .cma-palette [cmdk-root] {
   background: var(--surface);
   border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  border-color: var(--line-strong);
   overflow: hidden;
 }
 .cma-palette [cmdk-root]::before {
   content: '';
   display: block;
-  height: 3px;
-  background: var(--accent);
+  height: 1px;
+  background: var(--line-strong);
 }
 .cma-palette [cmdk-input] {
   width: 100%;
   padding: 16px 18px;
   font: inherit;
-  font-size: 15px;
+  font-size: var(--text-body);
   background: transparent;
   color: var(--ink);
   border: none;
@@ -477,9 +482,9 @@ table.pins tr.flash td {
   padding: 8px;
 }
 .cma-palette [cmdk-group-heading] {
-  font-size: 9px;
+  font-size: var(--text-micro);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--ink-3);
   padding: 10px 10px 4px;
@@ -489,7 +494,7 @@ table.pins tr.flash td {
   align-items: center;
   gap: 10px;
   padding: 9px 10px;
-  font-size: 13px;
+  font-size: var(--text-ui);
   cursor: pointer;
   border-left: 2px solid transparent;
 }
@@ -498,7 +503,7 @@ table.pins tr.flash td {
   border-left-color: var(--accent);
 }
 .cma-palette [cmdk-item] .ref {
-  font-size: 10px;
+  font-size: var(--text-micro);
   color: var(--ink-3);
   min-width: 44px;
   font-variant-numeric: tabular-nums;
@@ -506,7 +511,7 @@ table.pins tr.flash td {
 .cma-palette [cmdk-empty] {
   padding: 24px;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--text-ui);
   color: var(--ink-2);
 }
 

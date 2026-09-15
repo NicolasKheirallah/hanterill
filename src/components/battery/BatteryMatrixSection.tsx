@@ -1,11 +1,12 @@
 "use client";
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useInView } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { Container, SectionHeading } from "@/components/ui/layout";
 import { batteryDemo, cellOffsets, cellVoltage, moduleStats, type ModuleStats } from "@/lib/demo-data";
+import { CELL_NEUTRAL, CELL_OVER, CELL_WARN, NEUTRAL_MV, WARN_MV, cellFill } from "@/lib/cell-scale";
 import { DUR, EASE, SPRING } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { useModuleSelection } from "./selection-context";
@@ -27,8 +28,8 @@ const VIEW_KEY: Record<ViewMode, "viewVoltage" | "viewDeviation" | "viewModule">
   module: "viewModule",
 };
 
-const WARN_FILL = "color-mix(in srgb, var(--status-warning) 45%, var(--line))";
-const OVER_FILL = "color-mix(in srgb, var(--status-error) 50%, var(--line))";
+const WARN_FILL = CELL_WARN;
+const OVER_FILL = CELL_OVER;
 
 /**
  * Cell fill by view mode:
@@ -36,18 +37,18 @@ const OVER_FILL = "color-mix(in srgb, var(--status-error) 50%, var(--line))";
  * - deviation: heat by this potential's offset from the pack mean
  * - module: heat by the whole module's spread, so imbalanced modules read as
  *   vertical bands
+ *
+ * The fills come from `lib/cell-scale.ts` so this matrix, the read-out strip
+ * and the hero panel cannot drift apart again.
  */
 function fill(offset: number, mode: ViewMode, moduleDelta: number): string {
-  if (mode === "voltage") return "var(--line-strong)";
+  if (mode === "voltage") return CELL_NEUTRAL;
   if (mode === "module") {
-    if (moduleDelta <= 2) return "var(--line-strong)";
-    if (moduleDelta <= 4) return WARN_FILL;
+    if (moduleDelta <= NEUTRAL_MV) return CELL_NEUTRAL;
+    if (moduleDelta <= WARN_MV) return WARN_FILL;
     return OVER_FILL;
   }
-  const a = Math.abs(offset);
-  if (a <= 2) return "var(--line-strong)";
-  if (a <= 4) return WARN_FILL;
-  return OVER_FILL;
+  return cellFill(offset);
 }
 
 function srText(t: T, m: number, g: number) {
@@ -65,7 +66,7 @@ function srText(t: T, m: number, g: number) {
 }
 
 export function BatteryMatrixSection() {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const t = useTranslations("battery");
   const [mode, setMode] = useState<ViewMode>("deviation");
   const [selected, setSelected] = useState<Coord | null>(null);
@@ -186,13 +187,19 @@ export function BatteryMatrixSection() {
           </ToggleGroup.Root>
         </div>
 
-        <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1.85fr_1fr] lg:gap-14">
+        {/* The matrix is the primary instrument on this page, so it takes the
+            larger share of the container. At the old 1.85fr it was ~620px for
+            27 columns - about 20px each - and the two-digit module numerals
+            ran into each other and became unreadable. 2.4fr gives it ~740px at
+            a 1440 viewport, and below that the grid scrolls rather than
+            squeezing the labels. */}
+        <div className="mt-10 grid items-start gap-8 lg:grid-cols-[2.4fr_1fr] lg:gap-10">
           <div className="hidden min-w-0 sm:block">
             <div className="bezel bg-surface p-4 sm:p-5">
               {/* Live read-out: the pointed-at potential, right where you are
                   looking, so you never have to track the side panel. */}
-              <div className="mb-3 flex items-baseline justify-between gap-4 border-b border-line pb-2 font-mono text-[11px]">
-                <span className="uppercase tracking-wider text-text-muted">{t("spread")}</span>
+              <div className="mb-3 flex items-baseline justify-between gap-4 border-b border-line pb-2 font-mono text-[length:var(--text-micro)]">
+                <span className="uppercase tracking-[length:var(--track-label)] text-text-muted">{t("spread")}</span>
                 <span className="tnum text-right">
                   {activeCell ? (
                     <>
@@ -204,9 +211,9 @@ export function BatteryMatrixSection() {
                       </span>
                       <span
                         className={cn(
-                          Math.abs(activeOffset) > 4
+                          Math.abs(activeOffset) > WARN_MV
                             ? "text-status-error"
-                            : Math.abs(activeOffset) > 2
+                            : Math.abs(activeOffset) > NEUTRAL_MV
                               ? "text-status-warning"
                               : "text-text-muted",
                         )}
@@ -225,12 +232,14 @@ export function BatteryMatrixSection() {
               <span aria-live="polite" className="sr-only">
                 {srFocus}
               </span>
+              {/* Scrolls only when the columns would fall below the legible
+                  minimum, and says so when it does. */}
               <div className="overflow-x-auto">
               <div
                 ref={gridRef}
                 role="grid"
                 aria-label={t("gridAria")}
-                className="min-w-[620px]"
+                className="min-w-[700px]"
                 data-mx-reveal={revealed ? "" : undefined}
                 onMouseLeave={() => setHover(null)}
                 onBlur={(e) => {
@@ -255,7 +264,7 @@ export function BatteryMatrixSection() {
                         onFocus={() => setHover({ m, g: -1 })}
                         onClick={() => pick({ m, g: selected?.m === m ? selected.g : 1 })}
                         className={cn(
-                          "min-w-0 py-0.5 text-center font-mono text-[9px] tabular-nums leading-none transition-colors",
+                          "min-w-0 py-0.5 text-center font-mono text-[length:var(--text-micro)] tabular-nums leading-none transition-colors",
                           active?.m === m ? "text-text-primary" : "text-text-muted hover:text-text-secondary",
                         )}
                       >
@@ -282,7 +291,7 @@ export function BatteryMatrixSection() {
                         onFocus={() => setHover({ m: -1, g })}
                         onClick={() => pick({ m: selected?.g === g ? selected.m : 1, g })}
                         className={cn(
-                          "flex items-center pr-2 font-mono text-[10px] uppercase tracking-wider transition-colors",
+                          "flex items-center pr-2 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] transition-colors",
                           rowActive ? "text-text-primary" : "text-text-muted hover:text-text-secondary",
                         )}
                       >
@@ -315,7 +324,7 @@ export function BatteryMatrixSection() {
                             onClick={() => pick({ m, g })}
                             onKeyDown={(e) => onCellKey(e, m, g)}
                             className={cn(
-                              "mx-cell h-6 min-w-0 rounded-[1px] outline-none ring-inset transition-[box-shadow,transform] duration-150 will-change-transform",
+                              "mx-cell h-6 min-w-0 rounded-xs outline-none ring-inset transition-[box-shadow,transform] duration-150",
                               emphasised && !isCell && !isSelected && "ring-1 ring-text-primary/25",
                               isCell && "relative z-10 scale-[1.14]",
                               isSelected && "ring-2 ring-accent",
@@ -360,21 +369,23 @@ export function BatteryMatrixSection() {
             <PackScale mean={batteryDemo.avgCellGroup} value={scaleValue} />
 
             {/* Height is reserved so the panel does not collapse (and the bezel
-                notch does not jump) as you move between pack / module / cell. */}
+                notch does not jump) as you move between pack / module / cell.
+
+                The key follows `selected` ONLY, never `detail`. `detail`
+                tracks the hovered module, so keying on it made simply sweeping
+                the pointer across the pack queue up to thirteen 480ms
+                exit-then-enter cycles - the panel was never readable and could
+                not be interrupted. Hover now updates the content in place,
+                which is what direct manipulation means; only an actual
+                selection transition animates. */}
             <div className="mt-5 hidden min-h-[15.5rem] sm:block">
-              <AnimatePresence mode="wait">
+              <AnimatePresence initial={false}>
                 <motion.div
-                  key={
-                    selected
-                      ? `s-${selected.m}-${selected.g}`
-                      : detail
-                        ? `m-${detail.module}`
-                        : "pack"
-                  }
-                  initial={reduce ? false : { opacity: 0, y: 6 }}
+                  key={selected ? `s-${selected.m}-${selected.g}` : "idle"}
+                  initial={reduce ? { opacity: 0 } : { opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                  transition={{ duration: DUR.base, ease: EASE.standard }}
+                  exit={reduce ? { opacity: 0 } : { opacity: 0, y: -4 }}
+                  transition={{ duration: reduce ? DUR.fast : DUR.base, ease: EASE.standard }}
                 >
                   {selected && detail ? (
                     <SelectedDetail detail={detail} group={selected.g} />
@@ -427,24 +438,31 @@ export function BatteryMatrixSection() {
 function Legend({ mode }: { mode: ViewMode }) {
   const t = useTranslations("battery");
   if (mode === "voltage")
-    return <p className="mt-3 font-mono text-[11px] text-text-muted">{t("voltageLegend")}</p>;
+    return (
+      <p className="mt-3 font-mono text-[length:var(--text-micro)] text-text-muted">
+        {t("voltageLegend")}
+      </p>
+    );
   const swatches: [string, string][] =
     mode === "module"
       ? [
-          ["var(--line-strong)", `${t("moduleSpread")}, ${t("withinLegend")}`],
+          [CELL_NEUTRAL, `${t("moduleSpread")}, ${t("withinLegend")}`],
           [WARN_FILL, `${t("moduleSpread")}, ${t("midLegend")}`],
           [OVER_FILL, `${t("moduleSpread")}, ${t("overLegend")}`],
         ]
       : [
-          ["var(--line-strong)", t("withinLegend")],
+          [CELL_NEUTRAL, t("withinLegend")],
           [WARN_FILL, t("midLegend")],
           [OVER_FILL, t("overLegend")],
         ];
   return (
-    <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[11px] text-text-muted">
+    <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[length:var(--text-micro)] text-text-muted">
       {swatches.map(([sw, label]) => (
         <span key={label} className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-2 w-2 rounded-[1px]" style={{ background: sw }} />
+          <span
+            className="inline-block h-2 w-2 rounded-xs border border-line"
+            style={{ background: sw }}
+          />
           {label}
         </span>
       ))}

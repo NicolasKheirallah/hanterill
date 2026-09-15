@@ -55,6 +55,16 @@ for await (const f of htmlFiles(OUT)) {
   const xDefault = head(html, /<link rel="alternate" hreflang="x-default" href="([^"]*)"/i);
   const ogImage = head(html, /<meta property="og:image" content="([^"]*)"/);
   const twImage = head(html, /<meta name="twitter:image" content="([^"]*)"/);
+  // Next merges metadata shallowly: a page-level `openGraph` object replaces the
+  // layout's entirely. These three were declared in the layout, absent from all
+  // 80 built pages, and nothing asserted them - which is exactly why they
+  // shipped missing for as long as they did.
+  const ogType = head(html, /<meta property="og:type" content="([^"]*)"/);
+  const ogSiteName = head(html, /<meta property="og:site_name" content="([^"]*)"/);
+  const ogLocale = head(html, /<meta property="og:locale" content="([^"]*)"/);
+  const ogTitle = head(html, /<meta property="og:title" content="([^"]*)"/);
+  const ogDesc = head(html, /<meta property="og:description" content="([^"]*)"/);
+  const desc = head(html, /<meta name="description" content="([^"]*)"/);
   const title = head(html, /<title>([^<]*)<\/title>/);
 
   const isLocaleRoot = pagePath === "/en/" || pagePath === "/sv/";
@@ -69,6 +79,14 @@ for await (const f of htmlFiles(OUT)) {
   expect(xDefault === `${SITE_URL}${pagePath.replace("/sv/", "/en/")}`, `${rel} x-default`, String(xDefault));
   expect(!!ogImage, `${rel} og:image`, "missing");
   expect(!!twImage, `${rel} twitter:image`, "missing");
+  expect(ogType === "website", `${rel} og:type`, String(ogType));
+  expect(ogSiteName === "Hanterill", `${rel} og:site_name`, String(ogSiteName));
+  expect(ogLocale === (rel.startsWith("sv/") ? "sv_SE" : "en"), `${rel} og:locale`, String(ogLocale));
+  expect(!!ogTitle && !!ogDesc, `${rel} og:title/description`, "missing");
+  // Descriptions beyond ~160 characters are truncated in a SERP; titles under
+  // 15 are too thin to identify a page.
+  if (desc) expect(desc.length <= 200, `${rel} description length`, `${desc.length} chars`);
+  if (title) expect(title.length >= 15, `${rel} title length`, `${title.length} chars`);
   // titles must differ per locale for marketing pages
   if (/^sv\//.test(rel) && !/\/docs\//.test(rel) && !isLocaleRoot && pagePath !== "/sv/") {
     expect(!/^(About|Download|Features|Privacy|Safety|Screenshots|Vehicles|Other projects)\b/.test(title || ""), `${rel} localized title`, title);
@@ -96,6 +114,23 @@ for (const loc of locs) {
 // root redirect page exists and points at ./en/
 const root = await readFile(join(OUT, "index.html"), "utf8");
 expect(root.includes("./en/"), "root redirect", "no ./en/ bounce");
+
+// Every sitemap <lastmod> used to be the identical build timestamp, which tells
+// a crawler nothing. Assert they are at least not all one instant.
+const lastmods = [...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((m) => m[1]);
+expect(lastmods.length > 0, "sitemap has lastmod values", "none");
+// Either there is no lastmod (nothing in the repo records a per-page date, so
+// omitting it is honest) or the values genuinely differ. What must never ship
+// again is 152 URLs all claiming the build instant.
+// The invariant is that a lastmod, when present, is a real per-URL fact rather
+// than the build instant. Today only the two changelog entries carry one (the
+// newest release date). What must never ship again is every URL claiming the
+// same timestamp, which is what `lastModified: new Date()` produced.
+expect(
+  lastmods.length < 10 || new Set(lastmods).size > 1,
+  "sitemap lastmod is not one identical build stamp",
+  `${new Set(lastmods).size} distinct value(s) across ${lastmods.length} urls`,
+);
 
 // no og:image points at a missing asset
 for await (const f of htmlFiles(OUT)) {

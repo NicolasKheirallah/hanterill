@@ -1,8 +1,8 @@
 "use client";
-
 import { useCallback, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { ArrowLeft, ArrowRight, Download, RotateCcw } from "lucide-react";
 import { Container, SectionHeading } from "@/components/ui/layout";
 import { StatusMarker } from "@/components/ui/StatusBadge";
@@ -24,7 +24,7 @@ import {
 import { cn } from "@/lib/cn";
 
 export function SessionSimulator() {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const ts = useTranslations("session");
   const [i, setI] = useState(0);
   const regionRef = useRef<HTMLDivElement>(null);
@@ -105,13 +105,13 @@ export function SessionSimulator() {
           </div>
 
           <div className="min-h-[320px] p-5 sm:p-6">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="popLayout">
               <motion.div
                 key={stage.id}
-                initial={reduce ? false : { opacity: 0, y: 8 }}
+                initial={reduce ? false : { opacity: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
-                transition={{ duration: DUR.base, ease: EASE.standard }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: DUR.fast, ease: EASE.standard }}
               >
                 <StagePanel id={stage.id} />
               </motion.div>
@@ -174,7 +174,7 @@ function StagePanel({ id }: { id: SessionStageId }) {
 }
 
 function ConnectStage() {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const ts = useTranslations("session");
   const rows = [
     [ts("connectLink"), ts("connectStateLinked")],

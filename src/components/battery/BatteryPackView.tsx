@@ -1,10 +1,10 @@
 "use client";
-
 import { useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { useInView, useReducedMotion } from "motion/react";
+import { useInView } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
 import { Box } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -58,7 +58,7 @@ function Placeholder({ label, pulse }: { label?: string; pulse?: boolean }) {
  */
 export function BatteryPackView() {
   const tb = useTranslations("battery");
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const ref = useRef<HTMLDivElement>(null);
   // `mounted` latches on first view; `visible` tracks it live to pause the loop.
   const mounted = useInView(ref, { amount: 0.2, once: true });

@@ -7,23 +7,28 @@ export function Container({ children, className }: { children: ReactNode; classN
   return <div className={cn("mx-auto w-full max-w-[1200px] px-5 sm:px-8", className)}>{children}</div>;
 }
 
+/**
+ * The page-body primitive. It owns the one section rhythm in the system -
+ * `--space-2xl` on mobile, `--space-3xl` on desktop - inside a `Container`.
+ *
+ * Every page used to retype that padding on a raw `Container`, and two
+ * different values had already grown: marketing pages used 7rem on desktop
+ * while every feature, docs and content page used 4.5rem, so the same site
+ * ran at two vertical densities 36% apart. Use this instead of
+ * `<Container className="py-...">`.
+ */
 export function Section({
   children,
   className,
   id,
-  bleed = false,
 }: {
   children: ReactNode;
   className?: string;
   id?: string;
-  bleed?: boolean;
 }) {
   return (
-    <section
-      id={id}
-      className={cn("scroll-mt-24 py-2xl lg:py-3xl", bleed && "overflow-hidden", className)}
-    >
-      {children}
+    <section id={id} className={cn("scroll-mt-24 py-2xl lg:py-3xl", className)}>
+      <Container>{children}</Container>
     </section>
   );
 }
@@ -34,22 +39,24 @@ export function Section({
  * Ordinal numbering (`01 -`) is opt-in via `data-ordinal` and reserved for
  * genuinely sequential content (the session walkthrough).
  */
-export function Eyebrow({
+/**
+ * Mono legend line. Used only where it labels a live instrument (channel,
+ * units, source) - never as a decorative uppercase eyebrow above prose.
+ * The `ordinal` variant was removed: it had no call sites, and the one piece
+ * of genuinely sequential content (the 7-stage session walkthrough) numbers
+ * itself. See design.md "What pages MUST share".
+ */
+export function Legend({
   children,
   className,
-  ordinal = false,
 }: {
   children: ReactNode;
   className?: string;
-  ordinal?: boolean;
 }) {
   return (
     <p
-      {...(ordinal ? { "data-ordinal": "" } : {})}
       className={cn(
-        ordinal
-          ? "font-mono text-[12px] tracking-[0.08em] text-text-muted"
-          : "font-mono text-[11.5px] uppercase tracking-[0.12em] text-text-muted",
+        "font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted",
         className,
       )}
     >
@@ -60,25 +67,22 @@ export function Eyebrow({
 
 export function SectionHeading({
   as: As = "h2",
-  eyebrow,
   title,
   lead,
   className,
 }: {
   as?: "h1" | "h2" | "h3";
-  eyebrow?: string;
   title: ReactNode;
   lead?: ReactNode;
   className?: string;
 }) {
   return (
     <div className={cn("max-w-[46rem]", className)}>
-      {eyebrow ? <Eyebrow className="mb-3">{eyebrow}</Eyebrow> : null}
-      <As className="text-[2rem] leading-[1.1] tracking-[-0.02em] sm:text-[2.5rem] lg:text-[2.9rem]">
-        {title}
-      </As>
+      <As className="text-[clamp(1.875rem,2.2vw+1rem,2.75rem)] leading-[1.1]">{title}</As>
       {lead ? (
-        <p className="mt-5 max-w-[60ch] text-[1.0625rem] leading-relaxed text-text-secondary">{lead}</p>
+        <p className="mt-5 max-w-[60ch] text-[length:var(--text-prose)] leading-relaxed text-text-secondary">
+          {lead}
+        </p>
       ) : null}
     </div>
   );
@@ -94,7 +98,7 @@ export function MoreLink({
   external?: boolean;
 }) {
   const cls =
-    "group inline-flex items-center gap-1 text-[15px] font-medium text-accent transition-colors hover:text-accent-hover";
+    "group inline-flex items-center gap-1 text-[length:var(--text-body)] font-medium text-accent transition-colors hover:text-accent-hover";
   const inner = (
     <>
       <span className="rule-link">{children}</span>

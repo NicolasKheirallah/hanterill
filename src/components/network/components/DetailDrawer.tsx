@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
+import { useReducedMotionSafe } from '@/lib/use-motion-prefs'
 import {
   X, Search, MapPin, Hash, Share2, ArrowLeft, Route, Waypoints,
   ChevronDown, ChevronRight, Radio,
@@ -44,7 +45,7 @@ function PinTable({
 }) {
   const [q, setQ] = useState(initialFilter ?? '')
   const bodyRef = useRef<HTMLTableSectionElement>(null)
-  const reduce = useReducedMotion()
+  const reduce = useReducedMotionSafe()
 
   // Global pin search: apply initial filter after mount
   useEffect(() => {

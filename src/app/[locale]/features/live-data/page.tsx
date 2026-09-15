@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Section, MoreLink } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
+import { FeatureShots } from "@/components/features/FeatureShots";
 import { LiveTelemetryChart } from "@/components/telemetry/LiveTelemetryChart";
 import { liveChannels } from "@/lib/demo-data";
 
@@ -21,7 +22,9 @@ export default async function LiveDataPage({ params }: { params: Promise<{ local
     <>
       <LocalizedPageHeader id="liveData" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
+        <FeatureShots href="/features/live-data" />
+
         <LiveTelemetryChart />
 
         <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_1fr] lg:gap-16">
@@ -49,7 +52,7 @@ export default async function LiveDataPage({ params }: { params: Promise<{ local
         <div className="mt-6">
           <MoreLink href="/docs/architecture">{t("archDocs")}</MoreLink>
         </div>
-      </Container>
+      </Section>
     </>
   );
 }

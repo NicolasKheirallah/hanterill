@@ -25,7 +25,7 @@ export default async function NetworkPage({ params }: { params: Promise<{ locale
           stays one band and the explorer fills the rest of the viewport. */}
       <header className="border-b border-line">
         <div className="mx-auto w-full max-w-[1880px] px-4 py-3.5 sm:px-6">
-          <h1 className="text-[1.6rem] leading-tight tracking-[-0.02em]">{tp("networkTitle")}</h1>
+          <h1 className="text-[length:var(--text-display)] leading-[1.03]">{tp("networkTitle")}</h1>
           <p className="mt-1 max-w-[110ch] text-[13.5px] leading-relaxed text-text-secondary">
             {tp("networkLead")}
           </p>

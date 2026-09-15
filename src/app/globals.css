@@ -54,7 +54,22 @@
   --space-4xl: 10rem;
 
   --measure: 68ch;
+
+  /* Type scale. Six steps, plus the display clamp. Every size on the site
+   * resolves to one of these - no component invents its own px value. The
+   * steps are close enough to cover dense instrument chrome without the
+   * seven near-identical sizes (13 / 13.5 / 14 / 15 / 16px) that had drifted
+   * into the components. */
+  --text-micro: 0.6875rem; /* 11px - mono channel legends, tick labels  */
+  --text-meta: 0.75rem; /* 12px - mono row meta, table sub-labels    */
+  --text-ui: 0.8125rem; /* 13px - dense instrument chrome            */
+  --text-body: 0.9375rem; /* 15px - UI body copy, list rows            */
+  --text-prose: 1.0625rem; /* 17px - long-form prose and leads          */
+  --text-title: 1.375rem; /* 22px - minor section headings             */
   --text-display: clamp(2.5rem, 4.5vw + 1rem, 4.25rem);
+
+  /* One tracking value for every uppercase mono label in the system. */
+  --track-label: 0.12em;
 
   --motion-instant: 100ms;
   --motion-fast: 160ms;
@@ -101,12 +116,33 @@
   color-scheme: light;
 }
 
+/* Theme cross-fade. The toggle stamps `data-theme-switching` for ~260ms while
+ * it flips the palette, so the largest brightness change in the product eases
+ * instead of flashing. Colour properties only - transform and layout are never
+ * transitioned here, and the rules below are skipped under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-theme-switching],
+  :root[data-theme-switching] body,
+  :root[data-theme-switching] [data-site-header],
+  :root[data-theme-switching] [data-statement-footer],
+  :root[data-theme-switching] .bezel,
+  :root[data-theme-switching] section {
+    transition: background-color 240ms var(--ease-standard),
+      border-color 240ms var(--ease-standard), color 240ms var(--ease-standard);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
   }
 }
 
+/* The OS-preference light remap. It MUST stay byte-identical to the explicit
+ * `[data-theme="light"]` block above: the two used to disagree on the bronze
+ * (-45 vs -55 hue), so the same user saw a different accent depending on
+ * whether they toggled or simply had a light OS setting. Any change to a light
+ * value goes in both blocks. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     --bg-primary: oklch(96.2% 0.006 80);
@@ -121,10 +157,10 @@
     --line: oklch(87.5% 0.008 80);
     --line-strong: oklch(79% 0.01 80);
 
-    --accent: oklch(52% 0.115 55);
-    --accent-hover: oklch(45% 0.11 55);
+    --accent: oklch(50% 0.1 45);
+    --accent-hover: oklch(43% 0.095 45);
     --accent-fg: oklch(98.5% 0.008 80);
-    --accent-tint: oklch(94% 0.035 60);
+    --accent-tint: oklch(94% 0.03 45);
 
     --status-ok: oklch(50% 0.12 150);
     --status-warning: oklch(55% 0.12 75);
@@ -134,6 +170,22 @@
     --grid-line: oklch(24% 0.012 265 / 0.05);
 
     color-scheme: light;
+  }
+}
+
+/* The 108-cell neutral fill. `--line-strong` reads at ~1.2:1 on the light
+ * surface, which erased the matrix's baseline state in light mode - only the
+ * out-of-tolerance cells were visible. This pair stays legible in both
+ * themes while still reading as "no deviation". */
+:root {
+  --cell-neutral: oklch(41% 0.013 265);
+}
+:root[data-theme="light"] {
+  --cell-neutral: oklch(78% 0.012 80);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --cell-neutral: oklch(78% 0.012 80);
   }
 }
 
@@ -155,6 +207,18 @@
   --color-status-warning: var(--status-warning);
   --color-status-error: var(--status-error);
   --color-status-info: var(--status-info);
+  --color-cell-neutral: var(--cell-neutral);
+
+  /* Type scale, mirrored so `text-ui`, `text-body`, `text-prose`, `text-title`
+   * work as utilities. Deliberately overrides the Tailwind defaults for these
+   * names - the design system's steps win over the framework's. */
+  --text-micro: var(--text-micro);
+  --text-meta: var(--text-meta);
+  --text-ui: var(--text-ui);
+  --text-body: var(--text-body);
+  --text-prose: var(--text-prose);
+  --text-title: var(--text-title);
+  --tracking-label: var(--track-label);
 
   /* Geist carries the display voice - a precision grotesk, the instrument-
    * panel register; no serif anywhere. Inter is the body. IBM Plex Mono is
@@ -220,16 +284,24 @@
   }
 
   /* Geist on every heading; emphasis is weight or accent. Grotesk display
-   * tightens harder than a serif would. Per-component tracking utilities
-   * still win. */
+   * tightens harder than a serif would. These three tracking values are the
+   * system's; per-component overrides were deleted so nothing drifts from
+   * them again. */
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 500;
     letter-spacing: -0.017em;
+    text-wrap: balance;
   }
 
-  h1 { letter-spacing: -0.022em; text-wrap: balance; }
+  h1 { letter-spacing: -0.022em; }
   h2 { letter-spacing: -0.019em; }
+
+  /* Measured prose should not be balanced - balance is for short display runs,
+   * pretty is for paragraphs (it only prevents orphans). */
+  p {
+    text-wrap: pretty;
+  }
 
   a {
     color: inherit;
@@ -395,23 +467,57 @@
   }
 }
 
-/* Press feedback. A small physical push on click, pointer devices only
- * so it does not fire on touch tap-ghosting, and off under reduced
- * motion. Applied to buttons and toggle items that are not already
- * handling their own :active transform. */
+/* Press feedback. Response is the foundation everything else rests on, so this
+ * fires on touch too - it used to sit behind `@media (hover: hover)`, which
+ * meant nothing on the site responded on pointer-down for phone and tablet
+ * users. Pointer devices get the physical push; touch gets a colour shift
+ * because a 1px translate under a fingertip is invisible anyway. */
+.press {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform var(--motion-fast) var(--ease-out),
+    background-color var(--motion-fast) var(--ease-out);
+}
+
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .press {
-    transition: transform var(--motion-fast) var(--ease-out);
-  }
   .press:active {
     transform: translateY(1px) scale(0.985);
   }
 }
 
+@media (hover: none) {
+  .press:active {
+    background-color: color-mix(in srgb, var(--text-primary) 10%, transparent);
+  }
+}
+
+/* A bezel clips its own box with `clip-path`, which also clips the focus ring
+ * and any box-shadow drawn outside the polygon - leaving focusable bezels
+ * with no visible focus indicator. Put the focus ring INSIDE the clip. */
+.bezel:focus-visible,
+.bezel:has(:focus-visible) {
+  outline: none;
+}
+.bezel:focus-visible::after,
+.bezel:has(:focus-visible)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+  z-index: 1;
+}
+.bezel:focus-visible,
+.bezel:has(:focus-visible) {
+  position: relative;
+}
+
 /* Battery matrix: the 108 cells sweep in on a short diagonal stagger the first
  * time the grid is seen - a "reading the pack" moment. Only opacity and
- * clip-path animate, so the pointer scale on a hovered cell is never fought
- * over. Armed by data-mx-reveal; skipped under reduced motion. */
+ * transform animate, so the pointer scale on a hovered cell is never fought
+ * over and 108 elements never trigger a paint of a clip path. Armed by
+ * data-mx-reveal; skipped under reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
   [data-mx-reveal] .mx-cell {
     animation: mx-cell-in var(--motion-slow) var(--ease-out) both;
@@ -421,11 +527,11 @@
 @keyframes mx-cell-in {
   from {
     opacity: 0;
-    clip-path: inset(55% 0 0 0);
+    transform: translateY(45%) scaleY(0.55);
   }
   to {
     opacity: 1;
-    clip-path: inset(0 0 0 0);
+    transform: translateY(0) scaleY(1);
   }
 }
 
@@ -434,6 +540,25 @@
   8% { opacity: 1; }
   92% { opacity: 1; }
   100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* The connection-diagram packet. It used to animate `left` (a layout property)
+ * on a `key={phase}` remount, so every lap restarted from a logical value and
+ * the whole rail repainted 60 times a second. This is a pure transform: the
+ * inner track is exactly as wide as the rail, so translating it by 100% of its
+ * own width sweeps the dot from one end to the other on the compositor. One
+ * element, one animation, `alternate` instead of a JS ping-pong, and the
+ * reduced-motion contract in this file stops it (the caller does not even
+ * render it when motion is off). */
+@keyframes packet-sweep {
+  0% { transform: translateX(0); opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+.packet-sweep {
+  animation: packet-sweep 1.7s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate;
 }
 
 @keyframes sweep {
@@ -450,14 +575,91 @@
   animation: pulse-dot 2.4s var(--ease-out) infinite;
 }
 
+/* Reduced motion. Two tiers, not one blanket kill:
+ *
+ *  - Tier 1 - colour and opacity transitions survive, capped at 200ms. They
+ *    aid comprehension (a state change you can see happen) and carry no
+ *    vestibular risk. The old blanket `transition-duration: 0.001ms` deleted
+ *    them too, which is why the pin-row match marker in the network drawer
+ *    became invisible: the row flashed in a single frame and was gone.
+ *  - Tier 2 - every spatial transition (transform, height, width, top, left)
+ *    is removed by narrowing `transition-property` to the allowlist below.
+ *    Spatial motion never carries information on its own, so it can simply go.
+ *
+ * Loops collapse to their end state via iteration-count 1. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+    transition-property: opacity, color, background-color, border-color, outline-color,
+      text-decoration-color, fill, stroke !important;
+    transition-duration: 200ms !important;
+    transition-timing-function: linear !important;
+  }
+}
+
+/* The static equivalent for anything the clamp removes that carried meaning.
+ * A match marker that only exists as motion is not a match marker. */
+@media (prefers-reduced-motion: reduce) {
+  [data-flash] {
+    animation: none !important;
+    background-color: color-mix(in srgb, var(--accent) 22%, transparent) !important;
+  }
+}
+
+/* Reduce transparency: make the one glass surface solid rather than removing
+ * it. Material weight is preserved; legibility is prioritised. */
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-scrolled] [data-site-header],
+  [data-site-header][data-menu-open],
+  [data-material] {
+    background: var(--bg-primary) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* More contrast: near-solid surfaces with a defined, contrasting border, and
+ * the muted text step lifted to the secondary one. */
+@media (prefers-contrast: more) {
+  :root {
+    --text-muted: oklch(74% 0.008 85);
+    --line: oklch(45% 0.011 265);
+    --line-strong: oklch(56% 0.013 265);
+  }
+  :root[data-theme="light"] {
+    --text-muted: oklch(38% 0.011 265);
+    --line: oklch(62% 0.008 80);
+    --line-strong: oklch(48% 0.01 80);
+  }
+  :root[data-scrolled] [data-site-header],
+  [data-site-header][data-menu-open],
+  [data-material] {
+    background: var(--bg-primary) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .bezel {
+    border-color: var(--line-strong);
+  }
+}
+
+/* Forced colours (Windows High Contrast): hand the palette to the OS and drop
+ * the devices that only work with our own colours. */
+@media (forced-colors: active) {
+  .bezel {
+    border: 1px solid CanvasText;
+  }
+  .hairline-grid,
+  [data-material] {
+    background-image: none !important;
+    backdrop-filter: none !important;
+  }
+  :focus-visible {
+    outline: 2px solid Highlight;
   }
 }
 
@@ -484,27 +686,46 @@ h3:hover .heading-anchor,
   footer,
   nav,
   aside,
+  [data-no-print],
   .no-print,
-  .hairline-grid {
+  .hairline-grid,
+  [data-material] {
     display: none !important;
   }
+  /* Every token that can carry text on paper has to be remapped, not just the
+   * neutrals. The accent and the four status hues were left at their screen
+   * values, which put 2.0-2.8:1 coloured text on white - on the safety and
+   * reference pages that workshops actually print. */
   :root,
   :root[data-theme="dark"],
   :root[data-theme="light"] {
     --bg-primary: #ffffff;
-    --surface: #ffffff;
     --bg-secondary: #ffffff;
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
     --text-primary: #111417;
     --text-secondary: #2c3036;
     --text-muted: #4a4f57;
     --line: #c9cdd3;
-    --line-strong: #9aa0a8;
+    --line-strong: #6b7178;
+    --accent: #7a3f22;
+    --accent-hover: #5f3019;
+    --accent-fg: #ffffff;
+    --accent-tint: #f4ece7;
+    --cell-neutral: #9aa0a8;
+    --status-ok: #1d5c37;
+    --status-warning: #6b4a05;
+    --status-error: #8c1d1d;
+    --status-info: #1c4272;
     color-scheme: light;
   }
   body {
     background: #ffffff;
   }
-  .bezel,
+  .bezel {
+    border-color: var(--line-strong);
+    clip-path: none;
+  }
   [role="dialog"] {
     box-shadow: none !important;
   }

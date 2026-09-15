@@ -3,7 +3,7 @@ import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container, MoreLink } from "@/components/ui/layout";
+import { Section, MoreLink } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
 import { site } from "@/lib/site";
 
@@ -20,7 +20,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     <>
       <LocalizedPageHeader id="about" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
         <Prose>
           <h2>{t("hIndependence")}</h2>
           <p>{t("pIndependence")}</p>
@@ -51,7 +51,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </MoreLink>
           <MoreLink href="/docs/architecture">{t("moreArch")}</MoreLink>
         </div>
-      </Container>
+      </Section>
     </>
   );
 }

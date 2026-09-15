@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
-import { Container } from "@/components/ui/layout";
+import { Section } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -18,7 +18,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
     <>
       <LocalizedPageHeader id="privacy" />
 
-      <Container className="py-xl lg:py-2xl">
+      <Section>
         <Prose>
           <h2>{t("hStays")}</h2>
           <ul>
@@ -43,7 +43,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
           <h2>{t("hNoSub")}</h2>
           <p>{t("pNoSub")}</p>
         </Prose>
-      </Container>
+      </Section>
     </>
   );
 }

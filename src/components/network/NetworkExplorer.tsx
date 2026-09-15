@@ -1,7 +1,8 @@
 "use client";
 
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
+
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
-import { useReducedMotion } from 'motion/react'
 import {
   Background, BackgroundVariant, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider,
   getNodesBounds, getViewportForBounds, useEdgesState, useNodesState, useReactFlow,
@@ -119,7 +120,7 @@ function NetworkExplorerInner() {
   const hoverTimer = useRef<number | null>(null)
   const helpCloseRef = useRef<HTMLButtonElement>(null)
   const mac = useSyncExternalStore(subscribeNull, isMac, () => false)
-  const reduce = useReducedMotion()
+  const reduce = useReducedMotionSafe()
   const motion = reduce ? 0 : 1
 
   useEffect(() => {

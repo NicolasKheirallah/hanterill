@@ -1,9 +1,9 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
-import { RotateCcw } from "lucide-react";
+import { AnimatePresence, motion, useInView } from "motion/react";
+import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
+import { Pause, Play, RotateCcw } from "lucide-react";
 import { StatusMarker } from "@/components/ui/StatusBadge";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { DUR, EASE } from "@/lib/motion";
@@ -35,11 +35,16 @@ const SCAN_STATE_STEP_MS = 100;
 export function ScanSimulator({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("scan");
   const td = useTranslations("demo");
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const rootRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { amount: 0.4 });
 
-  const [elapsed, setElapsed] = useState(reduce ? SCAN_END : 0);
+  // Hydration-safe: `reduce` is false until after mount, so the server and the
+  // client's first render agree on "not started". Initialising from the raw
+  // hook meant reduced-motion users got a hydration mismatch plus a visible
+  // jump from "Idle / 0 ECUs" to a finished scan.
+  const [elapsed, setElapsed] = useState(0);
+  const [paused, setPaused] = useState(false);
   const [openEcu, setOpenEcu] = useState<string | null>(null);
   const raf = useRef<number | null>(null);
   const last = useRef<number>(0);
@@ -48,9 +53,21 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
 
   const stage: ScanStage = stageAt(elapsed);
   const done = stage === "complete";
-  // The scan runs itself once the section is on screen. No start control -
-  // scrolling away freezes the clock, scrolling back resumes it.
-  const running = inView && !reduce && !done;
+  const started = elapsed > 0;
+
+  // Reduced motion gets the finished scan as a static panel - the information
+  // without the animation.
+  const reduceDone = reduce && !started;
+  if (reduceDone && elapsed !== SCAN_END) setElapsed(SCAN_END);
+
+  /**
+   * The scan used to run itself whenever it was on screen with no way to stop
+   * it. That fails WCAG 2.2.2 (Pause, Stop, Hide): content that starts moving
+   * automatically and runs for more than five seconds has to be pausable. The
+   * control is one slot with three states, and the copy already existed in
+   * both message catalogs.
+   */
+  const running = inView && !reduce && !done && !paused;
 
   useEffect(() => {
     if (!running) return;
@@ -80,12 +97,14 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
 
   const visibleEcus = simEcus.filter((e) => elapsed >= e.at);
   const faultCount = visibleEcus.reduce((n, e) => n + e.faults.length, 0);
+  const faultEcus = new Set(visibleEcus.filter((e) => e.faults.length).map((e) => e.code)).size;
 
   function replay() {
     last.current = 0;
     simNow.current = 0;
     setElapsed(0);
     setOpenEcu(null);
+    setPaused(false);
   }
 
   return (
@@ -93,24 +112,46 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
       {/* Header: stage + controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <StatusMarker tone={done ? "ok" : stage === "idle" ? "muted" : "info"} pulse={!done && stage !== "idle"}>
+          <StatusMarker tone={done ? "ok" : stage === "idle" ? "muted" : "info"} pulse={running}>
             <span aria-live="polite">{t(stageKey[stage])}</span>
           </StatusMarker>
         </div>
-        {done ? (
-          <button
-            type="button"
-            aria-label={t("replayScanAria")}
-            onClick={replay}
-            className="inline-flex h-8 items-center gap-1.5 rounded-sm border border-line px-2.5 font-mono text-[12px] text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
-          >
-            <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} /> {t("replay")}
-          </button>
-        ) : null}
+        <div className="flex items-center gap-2">
+          {!done ? (
+            <button
+              type="button"
+              onClick={() => {
+                // Resuming has to re-arm the clock, or the first frame after a
+                // pause counts the whole paused interval as elapsed time.
+                last.current = 0;
+                setPaused((p) => !p);
+              }}
+              aria-label={paused ? t("resumeScanAria") : t("pauseScanAria")}
+              className="press inline-flex h-8 items-center gap-1.5 rounded-sm border border-line-strong px-2.5 font-mono text-[length:var(--text-meta)] text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
+            >
+              {paused ? (
+                <Play className="h-3.5 w-3.5" strokeWidth={1.75} />
+              ) : (
+                <Pause className="h-3.5 w-3.5" strokeWidth={1.75} />
+              )}
+              {paused ? t("resume") : t("pause")}
+            </button>
+          ) : null}
+          {done ? (
+            <button
+              type="button"
+              aria-label={t("replayScanAria")}
+              onClick={replay}
+              className="press inline-flex h-8 items-center gap-1.5 rounded-sm border border-line-strong px-2.5 font-mono text-[length:var(--text-meta)] text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
+            >
+              <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} /> {t("replay")}
+            </button>
+          ) : null}
+        </div>
       </div>
 
       {/* Vehicle line */}
-      <div className="flex items-center justify-between border-b border-line px-4 py-2.5 font-mono text-[12px]">
+      <div className="flex items-center justify-between border-b border-line px-4 py-2.5 font-mono text-[length:var(--text-meta)]">
         <span className="text-text-muted">{t("vehicle")}</span>
         <span className={cn("transition-colors", elapsed >= 900 ? "text-text-primary" : "text-text-muted")}>
           {elapsed >= 900 ? t("vehicleId") : t("detecting")}
@@ -118,14 +159,14 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
       </div>
 
       {/* Totals row: layout-stable */}
-      <div className="grid grid-cols-3 divide-x divide-line border-b border-line font-mono text-[12px]">
+      <div className="grid grid-cols-3 divide-x divide-line border-b border-line font-mono text-[length:var(--text-meta)]">
         <Stat label={t("ecus")} value={done ? scanTotals.discovered : visibleEcus.length} suffix={done ? "" : ` / ${simEcus.length}`} />
         <Stat
           label={t("faults")}
           value={faultCount}
           placeholder={stage === "scanning" ? t("scanning") : undefined}
         />
-        <Stat label={t("withFaults")} value={new Set(visibleEcus.filter((e) => e.faults.length).map((e) => e.code)).size} />
+        <Stat label={t("withFaults")} value={faultEcus} />
       </div>
 
       {/* ECU list */}

@@ -102,11 +102,11 @@ Hanterill implements the full automotive open networking stack:
 | **ISO 13400-2 (DoIP)** | Diagnostics over Internet Protocol | Auto-discovers vehicles over UDP/TCP Port 13400, negotiates vehicle announcements, handles routing activation, functional broadcast addressing, keepalive pinging. |
 | **ISO 14229-1 (UDS)** | Unified Diagnostic Services | Standardized diagnostic messaging layer running inside DoIP frames. |
 | **UDS 0x10** | `DiagnosticSessionControl` | Switches target ECUs between Default, Extended Diagnostic, and Safety sessions. |
-| **UDS 0x14** | `ClearDiagnosticInformation` | Erases trouble codes per module or car-wide, with freeze-frame backup and verify re-read. Compiled out of released builds (`unsafe-write-ops` only). |
+| **UDS 0x14** | `ClearDiagnosticInformation` | Erases trouble codes per module or car-wide, with freeze-frame backup and verify re-read. Shipped in every release, behind its own confirmation. |
 | **UDS 0x19** | `ReadDTCInformation` | Sub-functions for DTC counts by status mask, the DTC list, snapshot records and extended data records drive freeze-frame triage. |
 | **UDS 0x22** | `ReadDataByIdentifier` | Reads high-resolution telemetry, BMS cell arrays, thermal matrices, VIN, and part numbers. |
 | **UDS 0x2A** | `ReadDataByPeriodicIdentifier` | On-demand periodic sampling for live views (send-once registration and teardown only in read-only builds). |
-| **UDS 0x31** | `RoutineControl` | Requests stored routine results in read-only builds. Starting routines (EPB retract, damper calibration) is compiled out (`unsafe-write-ops` only). |
+| **UDS 0x31** | `RoutineControl` | Reads stored routine results and starts service routines (EPB retract, damper calibration). Starting a routine is a separately confirmed action. |
 | **UDS 0x3E** | `TesterPresent` | Keeps modules awake through long sweeps; transparent to the user. |
 | **SAE J2012 / ISO 14229-1** | DTC definition and status bytes | Decodes codes such as `P0A80-00` with the full byte-level status mask, classified into the four states the interface shows: active, pending, stored, historical. |
 
@@ -120,14 +120,14 @@ Hanterill implements the full automotive open networking stack:
 - **Thermal Grid & Cross-Checks**: Pack temperature channels rendered as a thermal grid, plus ten cross-signal consistency checks (reported pack voltage against the cell sum, parked current plausibility, coolant loop deltas). Sensor-to-module placement is not yet established, and the per-module temperature blocks read as unsupported on the reference vehicle.
 
 ### 2. Full-Vehicle Fault Code (DTC) Triage
-- Scan the full 43-ECU catalogue in one pass over high-speed DoIP, accelerated by functional broadcast collection and per-vehicle presence caching. 34 of those ECUs advertise DTC support.
+- Scan the full 49-ECU catalogue in one pass over high-speed DoIP, accelerated by functional broadcast collection and per-vehicle presence caching. 40 of those ECUs advertise DTC support.
 - Distinguish between **Active** faults (currently causing warning lights) and **Stored** historical faults (transient events). The inspector opens on a "Needs Attention" view.
 - Inspect **Freeze-Frame Telemetry** (vehicle speed, low-voltage rail, pack temperature, inverter torque) captured at the exact second the fault was tripped.
 - Compare **DTC Snapshots** before and after repairs with the built-in diff viewer.
 
 ### 3. DIY Maintenance & Service Procedures
-> [!WARNING]
-> The operations below are compiled out of released builds. They exist only in software deliberately built with the `unsafe-write-ops` feature, and the runtime capability manifest reports the difference. See [docs/safety.md](docs/safety.md).
+> [!IMPORTANT]
+> The operations below change the vehicle. They ship in every release, because a workshop tool that cannot clear a code after a repair is only half a tool — but each one is a separate, explicitly confirmed action, and the running binary publishes a capability manifest the interface reads. Nothing here flashes a module or opens security access to write. See [the safety documentation](https://hanterill.com/en/docs/safety).
 - **DTC Clearing (reference parity)**: car-wide or per-module erase with freeze-frame backup before the wipe, a verify re-read that reports the stubborn set, link recovery after module reboots, and an optional force-reset loop (suppressed while the car is in a driving mode).
 - **EPB Service Mode**: Retract the rear electric parking brake calipers into service position to perform rear brake pad/rotor replacements safely. Clamp and re-calibrate pad travel when finished.
 - **12V Battery Adaptation Reset**: Re-learn the 12V battery SoC and capacity aging matrix in the CEM after replacing the AGM low-voltage battery.
@@ -252,11 +252,11 @@ hanterill/
 
 ## Safety, Privacy & Data Ownership
 
-- **Read-Only Safety Boundaries**: Released builds transmit only read-only UDS services (`0x10`, `0x19`, `0x22`, `0x2A`, `0x3E`, plus the routine-result carve-out of `0x31`). Destructive clearing (`0x14`), routine starts and ECU reset (`0x11`) fail closed: they are compiled out unless deliberately built with `--features unsafe-write-ops` (`SAFE-001`, `DTC-002`).
-- **100% Local & Private**: Hanterill contains zero analytics, zero crash telemetry, and zero cloud dependencies. Diagnostic sessions and activity logs are stored locally with automated 17-character VIN redaction, support bundles scrubbed of serials, private addresses and GPS coordinates, per-vehicle caches keyed by a hash of the VIN, and no position data in inspection reports (`PRIVACY.md`, `EXPORT-001`).
-- **Shipped Capabilities Manifest**: the verified runtime capability and safety boundaries matrix lives at `docs/product/capabilities.md` in the source tree (`DOCS-001`).
-- **Privacy Policy**: `PRIVACY.md` in the source tree documents the Zero-Telemetry data ownership policy, storage locations, VIN redaction rules, and retention controls.
-- **Safety Guidelines**: `docs/safety.md` in the source tree covers read-only diagnostic boundaries and high-voltage safety notices.
+- **Read by default, writes ask first**: Reads are the default path and never prompt. Clearing (`0x14`), routine starts (`0x31`) and ECU reset (`0x11`) are shipped but gated — each is a separate confirmed action, the interface offers only what the binary's capability manifest advertises, and a `--no-default-features` build refuses them with a typed `read_only_build` response (`SAFE-001`, `DTC-002`).
+- **100% Local & Private**: Hanterill contains zero analytics, zero crash telemetry, and zero cloud dependencies. Diagnostic sessions and activity logs are stored locally with automated 17-character VIN redaction, support bundles scrubbed of serials, private addresses and GPS coordinates, per-vehicle caches keyed by a hash of the VIN, and no position data in inspection reports (`EXPORT-001`).
+- **Shipped Capabilities Manifest**: the running binary publishes a capability and safety-boundaries matrix, and the interface reads it rather than assuming what the build can do. The published version for the current release is at [hanterill.com/en/docs/architecture](https://hanterill.com/en/docs/architecture) (`DOCS-001`).
+- **Privacy Policy**: [hanterill.com/en/privacy](https://hanterill.com/en/privacy) documents the zero-telemetry data-ownership policy, storage locations, VIN redaction rules, and retention controls.
+- **Safety Guidelines**: [hanterill.com/en/safety](https://hanterill.com/en/safety) covers the read/write boundary, the service-routine confirmation model, and high-voltage safety notices.
 
 ---
 
@@ -265,10 +265,10 @@ hanterill/
 Hanterill is an independent, source-available diagnostic project developed by the community. It is **not** affiliated with, authorized by, maintained by, or in any way officially connected with **Polestar Performance AB**, **Volvo Car Corporation**, **Geely Automobile Holdings**, or any of their subsidiaries or affiliates.
 
 > [!WARNING]
-> Electric vehicles contain high-voltage systems (400V/800V) capable of causing serious injury or death. Service routines physically actuate vehicle mechanical systems. Always follow the safety precautions documented in `DISCLAIMER.md` in the source tree before connecting to or servicing any vehicle.
+> Electric vehicles contain high-voltage systems (400V/800V) capable of causing serious injury or death. Service routines physically actuate vehicle mechanical systems. Always follow the safety precautions at [hanterill.com/en/safety](https://hanterill.com/en/safety) before connecting to or servicing any vehicle.
 
 All product names, logos, brands, and vehicle models are trademarks or registered trademarks of their respective holders.
 
-For the full legal disclaimer, warranty limitations, and automotive safety notices, see **`DISCLAIMER.md`** in the source tree.
+For the full legal disclaimer, warranty limitations, and automotive safety notices, see the licence documentation at [hanterill.com/en/docs/license](https://hanterill.com/en/docs/license).
 
 **Private use only.** Hanterill is licensed **CC BY-NC-ND 4.0**: read, run and share it for personal, non-commercial use, with no commercial use and no distributing modified versions. The source is available to read; it is not OSI open source. See [LICENSE.md](LICENSE.md) for the full terms.
