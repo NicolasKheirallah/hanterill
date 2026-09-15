@@ -33,7 +33,9 @@ for (const [label, txt] of [["README.md", readmes], ["LICENSE.md", lic]]) {
   expect(!/Hanterill-main/i.test(txt), `${label} legacy slug`, "contains Hanterill-main");
   expect(!/github\.com\/hanterill\/hanterill/.test(txt), `${label} phantom org`, "contains github.com/hanterill/hanterill");
 }
-expect(!/hanterill\.com/.test(readmes + lic + site), "domain drift", "hanterill.com appears");
+// The only domain is hanterill.com. A stale .org reference is domain drift.
+expect(!/hanterill\.org/.test(readmes + lic + site), "domain drift", "hanterill.org appears");
+expect(/url:\s*"https:\/\/hanterill\.com"/.test(site), "site.ts canonical host", site);
 expect(!/hanterill-app/i.test(readmes + lic + site), "private repo slug", "hanterill-app appears in README/LICENSE/site.ts");
 
 // 2. GitHub URLs in src point at the public repo only (everything else derives

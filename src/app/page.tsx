@@ -20,7 +20,7 @@ export default function RootRedirect() {
     <html lang={routing.defaultLocale}>
       <head>
         <meta httpEquiv="refresh" content={`0; url=${target}`} />
-        <link rel="canonical" href={`https://hanterill.org/${routing.defaultLocale}/`} />
+        <link rel="canonical" href={`https://hanterill.com/${routing.defaultLocale}/`} />
         <script
           // Faster than waiting for the meta refresh, and replaces the entry so
           // Back does not land on this bounce page.

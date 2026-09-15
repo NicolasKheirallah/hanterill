@@ -18,7 +18,7 @@ for (const gone of ["file.svg", "globe.svg", "next.svg", "vercel.svg", "window.s
 }
 expect(existsSync(join(ROOT, "public/.nojekyll")), "public/.nojekyll", "missing");
 const cname = await readFile(join(ROOT, "public/CNAME"), "utf8").catch(() => "");
-expect(cname.trim() === "hanterill.org", "public/CNAME", JSON.stringify(cname));
+expect(cname.trim() === "hanterill.com", "public/CNAME", JSON.stringify(cname));
 const hisingen = await readdir(join(ROOT, "public/assets/hisingen")).catch(() => []);
 for (const gone of ["analytics-dashboard.png", "charging-11kw.png"]) {
   expect(!hisingen.includes(gone), `hisingen/${gone} removed`, "still present");

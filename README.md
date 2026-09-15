@@ -2,14 +2,14 @@
 
 > **Source-available, dealer-grade vehicle diagnostics & high-voltage telemetry for Polestar and Volvo electric vehicles over DoIP/UDS.**
 
-This repository is the **public website** (`hanterill.org`): a static Next.js export describing the app, its verified vehicle support and its safety boundaries. Tagged releases are published at [NicolasKheirallah/hanterill](https://github.com/NicolasKheirallah/hanterill); the application's source tree is private. Everything below documents what the app supports today, kept in sync with its changelog.
+This repository is the **public website** (`hanterill.com`): a static Next.js export describing the app, its verified vehicle support and its safety boundaries. Tagged releases are published at [NicolasKheirallah/hanterill](https://github.com/NicolasKheirallah/hanterill); the application's source tree is private. Everything below documents what the app supports today, kept in sync with its changelog.
 
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC_BY--NC--ND_4.0-lightgrey.svg)](LICENSE.md)
-[![Platform: macOS · Windows · Linux](https://img.shields.io/badge/Platform-macOS_%7C_Windows_%7C_Linux-lightgrey.svg)](https://hanterill.org/en/download)
+[![Platform: macOS · Windows · Linux](https://img.shields.io/badge/Platform-macOS_%7C_Windows_%7C_Linux-lightgrey.svg)](https://hanterill.com/en/download)
 [![Rust: 1.88+](https://img.shields.io/badge/Rust-1.88%2B-orange.svg)](https://www.rust-lang.org)
 [![Tauri: v2](https://img.shields.io/badge/Tauri-v2-24C8D8.svg)](https://tauri.app)
 [![Accessibility: WCAG 2.1 AA](https://img.shields.io/badge/Accessibility-WCAG_2.1_AA-success.svg)](https://www.w3.org/WAI/standards-guidelines/wcag/)
-[![Zero Telemetry](https://img.shields.io/badge/Privacy-100%25_Local-brightgreen.svg)](https://hanterill.org/en/privacy)
+[![Zero Telemetry](https://img.shields.io/badge/Privacy-100%25_Local-brightgreen.svg)](https://hanterill.com/en/privacy)
 
 ---
 

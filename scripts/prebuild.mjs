@@ -95,7 +95,7 @@ async function buildOg() {
   <text x="80" y="356" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="24" letter-spacing="2" fill="${OG.accent}">DoIP &#183; UDS &#183; BATTERY HEALTH &#183; LIVE TELEMETRY</text>
   <text x="80" y="466" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="22" fill="${OG.sec}">108 cell-group potentials &#183; 49-ECU catalogue &#183; ISO 13400 / 14229</text>
   <text x="80" y="506" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="22" fill="${OG.sec}">Runs locally. No cloud, no subscription.</text>
-  <text x="1120" y="580" text-anchor="end" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="22" fill="${OG.sec}">hanterill.org</text>
+  <text x="1120" y="580" text-anchor="end" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="22" fill="${OG.sec}">hanterill.com</text>
 </svg>`;
   await sharp(Buffer.from(svg)).png().toFile(join(ASSETS, "og.png"));
   console.log("prebuild: assets/og.png (1200x630)");

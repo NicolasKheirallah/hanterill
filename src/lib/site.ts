@@ -7,7 +7,7 @@ export const site = {
   tagline: "Vehicle diagnostics for Volvo and Polestar",
   description:
     "Vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and cross-platform. Source-available and free for private use.",
-  url: "https://hanterill.org",
+  url: "https://hanterill.com",
   repo: "NicolasKheirallah/hanterill",
   /**
    * License summary. The LICENSE file in the source repository is the source of

@@ -12,6 +12,16 @@ function expect(cond, name, detail) {
   else failures.push(`${name}: ${detail}`);
 }
 
+// The canonical host is whatever site.ts declares, so the gate cannot keep
+// asserting one domain while the config moves to another.
+const siteSrc = await readFile(join(ROOT, "src/lib/site.ts"), "utf8");
+const SITE_URL = siteSrc.match(/url:\s*"(https:\/\/[^"]+)"/)?.[1];
+if (!SITE_URL) {
+  console.log("seo checks: site.ts has no url");
+  console.log("SEO_FAILED");
+  process.exit(1);
+}
+
 async function* htmlFiles(dir) {
   for (const e of await readdir(dir, { withFileTypes: true })) {
     const p = join(dir, e.name);
@@ -51,12 +61,12 @@ for await (const f of htmlFiles(OUT)) {
   expect(!!canonical, `${rel} canonical`, "missing");
   expect(!!title, `${rel} title`, "missing");
   if (canonical) {
-    expect(canonical === `https://hanterill.org${pagePath}`, `${rel} canonical value`, canonical);
+    expect(canonical === `${SITE_URL}${pagePath}`, `${rel} canonical value`, canonical);
   }
-  if (ogUrl) expect(ogUrl === `https://hanterill.org${pagePath}`, `${rel} og:url`, ogUrl);
-  expect(hreflangEn === `https://hanterill.org${pagePath.replace("/sv/", "/en/")}`, `${rel} hreflang en`, String(hreflangEn));
-  expect(hreflangSv === `https://hanterill.org${pagePath.replace("/en/", "/sv/")}`, `${rel} hreflang sv`, String(hreflangSv));
-  expect(xDefault === `https://hanterill.org${pagePath.replace("/sv/", "/en/")}`, `${rel} x-default`, String(xDefault));
+  if (ogUrl) expect(ogUrl === `${SITE_URL}${pagePath}`, `${rel} og:url`, ogUrl);
+  expect(hreflangEn === `${SITE_URL}${pagePath.replace("/sv/", "/en/")}`, `${rel} hreflang en`, String(hreflangEn));
+  expect(hreflangSv === `${SITE_URL}${pagePath.replace("/en/", "/sv/")}`, `${rel} hreflang sv`, String(hreflangSv));
+  expect(xDefault === `${SITE_URL}${pagePath.replace("/sv/", "/en/")}`, `${rel} x-default`, String(xDefault));
   expect(!!ogImage, `${rel} og:image`, "missing");
   expect(!!twImage, `${rel} twitter:image`, "missing");
   // titles must differ per locale for marketing pages
@@ -73,7 +83,7 @@ expect(new Set(locs).size === locs.length, "sitemap duplicate urls", String(locs
 expect(locs.length > 40, "sitemap size", String(locs.length));
 for (const loc of locs) {
   expect(loc.endsWith("/"), `sitemap url ${loc}`, "missing trailing slash");
-  const p = loc.replace("https://hanterill.org/", "").replace(/\/$/, "");
+  const p = loc.replace(`${SITE_URL}/`, "").replace(/\/$/, "");
   let exists = false;
   try {
     exists = (await readFile(join(OUT, p || ".", "index.html"), "utf8")).length > 100;
@@ -91,8 +101,8 @@ expect(root.includes("./en/"), "root redirect", "no ./en/ bounce");
 for await (const f of htmlFiles(OUT)) {
   const html = await readFile(f, "utf8");
   const m = html.match(/<meta property="og:image" content="([^"]*)"/);
-  if (m && m[1].includes("hanterill.org")) {
-    const assetPath = m[1].replace("https://hanterill.org/", "").split("?")[0];
+  if (m && m[1].includes(SITE_URL)) {
+    const assetPath = m[1].replace(`${SITE_URL}/`, "").split("?")[0];
     try {
       await readFile(join(OUT, assetPath));
     } catch {
