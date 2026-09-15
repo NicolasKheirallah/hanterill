@@ -25,11 +25,17 @@ export const site = {
   get releasesUrl() {
     return `https://github.com/${this.repo}/releases`;
   },
-  /** This website's own repository, for "edit this page" links. */
-  websiteRepo: "NicolasKheirallah/openCMA---Website",
+  /**
+   * This website's own repository, for "edit this page" links. Same slug as
+   * `repo`: the app is released from `hanterill`, and its docs are the source
+   * for this site's docs pages.
+   */
+  websiteRepo: "NicolasKheirallah/hanterill",
   websiteBranch: "master",
-  docEditUrl(slug: string) {
-    return `https://github.com/${this.websiteRepo}/edit/${this.websiteBranch}/src/content/docs/${slug}.mdx`;
+  /** Edit link for a docs source file. Swedish docs live under `sv/`. */
+  docEditUrl(slug: string, locale = "en") {
+    const dir = locale === "en" ? "src/content/docs" : `src/content/docs/${locale}`;
+    return `https://github.com/${this.websiteRepo}/edit/${this.websiteBranch}/${dir}/${slug}.mdx`;
   },
 } as const;
 

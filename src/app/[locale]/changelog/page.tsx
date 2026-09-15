@@ -141,7 +141,7 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
               {t("viewAll")} <ExternalLink className="h-3 w-3" strokeWidth={1.75} />
             </span>
           </MoreLink>
-          <MoreLink href={`${site.repoUrl}/blob/main/CHANGELOG.md`} external>
+          <MoreLink href={`${site.repoUrl}/blob/${site.websiteBranch}/CHANGELOG.md`} external>
             {t("changelogFile")}
           </MoreLink>
           <MoreLink href="/docs/releases">How releases are made</MoreLink>

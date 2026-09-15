@@ -114,7 +114,7 @@ export default async function DocPage({ params }: Params) {
 
         <div className="no-print mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line pt-5">
           <a
-            href={site.docEditUrl(doc.slug)}
+            href={site.docEditUrl(doc.slug, translated ? locale : "en")}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 font-mono text-[12px] text-text-muted transition-colors hover:text-text-primary"
@@ -123,7 +123,7 @@ export default async function DocPage({ params }: Params) {
             {t("editPage")}
           </a>
           <a
-            href={`${site.repoUrl}/tree/main/docs`}
+            href={`${site.repoUrl}/blob/${site.websiteBranch}/README.md`}
             target="_blank"
             rel="noreferrer"
             className="font-mono text-[12px] text-text-muted transition-colors hover:text-text-primary"
