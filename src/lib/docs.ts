@@ -19,16 +19,25 @@ export const docs: DocMeta[] = [
   { slug: "getting-started", title: "Getting started", summary: "Install Hanterill and open your first session.", group: "Start", titleSv: "Kom igång", summarySv: "Installera Hanterill och öppna din första session." },
   { slug: "connection", title: "Connection", summary: "ENET cable, Ethernet interface and network setup.", group: "Start", titleSv: "Anslutning", summarySv: "ENET-kabel, Ethernet-gränssnitt och nätverksinställningar." },
   { slug: "supported-vehicles", title: "Supported vehicles", summary: "Platforms, status labels and what each one means.", group: "Start", titleSv: "Fordon som stöds", summarySv: "Plattformar, statusetiketter och vad varje etikett betyder." },
-  { slug: "battery-diagnostics", title: "Battery diagnostics", summary: "SOH, SOC, cell-group potentials, topologies and thermal data.", group: "Diagnostics" },
-  { slug: "dtc-scanning", title: "DTC scanning", summary: "Reading fault codes by status, freeze frames, clearing and diffs.", group: "Diagnostics" },
-  { slug: "inspection-reports", title: "Inspection reports", summary: "The scored pre-purchase inspection and how its rules work.", group: "Diagnostics" },
-  { slug: "ecu-reference", title: "ECU reference", summary: "The 43-ECU CMA catalogue: codes, names and part numbers.", group: "Reference" },
-  { slug: "cli", title: "CLI", summary: "The hanterill command line: reads, offline DID tooling, output formats.", group: "Reference" },
-  { slug: "architecture", title: "Architecture", summary: "How the diagnostic engine, DoIP and UDS layers fit together.", group: "Reference" },
+  { slug: "workspace-tour", title: "Screen tour", summary: "What every screen in the app is for, and which ones matter day to day.", group: "Start", titleSv: "Vygids", summarySv: "Vad varje vy i appen är till för, och vilka som spelar roll i vardagen." },
+  { slug: "interface-and-language", title: "Interface and languages", summary: "Interface languages, themes, keyboard use and per-OS setup.", group: "Start", titleSv: "Gränssnitt och språk", summarySv: "Gränssnittsspråk, teman, tangentbordsanvändning och uppsättning per operativsystem." },
+
+  { slug: "battery-diagnostics", title: "Battery diagnostics", summary: "SOH, SOC, cell-group potentials, topologies and thermal data.", group: "Diagnostics", titleSv: "Batteridiagnostik", summarySv: "SoH, SoC, cellgruppspotentialer, topologier och termiska data." },
+  { slug: "dtc-scanning", title: "DTC scanning", summary: "Reading fault codes by status, freeze frames, clearing and diffs.", group: "Diagnostics", titleSv: "Felkodsskanning", summarySv: "Läsa felkoder efter status, frysta ramdata, radering och diffar." },
+  { slug: "live-telemetry", title: "Live telemetry", summary: "Sampling channels on a cadence, recording a run, and replaying it later.", group: "Diagnostics", titleSv: "Realtidstelemetri", summarySv: "Sampla kanaler i fast takt, spela in en körning och spela upp den senare." },
+  { slug: "inspection-reports", title: "Inspection reports", summary: "The scored pre-purchase inspection and how its rules work.", group: "Diagnostics", titleSv: "Inspektionsrapporter", summarySv: "Den poängsatta begagnatkontrollen och hur dess regler fungerar." },
+  { slug: "sessions-and-evidence", title: "Sessions and evidence", summary: "What a session holds, the four comparisons, and what each export format is for.", group: "Diagnostics", titleSv: "Sessioner och bevis", summarySv: "Vad en session innehåller, de fyra jämförelserna och vad varje exportformat är till för." },
+  { slug: "firmware-and-inventory", title: "Firmware and inventory", summary: "Reading module software versions, and proving what a workshop visit changed.", group: "Diagnostics", titleSv: "Firmware och inventering", summarySv: "Läsa modulers mjukvaruversioner och bevisa vad en verkstadsvisit ändrade." },
+
+  { slug: "ecu-reference", title: "ECU reference", summary: "The 49-module CMA catalogue: addresses, codes, names and DTC support.", group: "Reference", titleSv: "ECU-referens", summarySv: "CMA-katalogen med 49 moduler: adresser, koder, namn och DTC-stöd." },
+  { slug: "cli", title: "CLI", summary: "The hanterill command line: reads, offline DID tooling, output formats.", group: "Reference", titleSv: "CLI", summarySv: "Kommandoraden hanterill: läsningar, offline DID-verktyg, utdataformat." },
+  { slug: "glossary", title: "Glossary", summary: "Every acronym and identifier these docs use, explained once.", group: "Reference", titleSv: "Ordlista", summarySv: "Varje akronym och identifierare dokumentationen använder, förklarad en gång." },
+  { slug: "architecture", title: "Architecture", summary: "How the diagnostic engine, DoIP and UDS layers fit together.", group: "Reference", titleSv: "Arkitektur", summarySv: "Hur diagnostikmotorn, DoIP- och UDS-lagren hänger ihop." },
+
   { slug: "safety", title: "Safety", summary: "Read-only versus vehicle-changing operations.", group: "Project", titleSv: "Säkerhet", summarySv: "Skrivskyddad läsning kontra operationer som ändrar fordonet." },
-  { slug: "privacy", title: "Privacy", summary: "What stays local and what is never collected.", group: "Project" },
-  { slug: "license", title: "License", summary: "Source-available, for private use. What that permits.", group: "Project" },
-  { slug: "releases", title: "Releases", summary: "Versioning, release channels and where the changelog lives.", group: "Project" },
+  { slug: "privacy", title: "Privacy", summary: "What stays local and what is never collected.", group: "Project", titleSv: "Integritetsskydd", summarySv: "Vad som stannar lokalt och vad som aldrig samlas in." },
+  { slug: "license", title: "License", summary: "Source-available, for private use. What that permits.", group: "Project", titleSv: "Licens", summarySv: "Källkodstillgängligt för privat bruk. Vad det tillåter." },
+  { slug: "releases", title: "Releases", summary: "Versioning, release channels and where the changelog lives.", group: "Project", titleSv: "Versioner", summarySv: "Versionssättning, release-kanaler och var changeloggen finns." },
 ];
 
 export function docsSlugs() {
@@ -89,8 +98,11 @@ export async function getDocsIndex(): Promise<DocIndexEntry[]> {
       } catch {
         // fall through with empty body
       }
+      // Same extraction prebuild.mjs performs via scripts/docs-text.mjs: the
+      // whole stripped body, no cap, so the fallback cannot index less than
+      // the generated corpus does.
       const headings: DocHeading[] = [];
-      for (const m of raw.matchAll(/^(#{1,3})\s+(.+?)\s*$/gm)) {
+      for (const m of raw.matchAll(/^(#{2,3})\s+(.+?)\s*$/gm)) {
         const text = m[2].replace(/[*_`]/g, "");
         headings.push({ level: m[1].length, text, id: slugify(text) });
       }
@@ -98,10 +110,9 @@ export async function getDocsIndex(): Promise<DocIndexEntry[]> {
         .replace(/```[\s\S]*?```/g, " ")
         .replace(/^import[^;]+;/gm, " ")
         .replace(/<[^>]+>/g, " ")
-        .replace(/[#>|*_`\-\[\]]/g, " ")
+        .replace(/[#>|*_`[\]]/g, " ")
         .replace(/\s+/g, " ")
-        .trim()
-        .slice(0, 600);
+        .trim();
       return { ...d, headings, text };
     }),
   );

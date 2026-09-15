@@ -62,18 +62,18 @@ for (const f of srcFiles) {
 }
 expect(offenders.length === 0, "hardcoded github URLs", offenders.join(" | "));
 
-// 3. ECU counts derive from ecus.ts (43 catalogue / 34 DTC-capable).
+// 3. ECU counts derive from ecus.ts (49 registry rows / 40 DTC-capable).
 const ecus = await read("src/lib/ecus.ts");
-const ecuCount = (ecus.match(/\{\s*code:\s*"/g) || []).length;
+const ecuCount = (ecus.match(/\{\s*address:\s*"/g) || []).length;
 const dtcCount = (ecus.match(/dtc:\s*true/g) || []).length;
-expect(ecuCount === 43, "ecu catalogue size", `found ${ecuCount}`);
-expect(dtcCount === 34, "dtc-capable size", `found ${dtcCount}`);
+expect(ecuCount === 49, "ecu catalogue size", `found ${ecuCount}`);
+expect(dtcCount === 40, "dtc-capable size", `found ${dtcCount}`);
 const scanSim = await read("src/lib/scan-sim.ts");
 expect(!/discovered:\s*\d+\s*,/.test(scanSim), "scan-sim hardcodes totals", "still hardcodes discovered/diagnostic");
 expect(/ecuStats/.test(scanSim), "scan-sim derives from ecuStats", "no ecuStats import");
 const views = await read("src/components/product/views.tsx");
 expect(/ecuStats\.dtc\b/.test(views), "views uses DTC-capable stat", "no ecuStats.dtc usage");
-expect(/43/.test(ecus), "ecus.ts states catalogue size", "no 43 in comment/data");
+expect(/49/.test(ecus), "ecus.ts states catalogue size", "no 49 in comment/data");
 
 // 4. Cell spread thresholds: one band definition (2/4), demo data self-consistent.
 expect(!/within 3 mV|3 to 5 mV|over 5 mV|inom 3 mV|3 till 5 mV|över 5 mV/.test(await read("src/messages/en.json") + await read("src/messages/sv.json")), "second band set", "3/5 mV legend still present");
@@ -153,6 +153,22 @@ for (const [f, c] of all) {
   expect(!/docsRepoPath/.test(c), "docsRepoPath removed", f);
 }
 expect(!/revalidate:\s*3600/.test(await read("src/lib/github.ts")), "meaningless revalidate", "still present");
+
+// 13. Task-router hrefs resolve, and every locale has a label for each row.
+const taskRoutes = await read("src/lib/task-routes.ts");
+const routeKeys = [...taskRoutes.matchAll(/key:\s*"(\w+)",\s*href:\s*"(\/docs\/[a-z-]+)"/g)].map(
+  (m) => ({ key: m[1], href: m[2] }),
+);
+expect(routeKeys.length > 0, "task routes present", "none parsed");
+for (const r of routeKeys) {
+  expect(metaSlugs.includes(r.href.replace("/docs/", "")), `task route ${r.key} target`, r.href);
+}
+const enMsgs = JSON.parse(await read("src/messages/en.json"));
+const svMsgs = JSON.parse(await read("src/messages/sv.json"));
+for (const r of routeKeys) {
+  expect(!!enMsgs.tasks?.rows?.[r.key], `tasks en label ${r.key}`, "missing");
+  expect(!!svMsgs.tasks?.rows?.[r.key], `tasks sv label ${r.key}`, "missing");
+}
 
 console.log(`source checks: ${checks.passed} passed, ${checks.failed} failed`);
 for (const f of failures) console.log("  FAIL " + f);

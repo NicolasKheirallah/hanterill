@@ -131,7 +131,7 @@ export function ModulesView() {
     <div className="space-y-3">
       <div className="flex gap-6 font-mono text-[12px] text-text-secondary">
         <span>
-          <span className="tnum text-text-primary">{ecuStats.discovered}</span> {t("discovered")}
+          <span className="tnum text-text-primary">{ecuStats.registered}</span> {t("registered")}
         </span>
         <span>
           <span className="tnum text-text-primary">{ecuStats.dtc}</span> {t("dtcCapable")}

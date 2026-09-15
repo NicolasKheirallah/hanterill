@@ -1,37 +1,56 @@
-Versions follow [SemVer](https://semver.org/). Each release is a tag in the repository, and the
-notes for every version are kept with that version, rendered on the [changelog page](/changelog).
+Versions follow [SemVer](https://semver.org/). A release is a tag in the app repository, and the
+notes for every version live with that version, rendered on the [changelog page](/changelog).
 
-## Where things are
+## Where to find things
 
-- **[Changelog](/changelog)**: the release notes for each version, rendered on this site.
+- **[Changelog](/changelog)**: the notes for each version, rendered on this site.
 - **[Releases](https://github.com/NicolasKheirallah/hanterill/releases)**: tagged builds with
-  installers and checksums. The [download page](/download) reads the latest release from GitHub.
+  installers and a checksum file. The [download page](/download) reads the latest release live from
+  GitHub.
 
 ## What a version contains
 
-Release notes distinguish the same three axes the [vehicles page](/vehicles) uses:
+Release notes keep the same split between verified and unverified that the rest of the site uses:
 
-1. **Verified capability** on tested platforms (CMA today),
-2. **catalogued but unverified** definitions for new platforms (SPA and SEA1 at the time of
-   writing), and
-3. **research** material: captures, provenance documents and open questions.
+1. What is **verified** on a tested platform (CMA today).
+2. What is **catalogued but unverified** for other platforms (SPA and SEA1 at the time of writing).
+3. What is **research**: captures, provenance documents and open questions.
 
-A decoder that has not been confirmed against hardware ships marked as such, and the runtime
-capability manifest reports the difference. Compatibility work does not silently become support.
+A decoder that has not been confirmed against hardware ships with that label, and the runtime
+capability manifest reports the difference. Compatibility work never becomes a claim of
+support without the evidence.
 
-## Update policy
+## Artifacts and verification
 
-Releases are signed and checksummed (`SHA256SUMS`). The application can check for updates in-app;
-this is optional, verified against the published digest, and the Linux package-manager path defers
-to the distribution instead. On downgrade, stored session evidence stays readable: the schema is
-migrated backwards-compatibly and older versions open it read-only rather than rewriting it.
+Each release publishes one bundle per platform: a `.dmg`/`.app` for macOS, an installer and a
+standalone executable for Windows, and an AppImage plus a `.deb` for Linux, alongside the CLI. A
+`SHA256SUMS.txt` file carries a checksum for every artifact, so you can verify a download before
+running it.
+
+<Callout kind="caution" title="macOS signing status">
+macOS builds are ad-hoc signed only, which means Gatekeeper will not vouch for them. The first
+launch needs a right-click and Open, or a one-time quarantine clear. Windows builds are unsigned
+too, so SmartScreen may warn. Check the checksum file if that matters to you.
+</Callout>
+
+## Updates
+
+Updates are downloaded from this site or the releases page. Hanterill does not have an in-app
+auto-updater, and it does not call home. If you installed on Linux from a package manager, update
+through that instead.
+
+Your stored sessions survive an update: the session format is versioned, and a newer schema opens
+read-only in an older build rather than being rewritten.
 
 ## History
 
+Each version links to its own notes on the [changelog page](/changelog), where the full per-release
+detail lives.
+
 | Version | Date | Headline |
 | --- | --- | --- |
-| 0.1.1 | 2026-09-11 | SPA and SEA1 platform scopes, DTC-clear reference parity, inspection scoring engine v1.0.0, functional-broadcast discovery, offline DID intelligence, subsystem GUI expansion, redaction hardening |
-| 0.1.0 | 2026-09-01 | First tagged release: Tauri desktop client at parity with the retired GUI harness, versioned observation envelopes, durable sessions, live telemetry lifecycle, CI regression gates |
+| [0.2.0](/changelog) | 2026-09-13 | First hardware-in-the-loop campaign on a production Polestar 2, 49-module registry with the reverse-engineered park assist camera, periodic streaming, multi-platform battery topologies, eight interface languages |
+| [0.1.1](/changelog) | 2026-09-11 | SPA and SEA1 platform scopes, DTC-clear reference parity, inspection scoring engine v1.0.0, functional-broadcast discovery, offline DID intelligence, redaction hardening |
+| [0.1.0](/changelog) | 2026-09-01 | First tagged release: the desktop client, versioned observation envelopes, durable sessions, live telemetry lifecycle, CI regression gates |
 
-For the current list of binaries and their state, the releases page is the source of truth;
-this site reads it live.
+The releases page is the source of truth for what is currently published. This site reads it live.

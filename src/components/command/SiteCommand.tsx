@@ -18,13 +18,17 @@ import { useRouter } from "@/i18n/navigation";
 import { ecus } from "@/lib/ecus";
 import { vehicleAnchor, vehicles } from "@/lib/vehicles";
 import { cn } from "@/lib/cn";
-import docsIndexJson from "@/lib/generated/docs-index.json";
 
 /**
  * Site-wide command palette (Ctrl/Cmd+K). The app advertises its own palette
  * on the home page; the website holds itself to the same interaction. One
  * dialog for the whole site: pages, vehicles, ECU codes and the docs (titles,
- * summaries, headings and a body excerpt from the prebuild index).
+ * summaries, headings and the full plain-text body from the prebuild index).
+ *
+ * The docs corpus is the largest single asset the site ships, so it is
+ * dynamically imported the first time the dialog opens rather than bundled
+ * into every page's initial JS. Pages, vehicles and ECU codes stay eager: they
+ * are small, and they answer a shortcut press with no wait at all.
  */
 
 type Entry = {
@@ -33,6 +37,16 @@ type Entry = {
   sub?: string;
   text?: string;
   href: string;
+};
+
+type DocsIndex = {
+  entries: {
+    slug: string;
+    title: string;
+    summary: string;
+    text: string;
+    headings: { text: string; id: string }[];
+  }[];
 };
 
 const subscribe = () => () => {};
@@ -51,14 +65,31 @@ export function CommandProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [docsIndex, setDocsIndex] = useState<DocsIndex | null>(null);
   const prevActive = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const docsRequested = useRef(false);
 
-  const openDialog = useCallback((initial?: string) => {
-    prevActive.current = document.activeElement as HTMLElement;
-    setQuery(initial ?? "");
-    setOpen(true);
+  const loadDocs = useCallback(() => {
+    if (docsRequested.current) return;
+    docsRequested.current = true;
+    // The prebuild index; loaded once, then kept. A failed load leaves the
+    // palette working with pages, vehicles and ECU codes rather than breaking
+    // the whole dialog.
+    import("@/lib/generated/docs-index.json")
+      .then((m) => setDocsIndex(m.default as DocsIndex))
+      .catch(() => setDocsIndex({ entries: [] }));
   }, []);
+
+  const openDialog = useCallback(
+    (initial?: string) => {
+      prevActive.current = document.activeElement as HTMLElement;
+      setQuery(initial ?? "");
+      setOpen(true);
+      loadDocs();
+    },
+    [loadDocs],
+  );
   const closeDialog = useCallback(() => setOpen(false), []);
 
   const entries = useMemo<Entry[]>(() => {
@@ -105,7 +136,7 @@ export function CommandProvider({ children }: { children: ReactNode }) {
         text: `${e.code} ${e.name}`,
         href: `/docs/ecu-reference#${e.domain}`,
       })),
-      ...docsIndexJson.entries.flatMap((d) => [
+      ...(docsIndex?.entries.flatMap((d) => [
         {
           group: groups.docs,
           label: d.title,
@@ -120,10 +151,10 @@ export function CommandProvider({ children }: { children: ReactNode }) {
           text: "",
           href: `/docs/${d.slug}#${h.id}`,
         })),
-      ]),
+      ]) ?? []),
     ];
     return out;
-  }, [t, tn, tf, tfeatures, tp, tdoc]);
+  }, [t, tn, tf, tfeatures, tp, tdoc, docsIndex]);
 
   const hits = useMemo<Entry[]>(() => {
     const q = query.trim().toLowerCase();

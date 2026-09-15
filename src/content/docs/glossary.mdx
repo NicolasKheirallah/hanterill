@@ -1,0 +1,49 @@
+import { GlossaryList } from "@/components/docs/mdx/GlossaryList";
+
+Diagnostics has its own vocabulary, and most of it is acronyms. This page is the lookup: every term
+the rest of these docs use, expanded once and explained in plain language.
+
+If you only read one section, read the Diagnostics group. That is where the words you will meet on
+the first screen live.
+
+<GlossaryList />
+
+## Why some terms sound similar
+
+A few pairs trip people up, so they are worth stating directly:
+
+- **SoH and SoC.** State of Health is how much capacity the pack has left compared with new. State
+  of Charge is how full it is right now. A pack can be 90% healthy and 20% charged at the same time.
+- **ECU and DID.** An ECU is a computer. A DID is a question you ask it. One module answers many
+  identifiers.
+- **DTC and freeze frame.** A DTC is the code that says a fault happened. A freeze frame is the
+  snapshot of conditions at the moment it happened. Not every code has one.
+- **Compatible and supported.** Compatible means Hanterill can reach the car. Supported means the
+  readings are verified. See [Supported vehicles](/docs/supported-vehicles).
+- **Provisional and verified.** A decoder marked provisional has not been confirmed against a
+  reference. A verified one has. The difference changes how much a reading should influence a
+  decision.
+
+## Identifiers you will see
+
+The docs quote identifier numbers in hex, and they come up often enough to list here:
+
+<SpecList rows={[
+  ["0x10", "Open a diagnostic session so a module will answer"],
+  ["0x14", "Clear stored fault codes (a write, after explicit confirmation)"],
+  ["0x19", "Read fault codes and their snapshots"],
+  ["0x22", "Read a value by identifier"],
+  ["0x2A", "Periodic read: one on-demand sample, plus teardown"],
+  ["0x31", "Start a service routine, or read the result of one that ran"],
+  ["0x3E", "Tester present, so the car does not sleep mid-scan"],
+]} />
+
+<Callout kind="note" title="Hex notation">
+An identifier like `0x1635` is a hexadecimal number. The `0x` prefix means "this is hex": `1635`
+in hex is 5685 in decimal. It is the BECM's address in the module registry.
+</Callout>
+
+## Next
+
+- [Screen tour](/docs/workspace-tour): the screens these terms appear on.
+- [ECU reference](/docs/ecu-reference): every module code, with its address and DTC support.

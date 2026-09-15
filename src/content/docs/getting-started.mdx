@@ -1,38 +1,46 @@
-Hanterill is a desktop application. It runs on your computer and talks to the vehicle over Ethernet. There is no account to create and no server to reach.
+Hanterill is a desktop app that plugs into your car with one cable and reads what the car's
+computers already know. There is no account to create, no server to reach, and nothing you read
+leaves your machine.
 
-## Before you start
+You do not need to understand the protocol to use it. This page gets you connected. The rest of
+these docs explain what each screen shows and where the numbers come from.
 
-You need:
+## What you need
 
-- A supported vehicle. Polestar 2 and the CMA Volvos (XC40/EX40, C40/EC40) are the tested platforms. See [Supported vehicles](/docs/supported-vehicles).
-- A passive ENET cable (OBD-II to RJ45).
-- An Ethernet interface on your computer. A USB-C to Ethernet adapter is fine.
+- A supported car. Polestar 2 and the CMA Volvos (XC40/EX40, C40/EC40) are the tested platforms.
+  See [Supported vehicles](/docs/supported-vehicles).
+- An ENET cable: OBD-II on one end, RJ45 on the other. It is a plain copper cable with no chip
+  inside, so there is no driver to install.
+- An Ethernet port on your computer. A USB-C to Ethernet adapter works.
 - Hanterill installed. See [Download](/download).
 
-## First session
+## Your first session
 
-1. Turn the vehicle to ignition-on. You do not need to start it.
-2. Connect the ENET cable to the OBD-II port and the RJ45 end to your Ethernet interface.
-3. Open Hanterill. It looks for a vehicle on the link and shows a connection state in the title bar.
-4. When the state reads **Connected**, open **Overview**. Hanterill reads vehicle identification and a battery summary in one pass.
-5. Open **Fault codes** to run a scan, **Battery** for the full high-voltage view, or **Report** for the scored inspection.
-6. Sessions you open are archived locally as you go; the Sessions page reopens them later and compares any two.
+1. Turn the car to ignition-on. You do not need to start it.
+2. Plug the ENET cable into the car's OBD-II port and the RJ45 end into your computer.
+3. Open Hanterill. It looks for a car on the cable and reports what it finds in the title bar.
+4. When the state reads **Connected**, open **Overview**. Hanterill reads the car's identity and a
+   battery summary in one pass.
+5. Go where you need to from there: **Fault codes** for a scan, **Battery** for the high-voltage
+   view, **Inspection report** for the scored summary.
+6. Sessions archive themselves locally as you work. The **Sessions** screen reopens them later and
+   compares any two.
 
-Everything so far is read-only, and in released builds it stays that way: the operations that
-change the vehicle are compiled out. See [Safety](/docs/safety).
+Everything above is a read. Hanterill asks questions and writes nothing back to the car.
 
-## No car attached?
+## No car handy?
 
-The connection page includes deterministic simulation vehicles (healthy baseline, fault-injected,
-sleep-drain), so every screen can be exercised offline before you plug in. Simulated sessions are
-labelled as simulated throughout.
+The released app connects to real cars only. Development builds can simulate a car for testing,
+and this website has a [simulated scan](/features/vehicle-diagnostics) you can watch, but the app
+you download expects a vehicle on the other end of the cable.
 
-## Where data goes
+## Where your data goes
 
-Sessions, reads and exports are written to your disk. Hanterill does not upload anything. See [Privacy](/docs/privacy).
+Sessions, reads and exports are written to your disk. Nothing is uploaded. See
+[Privacy](/docs/privacy).
 
-## Next
+## If something does not work
 
-- [Connection](/docs/connection) if the vehicle does not appear.
-- [Battery diagnostics](/docs/battery-diagnostics) for the high-voltage data.
-- [Safety](/docs/safety) before enabling any write operation.
+If the car never appears, the usual causes are the cable, the adapter, or a firewall. The
+[Connection](/docs/connection) page walks through them in order. If a reading looks wrong, read
+[Safety](/docs/safety) before acting on it.

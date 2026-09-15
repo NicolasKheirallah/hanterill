@@ -1,0 +1,65 @@
+Hanterill är helt lokalt. Det pratar med din bil, och det skriver till din disk. Det finns ingen
+backend, inget konto och inget att logga in på.
+
+## Vad som stannar på din maskin
+
+- Varje session, felläsning och livefångst, i ett lokalt arkiv med dina anteckningar
+- Exporter du skapar: JSON-, CSV- och ZIP-paket
+- Appinställningar, teman och anslutningspreferenser
+- Aktivitetsloggen: spåret av vad som körts, med VIN maskerade
+- Cachning per bil, lagrad under en hash av VIN så att en fillistning inte avslöjar någon identitet
+
+## Vad som aldrig samlas in
+
+- Ingen telemetri
+- Ingen analys eller användningsspårning
+- Inget molnkonto eller backend
+- Inga diagnostikdata uppladdade någonstans
+- Ingen kraschrapportering från tredje part
+
+Listan är kort med avsikt. Appen har ingen nätkod som pratar med något annat än bilen.
+
+## VIN- och platsmaskering
+
+VIN läses vid fordonsidentifiering, eftersom en session behöver veta vilken bil den tillhör. Där ett
+fullt VIN inte behövs maskeras det:
+
+- I gränssnittet visas VIN som ett fragment som `YSM...0428` som standard. Du kan slå på full
+  synlighet i Inställningar.
+- I loggar och exporter behålls det fulla VIN bara när du uttryckligen ber om det.
+- Supportpaketet rensar serienummer, privata adresser, inloggningsuppgifter och decimala koordinater
+  innan en fil lämnar maskinen, som `[REDACTED-GPS]`, medan äkta diagnostikavläsningar behålls intakta.
+
+Plats får samma behandling. Inspektionsrapporter för begagnatköp innehåller inga GPS-sektioner alls,
+och där andra exporter innehåller koordinater avrundas de till ungefär 110 meter.
+
+## Lagringstid och radering
+
+Du väljer hur länge sessioner behålls: 30 dagar, 90 dagar, ett år, eller obegränsat. Sidan för
+integritet och lagring har också en rensningsåtgärd som tömmer cachade poster och sparade sessioner i
+ett steg.
+
+<Callout kind="note" title="Radering betyder radering">
+Sessioner bor i lokal lagring på din maskin. Det finns ingen kopia någon annanstans, så att radera dem
+tar bort dem för gott.
+</Callout>
+
+## Nätverksaktivitet
+
+Under en session talar Hanterill bara med bilen över den lokala länken. Appen behöver ingen
+internetanslutning för att köra, och den har ingen uppdateringskontroll som kontaktar en server på egen hand.
+
+Den här webbplatsen är separat: den läser GitHub-API:et för att visa senaste release och
+repositorystatistik. Det är webbplatsen, inte appen.
+
+## Ingen prenumeration, och inget pris
+
+Det finns ingen betald nivå och ingen licensserver, och Hanterill är gratis för privat bruk i varje
+version: [licensen](/docs/license) är där det står skrivet. Källkoden går att läsa, och Hanterill är
+licensierad för personligt, icke-kommersiellt bruk. Det finns inget att tjäna pengar på i din bils
+data, så ingen av den samlas in.
+
+## Nästa steg
+
+- [Säkerhet](/docs/safety): vad appen kan ändra, och hur det är grindat.
+- [Licens](/docs/license): villkoren Hanterill levereras under.

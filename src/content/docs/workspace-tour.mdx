@@ -1,0 +1,111 @@
+import { TaskRouter } from "@/components/docs/mdx/TaskRouter";
+
+Hanterill has a lot of screens. This page is the map: what each one is for, and which ones you will
+actually use on a normal day.
+
+The short version: **Overview** tells you what the car is, **Fault Codes (DTCs)** and
+**Battery Health** are where the real work happens, and **Sessions & Reports** is where everything
+you did is kept.
+
+## Find the screen for your task
+
+If you already know what you are trying to do, skip the list and start here:
+
+<TaskRouter />
+
+## Vehicle
+
+- **Overview**: the landing page. Car identity, connection state, and a first summary of the
+  battery and any faults.
+- **Vehicle Entity**: the car's fingerprint. VIN, mileage from several modules, key count and
+  uptime, with the odometer cross-check.
+- **Connection**: pick an adapter, discover a car, see the link state and its details.
+- **Inspection Report**: the scored condition summary. See [Inspection reports](/docs/inspection-reports).
+- **Service Schedule**: service intervals and how much distance or time is left.
+- **Build Configuration**: the car's factory option list, read from the CEM.
+- **GPS Position**: a position fix from the TCAM module, requested only when you press the button.
+
+## Energy and battery
+
+- **Battery Health**: SoH, SoC, pack voltage and current, temperatures, and the cross-signal
+  checks. See [Battery diagnostics](/docs/battery-diagnostics).
+- **Cell & Thermal Map**: the cell-group data laid out physically over the pack, so a weak spot has
+  a location rather than just a number.
+- **12V Sleep Drain**: standby current history. Useful when a car has a flat battery in the morning
+  and nothing else looks wrong.
+- **Charging** and **Power (OBC/DC-DC)**: charging socket state, the 12 V rail and the converters.
+- **TCAM Battery**: the emergency backup battery in the telematics module.
+
+## Powertrain and thermal
+
+- **Drive Units**: front and rear motor and inverter telemetry, side by side.
+- **ICE engine**: the combustion and hybrid reference lane. On a battery-electric car this screen
+  stays quiet by design; it exists for the hybrid variants of the platform.
+- **Steering**: steering angle, rate and calibration state. Read-only.
+- **HVAC & Thermal**: the refrigerant loop, heater circuit and compressor.
+
+The energy domains (climate, drive units, charging and power) are tabs of one workspace, so a deep
+link can land you directly on the panel you need.
+
+## Diagnostics and ECUs
+
+- **Fault Codes (DTCs)**: the scan. Read, triage, clear and export. See [DTC scanning](/docs/dtc-scanning).
+- **ECU Inventory**: every module in the registry with its address, what it answered, and what it
+  reported. See [ECU reference](/docs/ecu-reference).
+- **DID Scanner**: a bounded sweep over identifier ranges across all modules. This is a research
+  tool: it finds what a module answers that the catalogue does not know about yet.
+- **DTC History Diff**: compare two scans and see what changed.
+- **Firmware SBOM**: the software inventory. Every module's part numbers and versions in one list,
+  diffable between visits.
+
+## Telemetry and tools
+
+- **Live Telemetry**: selected channels sampled on a fixed cadence and charted, with recording and
+  playback.
+- **DID Explorer**: read one identifier at a time, with the raw bytes and the decoded value side by
+  side. The manual override for when a screen does not show what you need.
+- **Service & Routines**: the write operations, each behind an explicit confirmation. See [Safety](/docs/safety).
+
+## System
+
+- **Capabilities**: what this specific car answered it can do, and what this build of the app can
+  do. When a screen seems empty, this is the honest explanation.
+- **Sessions & Reports**: everything you have captured, with exports and comparisons.
+- **Activity & Logs**: the operator trail of what was run, with VIN redaction applied.
+- **Settings**: appearance, language, connection policy, privacy and storage.
+
+## Reading a screen
+
+Most values in Hanterill carry three levels of detail, and you can stop at whichever one answers
+your question:
+
+1. **Label, value and unit.** The number you came for.
+2. **Interpretation.** What it means, how fresh it is, and whether it is measured or derived.
+3. **Evidence.** Which module and identifier it came from, the raw bytes, and the decoder version.
+
+That third level is what makes the tool auditable. If a number looks wrong, you can see where it
+came from without trusting anyone's summary.
+
+## Missing values are shown as missing
+
+A reading that did not answer is displayed as a gap with a reason, never as a zero. A module that
+was skipped is listed as skipped. A scan reports how many modules replied and how many did not.
+On a diagnostic tool, a fabricated zero is worse than a visible gap.
+
+## Keyboard
+
+- `Ctrl+K` or `Cmd+K` opens the command palette: jump to any screen, or search for an ECU by name.
+- `?` shows the full shortcut list.
+- Two-key chords jump straight to common screens, pressing `G` then `O` for overview, `G` then `B`
+  for battery, and so on.
+
+## Making it yours
+
+Language, themes, contrast, motion and the light/dark mode all live in **Settings**. See
+[Interface and languages](/docs/interface-and-language) for the full list, including which
+languages ship and what each operating system asks for on first launch.
+
+## Next
+
+- [Getting started](/docs/getting-started) if you have not connected yet.
+- [CLI](/docs/cli) for the same capabilities without the window.

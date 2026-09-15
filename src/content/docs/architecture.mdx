@@ -1,33 +1,43 @@
 import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 
-Hanterill is a layered diagnostic stack with a native desktop shell and a CLI over the same core.
-No part of it is a proprietary cloud API.
+Hanterill is a stack of layers, each one small enough to understand on its own. At the bottom,
+Ethernet. At the top, a screen that shows a battery percentage. This page walks the whole path.
 
-## Layers
+Nothing in it is a proprietary cloud API. Every layer is a public standard or a table Hanterill
+ships with.
+
+## The layers
 
 ```text
-Hanterill            desktop app + CLI, Rust and Tauri v2
-Application layer    sessions, sweeps, policies, use cases
-ISO 14229 UDS        unified diagnostic services
-ISO 13400 DoIP       diagnostics over IP
+Hanterill            desktop app and CLI, Rust and Tauri v2
+Application layer    use cases, sessions, sweeps, policy
+ISO 14229 UDS        unified diagnostic services (the questions)
+ISO 13400 DoIP       diagnostics over IP (the envelope)
 TCP / UDP            sockets, discovery, routing activation
 Ethernet             passive ENET cable, RJ45
 Vehicle gateway      CEM / VGM on CMA
 ```
 
-The full module-to-module wiring behind that gateway is a live map: every unit, bus
+The full module-to-module wiring behind that gateway is a live map of its own: every unit, bus
 segment and documented pin row sits in the [CMA Network Explorer](/network).
 
-## Session lifecycle
+## What happens when you press Connect
 
-1. UDP vehicle identification on port 13400 enumerates responders.
-2. A TCP connection opens to the vehicle on port 13400.
-3. Routing activation is sent and must be accepted before any diagnostic request.
-4. The engine opens an extended diagnostic session per ECU and issues reads.
-5. Responses are decoded against platform-specific maps and stored as typed observations.
-6. The session is held in a durable local store and exported on demand.
+1. **Find the car.** Hanterill sends a vehicle identification request over UDP on port 13400 and
+   listens for announcements.
+2. **Open a channel.** It opens a TCP connection to the car on the same port, 13400.
+3. **Get permission.** It sends a routing activation request. The car accepts or refuses, and until
+   it accepts, no diagnostic message will be answered.
+4. **Say hello to each module.** A `TesterPresent` keeps the session alive; a functional broadcast
+   can ask every module at once, with individual probes only for the quiet ones.
+5. **Ask a question.** A UDS request goes out inside a DoIP envelope. The car wraps the reply the
+   same way.
+6. **Decode the answer.** The bytes are matched against a platform-specific definition. A response
+   that does not match the contract is refused as a typed outcome, never coerced into a number.
+7. **Store it.** The observation is written to the local session archive with its source,
+   timestamp and decoder version.
 
-A single request travels the same path every time, and the response comes back along it:
+A single request travels the same path every time, and the answer comes back along it:
 
 <ProtocolFlow
   steps={[
@@ -37,43 +47,73 @@ A single request travels the same path every time, and the response comes back a
     { node: "Target ECU", detail: "BECM, extended session" },
   ]}
   request="read battery state of health"
-  response="94.7 %, decoded from the raw value"
+  response="91.14 %, decoded from the raw value"
 />
+
+## What DoIP actually adds
+
+DoIP is a thin wrapper. Its job is to carry diagnostic messages over an IP network and keep track
+of who is talking to whom. Each frame has a small header with a payload type, which is the field
+that says what kind of message this is:
+
+| Payload type | Meaning |
+| --- | --- |
+| `0x0001` | Vehicle identification request (UDP) |
+| `0x0004` | Vehicle announcement, the car answering |
+| `0x0005` / `0x0006` | Routing activation request and response |
+| `0x0007` / `0x0008` | Alive check, so a dead connection is noticed |
+| `0x8001` | A diagnostic message, which carries a UDS request or reply |
+| `0x8002` / `0x8003` | Positive and negative acknowledgement of that message |
+
+A car is not obliged to send the acknowledgement before the answer, so Hanterill buffers an early
+answer instead of mistaking it for the ack. Small details like that are why the transport is a
+layer of its own rather than a few socket calls.
+
+## What UDS adds
+
+UDS is the language of the questions. Every request starts with a service identifier, and the
+services used here are a short list: `0x10` to open a session, `0x19` for fault codes, `0x22` to
+read a value, `0x2A` for periodic reads, `0x31` for routines, `0x14` to clear. The
+[ECU reference](/docs/ecu-reference) and [Safety](/docs/safety) pages go through them one by one.
 
 ## Components
 
-- **Transport**: async Rust sockets, one connection multiplexed across ECUs. Requests and responses
-  are matched in an atomic exchange; stale frames from a previous connection epoch are rejected,
-  and routing is re-activated automatically after a recovery.
-- **Discovery**: presence probing can address all ECUs with one functional broadcast and chase only
-  the stragglers individually. Modules absent for several sweeps drop to a shortened timeout tier,
-  and a per-vehicle profile cache (keyed by a hash of the VIN) seeds known-absent modules.
-- **UDS**: request and response framing, negative-response handling, pending-response (`0x78`)
-  retries, and the read-only allowlist described in [Safety](/docs/safety).
-- **Decoders**: per-platform, per-ECU definitions with explicit payload contracts: expected length,
-  scaling, privacy classification and maturity. A response that does not match the contract is
-  refused as a typed outcome, never coerced. CMA is verified; SPA and SEA1 definitions ship marked
-  as awaiting hardware confirmation.
-- **Pack topologies**: the cell matrix is data, not code: CMA 108S, SPA EV 96S and 108S, SPA hybrid
-  102S and SEA variants each carry their own cell count and layout.
-- **Policy**: the [inspection scoring engine](/docs/inspection-reports) and the cross-signal
-  consistency checks sit on top of the observations.
-- **Sessions**: an atomic, durable JSON-backed archive with operator notes and corrupt-file
-  recovery; comparison views read from it.
-- **Safety gate**: the running build's real boundaries are exposed as a capability manifest, and
-  the interface hides every command the binary cannot execute.
-- **IPC**: one declarative command table maps every desktop request to exactly one use case, with
-  a test asserting no orphan variants.
+- **Transport**: asynchronous Rust sockets, one connection shared across every module. Requests and
+  replies are matched in a single exchange, replies from an old connection are rejected as stale,
+  and the route is re-activated automatically after a recovery.
+- **Discovery**: a functional broadcast can probe every module at once, falling back to individual
+  probes only for the quiet ones. Modules that stay silent across several sweeps drop to a shorter
+  timeout tier, and a per-car cache keyed by a VIN hash remembers what was absent last time.
+- **Decoders**: per-platform, per-module definitions with explicit payload contracts: expected
+  length, scaling, privacy class and maturity. CMA decoders are verified against a real car; SPA and
+  SEA1 definitions ship marked as awaiting hardware confirmation.
+- **Pack topologies**: the cell matrix is data, not code. CMA 108-cell, CMA 96-cell, SPA 96 and 108
+  and hybrid 102, and the SEA1 layouts each carry their own count and arrangement.
+- **Policy**: the [inspection scoring engine](/docs/inspection-reports) and the cross-signal checks
+  sit on top of the observations. They never add traffic.
+- **Sessions**: an atomic, durable local archive with operator notes and corrupt-file recovery.
+  Comparison views read from it.
+- **Safety gate**: the running binary's real boundaries are exposed as a capability manifest, and
+  the interface only offers commands the binary can execute.
+- **IPC**: one declarative command table maps every desktop request to exactly one use case, with a
+  test asserting no orphan entries.
 
-## Build editions
+## One build
 
-The engine compiles in three named editions: `standard` (the ship build: full read-only feature
-set), `production` (all-module scanner, inspector and every state-changing command compiled out)
-and `development` (everything on, including simulation scenarios). The safety gate is a build
-property, not a runtime toggle.
+Hanterill compiles as a single build with every feature on by default: the diagnostic reads, the
+all-modules DID scanner, and the write surface that asks for confirmation. There is no edition flag to explain
+and no hidden mode. A stripped `--no-default-features` build exists so the read-only gate keeps a
+compile-time edge that CI can exercise, and it is a development configuration rather than a
+release.
 
 ## Why Rust and Tauri
 
-The protocol work benefits from Rust's concurrency and error handling. Tauri keeps the binary small
-and avoids shipping a Chromium runtime, so the application feels native rather than like a web page
-in a window. The interface is React and TypeScript, typed against the engine's generated contracts.
+The protocol work suits Rust: many small concurrent operations with error handling that has to be
+explicit. Tauri keeps the binary small and uses the operating system's own webview instead of
+shipping a browser engine, so the app feels native rather than like a web page in a window. The
+interface is React and TypeScript, typed against contracts generated from the engine.
+
+## Next
+
+- [Connection](/docs/connection): the physical layer, and what to do when it misbehaves.
+- [Privacy](/docs/privacy): what the app writes to disk, and what it never sends anywhere.

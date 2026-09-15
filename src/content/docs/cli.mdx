@@ -1,12 +1,16 @@
 import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
 
-Hanterill ships a command-line companion, `hanterill`. It is an automation frontend for the same
-application layer the desktop app uses: every read goes through the shared use cases, and every
-structured document it emits is versioned.
+Hanterill ships a command-line companion, `hanterill`. It reaches the same engine
+the desktop app uses: every command goes through the same use cases, and every structured document
+it emits is versioned.
 
-<Callout kind="note" title="Offline tooling needs no vehicle">
-Parts of the CLI (`show`, `did-analyze`, `did-kb`, `did-plan`, `did-presets`, and `did-scan
---capture`) never contact a vehicle. The rest needs one transport source.
+Use it to script a scan, diff two sessions over a weekend, or read a car
+without opening a window.
+
+<Callout kind="note" title="Some commands never touch a car">
+`show`, `did-analyze`, `did-kb`, `did-plan`, `did-presets`, `firmware-diff`, `cells-diff`,
+`dtc-diff`, `export`, `replay`, `vendor-ref`, `vendor-dids` and `service-families` work entirely
+offline. Everything else needs exactly one transport source.
 </Callout>
 
 ## Invocation
@@ -15,69 +19,124 @@ Parts of the CLI (`show`, `did-analyze`, `did-kb`, `did-plan`, `did-presets`, an
 hanterill <command> [args] <transport> [--json | --format <fmt>]
 ```
 
-Exactly one transport source is required for any command that talks to a car:
+The transport flags tell the CLI where a car is:
 
 | Flag | Meaning |
 | --- | --- |
-| `--ip <addr>` | Connect to a DoIP entity at an explicit address |
-| `--discover` | Broadcast-discover a vehicle on the link-local network |
-| `--replay <corpus>` | Replay a recorded request/response corpus |
-| `--mock <scenario>` | Offline simulated vehicle (`healthy`, `faulty`, `tamper`), development builds |
-
-## Commands
-
-| Command | What it does |
-| --- | --- |
-| `scan` | Read DTCs from every catalogued DTC-capable ECU, or an explicit set (`--ecu BECM`, repeatable) |
-| `probe` | Presence pass over the catalogue; a timeout is never reported as absence |
-| `battery` | High-voltage battery report, including the cross-signal consistency checks |
-| `battery-cells` | Per-module cell-group voltages for the topology in force (`--topology` selects explicitly) |
-| `vehicle` | VIN and identity block |
-| `mileage` | Multi-ECU odometer read with tamper cross-check |
-| `service` | Service-interval schedule |
-| `report` | Composite vehicle-health report |
-| `live` | Fixed-cadence live PID sampling |
-| `snapshot` | Point-in-time capture to a file |
-| `keys`, `tcam`, `steering`, `power`, `gps`, `climate`, `motors`, `charge`, `inventory`, `config` | Read-only subsystem reports |
-| `did-scan` | Sweep a bounded identifier range on one ECU; `--capture` replays a saved CSV offline |
-| `did-scan-all` | All-module bounded sweep: presence, catalogue, optional discovery, with a request budget |
-| `did-analyze`, `did-kb`, `did-plan`, `did-presets` | Offline mining, learned-knowledge query and scan planning |
-| `dtc-detail` | Snapshot and extended records for one code |
-| `show <ecu> <dtc bytes...>` | Decode a fault code offline, no vehicle |
-| `firmware-diff`, `cells-diff`, `cross-check`, `charge-diagnosis`, `retrofit-check` | Two-session and cross-signal analysis |
-| `architecture`, `resolve-vehicle` | Platform resolution (CMA, SPA, SEA1) |
+| `--discover` | Find a car on the local network and connect to it |
+| `--ip <addr>` | Connect to a car at a known address |
+| `--replay <corpus>` | Replay a recorded request/response file instead of a car |
+| `--mock <scenario>` | A built-in simulated car, for tests and development builds |
 
 ## Output and exit codes
 
-Without a format flag the output is human-readable text. `--json` emits a versioned document
-(`"schema_version"` first); `--format text|json|csv` selects explicitly. Optional fields are `null`
-in JSON, never debug text. Files are written atomically, so a partial document is never published.
+With no format flag you get readable text. `--json` emits a versioned document (the first field is
+always `schema_version`), and `--format text|json|csv` selects explicitly. Missing values are JSON
+`null`, never placeholder text. Files are written atomically, so a partial document is never left
+on disk.
 
-| Code | Meaning |
+| Exit code | Meaning |
 | --- | --- |
-| 0 | Completed with complete diagnostic coverage |
-| 1 | Invalid invocation, transport failure, or a clean result with incomplete coverage |
+| 0 | The command completed and coverage was complete |
+| 1 | Bad invocation, a transport failure, or a clean result with incomplete coverage |
 
-A scan that could not reach every module exits 1 on purpose: partial coverage is reported as
-partial, with the failed and pending sets listed so `--retry-of <file>` can re-read exactly them.
+That second case is deliberate. A scan that could not reach every module exits 1, because "no
+codes found" and "no codes found in the four modules I could reach" are different answers.
 
-## Read-only, by build
+## Reading commands
 
-The scan, probe and read paths transmit only read services (`0x10`, `0x19`, `0x22`, plus the
-periodic-sample and routine-result carve-outs). Actuation subcommands (`clear-dtcs`, `epb`,
-`reset`, calibration helpers) exist only in builds compiled with the `unsafe-write-ops` feature;
-in a default build they answer `read_only_build` and exit. See [Safety](/docs/safety).
+| Command | What it does |
+| --- | --- |
+| `scan` | Read fault codes from every capable module, or an explicit set (`--ecu BECM`, repeatable) |
+| `probe` | Presence pass over the registry; a timeout is never reported as absence |
+| `battery` | High-voltage report, including the cross-signal checks |
+| `battery-cells` | Cell-group voltages for the pack layout in force |
+| `battery-temps` | Pack temperature channels |
+| `vehicle` | VIN and the identity block |
+| `mileage` | Odometer read across modules, with the tamper cross-check |
+| `service` | Service-interval counters and remaining distance or days |
+| `report` | The complete vehicle-health report |
+| `live` | Fixed-cadence live sampling of a preset or channel list |
+| `record` | The same, written to a `.csv` or `.json` file |
+| `snapshot` | Point-in-time capture to a file |
+| `cross-check` | All ten cross-signal consistency checks in one pass |
+| `charge-diagnosis` | Attribute a charge-power limitation from evidence, or decline to |
+| `keys`, `tcam`, `steering`, `power`, `gps`, `climate`, `motors`, `charge`, `inventory`, `config`, `uptime` | Read-only subsystem reports |
+| `parasitic-drain` | 12 V sleep-drain history and histogram |
+| `firmware-audit` | Identification sweep; produces the input for `firmware-diff` |
+| `dtc-detail`, `dtc-counts`, `dtc-snapshots` | Fault-code detail: counts by mask, snapshot and extended records |
+| `did-scaling` | Ask a module how an identifier is scaled |
+| `routine-results` | Read the stored result of a routine that already ran |
+| `periodic` | Probe the scheduled-transmission read (`0x2A`) |
+| `quiet-discovery` | Five-stage sweep for modules that stay silent or answer only in the default session |
+
+## Offline intelligence
+
+The DID tooling never contacts a car, which makes it the part you can run on a plane:
+
+| Command | What it does |
+| --- | --- |
+| `show <ecu> <dtc bytes...>` | Decode a fault code from bytes you type |
+| `did-scan` | Sweep an identifier range on a car, or against `--capture` for a saved CSV |
+| `did-scan-all` | All-module bounded sweep: presence, catalogue, optional discovery, with a request budget |
+| `did-watch` | Re-read a small set of identifiers on an interval |
+| `did-analyze` | Mine saved captures for unknown positives and contract mismatches |
+| `did-kb` | Query or fold the learned identifier knowledge base |
+| `did-plan` | Preview a bounded scan plan without contacting anything |
+| `did-presets` | List the discovery-range presets |
+| `firmware-diff` | Compare two firmware inventories, module by module |
+| `cells-diff` | Compare two cell-voltage captures, group by group |
+| `dtc-diff` | Compare two DTC scans |
+| `retrofit-check` | Compare a car's build list against a supplied option-to-module expectation file |
+| `export` | Unpack a saved session into modular JSON or CSV files |
+| `replay` | Replay a recorded live-telemetry run through the virtual-time engine |
+| `vendor-ref`, `vendor-dids`, `service-families` | Sanitized vendor reference vocabulary: what exists, never a decoded value |
+
+## Structured output
+
+Everything versioned starts with `schema_version`. Two examples worth knowing:
+
+- `scan --json` emits a `dtc-scan/2` document with per-module evidence: the SHA-256 of each raw
+  response, its length, wire timing, NRC codes, skip reasons, and the retry set. A negative
+  response keeps its NRC instead of being reported as a malformed positive reply.
+- `did-scan-all --json` emits a `did-scan-all/2` artifact with per-row NRC, hashes and latency,
+  plus a promotion-evidence block for uncatalogued positives. `--tier raw|support|public` controls
+  how much is redacted.
 
 <DiagnosticExample
   service="ReadDataByIdentifier"
   request="22 49 6D"
-  response="62 49 6D 03 E7"
+  response="62 49 6D 00 00 23 9A"
   note="hanterill battery --discover sends this itself. The CLI carries no decoding of its own: the bytes are decoded by the same catalogue the desktop app uses."
 />
 
-## Scripting
+## Read versus write
 
-The JSON documents are stable and versioned, suited to diffing two sessions in a shop workflow:
-`hanterill scan --discover --json > before.json`, repair, scan again, then
-`hanterill did-analyze`, `cells-diff` and `firmware-diff` compare the artifacts. VIN is redacted in
-exports by default.
+The read commands above stay inside the read-only service set. A separate group changes the car:
+`clear-dtcs`, `reset`, `epb`, `bms-reset`, `service-reset`, `usage-mode`, the calibration helpers
+(`climate-calibrate`, `sunroof-init`, `steering-zero`, `grille-calibrate`, `camera-learn`,
+`blindspot-reset`, `adas-reset`), `aux-pump`, `security` and `tcam-battery-test`.
+
+Those require explicit confirmation, are governed by [Safety](/docs/safety), and a build compiled
+without the write feature refuses them with a typed message.
+
+## Scripting a repair
+
+The JSON documents are stable and versioned, so diffing two sessions is a shell pipeline:
+
+```text
+hanterill scan --discover --json > before.json
+hanterill scan --discover --retry-of before.json --json > after.json
+hanterill dtc-diff before.json after.json
+```
+
+`--retry-of` re-reads only the modules the first pass left failed or unread, then merges the result
+back with lineage showing both passes. The original file is never modified.
+
+For battery work: capture `battery-cells --json` before and after, then run `cells-diff` to see
+per-cell deltas. A cell that was not read on one side keeps a gap rather than a zero.
+
+## Next
+
+- [Safety](/docs/safety): what the write commands do, and what they do not.
+- [Architecture](/docs/architecture): the layers these commands talk to.

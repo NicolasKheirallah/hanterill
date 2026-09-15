@@ -1,0 +1,94 @@
+import { EcuReference } from "@/components/docs/mdx/EcuReference";
+
+Ett fordon är inte en dator. Den är dussintals små datorer, kallade ECU:er (electronic control units),
+sammanlänkade. Var och en kör något: bromsarna, fönstren, batteriet, radion. Hanterill frågar var och
+en vad den är, vilken mjukvara den kör och om något är fel.
+
+Den här sidan är listan över varje ECU Hanterill vet hur den ska prata med på CMA-plattformen, med
+adressen den svarar på.
+
+## Registret
+
+CMA-registret innehåller 49 poster. Fyrtio av dem annonserar stöd för felkoder. Fem poster är märkta
+`ref`: referensrader från leverantörsdokumentation som aldrig observerats på ett riktigt fordon. På
+ett helt elektriskt fordon svarar dessa fem inte alls, och Hanterill registrerar tystnaden som
+förväntad istället för som ett fel.
+
+Varje post bär en DoIP-logisk adress. Se den som en anknytning inuti fordonet: `0x1635` är alltid
+batteristyrenheten, på samma sätt som 432 alltid är samma skrivbord. Hanterill skickar en begäran
+till en anknytning och svaret kommer tillbaka från den.
+
+## Gateway
+
+Två moduler sitter mellan din bärbara dator och allt annat. VGM är brandväggen och CEM är fordonets
+centrala karossdator.
+
+<EcuReference domain="gateway" />
+
+VGM är värd en notering: skrivningar till den kräver en säkerhetsnyckel som är unik per fordon.
+Läsningar fungerar utan den, vilket är anledningen till att varje skrivskyddad funktion i Hanterill
+"bara fungerar" på ett anslutet fordon.
+
+## Energi
+
+Det här är högspänningssidan. BECM hanterar traktionsbatteriet, VCU bestämmer hur mycket effekt
+motorerna får, och de två växelriktarna omvandlar batteriström till motorström (och tillbaka, när du
+släpper gasen).
+
+<EcuReference
+  domain="energy"
+  caption="ECM, TCM, DEM, MVBM och NRCM är referensrader för förbränning och 48 V. De är registrerade så att en hybridbil kan kartläggas senare; på en BEV förblir de tysta."
+/>
+
+## Chassi
+
+Styrning, bromsar, vinkelsensorn, och kamerorna och radarerna som vakar över vägen.
+
+<EcuReference domain="chassis" />
+
+## Kupé
+
+Skärmar, dörrar, klimat, lampor, krockkuddar, radio för telefon-som-nyckel. Den långa svansen av
+moduler som de flesta aldrig tänker på.
+
+<EcuReference
+  domain="cabin"
+  caption="Tomma artikelnummer är positioner som den offentliga dokumentationen inte listar. Hanterill läser fortfarande identifiering direkt från ECU:n med ReadDataByIdentifier."
+/>
+
+## Hur Hanterill pratar med dem
+
+Två UDS-tjänster gör det mesta av arbetet:
+
+<SpecList rows={[
+  ["0x22", "ReadDataByIdentifier: be en modul om ett numrerat värde, som dess VIN (0xF190) eller dess mjukvaruversion (0xF195)"],
+  ["0x19", "ReadDTCInformation: be en modul om dess lagrade felkoder"],
+  ["0x10", "DiagnosticSessionControl: be en modul öppna en diagnossession så att den svarar på de två första"],
+  ["0x3E", "TesterPresent: ett tyst \"fortfarande här\" så att fordonet inte försätter moduler i vila mitt i en skanning"],
+]} />
+
+De vanliga identitetsidentifierarna, lästa från varje modul som svarar:
+
+<SpecList rows={[
+  ["0xF190", "VIN"],
+  ["0xF18C", "ECU:ns serienummer"],
+  ["0xF193", "Leverantörens hårdvaruversion"],
+  ["0xF194", "Leverantörens mjukvarunummer"],
+  ["0xF195", "Leverantörens mjukvaruversion"],
+]} />
+
+Eftersom Hanterill läser dessa från varje ECU och inte bara från batteriet, producerar en skanning en
+fullständig hårdvaru- och mjukvaruinventering av fordonet. Det är vad [firmwarevyn](/docs/firmware-and-inventory)
+diffar mellan besök.
+
+## Inte varje modul svarar på allt
+
+Vissa moduler svarar på identitetsläsningar men har inga felkoder att rapportera. De är märkta
+`DTCs: no` ovan, och Hanterill hoppar över dem under en felkodsskanning istället för att registrera
+ett misslyckande. En modul som inte svarar alls är ett tredje fall: den registreras som icke
+observerad, aldrig som trasig.
+
+<Callout kind="note" title="En timeout är inte en diagnos">
+En modul som inte svarar kan betyda att den inte är monterad, sover, eller inte finns på fordonets
+bygglista. Hanterill säger "svarade inte" och lämnar bedömningen till dig.
+</Callout>

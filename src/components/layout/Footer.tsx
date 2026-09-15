@@ -56,7 +56,7 @@ export function Footer() {
               <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-muted">
                 {m.label}
               </dt>
-              <dd className="mt-1.5 font-mono text-[12.5px] text-text-secondary">{m.value}</dd>
+              <dd className="mt-1.5 break-words font-mono text-[12.5px] text-text-secondary">{m.value}</dd>
             </div>
           ))}
         </dl>

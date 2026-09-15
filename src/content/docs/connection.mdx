@@ -1,40 +1,82 @@
-Hanterill reaches the vehicle with ISO 13400 Diagnostics over IP (DoIP). Physically, that is ordinary Ethernet from your computer to a passive cable in the OBD-II port.
+Hanterill talks to the car over Ethernet. A modern car is a small
+network, and one of its plugs speaks ordinary internet. This page explains the cable, the
+network, and what to do when the car does not appear.
 
 ## The cable
 
-A passive ENET cable wires specific OBD-II pins to a standard RJ45 plug. It contains no electronics. It is not an ELM327, not a J2534 interface, and not a Bluetooth adapter. The cable itself needs no driver.
+An ENET cable connects specific OBD-II pins to a standard RJ45 plug. It contains no electronics.
+It is not an ELM327, not a J2534 interface, and not a Bluetooth adapter. The cable itself needs
+no driver.
 
-Typical chain:
+The chain looks like this:
 
 ```text
-OBD-II connector
+OBD-II port in the car
   -> ENET cable
   -> RJ45
   -> USB-C Ethernet adapter
-  -> Laptop
+  -> your laptop
 ```
 
-## Network settings
+Any passive OBD-II to Ethernet cable works, including the ones sold as "BMW ENET" or "E-Sys"
+cables. They are the same wiring.
 
-DoIP uses link-local addressing. In most cases the vehicle and adapter negotiate automatically and no manual IP configuration is needed. If your operating system holds the interface waiting for DHCP, set the adapter to link-local / automatic private addressing.
+## How the car appears on your network
 
-Hanterill discovers the vehicle with a UDP vehicle identification request on port 13400, then opens a TCP connection on the same port and performs routing activation before any diagnostic request. The interface itself is enumerated automatically: virtual adapters (VPN, loopback) are filtered out by the connection ranking, and hotplugging the cable is detected without a restart.
+Cars that support this use IPv4 link-local addressing, the `169.254.x.x` range. It is the same
+scheme two computers use when you plug a cable directly between them: each side picks an address
+without needing a router.
 
-## When the link misbehaves
+Most of the time the car and your adapter sort this out on their own. If your operating system
+sits waiting for a DHCP server that will never come, set the adapter to link-local or automatic
+private addressing manually.
 
-Recovery is built into the transport: a dropped TCP session re-activates routing on the surviving
-connection, responses from a previous connection epoch are rejected as stale, and a keepalive
-keeps the gateway from putting modules to sleep mid-scan. Clearing operations additionally wait
-out modules rebooting and repair the route afterwards.
+<Callout kind="note" title="What Hanterill actually does">
+It sends a discovery broadcast on UDP port 13400, listens for a car to announce itself, opens a
+TCP connection to that same port, and asks the car to activate a diagnostic route before sending
+anything else. The [Architecture](/docs/architecture) page covers each step.
+</Callout>
 
-## If the vehicle does not appear
+Hanterill picks the network interface for you. It ranks every adapter it can see, ignores virtual
+ones like VPNs and loopback, and prefers a wired link-local address. If you plug the cable in or
+out mid-session, it notices without needing a restart.
 
-- Confirm the vehicle is at ignition-on.
-- Confirm the RJ45 is in an Ethernet port, not a USB-only port.
-- Disable any VPN or firewall rule that blocks UDP 13400.
-- Try a different Ethernet adapter. Some USB adapters drop link-local traffic.
-- Check that no other diagnostic tool holds the DoIP socket.
+## If the car does not appear
+
+Work down this list. The first two cover most cases:
+
+- Is the car at ignition-on? A sleeping car answers nothing.
+- Is the RJ45 end in an Ethernet port, not a USB-only port?
+- Is a VPN or firewall blocking UDP 13400? Try disabling them briefly.
+- Try another Ethernet adapter. Some cheap USB adapters drop link-local traffic.
+- Is another diagnostic tool holding the connection? Only one tool can talk to the car at a time.
+
+<Callout kind="caution" title="One cable, one car">
+The cable goes from your computer to the car's diagnostic port, never to your home router. Do not
+bridge the car's network to your normal network.
+</Callout>
+
+## When the link drops
+
+Link recovery is built into the transport, so a brief interruption does not cost you the session:
+
+- If the TCP connection drops, Hanterill re-activates the route on the surviving link.
+- Replies from the old connection are rejected as stale, so a late answer cannot be mistaken for a
+  fresh one.
+- A keepalive (`TesterPresent` every couple of seconds) stops the car from putting modules to sleep
+  in the middle of a long scan.
+- If the car itself reports a different identity after a reconnect, Hanterill ends the session
+  rather than mixing two cars' readings into one file.
 
 ## Wireless
 
-Some vehicles expose DoIP over their own Wi-Fi access point. Where that is available and Hanterill supports it, the same discovery and routing steps apply over the wireless interface.
+Some cars expose diagnostics over their own Wi-Fi access point. If that is available and Hanterill
+supports it, discovery and routing work the same way over the wireless interface. The wired path is
+the tested one.
+
+## Next
+
+- [Architecture](/docs/architecture): what happens on the wire, step by step.
+- [Supported vehicles](/docs/supported-vehicles): which cars this works on today.
+- [Interface and languages](/docs/interface-and-language): per-OS permission notes and the
+  interface settings.

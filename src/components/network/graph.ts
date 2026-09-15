@@ -102,7 +102,7 @@ export const DOMAINS: Record<Domain, string> = {
   chassis: 'Chassis & braking',
   power: 'Power distribution',
   body: 'Body & comfort',
-  peripheral: 'Peripherals — sensors · switches · actuators',
+  peripheral: 'Peripherals: sensors · switches · actuators',
 }
 
 /* ------------------------------ layout constants ------------------------------

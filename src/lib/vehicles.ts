@@ -44,12 +44,71 @@ export const capStatusMeta: Record<CapStatus, { tone: Tone }> = {
 export type Platform = "CMA" | "SPA" | "SEA" | "SPA2";
 
 // Blurb text per platform is in the message catalog (platforms.blurbs).
-export const platformMeta: Record<Platform, { label: string; status: SupportStatus }> = {
-  CMA: { label: "CMA", status: "supported" },
-  SPA: { label: "SPA", status: "testing" },
-  SEA: { label: "SEA", status: "testing" },
-  SPA2: { label: "SPA2", status: "research" },
+// `testedAgainst` names the cars a platform has actually been exercised on.
+// It is evidence, not a support claim: a combustion XC40 does not verify the
+// electric XC40 Recharge, so these are listed apart from the vehicle rows.
+export const platformMeta: Record<
+  Platform,
+  { label: string; status: SupportStatus; testedAgainst: string[] }
+> = {
+  CMA: {
+    label: "CMA",
+    status: "supported",
+    testedAgainst: ["2023 Polestar 2 Long Range Dual Motor", "2018 XC40 (combustion)"],
+  },
+  SPA: {
+    label: "SPA",
+    status: "partial",
+    testedAgainst: ["2018 V90 T6 (combustion)"],
+  },
+  SEA: { label: "SEA", status: "testing", testedAgainst: [] },
+  SPA2: { label: "SPA2", status: "research", testedAgainst: [] },
 };
+
+/**
+ * Service families and their honest status. Names are the user-facing module
+ * and service, never a request identifier. Status vocabulary:
+ * - `beta`: the actuation routine ships behind an explicit confirmation, but
+ *   it is experimental and the operator runs it at their own risk.
+ * - `unrecovered`: the routine identifiers are not in any recovered data
+ *   layer, so no build can transmit them.
+ * - `refused`: deliberately not implemented.
+ * Labels live in the message catalog (platforms.service.*); only the tone is
+ * structural.
+ */
+export type ServiceStatus = "beta" | "unrecovered" | "refused";
+
+export const serviceStatusMeta: Record<ServiceStatus, { tone: Tone }> = {
+  beta: { tone: "warning" },
+  unrecovered: { tone: "muted" },
+  refused: { tone: "muted" },
+};
+
+export type ServiceFamily = {
+  /** Stable key; the label is `platforms.service.<key>`. */
+  key: string;
+  /** The module the service targets, as it is named on the car. */
+  module: string;
+  status: ServiceStatus;
+};
+
+export const serviceFamilies: ServiceFamily[] = [
+  { key: "epb", module: "Brake control module", status: "beta" },
+  { key: "steering", module: "Steering angle sensor", status: "beta" },
+  { key: "sri", module: "Driver information module", status: "beta" },
+  { key: "battery12v", module: "Battery monitoring sensor", status: "beta" },
+  { key: "tcam", module: "Telematics module", status: "beta" },
+  { key: "climate", module: "Climate control module", status: "beta" },
+  { key: "camera", module: "Camera and radar modules", status: "beta" },
+  { key: "sunroof", module: "Central electronic module", status: "beta" },
+  { key: "grille", module: "Engine control module", status: "beta" },
+  { key: "usage", module: "Central electronic module (gateway)", status: "beta" },
+  { key: "dpf", module: "Engine control module", status: "unrecovered" },
+  { key: "aftertreatment", module: "Urea aftertreatment module", status: "unrecovered" },
+  { key: "transmission", module: "Transmission control module", status: "unrecovered" },
+  { key: "mildhybrid", module: "48 V battery module", status: "unrecovered" },
+  { key: "generic", module: "Any module", status: "refused" },
+];
 
 export type VehicleSupport = {
   manufacturer: "Polestar" | "Volvo" | "Zeekr" | "Lynk & Co";

@@ -1,0 +1,83 @@
+Några problem syns bara medan fordonet gör något. En svag cell ser bra ut i vila och sjunker under last.
+En pump är tyst tills den är varm. Livedata är hur du ser en signal röra sig istället för
+att läsa en enda siffra.
+
+## Hur sampling fungerar
+
+Du väljer kanaler, och Hanterill frågar var och en efter dess värde i fast takt. Takten är ett
+schema, inte en gissning: varje tick ska ske vid en specifik tidpunkt, och ett prov som kommer sent
+registreras som sent istället för att låtsas att det var i tid.
+
+Samplingen är begränsad. Du väljer en varaktighet eller ett provantal, och körningen stannar när den
+når den. Du kan också pausa, återuppta eller avbryta när som helst, och att avbryta behåller allt som
+samlats in så långt.
+
+<Callout kind="note" title="En ström i taget">
+Bara en liveström körs åt gången. Att starta en ny medan en annan körs avvisas istället för att
+stoppa den första utan att säga till, så en pågående inspelning kan aldrig kapas av misstag.
+</Callout>
+
+## Förinställningar
+
+Att välja kanaler en i taget är långsamt, så det finns fyra förinställningar. Var och en är en namngiven
+uppsättning riktad mot en fråga.
+
+| Förinställning | Kanaler | Frågan den svarar på |
+| --- | --- | --- |
+| Batteri | Paketspänning, ström, SoC, SoH, beräknad effekt | Uppför sig paketet under denna last? |
+| Drivlina | Paketspänning och -ström, effekt, bakre motorns varvtal och spänning och ström | Vad gör motorerna, och vad kostar det? |
+| Termik | Batteriets kylvätska in och ut, motorlindningens och kylvätskans temperaturer | Flyttas värme bort där den ska? |
+| Alla | Varje katalogiserad kanal | En bred fångst när du ännu inte vet vad du ska titta på |
+
+Om en förinställning namnger en kanal som det anslutna fordonet inte stöder rapporteras luckan istället
+för att tas bort utan kommentar.
+
+## Takt och budgetar
+
+CLI:et exponerar samma kontroller med uttryckliga gränser: en förinställning eller kanallista, ett
+provantal och en frekvens mellan 1 och 5 Hz. Vyn i appen använder samma motor.
+
+Högre frekvens är inte automatiskt bättre. Bilens gateway betjänar varje modul på en anslutning, så
+en snabb fångst av många kanaler konkurrerar med sig själv. En fångst på 1 Hz av sex kanaler blir
+långt mer tillförlitlig än 5 Hz av fyrtio.
+
+## Inspelning till fil
+
+En inspelning är en livefångst skriven till disk: antingen `.json` för en fullständig, strukturerad
+post, eller `.csv` för ett kalkylark. Den behåller kanalidentiteten, enheten, avkodarversionen och en
+tidsstämpel per prov, så en inspelning är bevis snarare än en bild.
+
+En inspelningsfil är portabel. Den kan spelas upp senare, på en annan maskin, utan bil närvarande.
+
+## Uppspelning
+
+Uppspelning kör en inspelning tillbaka genom samma virtual-time-motor som livevyn använder. Du får en
+tidsreglage och hastighetskontroll (0,5x, 1x, 2x och snabbare), så en fångst som tog tio minuter att
+spela in kan granskas på två.
+
+Det här är delen som gör inspelningar värda att spara: en tekniker som inte var vid bilen kan se samma
+beteende, i sin egen takt, och filtrera till de kanaler den bryr sig om.
+
+Uppspelning är tydligt märkt som uppspelning. En inspelning presenterar sig aldrig som en liveavläsning,
+och en simulerad session presenterar sig aldrig som en inspelning.
+
+## Att exportera en kurva
+
+En inspelning eller uppspelning exporteras till CSV eller JSON från samma vy. CSV är för kalkylarket
+och den andra åsikten; JSON behåller strukturen och avkodarmetadatan om du planerar att jämföra den
+senare.
+
+## När du ska använda det
+
+- **Batterihälsa**: se paketström och spänning tillsammans under acceleration, jämför sedan
+  cellspridningen i vila mot spridningen under last.
+- **Termiska problem**: se kylvätska in och ut, och om deltat växer under ihållande last eller ligger
+  platt.
+- **Intermittenta fel**: spela in medan felet pågår, spela sedan upp det bredvid de frysta ramdata modulen
+  sparade.
+- **Före och efter en reparation**: spela in samma kanaler under samma förhållanden, jämför sedan.
+
+## Nästa steg
+
+- [Sessioner och bevis](/docs/sessions-and-evidence): var inspelningar bor och hur de jämförs.
+- [CLI](/docs/cli): `live`, `record` och `replay` med uttryckliga gränser.

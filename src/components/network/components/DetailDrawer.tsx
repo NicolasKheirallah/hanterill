@@ -194,7 +194,7 @@ function UnitBody({
       ) : (
         <Section title="Pin-out">
           <div className="border border-dashed border-(--line) p-4 text-xs leading-relaxed text-(--ink-2)">
-            Pin-out detail for this unit hasn’t been documented yet — connections shown are
+            Pin-out detail for this unit has not been documented yet. The connections shown are
             derived from other modules’ pin-outs and the source block diagram.
           </div>
         </Section>
@@ -298,20 +298,20 @@ function SegmentBody({ segment, onSelect }: { segment: Segment; onSelect: (id: s
     <>
       <Section title="Bus segment" icon={<Waypoints size={11} />}>
         <div className="text-xs leading-relaxed text-(--ink-2)">
-          Shared multi-drop {BUSES[segment.bus].label} segment — every unit below talks on the
+          Shared multi-drop {BUSES[segment.bus].label} segment: every unit below talks on the
           same pair of wires.
         </div>
         {(segment.speed || segment.wireH || segment.busModules) && (
           <div className="mt-3 flex flex-col gap-1.5 text-[11.5px]">
-            {segment.speed && <div><span className="text-(--ink-3)">Speed</span> — <b>{segment.speed}</b></div>}
+            {segment.speed && <div><span className="text-(--ink-3)">Speed</span>: <b>{segment.speed}</b></div>}
             {segment.wireH && (
               <div className="flex items-center gap-2">
-                <span className="text-(--ink-3)">Wires</span> —
+                <span className="text-(--ink-3)">Wires</span>:
                 <span className="inline-flex items-center gap-1.5">H <WireSwatch code={segment.wireH} /></span>
                 {segment.wireL && <span className="inline-flex items-center gap-1.5">L <WireSwatch code={segment.wireL} /></span>}
               </div>
             )}
-            {segment.busModules && <div><span className="text-(--ink-3)">On this bus</span> — {segment.busModules}</div>}
+            {segment.busModules && <div><span className="text-(--ink-3)">On this bus</span>: {segment.busModules}</div>}
           </div>
         )}
       </Section>

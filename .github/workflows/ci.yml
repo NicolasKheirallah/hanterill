@@ -27,6 +27,7 @@ jobs:
         run: |
           node scripts/gates/check-sources.mjs
           node scripts/gates/check-i18n.mjs
+          node scripts/gates/check-sv-terms.mjs
           node scripts/gates/check-a11y.mjs
           node scripts/gates/check-out.mjs
           node scripts/gates/check-hygiene.mjs

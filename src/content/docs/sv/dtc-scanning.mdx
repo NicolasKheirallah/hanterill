@@ -1,0 +1,99 @@
+import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
+import { ScreenShot } from "@/components/docs/mdx/ScreenShot";
+
+Bilen rapporterar sina egna problem. Varje problem registreras som en DTC: en felkod, en kort kod som
+`P0A80` som pekar på ett specifikt fel i ett specifikt system. Hanterill läser dem från varje modul som
+vill prata.
+
+## En kod är inte hela historien
+
+Varje DTC kommer med en statusbyte: extra bitar som säger mer om felet än koden själv. Hanterill gör
+om de bitarna till tydliga tillstånd:
+
+| Tillstånd | Betydelse |
+| --- | --- |
+| Aktiv | Felet pågår just nu. |
+| Väntande | Det hände en gång, men har inte bekräftats över tillräckligt många körcykler än. |
+| Lagrad | Bekräftat och registrerat av modulen. |
+| Historisk | Det sattes, rensades sedan, men modulen behåller fortfarande posten. |
+
+En varningslampa kan ligga ovanpå en enda aktiv kod och fem gamla historiska. Statusen är det som
+skiljer dem. Hanterill öppnar fellistan filtrerad till det som behöver uppmärksamhet först, med den
+tysta historiken ett tangenttryck bort.
+
+## Frysta ramdata
+
+När en modul sätter ett fel sparar den ofta en ögonblicksbild av fordonet i exakt det ögonblicket:
+hastighet, pakettemperatur, spänning, vad föraren bad om. Den ögonblicksbilden kallas frysta
+ramdata, och den är oftast mycket mer användbar än koden själv.
+
+Hanterill läser dem tillsammans med koden där de finns. Inte varje fel har några.
+
+## Vad en skanning faktiskt skickar
+
+Hanterill använder fyra ReadDTCInformation-delfunktioner: räkna koderna per statusmask, lista koderna
+per statusmask, läs en snapshot-post och läs en utökad datapost.
+
+Huvudutbytet, med byten på tråden:
+
+<DiagnosticExample
+  service="ReadDTCInformation, report DTCs by status mask"
+  request="19 02 FF"
+  response="59 02 FF <dtc><status> <dtc><status> ..."
+  note="Masken FF ber om varje status. Varje trebyteskod följs av en statusbyte; Hanterill avkodar den byten till aktiv, väntande, lagrad eller historisk."
+/>
+
+Skanningen körs per modul och samlas i en lista, grupperad per modul. En modul som inte svarar listas
+som icke observerad, aldrig som frisk. Ett rent skanningsresultat berättar hur många moduler som
+svarade, inte enbart att inget hittades.
+
+<ScreenShot
+  root="/assets/fault-codes.png"
+  alt="Vyn Felkoder: koder grupperade per modul med status, tillgång till frysta ramdata och bevispanelen"
+  caption="Felkoder: varje kod med sin statusklass, modulen som rapporterade den och dess bevis"
+/>
+
+## Före och efter: diffen
+
+Det mest användbara du kan göra med felkoder är att jämföra två skanningar. Skanna före reparationen,
+skanna efter, och öppna DTC-diffen. Tillagda koder, rensade koder, statusändringar och de frysta ramdata
+från före raderingen ligger sida vid sida.
+
+Båda sessionerna är redan sparade lokalt, så jämförelsen är en lokal beräkning. Ingen bil behövs.
+
+## Att radera koder
+
+Radering är en skrivning, och Hanterill behandlar den som en. Den ligger bakom en uttrycklig
+bekräftelse och körningens kapacitetskontroll, och ett bygge kompilerat utan skrivfunktionen avvisar
+den med ett typat svar istället för att misslyckas obegripligt.
+
+När åtgärden körs följer den en orkestrerad sekvens modellerad på referensverktyget:
+
+1. Öppna en utökad session med varje modul.
+2. Fånga de frysta ramdata först, eftersom raderingen förstör dem.
+3. Skicka bulkraderingen.
+4. Vänta ut modulens "upptagen"-fönster.
+5. Försök igen per modul där det behövs.
+6. Läs om för att verifiera, och rapportera de moduler som fortfarande håller koder (den envetna
+   mängden).
+
+Ett valfritt force-reset-steg startar om de envetna modulerna, reparerar länken och raderar en gång
+till. Det är opt-in och undertrycks medan fordonet rapporterar körläge.
+
+Per-modul-radering ("radera denna modul") använder samma maskineri med ett mål. Hela körningen sparas
+som bevis i sessionsarkivet.
+
+<Callout kind="caution" title="Att radera är inte att reparera">
+Att radera en kod tar bort posten, inte felet. Om det underliggande problemet finns kvar kommer koden
+tillbaka. Använd diffen för att bevisa en reparation, inte för att få en lampa att slockna.
+</Callout>
+
+## Exporter
+
+Skanningar exporteras till JSON och CSV. CSV-exportören neutraliserar formelinjektion i kalkylprogram
+(en cell som börjar med `=`, `+`, `-` eller `@` kan inte köras i Excel), och VIN maskeras som standard.
+
+## Nästa steg
+
+- [Batteridiagnostik](/docs/battery-diagnostics): den andra halvan av en typisk session.
+- [Inspektionsrapporter](/docs/inspection-reports): hur fel påverkar poängen.

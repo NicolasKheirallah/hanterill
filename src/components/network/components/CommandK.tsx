@@ -87,7 +87,7 @@ export default function CommandK({
           shouldFilter
           onKeyDown={(e) => { if (e.key === 'Escape') onOpenChange(false) }}
         >
-          <Command.Input placeholder="Search units & pins — try “inverter”, “LIN_14”, “horn”…" autoFocus />
+          <Command.Input placeholder="Search units & pins, try “inverter”, “LIN_14”, “horn”…" autoFocus />
           <Command.List>
             <Command.Empty>No matching unit or pin.</Command.Empty>
             {ORDER.map((d) => {

@@ -1,0 +1,122 @@
+Hanterill is a workshop tool, and workshops are not all the same. This page covers how you make it
+fit your eyes, your hands, and your language: interface languages, themes, keyboard use, and what
+each operating system expects from you.
+
+## Interface languages
+
+The interface ships fully translated in eight languages. Every one of them is complete, not partly
+machine-translated: a test asserts that no key is left untranslated, and it fails the build if one
+is.
+
+| Language | Shown as |
+| --- | --- |
+| English | English |
+| Swedish | Svenska |
+| Norwegian Bokmål | Norsk bokmål |
+| Danish | Dansk |
+| Finnish | Suomi |
+| Icelandic | Íslenska |
+| German | Deutsch |
+| Simplified Chinese | 中文 |
+
+Hanterill detects your language from the operating system on first launch and remembers your choice
+after that. You can change it at any time in **Settings → Language**, and the interface updates
+immediately. If a translation is ever missing a string, that string falls back to English rather
+than showing an empty label.
+
+<Callout kind="note" title="These docs are separate">
+The application is translated into all eight languages. This documentation site is a smaller
+effort: English plus Swedish today, with the Swedish set growing. That is why some doc pages say
+they are English only.
+</Callout>
+
+## Themes
+
+There is one design system with two families, dark and light, and six selectable colour schemes.
+Geometry, typography and behaviour never change between them, only the palette. Dark is the primary
+scheme.
+
+**Settings → Appearance** splits this into two controls, so you never have to read a seven-way list
+to answer one question:
+
+1. **Mode**: System, Light or Dark. System follows your operating system's preference.
+2. **Palette variant**: an optional pin inside the family you chose.
+
+| Palette | Family | What it is for |
+| --- | --- | --- |
+| Default | Either | The family's plain scheme. This is what you get after picking Light or Dark. |
+| OLED Black | Dark | True black, for OLED panels. |
+| Graphite | Dark | An ink-accented dark variant. |
+| Nordic Frost | Light | A cool Nordic light palette. |
+| Workshop Sepia | Light | A warm paper palette, easier on tired eyes. |
+
+Picking Light or Dark in Mode resets any pinned variant back to that family's default, so the two
+controls can never disagree.
+
+Two switches sit below the palette, and both stack on top of whatever scheme you picked:
+
+- **High contrast** strengthens borders and focus rings and lifts the muted text tiers.
+- **Reduce motion** minimises animation and transitions, independent of the operating system
+  preference, for people who find movement distracting or nauseating.
+
+The current scheme is previewed live in the same panel, with sample status tones and buttons rather
+than live data.
+
+## Reading a screen in any light
+
+Dense tables under bad light are the workshop reality, and the light palettes are the answer. If
+you are reading a cell matrix on a tablet under fluorescent light, Workshop Sepia and Nordic Frost
+are the two worth trying first. In a dark garage or at night, OLED Black removes the glow around
+each row.
+
+The targets are WCAG 2.1 AA for contrast, checked per theme rather than eyeballed, with body text
+aiming higher than the minimum. If a theme you use has a contrast problem, that is a bug worth
+reporting.
+
+## Keyboard
+
+Hanterill is fully usable without a mouse. Every control is reachable with `Tab`, focus is always
+visible, and dialogs close with `Escape`.
+
+- `Ctrl+K` (or `Cmd+K` on macOS) opens the command palette: jump to any screen, or search for a
+  module by name or address.
+- `?` opens the shortcut list.
+- Two-key chords jump straight to a screen. Press `G` then the second key: `G` `O` for overview,
+  `G` `B` for battery health, `G` `D` for fault codes, `G` `C` for connection.
+
+Chords are ignored while you are typing in a field, so a search box never steals them.
+
+## Screen readers and semantics
+
+The interface uses real semantic elements rather than decorated boxes: tables are tables, dialogs
+are dialogs with focus traps, tab panels are wired to their tabs, and status changes are announced
+through live regions rather than by repainting without announcement. Automated accessibility checks run over
+every state component (empty, error, loading, table, hex viewer) in CI.
+
+## Operating systems
+
+Hanterill runs on macOS, Windows and Linux from the same codebase and the same feature set.
+
+| OS | Versions | Packages |
+| --- | --- | --- |
+| macOS | 12 Monterey and newer, Apple Silicon and Intel | `.dmg`, `.app` bundle |
+| Windows | Windows 10 and 11, 64-bit x64 and ARM64 | NSIS installer, standalone `.exe` |
+| Linux | Ubuntu 22.04/24.04, Debian 12, Fedora 38+, Arch | `.AppImage`, `.deb` |
+
+Each platform has one quirk worth knowing before your first launch:
+
+- **macOS asks for local network permission** on the first connection attempt. Allow it, or
+  discovery will find nothing. It lives in **System Settings → Privacy & Security → Local
+  Network**.
+- **Windows may show a SmartScreen warning**, because the builds are not code-signed with a
+  commercial certificate. Click **More info**, then **Run anyway**.
+- **Linux needs no root access** at any point. The app binds ordinary unprivileged UDP and TCP
+  sockets on port 13400. The AppImage needs FUSE (`libfuse2` on Ubuntu 22.04 and newer); the
+  `.deb` installs with `dpkg -i` and resolves its own dependencies.
+
+All of these are covered with remediation steps on the [Connection](/docs/connection) page.
+
+## Next
+
+- [Connection](/docs/connection): getting the link up on your operating system.
+- [Screen tour](/docs/workspace-tour): what all those screens actually do.

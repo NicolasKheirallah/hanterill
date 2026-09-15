@@ -1,0 +1,47 @@
+import { GlossaryList } from "@/components/docs/mdx/GlossaryList";
+
+Diagnostik har sin egen vokabulär, och det mesta är akronymer. Den här sidan är uppslagsverket: varje
+term som resten av dokumentationen använder, utskriven en gång och förklarad på vanligt språk.
+
+Om du bara läser en sektion, läs Diagnostik-gruppen. Det är där orden du möter på den första vyn bor.
+
+<GlossaryList />
+
+## Varför vissa termer låter lika
+
+Några par snubblar folk på, så de är värda att säga direkt:
+
+- **SoH och SoC.** State of Health är hur mycket kapacitet paketet har kvar jämfört med nytt. State of
+  Charge är hur fullt det är just nu. Ett paket kan vara 90 % friskt och 20 % laddat samtidigt.
+- **ECU och DID.** En ECU är en dator. En DID är en fråga du ställer till den. En modul svarar på
+  många identifierare.
+- **DTC och frysta ramdata.** En DTC är koden som säger att ett fel hände. Frysta ramdata är
+  ögonblicksbilden av förhållandena i det ögonblicket. Inte varje kod har några.
+- **Kompatibel och stödd.** Kompatibel betyder att Hanterill kan nå bilen. Stödd betyder att
+  avläsningarna är verifierade. Se [Fordon som stöds](/docs/supported-vehicles).
+- **Preliminär och verifierad.** En avkodare märkt preliminär har inte bekräftats mot en referens. En
+  verifierad har det. Skillnaden ändrar hur mycket en avläsning bör påverka ett beslut.
+
+## Identifierare du kommer att se
+
+Dokumentationen citerar identifierarnummer i hex, och de dyker upp tillräckligt ofta för att listas här:
+
+<SpecList rows={[
+  ["0x10", "Öppna en diagnossession så att en modul svarar"],
+  ["0x14", "Radera lagrade felkoder (en skrivning, efter uttrycklig bekräftelse)"],
+  ["0x19", "Läs felkoder och deras snapshots"],
+  ["0x22", "Läs ett värde via identifierare"],
+  ["0x2A", "Periodisk läsning: ett prov på begäran, plus avregistrering"],
+  ["0x31", "Starta en servicerutin, eller läs resultatet av en som kört"],
+  ["0x3E", "Tester present, så fordonet inte somnar mitt i en skanning"],
+]} />
+
+<Callout kind="note" title="Hex-notation">
+En identifierare som `0x1635` är ett hexadecimalt tal. Prefixet `0x` betyder "detta är hex": `1635` i
+hex är 5685 i decimal. Det är BECM:s adress i modulregistret.
+</Callout>
+
+## Nästa steg
+
+- [Vygids](/docs/workspace-tour): vyerna dessa termer dyker upp på.
+- [ECU-referens](/docs/ecu-reference): varje modulkod, med sin adress och DTC-stöd.

@@ -25,6 +25,7 @@ export default async function DownloadPage({ params }: { params: Promise<{ local
   const t = await getTranslations("body.download");
   const td = await getTranslations("download");
   const tc = await getTranslations("common");
+  const tp = await getTranslations("pricing");
   return (
     <>
       <LocalizedPageHeader id="download" />
@@ -65,6 +66,9 @@ export default async function DownloadPage({ params }: { params: Promise<{ local
           </h2>
           <p className="mt-2 text-[15px] font-medium text-text-primary">{site.license.short}</p>
           <p className="mt-1.5 text-[14px] leading-relaxed text-text-secondary">{site.license.line}</p>
+          <p className="mt-3 text-[14px] leading-relaxed text-text-secondary">
+            <span className="font-medium text-text-primary">{tp("promise")}</span> {tp("commercial")}
+          </p>
           <div className="mt-4">
             <MoreLink href="/docs/license">{td("readLicense")}</MoreLink>
           </div>

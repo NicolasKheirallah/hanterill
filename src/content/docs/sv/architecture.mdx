@@ -1,0 +1,119 @@
+import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
+
+Hanterill är en stapel av lager, var och en tillräckligt liten att förstå på egen hand. Längst ned
+Ethernet. Längst upp en vy som visar en batteriprocent. Den här sidan går igenom hela vägen.
+
+Inget i den är ett proprietärt moln-API. Varje lager är en öppen standard eller en tabell Hanterill
+levererar med.
+
+## Lagren
+
+```text
+Hanterill            app och CLI, Rust och Tauri v2
+Applikationslager    use cases, sessioner, svep, policy
+ISO 14229 UDS        unified diagnostic services (frågorna)
+ISO 13400 DoIP       diagnostics over IP (kuvertet)
+TCP / UDP            sockets, upptäckt, routningsaktivering
+Ethernet             passiv ENET-kabel, RJ45
+Fordonsgateway       CEM / VGM på CMA
+```
+
+Den fullständiga modul-till-modul-kopplingen bakom den gateway:n är en egen levande karta: varje
+enhet, busssegment och dokumenterad pin-rad finns i [CMA Network Explorer](/network).
+
+## Vad som händer när du trycker Anslut
+
+1. **Hitta bilen.** Hanterill skickar en förfrågan om fordonsidentifiering över UDP på port 13400 och
+   lyssnar efter annonseringar.
+2. **Öppna en kanal.** Den öppnar en TCP-anslutning till bilen på samma port, 13400.
+3. **Få tillstånd.** Den skickar en begäran om routningsaktivering. Bilen accepterar eller avvisar,
+   och tills den accepterar besvaras inget diagnostikmeddelande.
+4. **Hälsa på varje modul.** En `TesterPresent` håller sessionen vid liv; en funktionell broadcast kan
+   fråga alla moduler på en gång, med individuella avsökningar endast för de tysta.
+5. **Ställ en fråga.** En UDS-begäran går ut i ett DoIP-kuvert. Bilen paketerar svaret på samma sätt.
+6. **Avkoda svaret.** Byten matchas mot en plattformsspecifik definition. Ett svar som inte matchar
+   kontraktet avvisas som ett typat utfall, aldrig tvingat till en siffra.
+7. **Spara det.** Observationen skrivs till det lokala sessionsarkivet med sin källa, tidsstämpel och
+   avkodarversion.
+
+En enskild begäran färdas samma väg varje gång, och svaret kommer tillbaka längs den:
+
+<ProtocolFlow
+  steps={[
+    { node: "Hanterill", detail: "diagnostikmotor" },
+    { node: "Ethernet", detail: "passiv ENET-kabel" },
+    { node: "Fordonsgateway", detail: "CEM / VGM, DoIP" },
+    { node: "Målstyrenhet", detail: "BECM, utökad session" },
+  ]}
+  request="läs batteriets hälsotillstånd"
+  response="91,14 %, avkodat från det råa värdet"
+/>
+
+## Vad DoIP faktiskt lägger till
+
+DoIP är ett tunt omslag. Dess uppgift är att bära diagnostikmeddelanden över ett IP-nätverk och hålla
+reda på vem som pratar med vem. Varje ram har ett litet huvud med en nyttolasttyp, vilket är fältet
+som säger vilken sorts meddelande detta är:
+
+| Nyttolasttyp | Betydelse |
+| --- | --- |
+| `0x0001` | Begäran om fordonsidentifiering (UDP) |
+| `0x0004` | Fordonsannonsering, fordonets svar |
+| `0x0005` / `0x0006` | Begäran och svar om routningsaktivering |
+| `0x0007` / `0x0008` | Livskontroll, så en död anslutning upptäcks |
+| `0x8001` | Ett diagnostikmeddelande, som bär en UDS-begäran eller ett svar |
+| `0x8002` / `0x8003` | Positiv och negativ bekräftelse av det meddelandet |
+
+Ett fordon är inte skyldig att skicka bekräftelsen före svaret, så Hanterill buffrar ett tidigt svar
+istället för att missta det för bekräftelsen. Små detaljer som den är anledningen till att
+transporten är ett eget lager snarare än några socket-anrop.
+
+## Vad UDS lägger till
+
+UDS är frågornas språk. Varje begäran börjar med en tjänsteidentifierare, och tjänsterna som används
+här är en kort lista: `0x10` för att öppna en session, `0x19` för felkoder, `0x22` för att läsa ett
+värde, `0x2A` för periodiska läsningar, `0x31` för rutiner, `0x14` för att radera.
+[ECU-referensen](/docs/ecu-reference) och [Säkerhet](/docs/safety) går igenom dem en och en.
+
+## Komponenter
+
+- **Transport**: asynkrona Rust-sockets, en anslutning delad över varje modul. Begäranden och svar
+  matchas i ett enda utbyte, svar från en gammal anslutning avvisas som föråldrade, och rutten
+  återaktiveras automatiskt efter en återhämtning.
+- **Upptäckt**: en funktionell broadcast kan avsöka varje modul på en gång, med fallback till
+  individuella avsökningar endast för de tysta. Moduler som förblir tysta över flera svep går ned
+  till en kortare timeout-nivå, och en cache per bil nycklad på en VIN-hash kommer ihåg vad som var
+  frånvarande förra gången.
+- **Avkodare**: definitioner per plattform och modul med uttryckliga nyttolastkontrakt: förväntad
+  längd, skalning, sekretessklass och mognad. CMA-avkodare är verifierade mot ett riktigt fordon; SPA- och
+  SEA1-definitioner levereras märkta som väntande på hårdvarubekräftelse.
+- **Paketuppbyggnader**: cellmatrisen är data, inte kod. CMA 108-cellers, CMA 96-cellers, SPA 96 och
+  108 och hybrid 102, samt SEA1-layouterna bär var sin räkning och ordning.
+- **Policy**: [motorn för besiktningspoäng](/docs/inspection-reports) och korskontrollerna ligger
+  ovanpå observationerna. De lägger aldrig till trafik.
+- **Sessioner**: ett atomiskt, hållbart lokalt arkiv med operatörsanteckningar och återhämtning från
+  skadade filer. Jämförelsevyer läser från det.
+- **Säkerhetsgrind**: den körande binärens verkliga gränser exponeras som ett kapacitetsmanifest, och
+  gränssnittet erbjuder bara kommandon binären kan utföra.
+- **IPC**: en deklarativ kommandotabell mappar varje begäran från appen till exakt ett use case, med
+  ett test som säkerställer att inga föräldralösa poster finns.
+
+## Ett bygge
+
+Hanterill kompileras som ett enda bygge med varje funktion på som standard: diagnostikavläsningarna,
+DID-skannern för alla moduler, och skrivytan som begär bekräftelse. Det finns ingen editionsflagga
+att förklara och inget dolt läge. Ett strippat `--no-default-features`-bygge finns så att den
+skrivskyddade grinden behåller en kompileringstidskant som CI kan öva, och det är en
+utvecklingskonfiguration snarare än en release.
+
+## Varför Rust och Tauri
+
+Protokollarbetet passar Rust: många små samtidiga operationer med felhantering som måste vara
+uttrycklig. Tauri håller binären liten och använder operativsystemets egen webview istället för att
+leverera en webbläsarmotor, så appen känns nativ snarare än som en webbsida i ett fönster.
+Gränssnittet är React och TypeScript, typat mot kontrakt som genereras från motorn.
+
+## Nästa steg
+
+- [Anslutning](/docs/connection): det fysiska lagret, och vad du gör när det krånglar.
+- [Integritetsskydd](/docs/privacy): vad appen skriver till disk, och vad den aldrig skickar någonstans.

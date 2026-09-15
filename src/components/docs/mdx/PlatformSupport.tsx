@@ -45,6 +45,12 @@ export function PlatformSupport({ platform }: { platform: Platform }) {
 
       <p className="px-4 py-3 text-[13px] leading-relaxed text-text-secondary">{BLURB[platform]}</p>
 
+      {meta.testedAgainst.length > 0 ? (
+        <p className="border-t border-line px-4 py-3 font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
+          Tested against: <span className="normal-case tracking-normal">{meta.testedAgainst.join(", ")}</span>
+        </p>
+      ) : null}
+
       {list.length ? (
         <table className="w-full border-collapse border-t border-line text-[13px]">
           <tbody>

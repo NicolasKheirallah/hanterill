@@ -1,0 +1,88 @@
+Varje läsning Hanterill gör sparas. Inte som en skärmbild eller en PDF, utan som bevis: vad som
+frågades, vad som kom tillbaka, när, och av vilken avkodare det tolkades. Den här sidan förklarar vad
+en session är, hur jämförelser fungerar, och vad varje exportformat faktiskt är till för.
+
+## Vad en session innehåller
+
+En session är posten över ett besök på ett fordon. Den innehåller:
+
+- När den startade och slutade, och vilka app- och kontraktsversioner som producerade den.
+- Fordonets identitet, med VIN maskerat som standard.
+- Varje operation som kördes, och dess utfall.
+- Råa observationer och deras tolkade värden, hållna åtskilda.
+- Operatörsanteckningar du lägger till själv.
+
+De råa byten stannar bredvid det avkodade värdet. Om en avkodare korrigeras i en
+senare version kan en sparad session tolkas om utan att hitta på en ny avläsning.
+
+<Callout kind="note" title="Var sessioner bor">
+Sessioner lagras på din maskin i ett lokalt arkiv. Inget laddas upp, och det finns ingen kopia på en
+server. Se [Integritetsskydd](/docs/privacy) för lagringstid och radering.
+</Callout>
+
+## Att jämföra två sessioner
+
+Fyra jämförelser är inbyggda, och var och en svarar på en olika fråga:
+
+| Jämförelse | Frågan den svarar på |
+| --- | --- |
+| Felkodsdiff | Vad ändrades mellan skanningen före reparationen och skanningen efter? |
+| Cellhistorikdiff | Har någon cellgrupp driftat sedan förra besöket? |
+| Firmwarediff | Ändrades mjukvaran på någon modul faktiskt? |
+| Full rapportjämförelse | Hur ser hela skickrapporten ut sida vid sida? |
+
+Var och en matchar de två sessionerna efter stabil identifierare snarare än position. En cellgrupp
+matchas efter sitt fysiska index, en modul efter sin adress, ett fel efter modul plus kod plus status.
+Där ena sidan saknar en avläsning för den identifieraren förblir luckan en lucka. Den fylls aldrig
+med en nolla, eftersom en saknad avläsning och en låg avläsning är olika fakta.
+
+## Att exportera
+
+En export är en kopia du kan lämna till någon annan, lägga i en jobbmapp, eller behålla efter att
+fordonet är borta. Fem former, var och en för ett olika syfte:
+
+| Format | Använd det när |
+| --- | --- |
+| Enkel JSON | Du vill ha en förlustfri fil med allt, för arkivering eller vidare bearbetning |
+| Modulär JSON-uppsättning | Du vill ha sessionen uppdelad i dedikerade filer (`battery`, `cells`, `dtcs`, `ecus`, `firmware`, `live_telemetry`, `vehicle`, och fler) |
+| CSV-uppsättning | Du vill öppna siffrorna i ett kalkylark |
+| ZIP-paket | Du vill ha hela den modulära uppsättningen som en fil att skicka |
+| PDF-rapport | Du vill ha något läsbart att skriva ut eller lämna till en kund |
+
+JSON är det kanoniska formatet: förlustfritt, versionssatt, och det enda som behåller råa bevis
+intakta. CSV är en projektion för en enskild tabell, så det plattar medvetet ut struktur. PDF är en
+rendering, och aldrig den enda kopian värd att behålla.
+
+<Callout kind="caution" title="Kalkylarkssäkerhet">
+En CSV-cell som börjar med `=`, `+`, `-` eller `@` kan köras som en formel när filen öppnas.
+Exportören neutraliserar dessa prefix före skrivning, så en felbeskrivning kan aldrig bli en levande
+formel i Excel.
+</Callout>
+
+## VIN-maskering vid export
+
+Varje exportdialog visar VIN-maskeringsvalet innan något skrivs, och maskering är på som standard.
+Maskerade exporter bär en förkortad form som `YSM...0428` istället för de fulla 17 tecknen. Stäng av
+det bara när filen verkligen behöver identifiera en specifik bil, som en handover-post hos en
+återförsäljare.
+
+Supportpaketet är striktare: det rensar serienummer, privata adresser och koordinater innan en fil
+lämnar maskinen, oavsett maskeringsinställningen.
+
+## Att importera
+
+En sessionsfil kan läsas tillbaka in, inklusive en som producerats av någon annan. Import behandlar
+filen som obetrodd indata och validerar den innan den sparas: schemaversion, förväntade fält och
+storleksgränser. En fil som inte kan läsas avvisas med en orsak istället för att halvladdas.
+
+## Att poängsätta en gammal session igen
+
+Inspektionsrapporten bär versionen av det regelset som producerade dess poäng, så en sparad session
+kan poängsättas om under ett nyare regelset utan att återansluta till fordonet. Rapporten bär också en
+SHA-256-kontrollsumma, så du kan avgöra om en fil har ändrats sedan den skrevs.
+
+## Nästa steg
+
+- [Livedata](/docs/live-telemetry): att fånga en ström över tid.
+- [Inspektionsrapporter](/docs/inspection-reports): vad den poängsatta rapporten gör med en session.
+- [CLI](/docs/cli): `export`, `replay` och diffkommandona för skriptat arbete.

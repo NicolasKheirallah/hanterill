@@ -26,7 +26,7 @@ export default async function DocsLayout({
             </div>
             <DocsSidebar />
             <p className="mt-6 border-t border-line pt-3 font-mono text-[10.5px] uppercase tracking-[0.12em] text-text-muted">
-              {t("versionStamp")} {release?.version ?? "v0.1.1 (source)"}
+              {t("versionStamp")} {release?.version ?? t("versionUnknown")}
             </p>
           </div>
         </aside>

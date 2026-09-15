@@ -1,0 +1,81 @@
+Some problems only show up while the car is doing something. A weak cell looks fine at rest and
+sags under load. A pump is quiet until it is hot. Live telemetry is how you watch a signal move
+instead of reading a single number.
+
+## How sampling works
+
+You pick channels, and Hanterill asks each one for its value on a fixed cadence. The cadence is a
+schedule, not a guess: each tick is due at a specific time, and a sample that arrives late is
+recorded as late rather than pretending it was on time.
+
+Sampling is bounded. You choose a duration or a sample count, and the run stops when it reaches it.
+You can also pause, resume or cancel at any point, and cancelling keeps everything sampled so far.
+
+<Callout kind="note" title="One stream at a time">
+Only one live stream runs at once. Starting a new one while another is running is refused rather
+than stopping the first without saying so, so a recording in progress can never be cut off by accident.
+</Callout>
+
+## Presets
+
+Choosing channels one by one is slow, so there are four presets. Each is a named set aimed at one
+question.
+
+| Preset | Channels | The question it answers |
+| --- | --- | --- |
+| Battery | Pack voltage, current, SoC, SoH, calculated power | Is the pack behaving under this load? |
+| Drivetrain | Pack voltage and current, power, rear motor speed and voltage and current | What are the motors doing, and what is it costing? |
+| Thermal | Battery coolant in and out, motor winding and coolant temperatures | Is heat being moved away where it should be? |
+| All | Every catalogued channel | A broad capture when you are not yet sure what to look at |
+
+If a preset names a channel the connected car does not support, the gap is reported rather than
+dropped without comment.
+
+## Cadence and budgets
+
+The CLI exposes the same controls with explicit bounds: a preset or channel list, a sample count,
+and a rate between 1 and 5 Hz. The desktop screen uses the same engine.
+
+Higher rates are not automatically better. The car's gateway serves every module on one connection,
+so a fast capture of many channels competes with itself. A 1 Hz capture of six channels will be far
+more trustworthy than 5 Hz of forty.
+
+## Recording to a file
+
+A recording is a live capture written to disk: either `.json` for a complete, structured record, or
+`.csv` for a spreadsheet. It keeps the channel identity, the unit, the decoder version, and a
+timestamp per sample, so a recording is evidence rather than a picture.
+
+A recording file is portable. It can be replayed later, on another machine, with no car present.
+
+## Replay
+
+Replay runs a recording back through the same virtual-time engine the live view uses. You get a time
+scrubber and speed control (0.5x, 1x, 2x and faster), so a capture that took ten minutes to record
+can be reviewed in two.
+
+This is what makes recordings worth keeping: a technician who was not at the car can watch the
+same behaviour, at their own pace, and filter to the channels they care about.
+
+Replay is clearly labelled as replay. A recording never presents itself as a live reading, and a
+simulated session never presents itself as a recording.
+
+## Exporting a trace
+
+A recording or replay exports to CSV or JSON from the same screen. CSV is for the spreadsheet and the
+second opinion; JSON keeps the structure and the decoder metadata if you plan to compare it later.
+
+## When to use it
+
+- **Battery health**: watch pack current and voltage together under acceleration, then compare the
+  cell spread at rest against the spread under load.
+- **Thermal problems**: watch coolant in and out, and see whether the delta grows under sustained
+  load or stays flat.
+- **Intermittent faults**: record while the fault is happening, then replay it next to the freeze
+  frame the module stored.
+- **Before and after a repair**: record the same channels under the same conditions, then compare.
+
+## Next
+
+- [Sessions and evidence](/docs/sessions-and-evidence): where recordings live and how they compare.
+- [CLI](/docs/cli): `live`, `record` and `replay` with explicit bounds.

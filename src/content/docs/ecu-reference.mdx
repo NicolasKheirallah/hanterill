@@ -1,27 +1,74 @@
 import { EcuReference } from "@/components/docs/mdx/EcuReference";
 
-ECU codes, names and part numbers from the CMA module catalogue: 43 units mapped over DoIP, 34 of
-them advertising diagnostic trouble code support. Grouped as Hanterill lays them out around the
-gateway. Names and numbers follow published wiring documentation. UDS means the ECU answers a
-diagnostic session. The same ECU data drives the topology diagram on the home page.
+A car is not one computer. It is dozens of small computers, called ECUs (electronic
+control units), wired together. Each one runs something: the brakes, the windows, the
+battery, the radio. Hanterill asks each of them what it is, what software it runs, and
+whether anything is wrong.
+
+This page is the list of every ECU Hanterill knows how to talk to on the CMA platform,
+with the address it answers on.
+
+## The registry
+
+The CMA registry holds 49 entries. Forty of them advertise fault-code support. Five
+entries are marked `ref`: reference rows from vendor documentation that have never
+been observed on a real car. On a battery-electric car those five stay quiet,
+and Hanterill records the silence as expected instead of a fault.
+
+Each entry carries a DoIP logical address. Think of it as a desk extension inside the
+car: `0x1635` is always the battery controller, the same way 432 is always the same
+desk. Hanterill sends a request to one extension and the reply comes back from it.
 
 ## Gateway
 
+Two modules sit between your laptop and everything else. The VGM is the firewall, and
+the CEM is the car's central body computer.
+
 <EcuReference domain="gateway" />
+
+The VGM is worth a note: writes to it need a security key that is unique per car. Reads
+work without it, which is why every read-only feature in Hanterill runs on a
+connected vehicle without extra setup.
 
 ## Energy
 
-<EcuReference domain="energy" />
+This is the high-voltage side. The BECM manages the traction battery, the VCU decides
+how much power the motors get, and the two inverters turn battery current into motor
+current (and back, when you lift off).
+
+<EcuReference
+  domain="energy"
+  caption="ECM, TCM, DEM, MVBM and NRCM are combustion and 48 V reference rows. They are registered so a hybrid car can be mapped later; on a BEV they stay silent."
+/>
 
 ## Chassis
+
+Steering, brakes, the angle sensor, and the cameras and radars that watch the road.
 
 <EcuReference domain="chassis" />
 
 ## Cabin
 
-<EcuReference domain="cabin" caption="Blank part numbers are positions the public documentation does not list. Hanterill still reads identification from the ECU directly with the ReadDataByIdentifier service." />
+Displays, doors, climate, lights, airbags, the phone-as-key radio. The long tail of
+modules most people never think about.
 
-## Common identifiers
+<EcuReference
+  domain="cabin"
+  caption="Blank part numbers are positions the public documentation does not list. Hanterill still reads identification from the ECU directly with ReadDataByIdentifier."
+/>
+
+## How Hanterill talks to them
+
+Two UDS services do most of the work:
+
+<SpecList rows={[
+  ["0x22", "ReadDataByIdentifier: ask a module for a numbered value, such as its VIN (0xF190) or its software version (0xF195)"],
+  ["0x19", "ReadDTCInformation: ask a module for its stored fault codes"],
+  ["0x10", "DiagnosticSessionControl: ask a module to open a diagnostic session so it will answer the first two"],
+  ["0x3E", "TesterPresent: a quiet \"still here\" so the car does not put modules to sleep mid-scan"],
+]} />
+
+The common identity identifiers, read from every module that answers:
 
 <SpecList rows={[
   ["0xF190", "VIN"],
@@ -31,4 +78,18 @@ diagnostic session. The same ECU data drives the topology diagram on the home pa
   ["0xF195", "Supplier software version"],
 ]} />
 
-Hanterill reads these from every ECU that answers, not just the battery module, so a full scan produces a hardware and software inventory of the car.
+Because Hanterill reads these from every ECU rather than only the battery, one scan
+produces a full hardware and software inventory of the car. That is what the
+[firmware view](/docs/cli) diffs between visits.
+
+## Not every module answers everything
+
+Some modules answer identification reads but have no fault codes to report. Those are
+marked `DTCs: no` above, and Hanterill skips them during a fault scan instead of
+recording a failure. A module that stays completely silent is a third case: it is
+recorded as not observed, never as broken.
+
+<Callout kind="note" title="A timeout is not a diagnosis">
+A module that does not answer can mean it is not fitted, asleep, or not on this car's build
+list. Hanterill says "did not answer" and leaves the judgement to you.
+</Callout>

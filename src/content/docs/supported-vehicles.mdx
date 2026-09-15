@@ -1,86 +1,111 @@
 import { PlatformSupport } from "@/components/docs/mdx/PlatformSupport";
 import { VehicleSupport } from "@/components/docs/mdx/VehicleSupport";
 
-Hanterill is built CMA-first. The Compact Modular Architecture platform under Polestar 2 and the smaller electric Volvos is where battery, ECU and routine coverage was written and validated.
+Hanterill was built CMA-first. The Compact Modular Architecture platform, under the Polestar 2
+and the smaller electric Volvos, is where the battery, ECU and routine coverage was written and
+checked against a real car. Other platforms are in progress, and this page says exactly how far
+each one has got.
 
-## Platform compatibility is not support
+## Reachable is not the same as supported
 
 Two different things:
 
-- **Platform compatibility** means Hanterill can reach the vehicle over DoIP.
-- **Verified support** means the diagnostic functions are implemented and checked
-  against known-good references.
+- **Reachable** means Hanterill can get a connection to the car over DoIP.
+- **Supported** means the diagnostic functions are written and checked against known-good
+  readings.
 
-A car can be reachable and still expose almost nothing useful. Status labels on
-this site always reflect verified support.
+A car can be reachable and still tell you almost nothing useful, because the decoder that turns
+raw bytes into a battery percentage has not been written or verified for that platform yet. The
+labels on this site always describe the second thing.
 
-## Status labels
+## What the labels mean
 
 | Label | Meaning |
 | --- | --- |
-| Supported | Verified runtime implementation. Battery, DTC, ECU identification and live data are exercised regularly. |
-| Partial | Some functions verified, others not yet covered on this vehicle. |
-| Testing | Implementation exists but needs validation. |
-| WIP | Actively being developed. Connects, but decoding is incomplete. |
-| Research | Architecture being investigated. Not usable for diagnostics. |
-| Planned | On the roadmap. No implementation yet. |
+| Supported | Verified against a live car. Battery, fault codes, ECU identification and live data are exercised regularly. |
+| Partial | Some functions verified, others not covered yet on this model. |
+| Testing | The code exists but has not been checked against the real car. Treat every reading as provisional. |
+| WIP | Under active development. It connects, but decoding is incomplete. |
+| Research | We are still figuring out how the platform works. Not usable for diagnostics. |
+| Planned | On the roadmap. Nothing written yet. |
 
 ## Platforms
 
-The tables below are generated from the same support data the rest of the site
-uses, so they cannot drift from the vehicles page.
+The tables below are generated from the same support data the rest of the site uses, so they
+cannot drift from the [vehicles page](/vehicles).
 
 ### CMA
 
+The tested platform. Polestar 2 and the CMA Volvos share one high-voltage layout, so a feature
+written for one works on the others.
+
 <PlatformSupport platform="CMA" />
 
-The full capability breakdown for the reference vehicle:
+The full capability breakdown for the reference car:
 
 <VehicleSupport model="Polestar 2" />
 
 ### SPA
 
-<Callout kind="caution" title="Not verified on a live vehicle">
-The SPA battery catalogue ships: pack topologies for the 69 kWh and 78 kWh EV packs and the
-102-cell hybrid, the CAN-era BECM registry and its decoders, ported from community research with
-cited provenance. Nothing is verified against a live vehicle yet, and on first-generation SPA the
-battery answers over CAN-era plumbing, not today's DoIP path. Do not rely on figures from these
-cars.
+Partially supported. Ships as catalogue data: pack topologies, a CAN-era BECM registry and
+decoders, ported from community research with citations. Combustion cars on this platform have
+been exercised through the engine reference lane, but the hybrid and EV battery path has not been
+checked against a live car: on first-generation SPA the battery answers over older CAN wiring,
+which the current DoIP transport cannot reach, so live battery scanning is not possible yet.
+
+<Callout kind="caution" title="Battery path not verified on a live car">
+The SPA battery definitions were ported from reference research, not measured on a car Hanterill
+has seen. Do not rely on SPA battery figures.
 </Callout>
 
 <PlatformSupport platform="SPA" />
 
 ### SEA
 
+The EX30-class definitions exist in the catalogue: ECU registry, routing addresses, identifier
+maps and cell mapping. Every one of them is unconfirmed by hardware.
+
 <Callout kind="caution" title="Hardware confirmation pending">
-SEA1 is defined in the catalogue: ECU registry, DoIP routing addresses, DID entries and battery
-cell mapping for EX30-class cars, with 107S and 110S topologies. Every definition is
-hardware-unconfirmed, held up only by synthetic fixtures. Zeekr and other sub-platforms
-deliberately do not inherit the EX30 map until their own mapping is confirmed.
+SEA1 ships as definitions held up by synthetic test data. Zeekr and other sub-platforms
+deliberately do not inherit the EX30 map, because family resemblance is not evidence.
 </Callout>
 
 <PlatformSupport platform="SEA" />
 
 ### SPA2
 
+Under investigation. The gateway and security model work differently, and no verified
+implementation exists.
+
 <Callout kind="note" title="Research">
-Under investigation. The gateway and security model differ; no verified implementation exists yet.
+Detection and registry entries only. Nothing on this platform produces a reading you should act
+on.
 </Callout>
 
 <PlatformSupport platform="SPA2" />
 
-## Pack topologies
+## Battery pack layouts
 
-The cell matrix takes its topology from the catalogue, never a hard-coded constant:
+The cell matrix takes its shape from the catalogue, never from a number written into the code.
+Each pack layout records how many cell groups it has and how they are arranged:
 
-| Platform | Topologies | State |
+| Platform | Layout | State |
 | --- | --- | --- |
-| CMA | 108S: 27 modules of 4 groups | Verified on the reference vehicle |
-| SPA | EV 96S (69 kWh), EV 108S (78 kWh), hybrid 102S | Catalogued, hardware verification pending |
-| SEA1 | 107S, 110S | Catalogued, hardware verification pending |
+| CMA | 108 groups: 27 modules of 4 | Verified on the reference car |
+| CMA | 96 groups: 24 modules of 4 (69 kWh) | Defined from catalogue and decoder evidence |
+| SPA | 96 (69 kWh), 108 (78 kWh), hybrid 102 | Catalogued, waiting on hardware |
+| SEA1 | 107 (69 kWh NMC), 120 (51 kWh LFP), 110 | Catalogued, waiting on hardware |
 
-A pack reports complete at its own cell count: a 102-cell hybrid is never judged against 108.
+A pack is judged complete at its own cell count. A 102-cell hybrid is never marked incomplete for
+not having 108.
 
-## Not manufacturer support
+## Independent, not affiliated
 
-Compatibility describes which vehicles Hanterill can communicate with. It is not a claim of endorsement. Hanterill is an independent project and is not affiliated with Volvo Cars, Polestar or Geely.
+Compatibility describes which cars Hanterill can communicate with. It is not a claim of
+endorsement. Hanterill is an independent project and is not affiliated with Volvo Cars, Polestar
+or Geely.
+
+## Next
+
+- [Connection](/docs/connection): getting a link to one of these cars.
+- [Battery diagnostics](/docs/battery-diagnostics): what the battery readings mean.

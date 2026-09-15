@@ -6,7 +6,7 @@ export const site = {
   name: "Hanterill",
   tagline: "Vehicle diagnostics for Volvo and Polestar",
   description:
-    "Vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and cross-platform. Source-available, for private use.",
+    "Vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and cross-platform. Source-available and free for private use.",
   url: "https://hanterill.org",
   repo: "NicolasKheirallah/hanterill",
   /**

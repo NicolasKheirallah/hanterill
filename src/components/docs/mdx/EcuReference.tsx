@@ -35,20 +35,34 @@ export function EcuReference({
           <thead>
             <tr className="border-b border-line-strong text-left">
               <th className="px-3 py-2 font-medium text-text-primary">Code</th>
+              <th className="px-3 py-2 font-medium text-text-primary">DoIP address</th>
               <th className="px-3 py-2 font-medium text-text-primary">Name</th>
               <th className="px-3 py-2 font-medium text-text-primary">Part number</th>
               <th className="px-3 py-2 font-medium text-text-primary">Domain</th>
               <th className="px-3 py-2 font-medium text-text-primary">UDS</th>
+              <th className="px-3 py-2 font-medium text-text-primary">DTCs</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((e) => (
               <tr key={e.code} className="border-b border-line last:border-0">
-                <td className="px-3 py-2 font-mono text-text-primary">{e.code}</td>
+                <td className="px-3 py-2 font-mono text-text-primary">
+                  {e.code}
+                  {e.variant ? (
+                    <span
+                      className="ml-2 font-mono text-[10px] uppercase tracking-wider text-text-muted"
+                      title="Reference row from vendor data, never observed on a Hanterill vehicle"
+                    >
+                      ref
+                    </span>
+                  ) : null}
+                </td>
+                <td className="px-3 py-2 font-mono text-text-secondary">{e.address}</td>
                 <td className="px-3 py-2 text-text-secondary">{e.name}</td>
                 <td className="px-3 py-2 font-mono text-text-muted">{e.partNumber ?? "not listed"}</td>
                 <td className="px-3 py-2 text-text-secondary">{DOMAIN_LABEL[e.domain]}</td>
                 <td className="px-3 py-2 text-text-secondary">{e.diagnostic ? "yes" : "no"}</td>
+                <td className="px-3 py-2 text-text-secondary">{e.dtc ? "yes" : "no"}</td>
               </tr>
             ))}
           </tbody>

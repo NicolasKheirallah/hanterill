@@ -136,10 +136,19 @@ export function PlatformExplorer({ defaultPlatform = "CMA" as Platform }) {
         </ToggleGroup.Root>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1">
+      <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
         <StatusMarker tone={statusMeta[pm.status].tone}>{t(`status.${pm.status}`)}</StatusMarker>
         <p className="max-w-[36rem] text-[14px] leading-relaxed text-text-secondary">{t(`blurbs.${platform}`)}</p>
       </div>
+
+      {pm.testedAgainst.length > 0 ? (
+        <p className="mt-3 text-[13px] leading-relaxed text-text-muted">
+          <span className="font-mono text-[11px] uppercase tracking-[0.12em]">
+            {t("testedAgainst")}
+          </span>{" "}
+          {pm.testedAgainst.join(", ")}
+        </p>
+      ) : null}
 
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_1fr] lg:gap-12">
         {/* Vehicle list */}

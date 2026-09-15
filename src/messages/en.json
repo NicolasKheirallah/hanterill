@@ -6,11 +6,11 @@
   "seo": {
     "home": {
       "title": "Hanterill | Vehicle Diagnostics for Volvo & Polestar",
-      "desc": "Source-available vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and for personal use."
+      "desc": "Source-available vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and free for personal use."
     },
     "features": {
       "title": "Features",
-      "desc": "Battery health, full vehicle diagnostics, live telemetry, subsystem telemetry, scored inspection reports, session evidence and gated service functions, all over one direct DoIP connection."
+      "desc": "Battery health, full vehicle diagnostics, live telemetry, subsystem telemetry, scored inspection reports, session evidence and service functions behind an explicit confirmation, all over one direct DoIP connection."
     },
     "batteryHealth": {
       "title": "Battery health",
@@ -18,7 +18,7 @@
     },
     "vehicleDiagnostics": {
       "title": "Vehicle diagnostics",
-      "desc": "ECU discovery over DoIP, identification data, DTCs by status with freeze frames, all-module DID scans, firmware inventory and gated clearing."
+      "desc": "ECU discovery over DoIP, identification data, DTCs by status with freeze frames, all-module DID scans, firmware inventory and clearing behind an explicit confirmation."
     },
     "liveData": {
       "title": "Live data",
@@ -38,11 +38,11 @@
     },
     "serviceFunctions": {
       "title": "Service functions",
-      "desc": "EPB service mode, 12 V battery adaptation, service reminder reset, damper calibration and DTC clearing: implemented, compiled out of released builds and gated behind an explicit unsafe-write feature."
+      "desc": "EPB service mode, 12 V battery adaptation, service reminder reset, damper calibration and DTC clearing: implemented behind an explicit confirmation, and checked against the running binary's capability manifest."
     },
     "vehicles": {
       "title": "Supported vehicles",
-      "desc": "Hanterill is CMA-first: Polestar 2 and the CMA Volvos are the tested platforms. SPA and SEA1 battery catalogues ship pending hardware verification; SPA2 and Zeekr remain research."
+      "desc": "Hanterill is CMA-first: Polestar 2 and the CMA Volvos are the tested platforms. Combustion and hybrid cars are partially supported through the engine reference lane; SEA1 battery catalogues ship pending hardware verification, and SPA2 and Zeekr remain research."
     },
     "download": {
       "title": "Download",
@@ -68,7 +68,27 @@
       "title": "Other projects",
       "desc": "Other independent projects from the same author as Hanterill, including Hisingen: Polestar and Volvo vehicle telemetry, native in the macOS menu bar."
     },
-    "docs": {
+    "tasks": {
+    "columnTask": "If you want to",
+    "columnScreen": "Go to",
+    "rows": {
+      "noVehicle": { "task": "The car does not appear when I plug in", "screen": "Connection troubleshooting" },
+      "usedBattery": { "task": "Is this used car's battery healthy?", "screen": "Battery Health, then Inspection Report" },
+      "worthBuying": { "task": "Is this car worth buying?", "screen": "Inspection Report" },
+      "activeFaults": { "task": "Which fault codes are currently active?", "screen": "Fault Codes (DTCs)" },
+      "repairCleared": { "task": "Did my repair actually clear the fault?", "screen": "DTC History Diff" },
+      "dealerUpdate": { "task": "Did the dealer update the software?", "screen": "Firmware SBOM, then Firmware Diff" },
+      "flatBattery": { "task": "The battery goes flat overnight", "screen": "12V Sleep Drain" },
+      "powerLoss": { "task": "The car sags or loses power under load", "screen": "Live Telemetry, Battery preset" },
+      "intermittent": { "task": "It only faults sometimes while driving", "screen": "Live Telemetry, record then replay" },
+      "modulesFitted": { "task": "Which modules are even fitted to this car?", "screen": "ECU Inventory" },
+      "didMeaning": { "task": "What does this identifier mean?", "screen": "DID Explorer, or the CLI did-plan" },
+      "customerReport": { "task": "I need something to hand a customer", "screen": "Sessions & Reports, export PDF" },
+      "scriptScan": { "task": "I want to script a scan", "screen": "the hanterill CLI" },
+      "buildLimits": { "task": "What can this build actually do to the car?", "screen": "Capabilities" }
+    }
+  },
+  "docs": {
       "title": "Documentation",
       "desc": "How Hanterill works, in detail. From plugging in a cable to decoding a battery block, the CLI and the scored inspection report."
     },
@@ -78,7 +98,7 @@
     },
     "network": {
       "title": "CMA Network Explorer",
-      "desc": "Interactive module-connectivity explorer for the CMA platform: 170 units, 295 documented links across nine networks and 622 harness pin rows, as data not drawing."
+      "desc": "Interactive module-connectivity explorer for the CMA platform: 170 units, 295 documented links across nine networks and 622 harness pin rows, as data rather than a drawing."
     }
   },
   "body": {
@@ -89,6 +109,8 @@
       "pLicense": "The source is available to read. Hanterill is provided for personal, non-commercial use under the project license, and is not open source in the OSI sense. The <link>license page</link> has the terms.",
       "hWhy": "Why it exists",
       "pWhy": "The diagnostic data a modern EV holds about its own battery and drivetrain is detailed and useful, and most of it is readable with standard protocols. Hanterill makes that data available to owners without a proprietary interface or a recurring fee.",
+      "hFree": "Free for private use",
+      "pFree": "Hanterill costs nothing for private use. There is no paid tier, no subscription, no account and no trial, and no diagnostic feature is held back. A workshop that wants to bill for this work can ask about a commercial licence; that option exists so private owners are never charged for it.",
       "hHow": "How it is built",
       "pHow": "The diagnostic engine, DoIP stack and decoders are Rust. The desktop shell is Tauri v2, so there is no bundled browser engine. The interface is React and TypeScript, typed against the engine.",
       "hContrib": "Contributing",
@@ -128,14 +150,14 @@
       "pVin": "The VIN is read as part of vehicle identification. In logs and exports, Hanterill redacts it where it is not required, so a shared session file does not carry a full VIN by default. Per-vehicle caches are keyed by a hash of the VIN.",
       "hNetwork": "Network activity",
       "pNetwork": "During a session, Hanterill communicates only with the vehicle over the local Ethernet link. The website may query the GitHub API to show the latest release; the application itself does not require any internet connection to run.",
-      "hNoSub": "No subscription",
-      "pNoSub": "There is no paid tier and no license server. The source is available to read and there is nothing to monetise in your vehicle data."
+      "hNoSub": "No subscription, and no price",
+      "pNoSub": "There is no paid tier and no license server, and Hanterill is free for private use in every version. The source is available to read, and there is nothing to monetise in your vehicle data."
     },
     "safety": {
       "hReadOnly": "Read-only by construction",
-      "pReadOnly": "Battery data, ECU identification, fault codes and live telemetry are all read operations. Running them cannot change vehicle configuration. Released builds transmit read services only: what the binary can do is reported by a capability manifest.",
+      "pReadOnly": "Battery data, ECU identification, fault codes and live telemetry are all read operations. Running them cannot change vehicle configuration. Hanterill transmits read services unless you explicitly confirm a write: what the binary can do is reported by a capability manifest.",
       "hChanges": "Operations that change the vehicle",
-      "pChanges": "Clearing diagnostic information, service routines and adaptations alter ECU state. They are not in released builds: they compile only with an explicit unsafe-write feature, and the interface hides every command the binary cannot execute. There is no setting that turns a released build into a write-capable one.",
+      "pChanges": "Clearing diagnostic information, service routines and adaptations alter ECU state. Each one asks for confirmation on its own, and the interface hides every command the running binary cannot execute. A build compiled without the write feature refuses them with a typed response.",
       "hHv": "High voltage",
       "pHv": "Electric vehicles carry hazardous high-voltage systems. Reading battery data over a diagnostic link does not de-energise anything and does not make physical high-voltage service safe. HV service requires procedures, equipment and training from the manufacturer.",
       "hNoSubstitute": "Not a substitute for manufacturer tooling",
@@ -150,7 +172,7 @@
       "reads": [
         "State of health and state of charge",
         "Pack voltage and pack current",
-        "Every cell-group potential on the pack topology in force (108 on CMA: 27 modules, 4 groups each)",
+        "Every cell-group potential on the active pack topology (108 on CMA: 27 modules, 4 groups each)",
         "Minimum, maximum and delta across cell groups",
         "Pack and module temperatures, rendered as a thermal grid",
         "Estimated usable capacity against nominal",
@@ -163,11 +185,11 @@
     },
     "vehicleDiagnostics": {
       "hDiscovery": "Discovery",
-      "pDiscovery": "A UDP identification request on port 13400 enumerates responders. Hanterill then opens a TCP channel, activates routing, and probes each address for a UDS session. A functional broadcast can query every ECU at once, falling back to individual probes only for the ones that stay quiet. The CMA catalogue holds 43 modules; 34 advertise DTC support. Discovery is fast because absent modules are remembered per vehicle, keyed by a hash of the VIN, never by the VIN itself.",
+      "pDiscovery": "A UDP identification request on port 13400 enumerates responders. Hanterill then opens a TCP channel, activates routing, and probes each address for a UDS session. A functional broadcast can query every ECU at once, falling back to individual probes only for the ones that stay quiet. The CMA registry holds 49 modules; 40 advertise DTC support. Discovery is fast because absent modules are remembered per vehicle, keyed by a hash of the VIN, never by the VIN itself.",
       "hFaults": "Fault codes",
       "pFaults": "DTCs are read with the ReadDTCInformation service and reported with their status: active, pending, stored or historical. The list opens on the codes that need attention. Where the ECU kept a freeze frame or snapshot, Hanterill retrieves it alongside the code, and a built-in diff compares any two scans.",
       "hClearing": "Clearing",
-      "pClearing": "Clearing (UDS 0x14) mirrors the reference tool's orchestration: per-ECU progress, freeze-frame capture before the erase, a verify re-read that reports the stubborn set, and optional link recovery after a module reboot. It is not compiled into released builds: it exists only behind the explicit unsafe-write feature, and the running binary reports its real capabilities through a manifest.",
+      "pClearing": "Clearing (UDS 0x14) mirrors the reference tool's orchestration: per-ECU progress, freeze-frame capture before the erase, a verify re-read that reports the stubborn set, and optional link recovery after a module reboot. It asks for confirmation first, and the running binary reports its real capabilities through a manifest.",
       "hDid": "DID scanner",
       "pDid": "A bounded scan sweeps known data identifiers across the whole catalogue in one pass, recording per-row negative response codes, digests and latency. The DID Explorer replays stored captures offline, so a CSV from one session can be mined without a vehicle attached.",
       "hInventory": "Inventory and firmware",
@@ -186,8 +208,8 @@
       "archDocs": "How the polling loop works"
     },
     "serviceFunctions": {
-      "warningLead": "Released builds cannot do any of this.",
-      "warningBody": "The operations below are compiled out unless the software is deliberately built with the unsafe-write feature. The running binary publishes a capability manifest, and the interface hides every command the binary cannot execute. There is no toggle that turns a released build into a write-capable one.",
+      "warningLead": "None of this happens without your explicit confirmation.",
+      "warningBody": "The operations below change the vehicle. Each one requires an explicit confirmation, and the running binary publishes a capability manifest so the interface only offers what the build can execute.",
       "thSystem": "System",
       "thRoutine": "Routine",
       "thService": "UDS service",
@@ -224,9 +246,9 @@
         ]
       ],
       "hClearing": "Clearing fault codes",
-      "pClearing": "Where it is compiled in, the clear path matches the reverse-engineered reference orchestration: enter the extended session per module, capture freeze frames before the erase (the clear wipes them), bulk clear, wait through the pending window, retry the laggards per ECU, then re-read and report the stubborn set. An optional force-reset loop reboots stubborn modules and repairs the DoIP routing afterwards. It is suppressed while the vehicle reports a driving usage mode. Pre-erase and post-clear states feed the built-in <link>DTC diff</link>.",
+      "pClearing": "Once you confirm it, the clear path matches the reverse-engineered reference orchestration: enter the extended session per module, capture freeze frames before the erase (the clear wipes them), bulk clear, wait through the pending window, retry the laggards per ECU, then re-read and report the stubborn set. An optional force-reset loop reboots stubborn modules and repairs the DoIP routing afterwards. It is suppressed while the vehicle reports a driving usage mode. Pre-erase and post-clear states feed the built-in <link>DTC diff</link>.",
       "hAvail": "Availability",
-      "pAvail": "Routine support depends on the ECU and the platform. A routine that is not implemented for a given vehicle is not shown. Testing and Research platforms do not expose service functions at all, and the routine identifiers themselves are pending a per-operation safety design review even in write-capable builds.",
+      "pAvail": "Routine support depends on the ECU and the platform. A routine that is not implemented for a given vehicle is not shown. Testing and Research platforms do not expose service functions at all, and the routine identifiers themselves are reverse-engineered, so they carry no per-operation safety design.",
       "safetyDocs": "Safety documentation"
     },
     "inspectionReports": {
@@ -242,7 +264,7 @@
         ],
         [
           "Cell voltage balance",
-          "Spread across cell groups on the topology in force."
+          "Spread across cell groups on the active topology."
         ],
         [
           "DTC severity",
@@ -253,10 +275,10 @@
           "Mileage cross-read across modules; disagreement is its own finding."
         ]
       ],
-      "hRules": "Rules, not vibes",
+      "hRules": "Rules, not guesses",
       "pRules": "The score is produced by a deterministic, versioned rule engine. Every rule cites the class of evidence it rests on, and the class caps the strongest verdict the rule may force. A published standard can flag attention. A community heuristic can only add a note. Provisional decoders downgrade their rules automatically.",
       "hMissing": "When inputs are missing",
-      "pMissing": "An unanswered channel is recorded as missing and the grade degrades toward inconclusive. Missing data never passes silently and never fails loudly: it is shown as what it is. The same engine carries advisory-only rules, such as coolant temperature spread, overdue service intervals and DC-DC bus voltage, which annotate the report without moving the score.",
+      "pMissing": "An unanswered channel is recorded as missing and the grade degrades toward inconclusive. Missing data is never read as a pass and never read as a failure: it is shown as what it is. The same engine carries advisory-only rules, such as coolant temperature spread, overdue service intervals and DC-DC bus voltage, which annotate the report without moving the score.",
       "hReport": "The report itself",
       "pReport": "The report page assembles identity, battery, fault, ECU, service and thermal findings into one printable document with a checksum, partial-coverage tolerance and an explanation of the rubric. Historical sessions can be re-scored under current rules without touching the car again. GPS position is removed from inspection reports, and remaining coordinates are rounded to roughly 110 metres.",
       "hBuying": "Buying a used EV",
@@ -304,9 +326,9 @@
         ]
       ],
       "hMeasured": "Measured, not manufactured",
-      "pMeasured": "Each field on these pages is a typed observation: value, state, source and decoder version, or an honest failure. A DID that refuses with a negative response code produces a refusal, not a zero. A parked car with a drifting rotor reading is classified stationary at the display layer without touching the raw value.",
+      "pMeasured": "Each field on these pages is a typed observation: value, state, source and decoder version, or a recorded failure. A DID that refuses with a negative response code produces a refusal, not a zero. A parked car with a drifting rotor reading is classified stationary at the display layer without touching the raw value.",
       "hChecks": "Consistency checks",
-      "pChecks": "Ten cross-signal checks compare the story the vehicle tells against itself: pack voltage against the sum of its cells, reported power against calculated, current plausibility while parked, compressor state against refrigerant pressure, axle coolant deltas. They run on the live battery, motor and climate reads. A check that is missing an input records it as insufficient data. None of them claims a fault: the worst verdict is a warning.",
+      "pChecks": "Ten cross-signal checks compare the vehicle's own readings against each other: pack voltage against the sum of its cells, reported power against calculated, current plausibility while parked, compressor state against refrigerant pressure, axle coolant deltas. They run on the live battery, motor and climate reads. A check that is missing an input records it as insufficient data. None of them claims a fault: the worst verdict is a warning.",
       "hBoundaries": "Boundaries",
       "pBoundaries": "Cable-rating decoding stays experimental. Option indexes the catalogue does not name remain numeric. Unknown layouts are kept as exploratory evidence rather than turned into a verdict about your car.",
       "thermalDocs": "Thermal and cell documentation"
@@ -333,7 +355,7 @@
       "hArchive": "The archive",
       "pArchive": "Every session is written to a durable local store: atomic saves, corrupt-file recovery, a cross-restart history and your own operator notes per session. Nothing leaves the machine. The store is also where the per-vehicle profile cache lives, keyed by a hash of the VIN so a directory listing never exposes an identity.",
       "hCompare": "Pick two, compare",
-      "pCompare": "The comparison views take any two stored sessions and show them side by side across DTC, battery, ECU and firmware domains. The point is evidence you can point at: fewer active codes after the repair, a stable cell spread after balancing, the exact firmware delta an OTA left behind.",
+      "pCompare": "The comparison views take any two stored sessions and show them side by side across DTC, battery, ECU and firmware domains. What you get is evidence you can point at: fewer active codes after the repair, a stable cell spread after balancing, the exact firmware delta an OTA left behind.",
       "hReplay": "Offline replay",
       "pReplay": "Captures are data. A stored DID scan CSV can be replayed and analysed without a vehicle attached, and the support bundle export scrubs serial numbers, private addresses, credentials and coordinates before a file ever leaves the machine.",
       "hExports": "Exports",
@@ -345,7 +367,7 @@
   "projects": {
     "hisingen": {
       "tagline": "Polestar and Volvo telemetry in the macOS menu bar.",
-      "description": "Battery state of charge, range, charging power, latch states, climate preconditioning and diagnostic history, native in the menu bar. Built with AppKit and SwiftUI — no Electron, no telemetry middlemen, no cloud database between you and your vehicle.",
+      "description": "Battery state of charge, range, charging power, latch states, climate preconditioning and diagnostic history, native in the menu bar. Built with AppKit and SwiftUI, with no Electron, no telemetry middlemen and no cloud database between you and your vehicle.",
       "highlights": [
         "Battery, range and charging status at a glance",
         "Remote climate, lock and charging controls",
@@ -372,7 +394,7 @@
     "simulated": "Simulated session",
     "sampleData": "Fixed sample data, not a vehicle reading",
     "representative": "Representative interface with sample values. Not a live vehicle reading.",
-    "privateUse": "Source-available, for private use",
+    "privateUse": "Source-available, free for private use",
     "rangeTo": "to",
     "mainNav": "Main",
     "menu": "Menu",
@@ -382,7 +404,27 @@
   "nav": {
     "features": "Features",
     "vehicles": "Vehicles",
-    "docs": "Docs",
+    "tasks": {
+    "columnTask": "If you want to",
+    "columnScreen": "Go to",
+    "rows": {
+      "noVehicle": { "task": "The car does not appear when I plug in", "screen": "Connection troubleshooting" },
+      "usedBattery": { "task": "Is this used car's battery healthy?", "screen": "Battery Health, then Inspection Report" },
+      "worthBuying": { "task": "Is this car worth buying?", "screen": "Inspection Report" },
+      "activeFaults": { "task": "Which fault codes are currently active?", "screen": "Fault Codes (DTCs)" },
+      "repairCleared": { "task": "Did my repair actually clear the fault?", "screen": "DTC History Diff" },
+      "dealerUpdate": { "task": "Did the dealer update the software?", "screen": "Firmware SBOM, then Firmware Diff" },
+      "flatBattery": { "task": "The battery goes flat overnight", "screen": "12V Sleep Drain" },
+      "powerLoss": { "task": "The car sags or loses power under load", "screen": "Live Telemetry, Battery preset" },
+      "intermittent": { "task": "It only faults sometimes while driving", "screen": "Live Telemetry, record then replay" },
+      "modulesFitted": { "task": "Which modules are even fitted to this car?", "screen": "ECU Inventory" },
+      "didMeaning": { "task": "What does this identifier mean?", "screen": "DID Explorer, or the CLI did-plan" },
+      "customerReport": { "task": "I need something to hand a customer", "screen": "Sessions & Reports, export PDF" },
+      "scriptScan": { "task": "I want to script a scan", "screen": "the hanterill CLI" },
+      "buildLimits": { "task": "What can this build actually do to the car?", "screen": "Capabilities" }
+    }
+  },
+  "docs": "Docs",
     "changelog": "Changelog",
     "safety": "Safety",
     "screenshots": "Screenshots",
@@ -390,17 +432,24 @@
     "github": "GitHub",
     "network": "Network"
   },
+  "pricing": {
+    "promise": "Free for private use, in every release.",
+    "detail": "There is no paid tier, no subscription, no account and no trial, and no feature is held back behind one: every diagnostic function the app has is in the download. The licence reserves an optional commercial licence for workshops that bill for this work, so a private owner never pays.",
+    "heading": "Private use costs nothing",
+    "body": "Hanterill is a tool for owners, not a subscription. It has no paid tier, no account, no trial and no licence server, and no diagnostic feature sits behind one. Private use stays free in every released version.",
+    "commercial": "Businesses are the one exception. The licence keeps a commercial option for workshops and service providers, because commercial use is not what CC BY-NC-ND permits. Private owners are unaffected."
+  },
   "hero": {
     "eyebrow": "Independent vehicle diagnostics",
-    "title": "Read your Volvo or Polestar the way you want to.",
-    "lead": "Connect to a supported Volvo or Polestar over Ethernet. Read battery health, ECU faults and live telemetry. No cloud, no subscription.",
+    "title": "Read your Volvo or Polestar directly.",
+    "lead": "Connect to a supported Volvo or Polestar over Ethernet. Read battery health, ECU faults and live telemetry. No cloud, no subscription, and free for private use.",
     "platforms": "Windows, macOS, Linux",
-    "principles": "Source-available, local only, no telemetry",
+    "principles": "Source-available, local only, no telemetry, free for private use",
     "captures": "Captured on the reference vehicle",
     "capturesLink": "All screenshots"
   },
   "connection": {
-    "title": "A passive cable is the whole interface.",
+    "title": "A passive cable is all the hardware you need.",
     "lead": "A passive ENET cable and any Ethernet interface are enough to reach a supported vehicle. Select a part of the chain to see what it does.",
     "requestLabel": "Request: read data",
     "responseLabel": "Response: 398.6 V",
@@ -461,7 +510,7 @@
     "batteryBody": "State of health and charge, pack voltage, cell-group spread, min, max and delta, and pack temperature. Cross-checks compare reported figures against the measured cells and flag disagreements. The percentage your dashboard shows, and the numbers behind it.",
     "batteryCta": "Battery diagnostics",
     "scanTitle": "Full vehicle scan",
-    "scanBody": "Hanterill discovers ECUs over DoIP, identifies which speak UDS, and reads the identification, hardware and software data from each. 43 modules in the CMA catalogue, 34 of them DTC-capable, probed in one pass.",
+    "scanBody": "Hanterill discovers ECUs over DoIP, identifies which speak UDS, and reads the identification, hardware and software data from each. 49 modules in the CMA registry, 40 of them DTC-capable, probed in one pass.",
     "scanCta": "Vehicle diagnostics",
     "faultTitle": "Fault codes, by status",
     "faultBody": "Hanterill reads DTCs with their status: active now, pending, stored or historical. The list opens on the codes that need attention. If the ECU saved a snapshot when the fault set, you get that too, with a built-in diff between scans.",
@@ -475,15 +524,15 @@
     "reportsBody": "The inspection report grades battery degradation, cell balance, fault severity and odometer consistency against a documented, versioned rule set. Missing inputs degrade the grade. They do not guess it.",
     "reportsCta": "Inspection reports",
     "serviceTitle": "Service procedures",
-    "serviceBody": "EPB service mode, 12 V battery adaptation, service reminder reset and damper calibration exist in the code. They are compiled out of released builds and run only in a build made with the explicit unsafe-write feature.",
+    "serviceBody": "EPB service mode, 12 V battery adaptation, service reminder reset and damper calibration are implemented behind an explicit confirmation, and driven through the running binary's capability manifest.",
     "serviceCta": "Service functions",
     "evidenceTitle": "Before and after, side by side",
     "evidenceBody": "Sessions archive locally and compare inside the app: fault codes before and after a repair, cell potentials module by module, firmware before and after an update.",
     "evidenceCta": "Compare diagnostic sessions",
     "shellTitle": "Built like instrumentation, not like an app",
-    "shellBody": "A command palette, two-key navigation chords, three themes plus a density setting, six interface languages, and deterministic simulation vehicles you can open a full session against without a car.",
-    "writeAccess": "Not compiled into released builds",
-    "readOnlyNote": "Released builds transmit read services only. The running binary reports what it can do through a capability manifest, and the interface hides what it cannot.",
+    "shellBody": "A command palette, two-key navigation chords, eight themes plus a density setting, eight interface languages, and a full keyboard path through every screen.",
+    "writeAccess": "Asks before it writes",
+    "readOnlyNote": "Hanterill transmits read services unless you explicitly confirm a write. The running binary reports what it can do through a capability manifest, and the interface hides what it cannot.",
     "sohLabel": "Battery state of health",
     "reportsCaption": "Inspection score, fixed sample values",
     "systemsCaption": "Subsystem read views",
@@ -584,14 +633,14 @@
     "paletteItems": [
       "Go to Battery cells",
       "Start live stream",
-      "Open simulation vehicles"
+      "Open the DID scanner"
     ],
     "shellThemesLabel": "Themes",
-    "shellThemes": "Dark, light, high contrast",
+    "shellThemes": "Dark, light, high contrast, OLED and workshop variants",
     "shellDensityLabel": "Density",
     "shellDensity": "Comfortable, compact",
     "shellLanguagesLabel": "Languages",
-    "shellLanguages": "EN, SV, NO, DA, FI, IS",
+    "shellLanguages": "EN, SV, NB, DA, FI, IS, DE, ZH",
     "hub": {
       "battery": {
         "title": "Battery health",
@@ -617,10 +666,10 @@
         "title": "Sessions and evidence",
         "body": "Sessions archive locally and compare inside the app: fault code diffs, cell history diffs, firmware before and after."
       },
-      "service": {
-        "title": "Service functions",
-        "body": "EPB service mode, 12 V adaptation, reminder reset and damper calibration, compiled out of released builds and gated behind an explicit unsafe-write feature."
-      }
+    "service": {
+      "title": "Service functions",
+      "body": "EPB service mode, 12 V adaptation, reminder reset and damper calibration, each behind an explicit confirmation and driven through the running binary's capability manifest."
+    }
     }
   },
   "battery": {
@@ -765,8 +814,8 @@
     }
   },
   "platforms": {
-    "title": "CMA tested. SPA and SEA1 catalogued.",
-    "lead": "Polestar 2 and the CMA Volvos are the tested platforms. SPA and SEA1 battery catalogues, decoders and pack topologies now ship in the app, but nothing on those cars is hardware-verified yet. Reaching a car is not the same as supporting it.",
+    "title": "CMA tested. SPA partially supported. SEA1 catalogued.",
+    "lead": "Polestar 2 and the CMA Volvos are the tested platforms. SPA ships as catalogue data and is now partially supported: combustion cars have been exercised through the engine reference lane, while the battery path still waits on hardware. SEA1 definitions are catalogued but unconfirmed. Reaching a car is not the same as supporting it.",
     "moreLink": "Full compatibility and status",
     "disclaimer": "Compatibility is not a claim of manufacturer support. Hanterill is an independent project and is not affiliated with Volvo Cars, Polestar or Geely.",
     "verifiedFunctions": "Verified functions",
@@ -794,8 +843,8 @@
       "planned": "Planned"
     },
     "blurbs": {
-      "CMA": "Compact Modular Architecture. The tested platform: Polestar 2 and the smaller electric Volvos. 108 cell groups, 27 modules by 4.",
-      "SPA": "Scalable Product Architecture. First-generation Recharge cars. The hybrid and EV pack topologies, the CAN-era BECM map and the decoders ship in the catalogue, pending live-vehicle verification.",
+      "CMA": "Compact Modular Architecture. The tested platform: Polestar 2 and the smaller electric Volvos. 108 cell groups, 27 modules by 4. Combustion and hybrid CMA cars are partially supported through the engine reference lane.",
+      "SPA": "Scalable Product Architecture. Partially supported. The hybrid and EV pack topologies, the CAN-era BECM map and the decoders ship in the catalogue, and combustion cars have been exercised through the engine reference lane.",
       "SEA": "Sustainable Experience Architecture. The SEA1 registry, DoIP routing addresses, DID catalogue and cell mapping for EX30-class cars are defined. Hardware confirmation is pending.",
       "SPA2": "Second-generation SPA. Different gateway and security model. Under investigation."
     },
@@ -822,12 +871,59 @@
       "in-progress": "In progress",
       "not-verified": "Not verified",
       "none": "Not started"
+    },
+    "testedAgainst": "Tested against",
+    "serviceModesHeading": "Service modes and procedures",
+    "serviceModesLead": "What the app can actually drive on a car, per service family. Read-only support is exercised on every supported vehicle. Routine support is experimental: the routines exist, they change ECU state, and you run them at your own risk.",
+    "serviceModesModule": "Module",
+    "serviceModesService": "Service",
+    "serviceModesStatus": "Status",
+    "serviceModesNote": "Routine identifiers are reverse-engineered, and running one is an authorised-service-session decision. Never actuate a safety-critical system, and never run any of this on a vehicle you do not own. Read-only results are always available and never change the car.",
+    "serviceModesSafety": "Safety and boundaries",
+    "serviceStatus": {
+      "beta": "Confirmation required",
+      "unrecovered": "Not recovered",
+      "refused": "Not supported"
+    },
+    "service": {
+      "epb": "Parking brake service position",
+      "steering": "Steering angle zero-point calibration",
+      "sri": "Service reminder reset",
+      "battery12v": "12 V battery adaptation reset",
+      "tcam": "Emergency backup battery conditioning",
+      "climate": "Climate damper calibration and coolant bleed",
+      "camera": "Camera and radar calibration",
+      "sunroof": "Sunroof and window normalisation",
+      "grille": "Active grille shutter calibration",
+      "usage": "Gateway usage mode, active and restore",
+      "dpf": "Diesel particulate filter regeneration",
+      "aftertreatment": "Urea aftertreatment service",
+      "transmission": "Transmission adaptation service",
+      "mildhybrid": "48 V mild-hybrid service",
+      "generic": "Generic write services"
+    },
+    "serviceNotes": {
+      "epb": "Retracts the rear calipers for pad or disc work, then clamps and re-learns them.",
+      "steering": "Re-learns the straight-ahead reference after steering work. Safety-critical: follow the manufacturer procedure.",
+      "sri": "Clears the maintenance-due message and resets the service countdown.",
+      "battery12v": "Re-learns the battery sensor after fitting a new 12 V battery.",
+      "tcam": "Conditions the emergency backup battery in the telematics module.",
+      "climate": "Cycles the blend-door actuators to re-learn their end stops, and runs the coolant bleed pump.",
+      "camera": "Re-learns the forward camera, radar and surround-view alignment. Safety-critical: follow the manufacturer procedure.",
+      "sunroof": "Re-establishes anti-pinch travel limits after a power loss.",
+      "grille": "Re-learns the active grille shutter end stops.",
+      "usage": "Sets the gateway usage mode for a diagnostic session, then restores it. The restore step is the safe default.",
+      "dpf": "Routine identifiers are not in any recovered data layer, so no build can start a regeneration. Ash, soot and distance read-outs are available.",
+      "aftertreatment": "Heater, injector, pump and tank reset identifiers are unrecovered. The urea level read-out is available.",
+      "transmission": "Adaptation-mode and clear-adaptation identifiers are unrecovered. Adaptation mileage read-outs are available.",
+      "mildhybrid": "Relay unlock and start-disable identifiers are unrecovered. State of charge and state of health read-outs are available.",
+      "generic": "Writing values by identifier is refused outright. There is no use case for it and none is planned without a per-operation safety design."
     }
   },
   "protocolStack": {
     "title": "Built on automotive standards.",
     "lead": "Hanterill talks to the car's diagnostic network with the same protocols a dealer tool uses. Nothing in between is a proprietary cloud service.",
-    "paragraph": "A session starts with UDP discovery on port 13400, opens a TCP channel and activates routing. Discovery can also address all ECUs at once with a functional broadcast. Reads then run as UDS: session control, read by identifier, read DTC information, on-demand periodic sampling and routine results. Released builds transmit read services only.",
+    "paragraph": "A session starts with UDP discovery on port 13400, opens a TCP channel and activates routing. Discovery can also address all ECUs at once with a functional broadcast. Reads then run as UDS: session control, read by identifier, read DTC information, on-demand periodic sampling and routine results. Reads are the default; writes are separate actions that ask for confirmation first.",
     "layers": {
       "hanterill": "Desktop application and CLI, Rust and Tauri",
       "engine": "Sessions, sweeps, decoders, scoring",
@@ -862,7 +958,7 @@
   },
   "privacy": {
     "title": "Your vehicle data stays with you.",
-    "lead": "Hanterill talks to the vehicle and writes diagnostic data to your disk. There is no backend and no subscription, and nothing about your car is uploaded or sold. The VIN is stripped from logs and exports that don't need it.",
+    "lead": "Hanterill talks to the vehicle and writes diagnostic data to your disk. There is no backend and no subscription, and nothing about your car is uploaded or sold. The VIN is removed from logs and exports that do not need it.",
     "moreLink": "How Hanterill handles data",
     "directLink": "Direct link. Nothing else in the path.",
     "vehicle": "Vehicle",
@@ -908,11 +1004,11 @@
     "readLicense": "Read license terms"
   },
   "safety": {
-    "title": "Read-only by default. Writes are compiled out.",
-    "lead": "Released builds of Hanterill transmit read services only. The operations that change the vehicle are not in them: they exist only in builds made with an explicit unsafe-write feature, and the app reports its real boundaries through a capability manifest.",
+    "title": "Read by default. Writes ask first.",
+    "lead": "Hanterill transmits read services unless you explicitly confirm a write. The operations that change the vehicle each ask for confirmation on their own, and the app reports its real boundaries through a runtime capability manifest.",
     "readOnly": "Read-only",
     "changesVehicle": "Changes the vehicle",
-    "writeAccess": "Not part of released builds",
+    "writeAccess": "Confirmation required",
     "highVoltageTitle": "High voltage.",
     "highVoltageBody": "Electric vehicles carry hazardous high-voltage systems. Reading data over a cable does not make it safe to work on them, and Hanterill is not a substitute for the manufacturer's service procedures.",
     "safetyDocs": "Safety documentation",
@@ -946,11 +1042,11 @@
       },
       {
         "q": "Which vehicles are actually supported?",
-        "a": "Polestar 2 and the CMA-platform Volvos (XC40/EX40, C40/EC40) are the tested platforms. SPA and SEA1 (EX30, Polestar 4) have battery catalogues, decoders and pack topologies shipping in the app, but nothing on those cars is hardware-verified yet, so they are labelled Testing. Zeekr, Lynk & Co and SPA2 remain research."
+        "a": "Polestar 2 and the CMA-platform Volvos (XC40/EX40, C40/EC40) are the tested platforms. Combustion and hybrid cars are partially supported through the engine reference lane. SPA and SEA1 (EX30, Polestar 4) have battery catalogues and decoders shipping in the app, but the battery path on those cars is not hardware-verified yet, so they are labelled Testing. Zeekr, Lynk & Co and SPA2 remain research."
       },
       {
         "q": "Can Hanterill damage my car?",
-        "a": "Released builds transmit read-only services. Clearing, routines and writes are not compiled into them: they exist only in builds made with an explicit unsafe-write feature for authorized service work. High-voltage service still requires the manufacturer's procedures."
+        "a": "No. Hanterill transmits read services unless you explicitly confirm a write, and every operation that changes the vehicle asks for confirmation on its own under the safety policy. A build compiled without the write feature refuses those commands outright. High-voltage service still requires the manufacturer's procedures."
       },
       {
         "q": "Is this an official Volvo or Polestar tool?",
@@ -962,7 +1058,7 @@
       },
       {
         "q": "Can I use it without a car?",
-        "a": "Yes. The connection page carries deterministic simulation vehicles (healthy baseline, fault-injected and sleep-drain scenarios), so every screen can be exercised offline. Simulated sessions are always labelled as simulated."
+        "a": "No. The released app connects to real cars only. Development builds can simulate a vehicle for testing, and every simulated session is labelled as simulated wherever it appears. See the connection page for what a real setup needs."
       },
       {
         "q": "What does the inspection report give me?",
@@ -970,22 +1066,22 @@
       }
     ],
     "compat": [
-      {
-        "q": "Does Hanterill work with any Volvo or Polestar?",
-        "a": "No. Hanterill is CMA-first. Polestar 2 and the CMA Volvos (XC40/EX40, C40/EC40) are the tested platforms. SPA and SEA1 have shipped battery catalogues and decoders pending hardware verification, and are labelled Testing. Zeekr, Lynk & Co and SPA2 are Research."
-      },
-      {
-        "q": "What is the difference between platform compatibility and support?",
-        "a": "Platform compatibility means Hanterill can reach the vehicle over DoIP. Support means the diagnostic functions are implemented and verified against known-good references. Being reachable does not make the data trustworthy, which is why Testing and Research platforms are labelled separately."
-      },
-      {
-        "q": "My car is listed as Testing or Research. Can I use it?",
-        "a": "You can connect and, on some, read identification data. Do not rely on battery figures or fault interpretation, and do not run service routines. Testing and Research mean the decoding is not verified on a live vehicle."
-      },
-      {
-        "q": "Is this endorsed by Volvo or Polestar?",
-        "a": "No. Hanterill is an independent project, not affiliated with, maintained by or authorised by Volvo Cars, Polestar or Geely. Manufacturer names are used only to describe compatibility."
-      }
+  {
+    "q": "Does Hanterill work with any Volvo or Polestar?",
+    "a": "No. Hanterill is CMA-first. Polestar 2 and the CMA Volvos (XC40/EX40, C40/EC40) are the tested platforms. SPA is partially supported: combustion cars have been exercised through the engine reference lane, while the hybrid and EV battery path is catalogued but not live-verified. SEA1 is catalogued and awaiting hardware confirmation. Zeekr, Lynk & Co and SPA2 are Research."
+  },
+  {
+    "q": "What is the difference between platform compatibility and support?",
+    "a": "Platform compatibility means Hanterill can reach the vehicle over DoIP. Support means the diagnostic functions are implemented and verified against known-good references. Being reachable does not make the data trustworthy, which is why Testing and Research platforms are labelled separately."
+  },
+  {
+    "q": "My car is listed as Partial, Testing or Research. Can I use it?",
+    "a": "You can connect and, on some, read identification data. Do not rely on battery figures or fault interpretation, and do not run service routines. Partial, Testing and Research all mean the decoding is not fully verified on that car."
+  },
+  {
+    "q": "Is this endorsed by Volvo or Polestar?",
+    "a": "No. Hanterill is an independent project, not affiliated with, maintained by or authorised by Volvo Cars, Polestar or Geely. Manufacturer names are used only to describe compatibility."
+  }
     ]
   },
   "gallery": {
@@ -1024,7 +1120,7 @@
   },
   "cta": {
     "title": "Download Hanterill and see what your vehicle has recorded.",
-    "body": "Source-available and for private use. It runs on your computer and reads the vehicle directly."
+    "body": "Source-available, free for private use, and staying that way. It runs on your computer and reads the vehicle directly."
   },
   "footer": {
     "blurb": "Full diagnostics for Volvo and Polestar, running on your own computer.",
@@ -1038,8 +1134,8 @@
       "platforms": "Platforms",
       "year": "Year"
     },
-    "disclaimer": "Hanterill is an independent project, not affiliated with, maintained by, sponsored by or authorised by Volvo Cars, Polestar or Geely. Manufacturer names are used only to describe compatibility. Source-available, private use only.",
-    "tagline": "For owners who want control over their car.",
+    "disclaimer": "Hanterill is an independent project, not affiliated with, maintained by, sponsored by or authorised by Volvo Cars, Polestar or Geely. Manufacturer names are used only to describe compatibility. Source-available and free for private use.",
+    "tagline": "For owners who do their own diagnostics.",
     "links": {
       "batteryHealth": "Battery health",
       "vehicleDiagnostics": "Vehicle diagnostics",
@@ -1069,6 +1165,26 @@
     "noReleasesYet": "No GitHub releases have been published yet. The source is tagged; installers are attached to releases as they are published.",
     "changelogFile": "CHANGELOG.md in the app repository"
   },
+  "tasks": {
+    "columnTask": "If you want to",
+    "columnScreen": "Go to",
+    "rows": {
+      "noVehicle": { "task": "The car does not appear when I plug in", "screen": "Connection troubleshooting" },
+      "usedBattery": { "task": "Is this used car's battery healthy?", "screen": "Battery Health, then Inspection Report" },
+      "worthBuying": { "task": "Is this car worth buying?", "screen": "Inspection Report" },
+      "activeFaults": { "task": "Which fault codes are currently active?", "screen": "Fault Codes (DTCs)" },
+      "repairCleared": { "task": "Did my repair actually clear the fault?", "screen": "DTC History Diff" },
+      "dealerUpdate": { "task": "Did the dealer update the software?", "screen": "Firmware SBOM, then Firmware Diff" },
+      "flatBattery": { "task": "The battery goes flat overnight", "screen": "12V Sleep Drain" },
+      "powerLoss": { "task": "The car sags or loses power under load", "screen": "Live Telemetry, Battery preset" },
+      "intermittent": { "task": "It only faults sometimes while driving", "screen": "Live Telemetry, record then replay" },
+      "modulesFitted": { "task": "Which modules are even fitted to this car?", "screen": "ECU Inventory" },
+      "didMeaning": { "task": "What does this identifier mean?", "screen": "DID Explorer, or the CLI did-plan" },
+      "customerReport": { "task": "I need something to hand a customer", "screen": "Sessions & Reports, export PDF" },
+      "scriptScan": { "task": "I want to script a scan", "screen": "the hanterill CLI" },
+      "buildLimits": { "task": "What can this build actually do to the car?", "screen": "Capabilities" }
+    }
+  },
   "docs": {
     "eyebrow": "Documentation",
     "title": "How Hanterill works, in detail.",
@@ -1084,6 +1200,7 @@
     "editPage": "Edit this page on GitHub",
     "repoDocs": "Deeper technical docs live in the app repository",
     "versionStamp": "App version",
+    "versionUnknown": "unavailable offline",
     "copy": "Copy",
     "copied": "Copied",
     "englishOnly": "This page is currently available in English.",
@@ -1108,7 +1225,7 @@
     "packVoltage60s": "Pack voltage, 60 s",
     "potentialsCaption": "108 cell-group potentials, deviation from mean",
     "moduleGroupTitle": "Module {module}, group {group}: {value} mV",
-    "discovered": "discovered",
+    "registered": "registered",
     "diagnosticCapable": "diagnostic-capable",
     "dtcCapable": "DTC-capable",
     "miniTrace": "{label} trace, currently {value}{unit}, ranging {lo} to {hi}",
@@ -1243,19 +1360,19 @@
   "pages": {
     "featuresEyebrow": "Features",
     "featuresTitle": "What Hanterill covers.",
-    "featuresLead": "The whole coverage, read over the same connection. Standard diagnostics stay read-only; write-capable functions are separated and not part of released builds.",
+    "featuresLead": "The full coverage, read over the same connection. Standard diagnostics stay read-only; the operations that change the vehicle each ask for confirmation on their own.",
     "batteryHealthEyebrow": "Features / Battery health",
     "batteryHealthTitle": "The percentage, and the numbers behind it.",
     "batteryHealthLead": "Hanterill reads high-voltage battery data reported by the vehicle: state of health and charge, pack voltage, cell-group distribution, imbalance and temperature, across every pack topology the catalogue knows.",
     "vehicleDiagnosticsEyebrow": "Features / Vehicle diagnostics",
-    "vehicleDiagnosticsTitle": "Every ECU on the network, not just the one with the light on.",
+    "vehicleDiagnosticsTitle": "Every ECU on the network, not only the one with the light on.",
     "vehicleDiagnosticsLead": "Hanterill discovers the vehicle ECUs over DoIP, identifies which speak UDS, and reads fault, identification and data-identifier content from each.",
     "liveDataEyebrow": "Features / Live data",
     "liveDataTitle": "Engineering telemetry on a polling loop.",
     "liveDataLead": "Hanterill polls and subscribes to data identifiers and plots them like instrumentation software: fixed axes, thin traces, no decoration.",
     "serviceFunctionsEyebrow": "Features / Service functions",
     "serviceFunctionsTitle": "The operations that change the vehicle stay separate.",
-    "serviceFunctionsLead": "Where the platform supports them, Hanterill can run service routines and adaptations. They are compiled out of released builds and gated behind an explicit unsafe-write feature.",
+    "serviceFunctionsLead": "Where the platform supports them, Hanterill can run service routines and adaptations. Each one requires an explicit confirmation, and the running binary reports what it can actually do.",
     "inspectionReportsEyebrow": "Features / Inspection reports",
     "inspectionReportsTitle": "Before you buy it: a score you can defend.",
     "inspectionReportsLead": "Hanterill turns the same reads into a graded pre-purchase inspection, with every verdict traceable to a documented rule.",
@@ -1266,8 +1383,8 @@
     "systemTelemetryTitle": "Beyond the battery.",
     "systemTelemetryLead": "Each subsystem with a read path gets its own page: climate, drive units, charging, power, TCAM, steering, service schedule, GPS and the vehicle option map.",
     "vehiclesEyebrow": "Vehicles",
-    "vehiclesTitle": "CMA tested, SPA and SEA1 catalogued.",
-    "vehiclesLead": "Select a platform and a vehicle to see exactly which functions are verified. Each status label reflects what has been checked on that car, not just the platform it is built on.",
+        "vehiclesTitle": "CMA tested. SPA partially supported. SEA1 catalogued.",
+    "vehiclesLead": "Select a platform and a vehicle to see which functions are verified. Each status label reflects what has been checked on that car, not the platform it is built on.",
     "downloadEyebrow": "Download",
     "downloadTitle": "Get Hanterill.",
     "downloadLead": "Native builds for each desktop platform. Nothing installs automatically and nothing phones home.",
@@ -1279,7 +1396,7 @@
     "safetyLead": "Diagnostic software can read a great deal and change a few things. Hanterill is built so you always know which is which.",
     "privacyEyebrow": "Privacy",
     "privacyTitle": "Entirely local.",
-    "privacyLead": "Hanterill has no backend and no account system. It talks to the vehicle and writes to your disk. That is the whole data path.",
+    "privacyLead": "Hanterill has no backend and no account system. It talks to the vehicle and writes to your disk. That is the entire data path.",
     "aboutEyebrow": "About",
     "aboutTitle": "A project for people who want to understand their vehicles.",
     "aboutLead": "Hanterill started as a way to read CMA battery data without a dealer subscription. It grew into a general DoIP and UDS diagnostic tool.",
@@ -1287,7 +1404,7 @@
     "screenshotsLead": "Hanterill running on a supported Volvo and Polestar: overview, battery, fault codes, live data, subsystem pages and the scored inspection report.",
     "projectsEyebrow": "Other projects",
     "projectsTitle": "More tools from the same bench.",
-    "projectsLead": "Hanterill is not the only project here. These are other independent tools from the same author, built with the same local-first approach.",
+    "projectsLead": "Hanterill is not the only project here. These are other independent tools from the same author, built on the same local-only approach.",
     "projectsViewRepo": "View on GitHub",
     "projectsPlatform": "Platform",
     "projectsLicense": "License",

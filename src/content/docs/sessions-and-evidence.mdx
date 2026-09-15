@@ -1,0 +1,88 @@
+Every read Hanterill makes is kept. Not as a screenshot or a PDF, but as evidence: what was asked, what
+came back, when, and by which decoder it was interpreted. This page explains what a session is, how
+comparisons work, and what each export format is actually for.
+
+## What a session contains
+
+A session is the record of one visit to a car. It holds:
+
+- When it started and ended, and which app and contract versions produced it.
+- The vehicle identity, with the VIN masked by default.
+- Every operation that ran, and its outcome.
+- Raw observations and their interpreted values, kept separately.
+- Operator notes you add yourself.
+
+The raw bytes stay alongside the decoded number. If a decoder is corrected in a
+later version, a stored session can be reinterpreted without inventing a new reading.
+
+<Callout kind="note" title="Where sessions live">
+Sessions are stored on your machine in a local archive. Nothing is uploaded, and there is no server
+copy. See [Privacy](/docs/privacy) for retention and deletion.
+</Callout>
+
+## Comparing two sessions
+
+Four comparisons are built in, and each one answers a different question:
+
+| Comparison | The question it answers |
+| --- | --- |
+| Fault code diff | What changed between the scan before the repair and the scan after? |
+| Cell history diff | Has any cell group drifted since the last visit? |
+| Firmware diff | Did the software on any module actually change? |
+| Full report comparison | What does the whole condition report look like side by side? |
+
+Each one aligns the two sessions by stable identifier rather than by position. A cell group is matched
+by its physical index, a module by its address, a fault by module plus code plus status. Where one side
+has no reading for that identifier, the gap stays a gap. It is never filled with a zero, because a
+missing reading and a low reading are different facts.
+
+## Exporting
+
+An export is a copy you can hand to someone else, put in a job folder, or keep after the car is gone.
+Five formats, each for a different purpose:
+
+| Format | Use it when |
+| --- | --- |
+| Single JSON | You want one lossless file with everything, for archiving or reprocessing |
+| Modular JSON set | You want the session split into dedicated files (`battery`, `cells`, `dtcs`, `ecus`, `firmware`, `live_telemetry`, `vehicle`, and more) |
+| CSV set | You want to open the numbers in a spreadsheet |
+| ZIP bundle | You want the whole modular set as one file to send |
+| PDF report | You want something readable to print or hand to a customer |
+
+JSON is the canonical format: lossless, versioned, and the only one that keeps raw evidence intact.
+CSV is a projection for a single table, so it flattens structure on purpose. PDF is a rendering, and
+never the only copy worth keeping.
+
+<Callout kind="caution" title="Spreadsheet safety">
+A CSV cell starting with `=`, `+`, `-` or `@` can execute as a formula when the file is opened. The
+exporter neutralises those prefixes before writing, so a fault description can never become a live
+formula in Excel.
+</Callout>
+
+## VIN masking at export time
+
+Every export dialog shows the VIN-masking choice before anything is written, and masking is on by
+default. Masked exports carry a shortened form such as `YSM...0428` instead of the full 17 characters.
+Turn it off only when the file genuinely needs to identify one specific car, such as a dealer handover
+record.
+
+The support bundle is stricter: it scrubs serial numbers, private addresses and coordinates before a
+file leaves the machine, regardless of the masking setting.
+
+## Importing
+
+A session file can be loaded back in, including one produced by someone else. Import treats the file
+as untrusted input and validates it before committing: schema version, expected fields, and size
+bounds. A file that cannot be read is refused with a reason rather than half-loaded.
+
+## Re-scoring an old session
+
+The inspection report carries the version of the rule set that produced its score, so a stored session
+can be re-scored under a newer rule set without reconnecting to the car. The report also carries a
+SHA-256 checksum, so you can tell whether a file has been altered since it was written.
+
+## Next
+
+- [Live telemetry](/docs/live-telemetry): capturing a stream over time.
+- [Inspection reports](/docs/inspection-reports): what the scored report does with a session.
+- [CLI](/docs/cli): `export`, `replay` and the diff commands for scripted work.

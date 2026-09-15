@@ -1,0 +1,117 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+Det mesta i Hanterill visar dig råa avläsningar och låter dig avgöra. Inspektionsrapporten är
+något annat: den svarar på en fråga, "vilket skick är fordonet i?", med en poäng och ett utlåtande.
+
+Eftersom det är en bedömning och inte en mätning är reglerna bakom nedskrivna, versionssatta och
+levereras med rapporten. Den här sidan förklarar hur de fungerar.
+
+<SafetyNotice level="read-only" title="Läsningar in, regler ut">
+Varje indata till poängen kommer från de skrivskyddade tjänster som beskrivs i
+[Felkodsskanning](/docs/dtc-scanning) och [Batteridiagnostik](/docs/battery-diagnostics).
+Poängsättningen lägger till aritmetik, aldrig trafik.
+</SafetyNotice>
+
+## De fyra utlåtandena
+
+Rapporten slutar i ett av fyra tydliga svar:
+
+| Utlåtande | Betydelse |
+| --- | --- |
+| Gott skick | Ingen regel reste en invändning och poängen är hög. |
+| Anmärkningar | Något värt att känna till, men inget säkerhetskritiskt. |
+| Uppmärksamhet | En hård regel utlöstes, eller poängen är låg. Läs fynden innan du beslutar något. |
+| Inconclusive | Inte tillräckligt många svarade för att förtjäna ett utlåtande. |
+
+Inconclusive är ett riktigt utfall, inte ett misslyckande. Om batterihälsan inte kunde läsas vägrar
+rapporten gissa istället för att poängsätta bilen på ofullständiga bevis.
+
+## Regelkatalogen (v1.0.0)
+
+Sex grupper av regler bär poängvikt:
+
+| Regelgrupp | Vad den tittar på |
+| --- | --- |
+| Batterinedbrytning | Hälsotillstånd mot publicerade band, inklusive tillverkarens garanti golv |
+| Cellbalans | Spänningsspridning över cellgrupper, med bevakningsband från publicerad community-forskning |
+| 12 V-stödbatteri | Vilospänningen i lågvoltsbatteriet, som startar fordonets elektronik |
+| 12 V-viloström | Hur mycket ström bilen drar medan den sover, från sin egen uppmätta historik |
+| Felallvarlighet | Koder viktade efter ISO 14229-statusklass och SAE J2012-kodklass, inte räknade platt |
+| Mätarställningskonsistens | Mätarställning korsläst över moduler; oenighet är ett eget fynd |
+
+Allt annat i rapporten är en notering: termisk spridning, ett försenat serviceintervall, spridning i
+drifttid, en laddbegränsning, antal nycklar. De beskriver vad som sågs och flyttar aldrig poängen.
+
+## Varje regel anger sina bevis
+
+Varje regel citerar en bevisklass, och klassen
+sätter ett tak för hur starkt utlåtande den regeln kan tvinga fram:
+
+| Klass | Exempel | Starkaste utlåtande den kan tvinga fram |
+| --- | --- | --- |
+| Publicerad standard | ISO-statusbitars betydelse | Uppmärksamhet |
+| Tillverkarspecifikation | Garantigolvet 8 år / 160 000 km | Uppmärksamhet |
+| Fordonsfångst | Uppmätt vilospänning och viloförbrukning från hårdvarusessioner | Anmärkningar |
+| Community-forskning | Bevakningsband för cellobalans | Anmärkningar |
+| Heuristik | En gissning om laddarens tak | Endast notering, påverkar aldrig poängen |
+
+En regel som vilar på en avkodare som fortfarande är preliminär nedgraderas en klass automatiskt.
+Det är därför vissa fynd läses som observationer snarare än bedömningar: verktyget redovisar vad det
+ännu inte vet.
+
+## De två hårda överstyrningarna
+
+Två fynd hoppar över aritmetiken och tvingar fram ett Uppmärksamhet-utlåtande på egen hand:
+
+- Ett bekräftat, just nu pågående fel i ett säkerhetssystem (krockkuddar, ABS/ESP, styrvinkel,
+  ADAS).
+- Lagrade mätarställningskopior som skiljer sig mer än normal drift. Den oenigheten är den starkaste
+  signalen om mätarställningsfusk en begagnatkontroll kan hitta, och rapporten anger storleken på
+  avvikelsen, aldrig en anklagelse.
+
+## När indata saknas
+
+Saknade indata degraderar rapporten mot inconclusive snarare än mot ett falskt allt-är-bra:
+
+- En kanal som aldrig svarade listas som en täckningslucka. Den kan inte godkänna en kontroll och
+  inte underkänna en.
+- En DTC-skanning som inte nådde varje modul markerar kodbevisen som ofullständiga, och kodregler kan
+  då inte på egen hand trycka utlåtandet högre än anmärkningar.
+- Rapporten skriver ut sin egen regelversion, sin täckning och en SHA-256-kontrollsumma, så en senare
+  läsning kan spåras till de regler som producerade den.
+- Att poängsätta en sparad session under ett nyare regelset är en lokal beräkning. Ingen bil behövs.
+
+## Termiska fynd förblir noteringar
+
+Paketets temperatursensorer har ingen fastställd mappning till enskilda moduler än, så termisk
+spridning rapporteras som en observation utan effekt på poängen. Den blir en riktig regel först när
+placeringen styrks av bevis.
+
+## Poängen själv
+
+Aritmetiken är enkel: börja på 100, dra av varje regels poäng, golva på 0. Utlåtandet följer sedan
+poängen, om inte en regel tvingade fram ett starkare:
+
+- 85 eller högre, utan något framtvingat uppåt: **gott skick**
+- 60 eller högre, eller någon anmärkningsregel utlöst: **anmärkningar**
+- under 60, eller en hård överstyrning utlöst: **uppmärksamhet**
+
+Om batterihälsan inte kunde läsas lämnas poängen tom istället för gissad, och utlåtandet blir
+**inconclusive**.
+
+## Platsintegritet
+
+Inspektionsrapporter för begagnatköp innehåller inga GPS-sektioner alls. Där andra exporter
+innehåller koordinater avrundas de till tre decimaler, ungefär 110 meter. Se
+[Integritetsskydd](/docs/privacy).
+
+## I appen
+
+- **Rapportvyn**: identitet, batteri, fel, styrenheter, service och termiska fynd med poängen.
+- **Utskrift**: webbläsarens egen utskriftsväg med anpassad print-CSS, så papperskopian matchar
+  skärmen.
+- **Sessioner**: sparade sessioner poängsätts om under aktuella regler utan att återansluta till
+  bilen.
+
+Det fullständiga designdokumentet, inklusive varje band och poängvärde, finns i appens repository på
+`docs/product/ppi-intelligence-and-scoring.md`.

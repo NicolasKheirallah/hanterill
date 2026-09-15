@@ -1,0 +1,110 @@
+import { TaskRouter } from "@/components/docs/mdx/TaskRouter";
+
+Hanterill har många vyer. Den här sidan är kartan: vad varje vy är till för, och vilka du faktiskt
+använder en vanlig dag.
+
+Kortversionen: **Översikt** berättar vad fordonet är, **Felkoder (DTC)** och **Batterihälsa** är där
+arbetet sker, och **Sessioner och rapporter** är där allt du gjort sparas.
+
+## Hitta vyn för din uppgift
+
+Om du redan vet vad du försöker göra, hoppa över listan och börja här:
+
+<TaskRouter />
+
+## Fordon
+
+- **Översikt**: startsidan. Bilens identitet, anslutningsläge och en första sammanfattning av
+  batteriet och eventuella fel.
+- **Fordonsentitet**: fordonets fingeravtryck. VIN, mätarställning från flera moduler, antal nycklar
+  och drifttid, med korskontrollen av mätarställningen.
+- **Anslutning**: välj adapter, sök upp ett fordon, se länkens läge och detaljer.
+- **Inspektionsrapport**: den poängsatta sammanfattningen. Se [Inspektionsrapporter](/docs/inspection-reports).
+- **Serviceschema**: serviceintervall och hur mycket sträcka eller tid som återstår.
+- **Byggkonfiguration**: fordonets fabriksoptionslista, läst från CEM.
+- **GPS-position**: en positionsbestämning från TCAM-modulen, begärs bara när du trycker på knappen.
+
+## Energi och batteri
+
+- **Batterihälsa**: SoH, SoC, paketspänning och -ström, temperaturer och korskontrollerna. Se
+  [Batteridiagnostik](/docs/battery-diagnostics).
+- **Cell- och värmekarta**: cellgruppsdatan utplacerad fysiskt över paketet, så en svag punkt får
+  en position istället för bara en siffra.
+- **12 V viloförbrukning**: historik över viloström. Användbart när fordonet har slut batteri på morgonen och
+  inget annat ser fel ut.
+- **Laddning** och **Effekt (OBC/DC-DC)**: ladduttagets läge, 12 V-skenan och omvandlarna.
+- **TCAM-batteri**: reservbatteriet i telematikmodulen.
+
+## Drivlina och termik
+
+- **Drivenheter**: telemetri för främre och bakre motorn och växelriktaren, sida vid sida.
+- **ICE-motor**: referensbanan för förbränning och hybrid. På ett helt elektriskt fordon svarar denna
+  vy inte alls, avsiktligt; den finns för plattformens hybridvarianter.
+- **Styrning**: styrvinkel, hastighet och kalibreringsläge. Skrivskyddat.
+- **HVAC och termik**: köldmediekretsen, värmekretsen och kompressorn.
+
+Energidomänerna (klimat, drivenheter, laddning och effekt) är flikar i en gemensam arbetsyta, så en
+djuplänk kan landa direkt på rätt panel.
+
+## Diagnostik och styrenheter
+
+- **Felkoder (DTC)**: skanningen. Läs, triagera, radera och exportera. Se [Felkodsskanning](/docs/dtc-scanning).
+- **Styrmodulregister**: varje modul i registret med sin adress, vad den svarade och vad den
+  rapporterade. Se [ECU-referens](/docs/ecu-reference).
+- **DID-skanner**: ett begränsat svep över identifierarintervall i alla moduler. Det här är ett
+  forskningsverktyg: det hittar vad en modul svarar som katalogen ännu inte känner till.
+- **DTC-historikdiff**: jämför två skanningar och se vad som ändrats.
+- **Firmware-SBOM**: mjukvaruinventeringen. Varje moduls artikelnummer och versioner i en lista,
+  diffbar mellan besök.
+
+## Telemetri och verktyg
+
+- **Livedata**: valda kanaler samplade i fast takt och ritade, med inspelning och uppspelning.
+- **DID-utforskaren**: läs en identifierare i taget, med råa byte och det avkodade värdet sida vid
+  sida. Den manuella överstyrningen när en vy inte visar det du behöver.
+- **Service och rutiner**: skrivåtgärderna, var och en bakom en uttrycklig bekräftelse. Se [Säkerhet](/docs/safety).
+
+## System
+
+- **Kapaciteter**: vad just den här bilen svarade att den kan, och vad just det här bygget av appen
+  kan. När en vy verkar tom är detta den ärliga förklaringen.
+- **Sessioner och rapporter**: allt du har fångat, med exporter och jämförelser.
+- **Aktivitet och loggar**: spåret av vad som körts, med VIN-maskering tillämpad.
+- **Inställningar**: utseende, språk, anslutningspolicy, integritet och lagring.
+
+## Att läsa en vy
+
+De flesta värden i Hanterill har tre detaljnivåer, och du kan stanna vid den som svarar på din fråga:
+
+1. **Etikett, värde och enhet.** Siffran du kom för.
+2. **Tolkning.** Vad den betyder, hur färsk den är, och om den är uppmätt eller härledd.
+3. **Bevis.** Vilken modul och identifierare den kom från, de råa byten och avkodarens version.
+
+Den tredje nivån är det som gör verktyget granskningsbart. Om en siffra ser fel ut kan du se exakt
+var den kom ifrån utan att lita på någons sammanfattning.
+
+## Saknade värden visas som saknade
+
+En avläsning som inte svarade visas som en lucka med en orsak, aldrig som en nolla. En modul som
+hoppades över listas som överhoppad. En skanning rapporterar hur många moduler som svarade och hur
+många som inte gjorde det. Det betyder mer än det låter: på ett diagnosverktyg är en påhittad nolla
+sämre än en synlig lucka.
+
+## Tangentbord
+
+- `Ctrl+K` eller `Cmd+K` öppnar kommandopaletten: hoppa till valfri vy, eller sök en styrenhet på
+  namn.
+- `?` visar hela genvägslistan.
+- Tvåtangentskombinationer hoppar direkt till vanliga vyer: tryck `G` och sedan `O` för översikt,
+  `G` och sedan `B` för batteri, och så vidare.
+
+## Anpassa appen
+
+Språk, teman, kontrast, rörelse och ljust/mörkt läge finns alla i **Inställningar**. Se
+[Gränssnitt och språk](/docs/interface-and-language) för hela listan, inklusive vilka språk som
+levereras och vad varje operativsystem frågar efter vid första starten.
+
+## Nästa steg
+
+- [Kom igång](/docs/getting-started) om du inte har anslutit än.
+- [CLI](/docs/cli) för samma förmågor utan fönstret.

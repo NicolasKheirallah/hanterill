@@ -1,61 +1,99 @@
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 
-Hanterill separates reading from changing at the build level, not with a settings switch. What the
-running binary can do is reported by a capability manifest, and the interface renders only what the
-binary can execute.
+A diagnostic tool can do two very different things: ask the car questions, or tell the car to do
+something. Hanterill keeps those worlds apart. This page explains exactly where the line sits and
+how the app enforces it.
 
-## Read-only by construction
+## Reading is the default
 
-A default build of any Hanterill artifact (desktop app, CLI, library) transmits only read-only UDS
-traffic: session control (`0x10`), read DTC information (`0x19`), read data by identifier (`0x22`),
-scaling reads (`0x24`) and tester present (`0x3E`), plus two exact carve-outs:
+Every read path in Hanterill transmits only services that ask questions:
 
-- `0x31 0x03` request routine results, which reports the stored outcome of a routine that already
-  ran and never starts or stops anything;
-- `0x2A` periodic read send-once and stop, for one on-demand sample and its teardown.
+| Service | What it asks |
+| --- | --- |
+| `0x10` | Open a diagnostic session so the module will answer |
+| `0x19` | Read fault codes |
+| `0x22` | Read a value by identifier |
+| `0x24` | Read how a value is scaled |
+| `0x3E` | "Still here", so the car does not fall asleep mid-scan |
 
-The transport layer rejects every other service and subfunction at runtime. There is no build in
-which Hanterill flashes modules, unlocks security access (`0x27`) or writes by identifier (`0x2E`).
+There are two narrow carve-outs beyond that list, and both only read:
 
-## Operations that change the vehicle
+- `0x31 0x03` reports the stored result of a routine that already ran. It never starts or stops
+  anything.
+- The `0x2A` periodic read can register one on-demand sample and cancel it again. The unsolicited
+  repeating modes are refused.
 
-- Clearing diagnostic information (`0x14`)
-- Starting routines (`0x31`), including EPB service mode and calibration helpers
-- Adaptations and writes by identifier
-- ECU reset (`0x11`), used only by the opt-in force-reset loop in the clear path
+Nothing in that set changes the car, and it is the same set in every build.
 
-<SafetyNotice level="adaptation" title="Not in released builds">
-These are compiled only with the non-default `unsafe-write-ops` feature. A released binary answers
-them with a typed refusal; there is no hidden way to turn a standard build into a write-capable
-one. The routine identifiers are reverse-engineered, and even write-capable builds keep steering
-angle and ADAS targets out of reach: those must not be actuated without the manufacturer's
-procedure. The clear path additionally captures freeze frames before erasing (the erase wipes
-them), re-reads to verify and reports the stubborn set. See the repository's `docs/safety.md` for
-the full flow.
+## Writing exists, and it asks first
+
+The released build ships the state-changing commands, because a workshop tool that cannot clear a
+code after a repair is only half a tool. What makes that safe is consent rather than absence:
+
+- Every write is a separate, explicitly confirmed action in the interface.
+- The running binary publishes a capability manifest, and the interface only offers what the
+  binary can actually do.
+- A build compiled without the write feature refuses those commands with a typed `read_only_build`
+  response. That stripped configuration exists for CI and development; it is not what ships.
+- Hanterill never flashes modules, never unlocks security access (`0x27`) to write by identifier,
+  and never performs programming services.
+
+<SafetyNotice level="adaptation" title="What the write surface covers">
+Clearing fault codes (`0x14`), starting service routines (`0x31`), ECU reset (`0x11`, used only by
+the opt-in force-reset step in the clear flow), and gated memory reads (`0x23`) with a 256-byte cap
+and a caller-verified address list. The routine identifiers are reverse-engineered. Even on a
+write-capable build, steering-angle and ADAS targets must not be actuated without the
+manufacturer's procedure: Hanterill exposes the capability, not a licence to use it.
 </SafetyNotice>
+
+## The clear flow, step by step
+
+Clearing fault codes is the write most people will actually use, and it is worth knowing what
+happens after you confirm:
+
+1. Enter an extended session with each module. Manufacturer modules reject a clear in the default
+   session, so this step is required.
+2. Capture the freeze frames before erasing. The erase destroys them.
+3. Send the bulk clear.
+4. Wait through the module's pending-response window.
+5. Retry per module where the bulk pass did not land.
+6. Re-read the codes and report the stubborn set: modules still holding codes after the erase.
+
+An optional force-reset loop reboots those stubborn modules, waits roughly five seconds, repairs
+the route and clears once more. It is opt-in, and it refuses to run while the car reports a driving
+usage mode.
 
 ## Traffic discipline
 
-Diagnostic queries use bounded loops, request budgets and cooperative cancellation, so a scan can
-not flood the gateway. Sessions run with the vehicle parked, in normal usage mode; the DTC clear
-loop refuses the force-reset step while the car reports a driving mode.
+A diagnostic tool can flood a car just by being eager. Hanterill keeps its request volume bounded:
+
+- Scans run bounded loops with request budgets, so a sweep cannot flood the gateway.
+- Cancellation is cooperative and checked between requests, so stopping is immediate rather than
+  after the whole sweep finishes.
+- Sessions are meant for a parked car. Keep the car in Park with the parking brake on.
+- Recovery never resets a module just because a request timed out.
 
 ## High voltage
 
-<SafetyNotice level="high-voltage" title="High-voltage systems are hazardous">
-Electric vehicles carry hazardous high-voltage systems. Reading battery data over a diagnostic link
-does not de-energise anything and does not make physical high-voltage service safe. HV service
-requires the manufacturer's procedures, equipment and training.
+<SafetyNotice level="high-voltage" title="High voltage is dangerous">
+Electric cars carry several hundred volts of direct current. Reading battery data over a cable does
+not de-energise anything and does not make physical high-voltage work safe. Servicing the pack, the
+inverters or the orange cabling requires the manufacturer's procedures, equipment and training.
 </SafetyNotice>
 
-## Not a replacement for manufacturer tooling
+## Not a replacement for the manufacturer's tooling
 
 Hanterill is independent and is not affiliated with Volvo Cars, Polestar or Geely. Do not make a
-safety-critical repair decision on Hanterill output alone, especially on Testing or Research
-platforms where decoding is not verified on a live vehicle.
+safety-critical repair decision on Hanterill output alone, especially on a platform still marked
+Testing or Research where decoding has not been checked against a real car.
 
 ## If something looks wrong
 
-Stop. Do not run routines to "fix" a reading you do not understand. Export the session, compare it
-against a known-good reference or a second scan, and ask in the project's discussions before
-acting. The [support bundle](/docs/privacy) export is scrubbed for sharing.
+Stop. Do not run a routine to "fix" a reading you do not understand. Export the session, compare it
+against a second scan or a known-good car, and ask in the project's discussions before acting. The
+[support bundle](/docs/privacy) export is scrubbed for sharing.
+
+## Next
+
+- [Connection](/docs/connection): safe hardware setup.
+- [DTC scanning](/docs/dtc-scanning): what clearing actually does.

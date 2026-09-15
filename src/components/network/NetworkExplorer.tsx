@@ -594,7 +594,7 @@ function NetworkExplorerInner() {
                 <Route size={13} className="shrink-0 text-(--accent)" />
                 {!trace.result ? (
                   <span>
-                    Tracing from <b>{traceFromName}</b> — click a destination unit
+                    Tracing from <b>{traceFromName}</b>: click a destination unit
                     <span className="text-(--ink-3)"> · Esc to cancel</span>
                   </span>
                 ) : (

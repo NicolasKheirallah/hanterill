@@ -35,6 +35,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           <h2>{t("hWhy")}</h2>
           <p>{t("pWhy")}</p>
 
+          <h2>{t("hFree")}</h2>
+          <p>{t("pFree")}</p>
+
           <h2>{t("hHow")}</h2>
           <p>{t("pHow")}</p>
 

@@ -27,7 +27,7 @@ export const ZoneNode = memo(function ZoneNode({ data }: NodeProps<Node<ZoneNode
       </div>
       {data.collapsed && (
         <div className="zsummary">
-          {data.unitCount} units · {data.linkCount} links — click to expand
+          {data.unitCount} units · {data.linkCount} links, click to expand
         </div>
       )}
     </div>

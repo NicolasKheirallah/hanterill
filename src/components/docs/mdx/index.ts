@@ -11,3 +11,6 @@ export { PlatformSupport } from "./PlatformSupport";
 export { DidReference } from "./DidReference";
 export { ProtocolFlow } from "./ProtocolFlow";
 export { DiagnosticExample } from "./DiagnosticExample";
+export { GlossaryList } from "./GlossaryList";
+export { TaskRouter } from "./TaskRouter";
+export { ScreenShot } from "./ScreenShot";

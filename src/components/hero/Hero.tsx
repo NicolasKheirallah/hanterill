@@ -26,6 +26,7 @@ export function Hero() {
   const t = useTranslations("hero");
   const tc = useTranslations("common");
   const ts = useTranslations("shots");
+  const tp = useTranslations("pricing");
 
   return (
     <section className="border-b border-line-strong">
@@ -47,6 +48,10 @@ export function Hero() {
                 {tc("viewSource")}
               </Button>
             </div>
+            <p className="mt-5 flex items-center gap-2 text-[13.5px] text-text-muted">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-status-ok" aria-hidden />
+              {tp("promise")}
+            </p>
           </div>
 
           <div className="relative lg:pl-2">

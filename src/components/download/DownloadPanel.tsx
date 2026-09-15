@@ -13,6 +13,7 @@ const noop = () => () => {};
 export function DownloadPanel({ release }: { release: Release | null }) {
   const detected = useSyncExternalStore(noop, detectPlatform, () => null);
   const t = useTranslations("download");
+  const tp = useTranslations("pricing");
   const locale = useLocale();
 
   return (
@@ -73,6 +74,13 @@ export function DownloadPanel({ release }: { release: Release | null }) {
           );
         })}
       </ul>
+
+      <div className="flex items-start gap-3 border-t border-line px-5 py-4">
+        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-status-ok" aria-hidden />
+        <p className="text-[13.5px] leading-relaxed text-text-secondary">
+          <span className="font-medium text-text-primary">{tp("promise")}</span> {tp("detail")}
+        </p>
+      </div>
 
       <div className="flex items-center justify-between gap-3 border-t border-line px-5 py-4">
         <span className="flex items-center gap-2 font-mono text-[12px] text-text-secondary">

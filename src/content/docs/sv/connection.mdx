@@ -1,37 +1,81 @@
-Hanterill når fordonet med ISO 13400 Diagnostics over IP (DoIP). Praktiskt är det vanlig Ethernet från datorn till en passiv kabel i OBD-II-porten.
+Hanterill kommunicerar med fordonet över Ethernet. En modern bil är ett litet nätverk, och ett av
+dess uttag talar vanlig internetprotokoll. Den här sidan går igenom kabeln, nätverket och vad du gör
+när fordonet inte dyker upp.
 
 ## Kabeln
 
-En passiv ENET-kabel för specifika OBD-II-stift till en vanlig RJ45-kontakt. Den innehåller ingen elektronik. Det är ingen ELM327, inget J2534-gränssnitt och ingen Bluetooth-adapter. Kabeln kräver ingen drivrutin.
+En ENET-kabel kopplar bestämda stift i OBD-II-uttaget till en vanlig RJ45-kontakt. Den innehåller
+ingen elektronik. Det är ingen ELM327, inget J2534-gränssnitt och ingen Bluetooth-adapter. Kabeln
+kräver ingen drivrutin.
 
-Typisk kedja:
+Kedjan ser ut så här:
 
 ```text
-OBD-II-kontakt
+OBD-II-uttaget i fordonet
   -> ENET-kabel
   -> RJ45
   -> USB-C Ethernet-adapter
-  -> Bärbar dator
+  -> datorn
 ```
 
-## Nätverksinställningar
+Vilken passiv OBD-II till Ethernet-kabel som helst fungerar, även de som säljs som "BMW ENET" eller
+"E-Sys". Det är samma kabel.
 
-DoIP använder länklokal adressering. I de flesta fall förhandlar fordonet och adaptern fram adresser automatiskt och ingen manuell IP-konfiguration behövs. Om operativsystemet håller gränssnittet väntande på DHCP, sätt adaptern på länklokal / automatisk privat adressering.
+## Hur fordonet hittas på nätet
 
-Hanterill upptäcker fordonet med en UDP-begäran för fordon identifiering på port 13400, öppnar sedan en TCP-anslutning på samma port och utför routningsaktivering före varje diagnostikbegäran. Själva gränssnittet räknas upp automatiskt: virtuella adapter (VPN, loopback) filtreras bort av anslutningsrankingen, och att koppla in eller ur kabeln upptäcks utan omstart.
+Fordon som stöder detta använder länklokal IPv4-adressering, intervallet `169.254.x.x`. Det är samma
+princip som när du kopplar en nätverkskabel direkt mellan två datorer: var sida väljer en adress
+utan att någon router behövs.
 
-## När länken bråkar
+Oftast löser fordonet och adaptern detta själva. Om operativsystemet väntar på en DHCP-server som
+aldrig svarar, ställ in adaptern på länklokal adressering manuellt.
 
-Återhämtning finns inbyggd i transporten: en tappad TCP-session återaktiverar routningen på den överlevande anslutningen, svar från en tidigare anslutningsperiod förkastas som föråldrade, och en keepalive förhindrar att gateway:n försätter moduler i vila mitt i ett svep. Raderingsåtgärder väntar dessutom ut omstartande moduler och reparerar routen efteråt.
+<Callout kind="note" title="Vad Hanterill gör">
+Appen skickar en förfrågan om fordonsidentifiering över UDP på port 13400 och lyssnar efter att ett
+fordon annonserar sig. Sedan öppnas en TCP-anslutning till samma port, och routningen aktiveras
+innan något annat skickas. Sidan [Arkitektur](/docs/architecture) går igenom varje steg.
+</Callout>
+
+Hanterill väljer nätverksgränssnitt åt dig. Det rangordnar varje adapter det hittar, bortser från
+virtuella gränssnitt som VPN och loopback och föredrar en trådbunden länklokal adress. Kopplar du in
+eller ur kabeln mitt i en session upptäcks det utan omstart.
 
 ## Om fordonet inte dyker upp
 
-- Kontrollera att fordonet är på tändning.
-- Kontrollera att RJ45 sitter i en Ethernet-port, inte en ren USB-port.
-- Inaktivera VPN- eller brandregsler som blockerar UDP 13400.
-- Testa en annan Ethernet-adapter. Vissa USB-adapter tappar länklokal trafik.
-- Kontrollera att inget annat diagnosverktyg håller DoIP-uttaget.
+Arbeta dig nedåt i listan. De två första punkterna löser de flesta fall:
+
+- Är fordonet på tändning? Ett fordon som sover svarar inte.
+- Sitter RJ45-kontakten i ett Ethernet-uttag, inte i ett uttag som bara har USB?
+- Blockerar en VPN eller brandvägg UDP 13400? Stäng av dem tillfälligt och försök igen.
+- Prova en annan Ethernet-adapter. En del billiga USB-adapter tappar länklokal trafik.
+- Håller något annat diagnosverktyg anslutningen? Bara ett verktyg i taget kan tala med fordonet.
+
+<Callout kind="caution" title="En kabel, ett fordon">
+Kabeln går från datorn till fordonets diagnosuttag, aldrig till hemmaroutern. Koppla inte ihop
+fordonets nätverk med ditt vanliga nätverk.
+</Callout>
+
+## När länken tappas
+
+Transporten har inbyggd återhämtning, så ett kort avbrott kostar dig inte sessionen:
+
+- Tappas TCP-anslutningen aktiverar Hanterill routningen igen på den länk som finns kvar.
+- Svar från den gamla anslutningen avvisas som föråldrade, så ett sent svar inte kan misstas för ett
+  aktuellt.
+- En keepalive (`TesterPresent` varannan sekund) hindrar fordonet från att försätta moduler i vila
+  mitt i en längre skanning.
+- Rapporterar fordonet en annan identitet efter en återanslutning avslutas sessionen, i stället för
+  att avläsningar från två fordon blandas i samma fil.
 
 ## Trådlöst
 
-Vissa fordon exponerar DoIP över sin egen Wi-Fi-accesspunkt. Där det finns och Hanterill stöder det gäller samma steg för upptäckt och routning över det trådlösa gränssnittet.
+En del fordon exponerar diagnostik över sin egen Wi-Fi-accesspunkt. Finns det och stöder Hanterill
+det, fungerar upptäckt och routning på samma sätt över det trådlösa gränssnittet. Den trådbundna
+vägen är den testade.
+
+## Nästa steg
+
+- [Arkitektur](/docs/architecture): vad som händer på länken, steg för steg.
+- [Fordon som stöds](/docs/supported-vehicles): vilka fordon detta fungerar på idag.
+- [Gränssnitt och språk](/docs/interface-and-language): behörigheter per operativsystem och
+  inställningarna för gränssnittet.

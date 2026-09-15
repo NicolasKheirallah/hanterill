@@ -1,0 +1,142 @@
+import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
+
+Hanterill levereras med en kommandoradsföljeslagare, `hanterill`. Det är ett annat sätt att nå samma
+motor som appen använder: varje kommando går genom samma use cases, och varje strukturerat
+dokument den skriver ut är versionssatt.
+
+Använd den när du vill skripta en skanning, diffa två sessioner över en helg, eller läsa ett fordon utan
+att öppna ett fönster.
+
+<Callout kind="note" title="Vissa kommandon rör aldrig ett fordon">
+`show`, `did-analyze`, `did-kb`, `did-plan`, `did-presets`, `firmware-diff`, `cells-diff`,
+`dtc-diff`, `export`, `replay`, `vendor-ref`, `vendor-dids` och `service-families` fungerar helt
+offline. Allt annat behöver exakt en transportkälla.
+</Callout>
+
+## Anrop
+
+```text
+hanterill <kommando> [argument] <transport> [--json | --format <fmt>]
+```
+
+Transportflaggorna talar om för CLI:et var ett fordon finns:
+
+| Flagga | Betydelse |
+| --- | --- |
+| `--discover` | Hitta ett fordon på det lokala nätverket och anslut till den |
+| `--ip <addr>` | Anslut till ett fordon på en känd adress |
+| `--replay <corpus>` | Spela upp en inspelad begäran/svar-fil istället för ett fordon |
+| `--mock <scenario>` | En inbyggd simulerad bil, för tester och utvecklingsbyggen |
+
+## Utdata och exitkoder
+
+Utan formatflagga får du läsbar text. `--json` skriver ut ett versionssatt dokument (första fältet är
+alltid `schema_version`), och `--format text|json|csv` väljer uttryckligen. Saknade värden är JSON
+`null`, aldrig platshållartext. Filer skrivs atomiskt, så ett ofullständigt dokument lämnas aldrig på
+disk.
+
+| Exitkod | Betydelse |
+| --- | --- |
+| 0 | Kommandot slutfördes och täckningen var fullständig |
+| 1 | Felaktigt anrop, ett transportfel, eller ett rent resultat med ofullständig täckning |
+
+Det andra fallet är avsiktligt. En skanning som inte kunde nå varje modul avslutas med 1, eftersom
+"inga koder hittades" och "inga koder hittades i de fyra moduler jag kunde nå" är olika svar.
+
+## Läskommandon
+
+| Kommando | Vad det gör |
+| --- | --- |
+| `scan` | Läs felkoder från varje kapabel modul, eller en uttrycklig uppsättning (`--ecu BECM`, repeterbar) |
+| `probe` | Närvaropass över registret; en timeout rapporteras aldrig som frånvaro |
+| `battery` | Högspänningsrapport, inklusive korskontrollerna |
+| `battery-cells` | Cellgruppsspänningar för den paketuppbyggnad som gäller |
+| `battery-temps` | Pakettemperaturkanaler |
+| `vehicle` | VIN och identitetsblocket |
+| `mileage` | Mätarställning läst över moduler, med fusk-korskontrollen |
+| `service` | Servicenvålsräknare och återstående sträcka eller dagar |
+| `report` | Den fullständiga fordonshälsorapporten |
+| `live` | Live-sampling i fast takt för en preset eller kanallista |
+| `record` | Samma sak, skrivet till en `.csv`- eller `.json`-fil |
+| `snapshot` | Ögonblicksbild till en fil |
+| `cross-check` | Alla tio korskontroller i en körning |
+| `charge-diagnosis` | Tillskriv en laddningseffektbegränsning från bevis, eller avstå |
+| `keys`, `tcam`, `steering`, `power`, `gps`, `climate`, `motors`, `charge`, `inventory`, `config`, `uptime` | Skrivskyddade delsystemrapporter |
+| `parasitic-drain` | 12 V viloförbrukningshistorik och histogram |
+| `firmware-audit` | Identifieringssvep; producerar indata för `firmware-diff` |
+| `dtc-detail`, `dtc-counts`, `dtc-snapshots` | Felkodsdetaljer: räkningar per mask, snapshot- och utökade poster |
+| `did-scaling` | Fråga en modul hur en identifierare skalas |
+| `routine-results` | Läs det sparade resultatet av en rutin som redan kört |
+| `periodic` | Avsök den schemalagda sändningsläsningen (`0x2A`) |
+| `quiet-discovery` | Femstegssvep efter moduler som förblir tysta eller bara svarar i standardsessionen |
+
+## Offline-intelligens
+
+DID-verktygen rör aldrig ett fordon, vilket gör dem till delen du kan köra på ett flygplan:
+
+| Kommando | Vad det gör |
+| --- | --- |
+| `show <ecu> <dtc bytes...>` | Avkoda en felkod från byte du skriver |
+| `did-scan` | Svep ett identifierarintervall på ett fordon, eller mot `--capture` för en sparad CSV |
+| `did-scan-all` | Begränsat svep över alla moduler: närvaro, katalog, valfri upptäckt, med en requestbudget |
+| `did-watch` | Läs om en liten uppsättning identifierare med intervall |
+| `did-analyze` | Utvinn sparade fångster efter okända positiva svar och kontraktsavvikelser |
+| `did-kb` | Fråga eller fäll in i den inlärda kunskapsbasen för identifierare |
+| `did-plan` | Förhandsgranska en begränsad skanningsplan utan att kontakta något |
+| `did-presets` | Lista förinställningarna för upptäcktsintervall |
+| `firmware-diff` | Jämför två firmwareinventeringar, modul för modul |
+| `cells-diff` | Jämför två cellspänningsfångster, grupp för grupp |
+| `dtc-diff` | Jämför två DTC-skanningar |
+| `retrofit-check` | Jämför en bils bygglista mot en medföljande förväntansfil för option-till-modul |
+| `export` | Packa upp en sparad session i modulära JSON- eller CSV-filer |
+| `replay` | Spela upp en inspelad live-telemetrikörning genom virtual-time-motorn |
+| `vendor-ref`, `vendor-dids`, `service-families` | Sanerad leverantörsreferensvokabulär: vad som finns, aldrig ett avkodat värde |
+
+## Strukturerad utdata
+
+Allt versionssatt börjar med `schema_version`. Två exempel värda att känna till:
+
+- `scan --json` skriver ut ett `dtc-scan/2`-dokument med bevis per modul: SHA-256 för varje råsvar,
+  dess längd, trådtid, NRC-koder, hopporsaker och omförsöksmängden. Ett negativt svar behåller sin
+  NRC istället för att rapporteras som ett felformat positivt svar.
+- `did-scan-all --json` skriver ut en `did-scan-all/2`-artefakt med NRC, hash och latens per rad,
+  plus ett bevisblock för befordran av okatalogiserade positiva svar. `--tier raw|support|public`
+  styr hur mycket som maskas.
+
+<DiagnosticExample
+  service="ReadDataByIdentifier"
+  request="22 49 6D"
+  response="62 49 6D 00 00 23 9A"
+  note="hanterill battery --discover skickar detta själv. CLI:et bär ingen egen avkodning: byten avkodas av samma katalog som appen använder."
+/>
+
+## Läsning kontra skrivning
+
+Läskommandona ovan håller sig inom den skrivskyddade tjänsteuppsättningen. En separat grupp ändrar
+bilen: `clear-dtcs`, `reset`, `epb`, `bms-reset`, `service-reset`, `usage-mode`,
+kalibreringshjälparna (`climate-calibrate`, `sunroof-init`, `steering-zero`, `grille-calibrate`,
+`camera-learn`, `blindspot-reset`, `adas-reset`), `aux-pump`, `security` och `tcam-battery-test`.
+
+De kräver uttrycklig bekräftelse, styrs av [Säkerhet](/docs/safety), och ett bygge kompilerat utan
+skrivfunktionen avvisar dem med ett typat meddelande.
+
+## Att skripta en reparation
+
+JSON-dokumenten är stabila och versionssatta, så att diffa två sessioner är en shell-pipeline:
+
+```text
+hanterill scan --discover --json > before.json
+hanterill scan --discover --retry-of before.json --json > after.json
+hanterill dtc-diff before.json after.json
+```
+
+`--retry-of` läser bara om de moduler som första passningen lämnade misslyckade eller olästa, och
+fogar sedan in resultatet med härstamning som visar båda passningarna. Originalfilen ändras aldrig.
+
+För batteriarbete: fånga `battery-cells --json` före och efter, kör sedan `cells-diff` för att se
+deltan per cell. En cell som inte lästes på ena sidan behåller en lucka istället för en nolla.
+
+## Nästa steg
+
+- [Säkerhet](/docs/safety): vad skrivkommandona gör, och vad de inte gör.
+- [Arkitektur](/docs/architecture): lagren dessa kommandon talar med.

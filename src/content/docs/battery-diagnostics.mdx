@@ -1,63 +1,119 @@
 import { DidReference } from "@/components/docs/mdx/DidReference";
 import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+import { ScreenShot } from "@/components/docs/mdx/ScreenShot";
 
-The high-voltage battery data comes from the Battery Energy Control Module (BECM) over UDS. Hanterill opens an extended session with the BECM and reads by identifier.
+The high-voltage battery has its own computer, the BECM (Battery Energy Control Module). It
+already tracks everything about the pack: how much charge is left, how healthy it is, the voltage
+of every cell group, and how warm it is. Hanterill asks that computer questions rather than
+estimating from other signals.
+
+<ScreenShot
+  root="/assets/battery-health.png"
+  alt="The Battery Health screen: state of health, state of charge, pack voltage and current, and the cross-signal checks"
+  caption="Battery Health: the measured pack values and the cross-checks that compare them against each other"
+/>
 
 <SafetyNotice level="read-only">
-Everything on this page is a read. Hanterill queries the BECM and decodes the response. It does not write to the module and does not change how the pack is managed.
+Everything on this page is a read. Hanterill asks the BECM for values and decodes the answers. It
+does not write to the module and does not change how the pack is managed.
 </SafetyNotice>
 
-## What you get
+## State of Health, the short version
 
-- State of Health and State of Charge
-- Pack voltage and pack current
-- Cell-group potentials on the pack topology in force: 108 on CMA (27 modules, 4 groups each);
-  SPA EV 96S and 108S, SPA hybrid 102S and SEA variants are catalogued
-- Minimum, maximum and delta across cell groups
-- Pack and module temperatures, rendered as a thermal grid
-- Estimated usable capacity against nominal
-- Cross-signal consistency checks (reported pack voltage against the cell sum, and more)
-- BECM hardware and software part numbers
+State of Health (SoH) is the number you want before buying a used EV. It compares the pack's
+current capacity to what it had when new. A pack at 91% SoH has lost 9% of its original capacity.
 
-## Reading it
+The BECM calculates this itself. Hanterill reads it through the identifier `0x496D`, where the
+answer is a 32-bit integer in hundredths of a percent.
 
-After routing activation, Hanterill enters an extended session with the BECM
-and reads each identifier:
+<DiagnosticExample
+  service="ReadDataByIdentifier, SoH on the BECM"
+  request="22 49 6D"
+  response="62 49 6D 00 00 23 9A"
+  note="The payload 0x0000239A is 9114. Divided by 100 that is 91.14% SoH. This exact decode is verified against the reference car."
+/>
+
+## What else you get
+
+- State of Charge (SoC): how full the pack is, read as a live channel (`0x4A89`)
+- Pack voltage (`0x4803`) and pack current (`0x4802`), read live
+- Every cell-group potential on the pack layout in force: 108 on CMA (27 modules of 4 groups)
+- Minimum, maximum and spread across those groups
+- Pack temperature channels (`0x4980`), shown as provisional: the sensor-to-module mapping is not
+  established yet, so the values are displayed as pack channels, never as one module's temperature
+- Per-cell SoH and learned-capacity blocks (`0x480E`, `0x4982`, `0xDA02`)
+- Cross-checks that compare one measured signal against another
+- BECM hardware and software part numbers, read with the standard identity identifiers
+
+## Why a cell matrix instead of one number
+
+One average voltage hides problems. A pack where every cell group sits within a few millivolts of
+its neighbours is balanced. A pack where one group is consistently lower than the rest has a weak
+spot forming.
+
+That is why Hanterill reads the cell groups as a block rather than trusting a single summary value.
+The website's [battery section](/features/battery-health) shows the same matrix with sample data.
+
+<ScreenShot
+  root="/assets/cell-map.png"
+  alt="The Cell and Thermal Map: every cell group laid out physically over the pack, coloured by deviation from the pack mean"
+  caption="Cell and Thermal Map: the same voltages laid out over the physical pack, so a weak spot has a position"
+/>
+
+<Callout kind="note" title="How the cell groups are read">
+Per-module blocks live at `0x4B10` through `0x4B2A`: 27 identifiers, one per module, four cell
+groups each. The layout comes from a catalogue entry for the car's pack, not a number written into
+the code. A 102-cell hybrid pack is treated as complete at 102.
+</Callout>
+
+## The temperature history
+
+The BECM also stores a lifetime record: how many hours the pack has spent in each temperature band.
+Hanterill shows it as a histogram with the total operating hours and how much of that time was in
+the comfortable window. Heat is what ages a battery, so time spent very hot or very cold is worth
+seeing before you buy.
+
+## Cross-checks
+
+Hanterill compares signals that should agree with each other and reports where they do not: the
+reported pack voltage against the sum of the cell groups, calculated power against reported power,
+current flow while parked, and more. There are ten of these checks.
+
+The verdict vocabulary matters more than the count. A check can come back consistent, a warning, a
+signal disagreement, decoder uncertain, or insufficient data. An input that never answered is
+recorded as missing, never treated as a pass. No check claims a hardware fault, and none goes beyond
+a warning.
+
+## Reading it over the wire
+
+After routing activation, Hanterill opens an extended session with the BECM and reads each
+identifier:
 
 <DidReference
   rows={[
     ["0x496D", "Battery state of health"],
-    ["0x1635", "Pack voltage"],
+    ["0x4803", "Pack voltage"],
+    ["0x4802", "Pack current"],
+    ["0x4B10-0x4B2A", "Cell-group potentials, one block per module"],
     ["0xF190", "VIN, for session correlation"],
   ]}
 />
 
-The state-of-health read, with the bytes on the wire:
-
-<DiagnosticExample
-  service="ReadDataByIdentifier"
-  request="22 49 6D"
-  response="62 49 6D 03 E6"
-  note="The raw value 03E6 is 998. Scaled by 0.1 that is 99.8, then offset against nominal capacity to the reported SoH. The scaling lives in the CMA decoder map, not in the ECU response."
-/>
-
-Cell-group potentials are read as a block and mapped to module and group
-positions, not derived from a single summary field. DTCs come from the same
-session with a ReadDTCInformation request. Live views use the periodic identifier read (0x2A)
-where the ECU supports it: one on-demand registration instead of hammering the same identifier.
-
-## Reading the cell matrix
-
-A healthy pack sits within a few millivolts across all 108 groups. A widening delta, or one module consistently offset from the pack mean, is more informative than the SOH percentage alone. The website's [battery section](/features/battery-health) shows the same matrix with sample data.
+Live views use the periodic identifier read (`0x2A`) where the module supports it: one registration
+instead of asking the same question in a loop.
 
 ## Other platforms
 
 <Callout kind="warning" title="Not hardware-verified on SPA and SEA">
-SPA and SEA1 carry their own BECM registries: different cell counts and different payload
-contracts. The same identifier number can be a 4-byte quantity on CMA and a 2-byte one on SPA, so
-they are separate definitions, not shared ones. They ship under community-research evidence
-provenance and nothing is verified against a live SPA or SEA vehicle yet. Battery data from those
-cars is marked unverified and should not be used for decisions. Even on CMA the per-module
-temperature placement is provisional: sensor-to-module mapping is not yet established.
+SPA and SEA1 carry their own BECM definitions: different cell counts and different payload
+contracts. The same identifier number can be a 4-byte value on CMA and a 2-byte one on SPA, so they
+are separate definitions, never shared ones. They ship under community-research provenance and
+nothing is verified against a live SPA or SEA car yet. Battery data from those cars is marked
+unverified and should not be used for decisions.
 </Callout>
+
+## Next
+
+- [DTC scanning](/docs/dtc-scanning): the fault side of the same session.
+- [Inspection reports](/docs/inspection-reports): how battery readings turn into a scored verdict.

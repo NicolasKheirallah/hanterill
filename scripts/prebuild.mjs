@@ -12,6 +12,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import sharp from "sharp";
+import { extractDoc } from "./docs-text.mjs";
 
 const ROOT = process.cwd();
 const ASSETS = join(ROOT, "public", "assets");
@@ -92,7 +93,7 @@ async function buildOg() {
   <text x="80" y="240" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="104" font-weight="600" letter-spacing="-3" fill="${OG.text}">Hanterill</text>
   <text x="80" y="304" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="38" fill="${OG.sec}">Vehicle diagnostics for Volvo and Polestar</text>
   <text x="80" y="356" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="24" letter-spacing="2" fill="${OG.accent}">DoIP &#183; UDS &#183; BATTERY HEALTH &#183; LIVE TELEMETRY</text>
-  <text x="80" y="466" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="22" fill="${OG.sec}">108 cell-group potentials &#183; 43-ECU catalogue &#183; ISO 13400 / 14229</text>
+  <text x="80" y="466" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="22" fill="${OG.sec}">108 cell-group potentials &#183; 49-ECU catalogue &#183; ISO 13400 / 14229</text>
   <text x="80" y="506" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="22" fill="${OG.sec}">Runs locally. No cloud, no subscription.</text>
   <text x="1120" y="580" text-anchor="end" font-family="'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace" font-size="22" fill="${OG.sec}">hanterill.org</text>
 </svg>`;
@@ -101,16 +102,6 @@ async function buildOg() {
 }
 
 // ----------------------------------------------------------- command index --
-
-function slugify(s) {
-  // Mirrors github-slugger (rehype-slug on the built pages): unicode letters
-  // survive, punctuation drops, whitespace becomes hyphens.
-  return s
-    .toLowerCase()
-    .trim()
-    .replace(/[^\p{L}\p{N}_\s-]/gu, "")
-    .replace(/\s+/g, "-");
-}
 
 async function buildCommandIndex() {
   const docsSrc = await readFile(join(ROOT, "src/lib/docs.ts"), "utf8");
@@ -126,20 +117,7 @@ async function buildCommandIndex() {
     } catch {
       /* body stays empty; the entry is still findable by title */
     }
-    const headings = [...raw.matchAll(/^(#{2,3})\s+(.+?)\s*$/gm)].map((m) => ({
-      level: m[1].length,
-      text: m[2].replace(/[*_`]/g, ""),
-      id: slugify(m[2].replace(/[*_`]/g, "")),
-    }));
-    const text = raw
-      .replace(/```[\s\S]*?```/g, " ")
-      .replace(/^import[^;]+;/gm, " ")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/[#>|*_`[\]]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 700);
-    entries.push({ ...d, headings, text });
+    entries.push({ ...d, ...extractDoc(raw) });
   }
   const outDir = join(ROOT, "src/lib/generated");
   await mkdir(outDir, { recursive: true });
@@ -147,7 +125,10 @@ async function buildCommandIndex() {
     join(outDir, "docs-index.json"),
     JSON.stringify({ generated: "prebuild", entries }),
   );
-  console.log(`prebuild: docs-index.json (${entries.length} docs, ${entries.reduce((n, e) => n + e.headings.length, 0)} headings)`);
+  const chars = entries.reduce((n, e) => n + e.text.length, 0);
+  console.log(
+    `prebuild: docs-index.json (${entries.length} docs, ${entries.reduce((n, e) => n + e.headings.length, 0)} headings, ${chars} searchable chars)`,
+  );
 }
 
 if (!existsSync(join(ASSETS, "overview.png"))) {

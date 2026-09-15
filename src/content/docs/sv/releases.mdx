@@ -1,0 +1,54 @@
+Versioner följer [SemVer](https://semver.org/). En release är en tagg i appens repository, och
+anteckningarna för varje version finns med den versionen, renderade på
+[changelog-sidan](/changelog).
+
+## Var du hittar saker
+
+- **[Changelog](/changelog)**: anteckningarna för varje version, renderade på den här sajten.
+- **[Versioner](https://github.com/NicolasKheirallah/hanterill/releases)**: taggade byggen med
+  installerare och en checksumfil. [Nedladdningssidan](/download) läser senaste release live från
+  GitHub.
+
+## Vad en version innehåller
+
+Versionsanteckningar håller samma uppdelning mellan verifierat och overifierat som resten av sajten:
+
+1. Vad som är **verifierat** på en testad plattform (CMA idag).
+2. Vad som är **katalogiserat men overifierat** för andra plattformar (SPA och SEA1 vid skrivandet).
+3. Vad som är **forskning**: fångster, proveniensdokument och öppna frågor.
+
+En avkodare som inte bekräftats mot hårdvara levereras med den märkningen, och körmiljöns
+kapacitetsmanifest rapporterar skillnaden. Kompatibilitetsarbete blir aldrig ett påstående om
+stöd utan bevis.
+
+## Artefakter och verifiering
+
+Varje release publicerar ett paket per plattform: en `.dmg`/`.app` för macOS, en installerare och en
+fristående körbar fil för Windows, och en AppImage plus en `.deb` för Linux, tillsammans med CLI:et.
+En `SHA256SUMS.txt`-fil bär en kontrollsumma för varje artefakt, så du kan verifiera en nedladdning
+innan du kör den.
+
+<Callout kind="caution" title="macOS-signeringsstatus">
+macOS-byggen är bara ad-hoc-signerade, vilket betyder att Gatekeeper inte går i god för dem. Första
+starten behöver en högerklickning och Öppna, eller en engångsrensning av quarantine. Windows-byggen är
+osignerade också, så SmartScreen kan varna. Kontrollera checksumfilen om det spelar roll för dig.
+</Callout>
+
+## Uppdateringar
+
+Uppdateringar laddas ner från den här sajten eller versionssidan. Hanterill har ingen inbyggd
+automatisk uppdaterare, och den ringer inte hem. Om du installerade på Linux från en pakethanterare,
+uppdatera genom den istället.
+
+Dina sparade sessioner överlever en uppdatering: sessionsformatet är versionssatt, och ett nyare schema
+öppnas skrivskyddat i ett äldre bygge istället för att skrivas om.
+
+## Historik
+
+| Version | Datum | Rubrik |
+| --- | --- | --- |
+| 0.2.0 | 2026-09-13 | Första hårdvaru-i-loopen-kampanjen på en produktions-Polestar 2, 49-modulsregister med den reverse-enginerade parkeringskameran, periodisk strömning, batteritopologier för flera plattformar, åtta gränssnittsspråk |
+| 0.1.1 | 2026-09-11 | SPA- och SEA1-plattformsomfång, DTC-radering i referensparitet, besiktningsmotor v1.0.0, funktionell broadcast-upptäckt, offline DID-intelligens, härdad maskering |
+| 0.1.0 | 2026-09-01 | Första taggade releasen: appklienten, versionssatta observationskuvert, hållbara sessioner, livscykel för livedata, CI-regressionsgrindar |
+
+Versionssidan är källan till sanning för vad som är publicerat just nu. Den här sajten läser den live.

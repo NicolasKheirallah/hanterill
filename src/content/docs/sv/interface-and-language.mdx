@@ -1,0 +1,118 @@
+Hanterill är ett verkstadsverktyg, och verkstäder är inte alla likadana. Den här sidan handlar om hur
+du anpassa appen: gränssnittsspråk, teman, tangentbord och vad varje operativsystem förväntar sig
+av dig.
+
+## Gränssnittsspråk
+
+Gränssnittet levereras fullt översatt på åtta språk. Alla är kompletta, inte delvis maskinöversatta:
+ett test kontrollerar att ingen nyckel lämnas oöversatt och fäller bygget om en gör det.
+
+| Språk | Visas som |
+| --- | --- |
+| Engelska | English |
+| Svenska | Svenska |
+| Norska bokmål | Norsk bokmål |
+| Danska | Dansk |
+| Finska | Suomi |
+| Isländska | Íslenska |
+| Tyska | Deutsch |
+| Förenklad kinesiska | 中文 |
+
+Hanterill känner igen ditt språk från operativsystemet vid första starten och kommer ihåg ditt val
+efter det. Du kan byta när som helst i **Inställningar → Språk**, och gränssnittet uppdateras direkt.
+Om en översättning någon gång saknar en sträng faller den strängen tillbaka till engelska istället
+för att visa en tom etikett.
+
+<Callout kind="note" title="Den här dokumentationen är separat">
+Applikationen är översatt till alla åtta språk. Den här dokumentationssajten är ett mindre arbete:
+engelska plus svenska idag, och den svenska uppsättningen växer. Därför säger vissa sidor att de bara
+finns på engelska.
+</Callout>
+
+## Teman
+
+Det finns ett designsystem med två familjer, mörk och ljus, och sex valbara färgscheman. Geometri,
+typografi och beteende ändras aldrig mellan dem, bara paletten. Mörkt är basschemat.
+
+**Inställningar → Utseende** delar upp detta i två kontroller, så du aldrig behöver läsa en lista med
+sju val för att svara på en fråga:
+
+1. **Läge**: System, Ljust eller Mörkt. System följer operativsystemets inställning.
+2. **Palettvariant**: en valfri fästning inom familjen du valde.
+
+| Palett | Familj | Vad den är till för |
+| --- | --- | --- |
+| Standard | Endera | Familjens enkla schema. Detta är vad du får efter att ha valt Ljust eller Mörkt. |
+| OLED-svart | Mörk | Äkta svart, för OLED-paneler. |
+| Grafit | Mörk | En bläckbetonad mörk variant. |
+| Nordisk frost | Ljus | En sval nordisk ljuspalett. |
+| Verkstadssepia | Ljus | En varm papperspalett, skonsammare för trötta ögon. |
+
+Att välja Ljust eller Mörkt i Läge återställer en fäst variant till familjens standard, så de två
+kontrollerna kan aldrig säga emot varandra.
+
+Två reglage sitter under paletten, och båda lägger sig ovanpå vilket schema du än valt:
+
+- **Hög kontrast** förstärker ramar och fokusringar och lyfter de dämpade textnivåerna.
+- **Minska rörelse** minimerar animationer och övergångar, oberoende av operativsystemets inställning,
+  för dig som upplever rörelse som störande eller illamående.
+
+Det aktuella schemat förhandsvisas direkt i samma panel, med exempel på statustoner och knappar
+istället för livedata.
+
+## Att läsa en vy i vilket ljus som helst
+
+Täta tabeller i dåligt ljus är verkstadens vardag, och de ljusa paletterna är svaret. Om du läser en
+cellmatris på en surfplatta under lysrörsljus är Verkstadssepia och Nordisk frost de två som är värda
+att prova först. I ett mörkt garage eller på natten tar OLED-svart bort glöden runt varje rad.
+
+Målet är WCAG 2.1 AA för kontrast, kontrollerat per tema istället för på ögonmått, med brödtext som
+siktar högre än minimum. Om ett tema du använder har ett kontrastproblem är det en bugg värd att
+rapportera.
+
+## Tangentbord
+
+Hanterill går att använda helt utan mus. Varje kontroll nås med `Tab`, fokus är alltid synligt, och
+dialoger stängs med `Escape`.
+
+- `Ctrl+K` (eller `Cmd+K` på macOS) öppnar kommandopaletten: hoppa till valfri vy, eller sök en modul
+  på namn eller adress.
+- `?` öppnar genvägslistan.
+- Tvåtangentskombinationer hoppar direkt till en vy. Tryck `G` och sedan den andra tangenten: `G` `O`
+  för översikt, `G` `B` för batterihälsa, `G` `D` för felkoder, `G` `C` för anslutning.
+
+Kombinationer ignoreras medan du skriver i ett fält, så ett sökfält aldrig stjäl dem.
+
+## Skärmläsare och semantik
+
+Gränssnittet använder riktiga semantiska element istället för dekorerade rutor: tabeller är tabeller,
+dialoger är dialoger med fokusfällor, flikpaneler är kopplade till sina flikar, och statusändringar
+annonseras via liveregioner istället för att målas om utan avisering. Automatiska tillgänglighetskontroller körs
+över varje tillståndskomponent (tom, fel, laddning, tabell, hex-visare) i CI.
+
+## Operativsystem
+
+Hanterill körs på macOS, Windows och Linux från samma kodbas och med samma funktionsuppsättning.
+
+| Operativsystem | Versioner | Paket |
+| --- | --- | --- |
+| macOS | 12 Monterey och nyare, Apple Silicon och Intel | `.dmg`, `.app`-paket |
+| Windows | Windows 10 och 11, 64-bitars x64 och ARM64 | NSIS-installatör, fristående `.exe` |
+| Linux | Ubuntu 22.04/24.04, Debian 12, Fedora 38+, Arch | `.AppImage`, `.deb` |
+
+Varje plattform har en egenhet värd att känna till före första starten:
+
+- **macOS frågar om lokal nätverksåtkomst** vid första anslutningsförsöket. Tillåt det, annars hittar
+  upptäckten ingenting. Det finns i **Systeminställningar → Integritet och säkerhet → Lokalt nätverk**.
+- **Windows kan visa en SmartScreen-varning**, eftersom byggena inte är kodsignerade med ett
+  kommersiellt certifikat. Klicka **Mer information** och sedan **Kör ändå**.
+- **Linux kräver ingen root-åtkomst** någon gång. Appen binder vanliga oprivilegierade UDP- och
+  TCP-sockets på port 13400. AppImage kräver FUSE (`libfuse2` på Ubuntu 22.04 och nyare); `.deb`
+  installeras med `dpkg -i` och löser sina egna beroenden.
+
+Allt detta finns med åtgärdssteg på sidan [Anslutning](/docs/connection).
+
+## Nästa steg
+
+- [Anslutning](/docs/connection): få länken upp på ditt operativsystem.
+- [Vygids](/docs/workspace-tour): vad alla dessa vyer faktiskt gör.

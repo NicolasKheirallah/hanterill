@@ -1,0 +1,95 @@
+"Did they actually update it?" is one of the most common questions about a modern car, and one of
+the hardest to answer. A software version is usually a string of digits nobody memorised. Hanterill
+answers it by reading the versions, saving the list, and showing you the difference later.
+
+## What a module can tell you about itself
+
+Each module answers four identification reads:
+
+| Identifier | What it holds |
+| --- | --- |
+| `0xEDA0` | The composite identification block: the module's own identity record |
+| `0xF18C` | The ECU serial number, the hardware unit's own serial |
+| `0xF194` | The supplier software number |
+| `0xF195` | The supplier software version |
+
+The distinction between `0xF194` and `0xF195` matters. One names the software part, the
+other names its version. A repair that replaces a module changes the serial. A software update changes
+the version. Those are different kinds of change and the diff reports them separately.
+
+## The audit
+
+An audit sweeps the modules and reads those four identifiers from each. It runs inside an explicit
+budget: a cap on how many modules it will read, and a deadline for the whole pass. When either bound
+is hit, the audit stops and returns what it already gathered.
+
+A module list is never presented as complete when it is not. The result carries:
+
+- **Coverage**: how many modules were planned, answered, failed, or were skipped.
+- **A row per module**, including the ones never asked, each with the reason it was not read.
+- **Field coverage**: how many modules supplied each of the four fields, so you can see that 40
+  modules answered but only 32 had a supplier software version to give.
+- **Why it stopped**, if a bound was the reason.
+
+<Callout kind="note" title="A count of modules is not a result">
+"41 modules answered" says nothing about whether you got the software versions. Hanterill reports the
+per-field counts for this reason.
+</Callout>
+
+## The diff
+
+Two audits of the same car compare module by module. Each module ends up in one of six states:
+
+| State | Meaning |
+| --- | --- |
+| Unchanged | Same on both sides |
+| Software changed | The software number or version differs; the hardware serial did not |
+| Hardware changed | The serial differs, so the physical unit is not the same one |
+| New ECU | Present in the second audit, absent in the first |
+| Missing ECU | Present in the first audit, absent in the second |
+| Unknown | Addressed on both sides but never identified, so there is nothing to compare |
+
+An ECU found on exactly one side is new or missing, never "changed". A module that appeared between
+visits was fitted, not updated.
+
+## A worked example
+
+A car comes in after a dealer service, and the owner wants to know what the visit actually did.
+
+1. Before the visit, run an audit and export it as JSON. Save it with the date in the filename.
+2. After the visit, run the same audit. If the car is not at hand any more, a session saved from the
+   earlier visit works just as well.
+3. Compare the two. Modules whose software changed are the ones the visit touched.
+4. Anything that reads `Unchanged` was not updated, whatever the invoice says.
+
+The same workflow works for a module you replaced yourself: the serial changes and the state reads
+`Hardware changed`, which confirms the new part is the one now talking on the bus.
+
+<Callout kind="caution" title="An unchanged version is not proof of nothing">
+A module that did not answer is recorded as unknown, never as unchanged. If the audit could not read
+a module either time, the diff cannot tell you whether anything happened to it.
+</Callout>
+
+## In the CLI
+
+For scripted work, the two halves are separate commands:
+
+```text
+hanterill firmware-audit --discover --json > before.json
+hanterill firmware-audit --discover --json > after.json
+hanterill firmware-diff before.json after.json
+```
+
+`firmware-audit` accepts an explicit module list, a module cap and a timeout, so it can be pointed at
+one suspected module instead of the whole car.
+
+## Firmware and sessions
+
+An audit is stored in the session archive like any other read, so the firmware inventory from a past
+visit is still there when the car comes back. That is usually faster than re-reading the car, and it
+means the comparison works with no vehicle present at all.
+
+## Next
+
+- [Sessions and evidence](/docs/sessions-and-evidence): the archive the audits live in.
+- [CLI](/docs/cli): the full command list and versioned output.

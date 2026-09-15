@@ -62,7 +62,7 @@ export const simEcus: SimEcu[] = ecus.map((e, i) => ({
 export const SCAN_END = simEcus[simEcus.length - 1].at + 500;
 
 export const scanTotals = {
-  discovered: ecuStats.discovered,
+  discovered: ecuStats.registered,
   dtcCapable: ecuStats.dtc,
   modulesWithFaults: Object.keys(FAULTS).length,
   faults: Object.values(FAULTS).reduce((n, f) => n + f.length, 0),

@@ -6,8 +6,10 @@ import { cn } from "@/lib/cn";
  * emits AVIF/WebP renditions under `assets/gen/<key>/` and this component
  * references them with an explicit srcset. `root` is a repo-root asset path
  * without the Pages base path, e.g. "/assets/overview.png"; the base path is
- * prepended here. If the generated directory is missing (a fresh clone
- * before the first build), the browser falls back to the original source.
+ * prepended here. `width` is the source's intrinsic width; prebuild never
+ * upscales, so the srcset stops there too. If the generated directory is
+ * missing (a fresh clone before the first build), the browser falls back to
+ * the original source.
  */
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -17,9 +19,14 @@ export function shotKey(root: string) {
   return root.replace(/^\/assets\//, "").replace(/\.[^.]+$/, "");
 }
 
-function srcset(root: string, ext: "avif" | "webp") {
+/** Widths prebuild.mjs actually generated for a source of this width. */
+function renderedWidths(width: number) {
+  return WIDTHS.filter((w) => w <= width);
+}
+
+function srcset(root: string, ext: "avif" | "webp", widths: number[]) {
   const key = shotKey(root);
-  return WIDTHS.map((w) => `${BASE}/assets/gen/${key}/${key}-${w}w.${ext} ${w}w`).join(", ");
+  return widths.map((w) => `${BASE}/assets/gen/${key}/${key}-${w}w.${ext} ${w}w`).join(", ");
 }
 
 export function Shot({
@@ -41,10 +48,15 @@ export function Shot({
   imgClassName?: string;
   priority?: boolean;
 }) {
+  const widths = renderedWidths(width);
   return (
     <picture className={cn("block", className)}>
-      <source type="image/avif" srcSet={srcset(root, "avif")} sizes={sizes} />
-      <source type="image/webp" srcSet={srcset(root, "webp")} sizes={sizes} />
+      {widths.length > 0 ? (
+        <>
+          <source type="image/avif" srcSet={srcset(root, "avif", widths)} sizes={sizes} />
+          <source type="image/webp" srcSet={srcset(root, "webp", widths)} sizes={sizes} />
+        </>
+      ) : null}
       <img
         src={`${BASE}${root}`}
         alt={alt}
