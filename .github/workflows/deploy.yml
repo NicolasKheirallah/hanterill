@@ -3,6 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [master]
+  # The download panel, the docs version stamp and the changelog page bake the
+  # GitHub release data into the exported HTML at build time. Without this, the
+  # site keeps advertising whatever release was latest at the previous build.
+  release:
+    types: [published]
   workflow_dispatch:
 
 # Allow the deploy job to publish to Pages via OIDC.
@@ -21,6 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # A release event checks out the tag. The site always builds master, so
+          # publishing a release can never roll the deployed site back.
+          ref: ${{ github.event_name == 'release' && 'master' || github.ref }}
 
       - uses: actions/setup-node@v4
         with:
