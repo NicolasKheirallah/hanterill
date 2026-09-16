@@ -3,9 +3,9 @@ import { TaskRouter } from "@/components/docs/mdx/TaskRouter";
 Hanterill has a lot of screens. This page is the map: what each one is for, and which ones you will
 actually use on a normal day.
 
-The short version: **Overview** tells you what the car is, **Fault Codes (DTCs)** and
-**Battery Health** are where the real work happens, and **Sessions & Reports** is where everything
-you did is kept.
+The short version: **Overview** tells you what the car is. **Fault Codes (DTCs)** and
+**Battery Health** are where the real work happens, and **Sessions & Reports** keeps everything you
+did.
 
 ## Find the screen for your task
 
@@ -45,7 +45,7 @@ If you already know what you are trying to do, skip the list and start here:
 - **HVAC & Thermal**: the refrigerant loop, heater circuit and compressor.
 
 The energy domains (climate, drive units, charging and power) are tabs of one workspace, so a deep
-link can land you directly on the panel you need.
+link takes you straight to the panel you need.
 
 ## Diagnostics and ECUs
 
@@ -53,7 +53,7 @@ link can land you directly on the panel you need.
 - **ECU Inventory**: every module in the registry with its address, what it answered, and what it
   reported. See [ECU reference](/docs/ecu-reference).
 - **DID Scanner**: a bounded sweep over identifier ranges across all modules. This is a research
-  tool: it finds what a module answers that the catalogue does not know about yet.
+  tool: it finds what a module answers that is not in the catalogue yet.
 - **DTC History Diff**: compare two scans and see what changed.
 - **Firmware SBOM**: the software inventory. Every module's part numbers and versions in one list,
   diffable between visits.
@@ -64,12 +64,13 @@ link can land you directly on the panel you need.
   playback.
 - **DID Explorer**: read one identifier at a time, with the raw bytes and the decoded value side by
   side. The manual override for when a screen does not show what you need.
-- **Service & Routines**: the write operations, each behind an explicit confirmation. See [Safety](/docs/safety).
+- **Service & Routines**: the write operations, each behind an explicit confirmation. See
+  [Service functions](/docs/service-functions) and [Safety](/docs/safety).
 
 ## System
 
 - **Capabilities**: what this specific car answered it can do, and what this build of the app can
-  do. When a screen seems empty, this is the honest explanation.
+  do. When a screen seems empty, this is where to find the reason.
 - **Sessions & Reports**: everything you have captured, with exports and comparisons.
 - **Activity & Logs**: the operator trail of what was run, with VIN redaction applied.
 - **Settings**: appearance, language, connection policy, privacy and storage.
@@ -88,9 +89,9 @@ came from without trusting anyone's summary.
 
 ## Missing values are shown as missing
 
-A reading that did not answer is displayed as a gap with a reason, never as a zero. A module that
-was skipped is listed as skipped. A scan reports how many modules replied and how many did not.
-On a diagnostic tool, a fabricated zero is worse than a visible gap.
+When a reading does not answer, the app shows a gap with a reason, never a zero. It lists a skipped
+module as skipped. A scan reports how many modules replied and how many did not. On a diagnostic
+tool, a fabricated zero is worse than a visible gap.
 
 ## Keyboard
 
@@ -101,7 +102,7 @@ On a diagnostic tool, a fabricated zero is worse than a visible gap.
 
 ## Making it yours
 
-Language, themes, contrast, motion and the light/dark mode all live in **Settings**. See
+**Settings** holds language, themes, contrast, motion and the light/dark mode. See
 [Interface and languages](/docs/interface-and-language) for the full list, including which
 languages ship and what each operating system asks for on first launch.
 

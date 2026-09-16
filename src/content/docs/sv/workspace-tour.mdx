@@ -3,8 +3,8 @@ import { TaskRouter } from "@/components/docs/mdx/TaskRouter";
 Hanterill har många vyer. Den här sidan är kartan: vad varje vy är till för, och vilka du faktiskt
 använder en vanlig dag.
 
-Kortversionen: **Översikt** berättar vad fordonet är, **Felkoder (DTC)** och **Batterihälsa** är där
-arbetet sker, och **Sessioner och rapporter** är där allt du gjort sparas.
+Kortversionen: **Översikt** berättar vad fordonet är. **Felkoder (DTC)** och **Batterihälsa** är där
+arbetet sker, och **Sessioner och rapporter** sparar allt du gjort.
 
 ## Hitta vyn för din uppgift
 
@@ -30,8 +30,8 @@ Om du redan vet vad du försöker göra, hoppa över listan och börja här:
   [Batteridiagnostik](/docs/battery-diagnostics).
 - **Cell- och värmekarta**: cellgruppsdatan utplacerad fysiskt över paketet, så en svag punkt får
   en position istället för bara en siffra.
-- **12 V viloförbrukning**: historik över viloström. Användbart när fordonet har slut batteri på morgonen och
-  inget annat ser fel ut.
+- **12 V viloförbrukning**: historik över viloström. Användbart när fordonet har slut batteri på
+  morgonen och inget annat ser fel ut.
 - **Laddning** och **Effekt (OBC/DC-DC)**: ladduttagets läge, 12 V-skenan och omvandlarna.
 - **TCAM-batteri**: reservbatteriet i telematikmodulen.
 
@@ -44,7 +44,7 @@ Om du redan vet vad du försöker göra, hoppa över listan och börja här:
 - **HVAC och termik**: köldmediekretsen, värmekretsen och kompressorn.
 
 Energidomänerna (klimat, drivenheter, laddning och effekt) är flikar i en gemensam arbetsyta, så en
-djuplänk kan landa direkt på rätt panel.
+djuplänk tar dig direkt till rätt panel.
 
 ## Diagnostik och styrenheter
 
@@ -52,7 +52,7 @@ djuplänk kan landa direkt på rätt panel.
 - **Styrmodulregister**: varje modul i registret med sin adress, vad den svarade och vad den
   rapporterade. Se [ECU-referens](/docs/ecu-reference).
 - **DID-skanner**: ett begränsat svep över identifierarintervall i alla moduler. Det här är ett
-  forskningsverktyg: det hittar vad en modul svarar som katalogen ännu inte känner till.
+  forskningsverktyg: det hittar vad en modul svarar som ännu inte finns i katalogen.
 - **DTC-historikdiff**: jämför två skanningar och se vad som ändrats.
 - **Firmware-SBOM**: mjukvaruinventeringen. Varje moduls artikelnummer och versioner i en lista,
   diffbar mellan besök.
@@ -62,12 +62,13 @@ djuplänk kan landa direkt på rätt panel.
 - **Livedata**: valda kanaler samplade i fast takt och ritade, med inspelning och uppspelning.
 - **DID-utforskaren**: läs en identifierare i taget, med råa byte och det avkodade värdet sida vid
   sida. Den manuella överstyrningen när en vy inte visar det du behöver.
-- **Service och rutiner**: skrivåtgärderna, var och en bakom en uttrycklig bekräftelse. Se [Säkerhet](/docs/safety).
+- **Service och rutiner**: skrivåtgärderna, var och en bakom en uttrycklig bekräftelse. Se
+  [Servicefunktioner](/docs/service-functions) och [Säkerhet](/docs/safety).
 
 ## System
 
 - **Kapaciteter**: vad just den här bilen svarade att den kan, och vad just det här bygget av appen
-  kan. När en vy verkar tom är detta den ärliga förklaringen.
+  kan. När en vy verkar tom är det här du hittar orsaken.
 - **Sessioner och rapporter**: allt du har fångat, med exporter och jämförelser.
 - **Aktivitet och loggar**: spåret av vad som körts, med VIN-maskering tillämpad.
 - **Inställningar**: utseende, språk, anslutningspolicy, integritet och lagring.
@@ -85,10 +86,9 @@ var den kom ifrån utan att lita på någons sammanfattning.
 
 ## Saknade värden visas som saknade
 
-En avläsning som inte svarade visas som en lucka med en orsak, aldrig som en nolla. En modul som
-hoppades över listas som överhoppad. En skanning rapporterar hur många moduler som svarade och hur
-många som inte gjorde det. Det betyder mer än det låter: på ett diagnosverktyg är en påhittad nolla
-sämre än en synlig lucka.
+När en avläsning inte svarar visar appen en lucka med en orsak, aldrig en nolla. En överhoppad
+modul listas som överhoppad. En skanning rapporterar hur många moduler som svarade och hur många
+som inte gjorde det. På ett diagnosverktyg är en påhittad nolla sämre än en synlig lucka.
 
 ## Tangentbord
 
@@ -100,7 +100,7 @@ sämre än en synlig lucka.
 
 ## Anpassa appen
 
-Språk, teman, kontrast, rörelse och ljust/mörkt läge finns alla i **Inställningar**. Se
+**Inställningar** innehåller språk, teman, kontrast, rörelse och ljust/mörkt läge. Se
 [Gränssnitt och språk](/docs/interface-and-language) för hela listan, inklusive vilka språk som
 levereras och vad varje operativsystem frågar efter vid första starten.
 

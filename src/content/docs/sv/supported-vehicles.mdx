@@ -14,8 +14,8 @@ Två olika saker, och skillnaden spelar roll:
 - **Stödd** betyder att diagnostikfunktionerna är skrivna och kontrollerade mot kända, korrekta
   avläsningar.
 
-Ett fordon kan vara nåbar och ändå berätta nästan inget användbart, eftersom avkodaren som gör råa byte
-till en batteriprocent ännu inte är skriven eller verifierad för den plattformen. Etiketterna på
+Ett fordon kan vara nåbart och ändå berätta nästan inget användbart. Avkodaren som omvandlar råa
+byte till en batteriprocent är ännu inte skriven eller verifierad för den plattformen. Etiketterna på
 den här sajten beskriver alltid det andra.
 
 ## Vad etiketterna betyder
@@ -25,9 +25,7 @@ den här sajten beskriver alltid det andra.
 | Stöds | Verifierad mot ett riktigt fordon. Batteri, felkoder, styrenhetsidentifiering och realtidsdata testas regelbundet. |
 | Delvis | Vissa funktioner verifierade, andra täcks inte än på denna modell. |
 | Testas | Koden finns men har inte kontrollerats mot den riktiga bilen. Behandla varje avläsning som preliminär. |
-| WIP | Under aktiv utveckling. Ansluter, men avkodningen är ofullständig. |
 | Utreds | Vi kartlägger fortfarande hur plattformen fungerar. Inte användbar för diagnostik. |
-| Planerat | På färdplanen. Inget skrivet ännu. |
 
 ## Plattformar
 
@@ -47,21 +45,24 @@ Fullständig funktionsgenomgång för referensfordonet:
 
 ### SPA
 
-Levereras som katalogdata: pakettopologier, ett CAN-eran BECM-register och avkodare, porterade från
-community-research med citeringar. Inget här har kontrollerats mot en levande bil ännu.
+Delvis stödd. Levereras som katalogdata: pakettopologier, ett CAN-eran BECM-register och avkodare,
+porterade från community-research med citeringar. Inget här har kontrollerats mot en levande bil
+ännu. På första generationens SPA svarar batteriet över äldre CAN-kablage. En ISO-TP-CAN-transport
+finns i appen, men ingen hårdvaruadapter levereras än, så levande batteriskanning väntar på adaptern,
+inte på mjukvara som inte finns.
 
 <Callout kind="caution" title="Inte verifierad mot en levande bil">
 SPA-batteridefinitionerna porterades från referensforskning, inte uppmätta på ett fordon som Hanterill
-har sett. På första generationens SPA svarar batteriet över äldre CAN-kablage, som den nuvarande
-DoIP-transporten inte når, så levande skanning är inte möjlig ännu. Lita inte på SPA-siffror.
+har sett. Lita inte på SPA-siffror.
 </Callout>
 
 <PlatformSupport platform="SPA" />
 
-### SEA
+### SEA1
 
 EX30-klassens definitioner finns i katalogen: styrenhetsregister, routningsadresser,
-identifierarkartor och cellmappning. Var och en av dem är obekräftad av hårdvara.
+identifierarkartor och cellmappning. Var och en av dem är obekräftad av hårdvara. Plattformen heter
+SEA1 i appen; "SEA" är familjenamnet.
 
 <Callout kind="caution" title="Hårdvarubekräftelse återstår">
 SEA1 levereras som definitioner som bärs upp av syntetisk testdata. Zeekr och andra delplattformar
@@ -88,10 +89,13 @@ paketuppbyggnad anger hur många cellgrupper den har och hur de är ordnade:
 
 | Plattform | Uppbyggnad | Status |
 | --- | --- | --- |
-| CMA | 108 grupper: 27 moduler om 4 | Verifierad på referensbilen |
+| CMA | 108 grupper: 27 moduler om 4 (78 kWh) | Verifierad på referensfordonet |
+| CMA | 108 grupper: 27 moduler om 4 (82 kWh) | Katalogiserad från katalog- och avkodarbevis |
 | CMA | 96 grupper: 24 moduler om 4 (69 kWh) | Definierad från katalog- och avkodarbevis |
-| SPA | 96 (69 kWh), 108 (78 kWh), hybrid 102 | Katalogiserad, väntar på hårdvara |
-| SEA1 | 107 (69 kWh NMC), 120 (51 kWh LFP), 110 | Katalogiserad, väntar på hårdvara |
+| SPA | 96 (69 kWh), 108 (78 kWh), hybrid 102 (T8) | Katalogiserad, väntar på hårdvara |
+| SPA | hybrid 96 (tidig T8, 11,6 kWh) | Katalogiserad, väntar på hårdvara |
+| SEA1 | 107 (69 kWh NMC), 120 (51 kWh LFP) | Katalogiserad, väntar på hårdvara |
+| SEA1 | 110 (100 kWh NMC, Zeekr-klass) | Katalogiserad, väntar på hårdvara |
 
 Ett paket bedöms komplett vid sin egen cellräkning. En 102-cellers hybrid märks aldrig ofullständig
 för att den inte har 108.

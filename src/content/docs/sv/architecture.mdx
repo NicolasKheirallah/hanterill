@@ -1,7 +1,8 @@
 import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 
 Hanterill är en stapel av lager, var och en tillräckligt liten att förstå på egen hand. Längst ned
-Ethernet. Längst upp en vy som visar en batteriprocent. Den här sidan går igenom hela vägen.
+ligger Ethernet, och längst upp en vy som visar en batteriprocent. Den här sidan går igenom hela
+vägen.
 
 Inget i den är ett proprietärt moln-API. Varje lager är en öppen standard eller en tabell Hanterill
 levererar med.
@@ -13,13 +14,29 @@ Hanterill            app och CLI, Rust och Tauri v2
 Applikationslager    use cases, sessioner, svep, policy
 ISO 14229 UDS        unified diagnostic services (frågorna)
 ISO 13400 DoIP       diagnostics over IP (kuvertet)
+ISO 15765 ISO-TP     diagnostics over CAN (den andra länken)
 TCP / UDP            sockets, upptäckt, routningsaktivering
 Ethernet             passiv ENET-kabel, RJ45
+CAN                  OBD-II-stift, hårdvaruadapter krävs
 Fordonsgateway       CEM / VGM på CMA
 ```
 
 Den fullständiga modul-till-modul-kopplingen bakom den gateway:n är en egen levande karta: varje
 enhet, busssegment och dokumenterad pin-rad finns i [CMA Network Explorer](/network).
+
+### CAN-länken
+
+De flesta fordon nås över DoIP, men transporten talar också ISO-TP över CAN. Det är den äldre
+OBD-II-vägen: CAN-ramar som bär samma UDS-frågor. Den är implementerad och kräver en
+hårdvaruadapter; Hanterill levererar ingen. Sidan [Anslutning](/docs/connection) går igenom vad
+varje länk kräver.
+
+### Det levande registret med 44 rader och förteckningen med 49
+
+Sidan [Styrenhetsreferensen](/docs/ecu-reference) listar 49 rader: hela CMA/ICE-förteckningen som
+Hanterill kan tala med. En levande audit går igenom det mindre register som fordonet faktiskt
+annonserar: 44 rader på en BEV. Förteckningen är kartan; registret är vad det fordonet
+presenterade.
 
 <ProtocolStack />
 
@@ -27,17 +44,17 @@ enhet, busssegment och dokumenterad pin-rad finns i [CMA Network Explorer](/netw
 
 ## Vad som händer när du trycker Anslut
 
-1. **Hitta bilen.** Hanterill skickar en förfrågan om fordonsidentifiering över UDP på port 13400 och
+1. Hitta bilen. Hanterill skickar en förfrågan om fordonsidentifiering över UDP på port 13400 och
    lyssnar efter annonseringar.
-2. **Öppna en kanal.** Den öppnar en TCP-anslutning till bilen på samma port, 13400.
-3. **Få tillstånd.** Den skickar en begäran om routningsaktivering. Bilen accepterar eller avvisar,
-   och tills den accepterar besvaras inget diagnostikmeddelande.
-4. **Hälsa på varje modul.** En `TesterPresent` håller sessionen vid liv; en funktionell broadcast kan
+2. Öppna en kanal. Den öppnar en TCP-anslutning till bilen på samma port, 13400.
+3. Få tillstånd. Den skickar en begäran om routningsaktivering. Bilen accepterar eller avvisar, och
+   tills den accepterar besvaras inget diagnostikmeddelande.
+4. Hälsa på varje modul. En `TesterPresent` håller sessionen vid liv; en funktionell broadcast kan
    fråga alla moduler på en gång, med individuella avsökningar endast för de tysta.
-5. **Ställ en fråga.** En UDS-begäran går ut i ett DoIP-kuvert. Bilen paketerar svaret på samma sätt.
-6. **Avkoda svaret.** Byten matchas mot en plattformsspecifik definition. Ett svar som inte matchar
+5. Ställ en fråga. En UDS-begäran går ut i ett DoIP-kuvert. Bilen paketerar svaret på samma sätt.
+6. Avkoda svaret. Byten matchas mot en plattformsspecifik definition. Ett svar som inte matchar
    kontraktet avvisas som ett typat utfall, aldrig tvingat till en siffra.
-7. **Spara det.** Observationen skrivs till det lokala sessionsarkivet med sin källa, tidsstämpel och
+7. Spara det. Observationen skrivs till det lokala sessionsarkivet med sin källa, tidsstämpel och
    avkodarversion.
 
 En enskild begäran färdas samma väg varje gång, och svaret kommer tillbaka längs den:
@@ -68,16 +85,17 @@ som säger vilken sorts meddelande detta är:
 | `0x8001` | Ett diagnostikmeddelande, som bär en UDS-begäran eller ett svar |
 | `0x8002` / `0x8003` | Positiv och negativ bekräftelse av det meddelandet |
 
-Ett fordon är inte skyldig att skicka bekräftelsen före svaret, så Hanterill buffrar ett tidigt svar
-istället för att missta det för bekräftelsen. Små detaljer som den är anledningen till att
+Ett fordon är inte skyldigt att skicka bekräftelsen före svaret, så Hanterill buffrar ett tidigt
+svar i stället för att missta det för bekräftelsen. Sådana små detaljer är anledningen till att
 transporten är ett eget lager snarare än några socket-anrop.
 
 ## Vad UDS lägger till
 
-UDS är frågornas språk. Varje begäran börjar med en tjänsteidentifierare, och tjänsterna som används
+UDS definierar frågorna. Varje begäran börjar med en tjänsteidentifierare. Tjänsterna som används
 här är en kort lista: `0x10` för att öppna en session, `0x19` för felkoder, `0x22` för att läsa ett
-värde, `0x2A` för periodiska läsningar, `0x31` för rutiner, `0x14` för att radera.
-[ECU-referensen](/docs/ecu-reference) och [Säkerhet](/docs/safety) går igenom dem en och en.
+värde, `0x2A` för periodiska läsningar, `0x31` för rutiner, `0x3E` för `TesterPresent`, och `0x14`
+för att radera, som bara finns i skrivbara byggen. [Styrenhetsreferensen](/docs/ecu-reference) och
+[Säkerhet](/docs/safety) går igenom dem en och en.
 
 ## Komponenter
 
@@ -91,8 +109,9 @@ värde, `0x2A` för periodiska läsningar, `0x31` för rutiner, `0x14` för att 
 - **Avkodare**: definitioner per plattform och modul med uttryckliga nyttolastkontrakt: förväntad
   längd, skalning, sekretessklass och mognad. CMA-avkodare är verifierade mot ett riktigt fordon; SPA- och
   SEA1-definitioner levereras märkta som väntande på hårdvarubekräftelse.
-- **Paketuppbyggnader**: cellmatrisen är data, inte kod. CMA 108-cellers, CMA 96-cellers, SPA 96 och
-  108 och hybrid 102, samt SEA1-layouterna bär var sin räkning och ordning.
+- **Paketuppbyggnader**: cellmatrisen är data, inte kod. CMA 108-cellers, CMA 96-cellers, CMA
+  82 kWh, SPA 96 och 108 och hybrid 102, SPA tidig-hybrid 96, samt SEA1-layouterna bär var sin
+  räkning och ordning.
 - **Policy**: [motorn för besiktningspoäng](/docs/inspection-reports) och korskontrollerna ligger
   ovanpå observationerna. De lägger aldrig till trafik.
 - **Sessioner**: ett atomiskt, hållbart lokalt arkiv med operatörsanteckningar och återhämtning från
@@ -113,8 +132,8 @@ utvecklingskonfiguration snarare än en release.
 ## Varför Rust och Tauri
 
 Protokollarbetet passar Rust: många små samtidiga operationer med felhantering som måste vara
-uttrycklig. Tauri håller binären liten och använder operativsystemets egen webview istället för att
-leverera en webbläsarmotor, så appen känns nativ snarare än som en webbsida i ett fönster.
+uttrycklig. Tauri håller binären liten och använder operativsystemets egen webview i stället för
+att leverera en webbläsarmotor. Appen känns nativ snarare än som en webbsida i ett fönster.
 Gränssnittet är React och TypeScript, typat mot kontrakt som genereras från motorn.
 
 ## Nästa steg

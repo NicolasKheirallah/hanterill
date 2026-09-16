@@ -41,7 +41,7 @@ export const glossary: GlossaryEntry[] = [
   {
     term: "DTC",
     full: "Diagnostic Trouble Code",
-    meaning: "A code a module stores when it detects a problem, such as P0A80 for a battery fault.",
+    meaning: "A code a module stores when it detects a problem, printed as seven characters such as B171D57.",
     group: "Diagnostics",
     doc: "/docs/dtc-scanning",
   },

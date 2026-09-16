@@ -271,7 +271,7 @@
         [
           "12 V battery",
           "Adaptation reset after replacement",
-          "WriteDataByIdentifier"
+          "RoutineControl"
         ],
         [
           "Service reminder",
@@ -297,7 +297,7 @@
       "hClearing": "Clearing fault codes",
       "pClearing": "Once you confirm it, the clear path matches the reverse-engineered reference orchestration: enter the extended session per module, capture freeze frames before the erase (the clear wipes them), bulk clear, wait through the pending window, retry the laggards per ECU, then re-read and report the stubborn set. An optional force-reset loop reboots stubborn modules and repairs the DoIP routing afterwards. It is suppressed while the vehicle reports a driving usage mode. Pre-erase and post-clear states feed the built-in <link>DTC diff</link>.",
       "hAvail": "Availability",
-      "pAvail": "Routine support depends on the ECU and the platform. A routine that is not implemented for a given vehicle is not shown. Testing and Research platforms do not expose service functions at all, and the routine identifiers themselves are reverse-engineered, so they carry no per-operation safety design.",
+      "pAvail": "Routine support depends on the ECU and the platform. A routine that is not implemented for a given vehicle is not shown, and availability is gated by the build's capability manifest. The routine identifiers themselves are reverse-engineered, so they carry no per-operation safety design.",
       "safetyDocs": "Safety documentation"
     },
     "inspectionReports": {

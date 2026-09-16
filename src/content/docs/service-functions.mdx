@@ -1,0 +1,119 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+Most of Hanterill asks the car questions. A service function tells the car to do something: retract
+the parking brake, zero a steering-angle sensor, reset a service interval, run a coolant bleed. This
+page explains what ships, how each action is confirmed, and what cannot be undone.
+
+<SafetyNotice level="adaptation" title="These actions change the vehicle">
+Everything on this page transmits a state-changing request. None of it runs without an explicit,
+per-action confirmation, and a build compiled without the write feature refuses it outright.
+</SafetyNotice>
+
+## Two kinds of request
+
+- **Reads** ask for a value: identification, fault codes, measured channels, the stored result of a
+  routine that already ran. Reads are the default everywhere in the app and never change the car.
+- **Service functions** start a routine or send a command that actuates hardware.
+
+Three families are refused by design in every build: writing a value by identifier, input/output
+control, and unlocking security access to write. Security access is used only to inspect the seed and
+key state, never to unlock anything. Programming and flashing are not implemented at all.
+
+## The confirmation contract
+
+A workshop tool that cannot clear a code after a repair is only half a tool, so the write surface
+exists. What makes it safe is consent rather than absence:
+
+- The running binary publishes a capability manifest, and the interface only offers what this
+  build can actually execute.
+- Each action opens a confirmation dialog naming the vehicle, the target module and the exact
+  request. The execute button stays disabled until every prerequisite checkbox is ticked. A
+  high-hazard routine gets a danger-styled confirmation.
+- Only one actuation runs at a time.
+- The audit log records the responses that actually came back, not the intent.
+- A build compiled without the write feature answers a typed `read_only_build` refusal instead of
+  failing mysteriously. That stripped configuration is for CI and development; it is not what ships.
+
+## Before you start
+
+The preconditions are **attested by you, not enforced by the tool**. Every routine expects a parked,
+level vehicle with the parking brake on and chocks where the procedure calls for them. It also
+expects ignition in Position II with 12 V support and a positive acknowledgment from the module.
+Each routine carries its own one-line prerequisite as well. Treat those as a checklist to have
+completed, not a warning to click past.
+
+## The routine catalogue
+
+Sixteen routines ship, all using the same routine-control service. Hazard is the app's own rating.
+
+| System | What it does | Hazard |
+| --- | --- | --- |
+| Electric parking brake | Retract to service position for pad replacement | High |
+| Electric parking brake | Restore from service position | Medium |
+| Steering angle | Zero the steering-angle sensor | High |
+| 12 V battery | Adaptation reset after a battery replacement | Medium |
+| TCAM backup battery | Condition the telematics backup battery | Medium |
+| Auxiliary coolant pump | Run pump 1, pump 2 or both (guided bleed) | Medium |
+| ADAS camera | Reset the forward camera | Medium |
+| ADAS radar | Reset the forward radar | Medium |
+| Surround camera | Learn the surround-view cameras | Medium |
+| Blind-spot radar | Reset the left/right blind-spot radars | Medium |
+| Service reminder | Reset the service interval counter | Low |
+| Climate control | Calibrate the HVAC damper | Low |
+| Sunroof and windows | Normalise after a power loss | Low |
+| Grille shutter | Calibrate the active grille shutter | Low |
+| Usage mode | Put the car into an active usage mode | Medium |
+| Usage mode | Put the car into an inactive usage mode | Medium |
+
+## The guided coolant bleed
+
+The auxiliary coolant pump is the one routine with a guided flow rather than a single action. It
+walks through a five-step sequence, letting you choose pump 1, pump 2 or both, and it distinguishes
+between "stopped because you asked" and "stopped because it could not be confirmed". An unconfirmed
+stop is reported as unconfirmed, never quietly presented as safe.
+
+## Clearing fault codes
+
+Clearing is its own flow, with its own page. The steps are entering extended sessions, capturing
+freeze frames before they are destroyed, bulk clear, retry, and a verify re-read that names the
+modules still holding codes. The optional force-reset step reboots stubborn modules and repairs the route
+afterwards; it is opt-in and refuses to run while the car reports a driving usage mode. See
+[DTC scanning](/docs/dtc-scanning) for the full sequence.
+
+## ECU reset
+
+A module reset is available as a separate action, and it is also what the clear flow's force-reset
+step uses. It reboots the target module rather than changing a stored value. Like every other write,
+it is behind the same confirmation contract.
+
+## What can and cannot be undone
+
+Three things have a reverse step: the parking-brake restore, the inverse usage mode, and switching
+the coolant pump off. Everything else is **one-way**: steering-angle zero, ADAS and camera resets,
+calibration routines, adaptation resets. There is no rollback. The interface says so before you
+confirm.
+
+## Honest limits
+
+- The routine identifiers are reverse-engineered, so they carry no per-operation safety design
+  from the manufacturer. Hanterill exposes the capability, not a licence to use it; steering-angle
+  and ADAS targets should not be actuated without the manufacturer's procedure.
+- Availability depends on the vehicle mapping. Hanterill refuses a routine whose target module is
+  not resolved for that platform instead of attempting it against a guessed address.
+- Routines transmit directly without escalating the diagnostic session. Only the clear flow enters
+  an extended session first.
+- There is no separate gate that hides service functions on Testing or Research platforms. Do not
+  assume one exists.
+
+## Errors and negative responses
+
+A routine succeeds only on a positive routine-control response. The app surfaces a negative response
+with the module and the routine that produced it instead of retrying it blindly. It reports anything
+else as malformed. A timeout is never treated as success, and the app does not reset a module just to
+clear a timeout.
+
+## Next
+
+- [Safety](/docs/safety): the read-only versus vehicle-changing boundary in full.
+- [DTC scanning](/docs/dtc-scanning): the clear flow and the before/after diff.
+- [Sessions and evidence](/docs/sessions-and-evidence): how a write is recorded.

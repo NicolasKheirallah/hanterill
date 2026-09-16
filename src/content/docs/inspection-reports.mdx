@@ -13,33 +13,74 @@ and [Battery diagnostics](/docs/battery-diagnostics). Scoring adds arithmetic, n
 
 ## The four verdicts
 
-The report ends in one of four plain answers:
+The report ends in one of four plain answers. The rule names and the words on screen differ
+slightly; both are shown here so a stored report and the app agree.
 
-| Verdict | What it means |
-| --- | --- |
-| Sound | No rule raised a concern and the score is high. |
-| Advisories | Something worth knowing about, but nothing safety-critical. |
-| Attention | A hard rule fired, or the score is low. Read the findings before you decide anything. |
-| Inconclusive | Not enough answered to earn a verdict. |
+| Verdict | On screen | What it means |
+| --- | --- | --- |
+| Sound | "Sound" | No rule raised a concern and the score is high. |
+| Advisories | "Sound: minor advisories" | Something worth knowing about, but nothing safety-critical. |
+| Attention | "Needs attention" | A hard override fired, or the score is low. Read the findings before you decide anything. |
+| Inconclusive | "Not evaluated" | Not enough answered to earn a verdict. |
 
 Inconclusive is a real outcome, not a failure. If the battery health could not be read, the report
 refuses to guess rather than scoring the car on partial evidence.
 
-## The rule catalogue (v1.0.0)
+## The score itself
 
-Six groups of rules carry score weight:
+One captured pass produces one score, not a score per system. The arithmetic is simple:
 
-| Rule group | What it looks at |
-| --- | --- |
-| Battery degradation | State of Health against published bands, including the manufacturer's warranty floor |
-| Cell balance | Voltage spread across cell groups, with watch bands from published community research |
-| 12 V support battery | The rested voltage of the low-voltage battery, which starts the car's electronics |
-| 12 V quiescent draw | How much current the car draws while asleep, from its own measured history |
-| Fault severity | Codes weighted by ISO 14229 status class and SAE J2012 code class, not counted flat |
-| Odometer consistency | Mileage cross-read across modules; disagreement is its own finding |
+```
+score = clamp(100 − (sum of every rule's points), 0, 100)
+```
 
-Everything else in the report is a note: thermal spread, an overdue service interval, uptime
-spread, a charge limitation, key count. Those describe what was seen and never move the score.
+Start at 100, subtract each rule that fired, and never fall below 0. The verdict then follows the
+score unless a rule forced something stronger. In order, first match wins:
+
+1. Any hard override fired → **attention**.
+2. A rule forced attention → **attention**; a rule forced advisories → **advisories**.
+3. Score 85 or above → **sound**.
+4. Score 60 or above → **advisories**.
+5. Below 60 → **attention**.
+6. No score at all → **inconclusive**.
+
+## What actually carries score weight (v1.0.0)
+
+Four inputs move the number. This is the complete list as shipped:
+
+| Input | Band | Points |
+| --- | --- | --- |
+| Battery State of Health | below 70% | −30 |
+| | 70% up to 80% | −14 |
+| | 80% up to 90% | −4 |
+| | 90% and above | 0 (note only) |
+| 12 V rested rail | below 12.2 V | −16 |
+| | 12.2 V up to 12.5 V | −6 |
+| | 12.5 V and above | 0 (note only) |
+| Fault codes | confirmed, failing and lamp on, class P or U | −12 each, capped at −30 total |
+| | confirmed but not currently failing | −5 each, capped at −20 total |
+| | pending only | −2 each, capped at −8 total |
+| | confirmed and failing on a safety module | −8 each, plus the hard override |
+| Odometer | stored copies disagree beyond 20 km | −25, plus the hard override |
+
+A few rules about those rules:
+
+- Below 70% SoH is the published warranty floor. The report describes where the reading sits
+  against the 8-year / 160,000 km terms; it makes no coverage determination.
+- A reading at or above about 13 V on the 12 V rail is converter-supported, not rested. No
+  state-of-charge assessment is made at all in that case, and nothing is deducted.
+- Fault codes are weighted, not counted flat. Hanterill reads the status bits to tell whether a
+  code is active, pending or stored, and reads the code class to tell whether it is a
+  powertrain/network code.
+- Cell balance and quiescent draw do not carry score weight in this version. Cell balance is a
+  review band in the battery screens; the score engine never reads the sleep-current history. If you
+  have seen them described as scored rule groups, that description is ahead of the shipped engine.
+
+## What stays a note
+
+Everything else in the report describes what was seen and never moves the score: the coolant-loop
+thermal spread, an overdue service interval, uptime spread, a charge limitation, key count, and the
+"clean scan" note. A note can still be worth reading; it just cannot change the verdict.
 
 ## Every rule names its evidence
 
@@ -48,24 +89,28 @@ can push:
 
 | Class | Example | Strongest verdict it can force |
 | --- | --- | --- |
-| Published standard | ISO status-bit meanings | Attention |
+| Published standard | ISO status-bit meanings and code classes | Attention |
 | Manufacturer spec | The 8-year / 160,000 km warranty floor | Attention |
-| Vehicle capture | Measured rest spread and sleep draw from hardware sessions | Advisories |
-| Community research | Cell-imbalance watch bands | Advisories |
-| Heuristic | A charger ceiling guess | Note only, never affects the score |
+| Vehicle capture | An odometer read across several modules | Advisories |
+| Community research | The rested-voltage bands for the 12 V battery | Advisories |
+| Heuristic | A charger-ceiling guess | Note only, never affects the score |
 
-A rule resting on a decoder that is still provisional is downgraded one class automatically. That
-is why some findings read as observations rather than judgements: the tool reports what it does not
-yet know.
+A rule resting on a decoder that is still provisional is downgraded one class automatically. The
+State of Health rules are provisional, which is why even a badly degraded pack lands as
+**advisories** rather than **attention**. Battery data alone cannot produce "Needs attention" in
+this version. Only a hard override, or a low score driven by other findings, gets there.
 
 ## The two hard overrides
 
 Two findings skip the arithmetic and force an Attention verdict on their own:
 
 - A confirmed, currently failing fault in a safety system (airbags, ABS/ESP, steering angle, ADAS).
-- Stored odometer copies that disagree beyond normal drift. That disagreement is the strongest
-  mileage-fraud signal a used-car inspection can find, and the report states the magnitude of the
-  disagreement, never an accusation.
+- Stored odometer copies that disagree beyond normal drift (more than 20 km). That disagreement is
+  the strongest mileage-fraud signal a used-car inspection can find, and the report states the
+  magnitude of the disagreement, never an accusation.
+
+An override outranks everything, including a missing score. A live safety fault still forces
+attention even when the battery health was never read.
 
 ## When inputs are missing
 
@@ -73,8 +118,11 @@ Missing inputs degrade the report toward inconclusive rather than toward a false
 
 - A channel that never answered is listed as a coverage gap. It cannot pass a check and cannot fail
   one.
-- A DTC scan that did not reach every module marks the code evidence partial, and code rules then
-  cannot push the verdict above advisories on their own.
+- State of Health is the one input that removes the score entirely. Without it the score is
+  empty, not zero, and the verdict is inconclusive unless an override fired.
+- A DTC scan that did not reach every module is recorded as a coverage gap and marks the code
+  evidence partial. Non-safety code rules ask for advisories at most in any case, so a partial scan
+  cannot quietly become an all-clear.
 - The report prints its own rule version, its coverage, and a SHA-256 checksum, so a later reading
   can be traced to the rules that produced it.
 - Re-scoring a stored session under a newer rule set is a local calculation. No car needed.
@@ -84,18 +132,6 @@ Missing inputs degrade the report toward inconclusive rather than toward a false
 The pack temperature sensors have no established mapping to individual modules yet, so thermal
 spread is reported as an observation with zero effect on the score. It graduates to a real rule
 only when the placement is corroborated by evidence.
-
-## The score itself
-
-The arithmetic is simple: start at 100, subtract each rule's points, floor at 0. The verdict then
-follows the score, unless a rule forced a stronger one:
-
-- 85 or above, with nothing forced upward: **sound**
-- 60 or above, or any advisory rule fired: **advisories**
-- below 60, or a hard override fired: **attention**
-
-If the battery health could not be read, the score is left empty rather than guessed, and the
-verdict is **inconclusive**.
 
 ## Location privacy
 
@@ -109,5 +145,7 @@ coordinates, they are rounded to three decimals, roughly 110 metres. See [Privac
   screen.
 - **Sessions**: stored sessions re-score under current rules without reconnecting to a car.
 
-The full design document, including every band and point value, lives in the app repository at
-`docs/product/ppi-intelligence-and-scoring.md`.
+The full design document, including the rationale for every band, lives in the app repository at
+`docs/product/ppi-intelligence-and-scoring.md`. Where that document and the shipped engine differ,
+the engine is what runs: it is the single implementation behind the app, the CLI and every stored
+session.

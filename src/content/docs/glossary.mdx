@@ -3,8 +3,8 @@ import { GlossaryList } from "@/components/docs/mdx/GlossaryList";
 Diagnostics has its own vocabulary, and most of it is acronyms. This page is the lookup: every term
 the rest of these docs use, expanded once and explained in plain language.
 
-If you only read one section, read the Diagnostics group. That is where the words you will meet on
-the first screen live.
+If you read only one section, read the Diagnostics group. Its terms are the ones you meet on the
+first screen.
 
 <GlossaryList />
 
@@ -14,6 +14,10 @@ A few pairs trip people up, so they are worth stating directly:
 
 - **SoH and SoC.** State of Health is how much capacity the pack has left compared with new. State
   of Charge is how full it is right now. A pack can be 90% healthy and 20% charged at the same time.
+- **Battery health, SoH and the report score.** Three different numbers. Hanterill reads the SoH
+  percentage from the battery controller. It calculates the per-cell summary from three per-cell
+  blocks, and the report score out of 100 from the whole car, with SoH as one input. See
+  [Battery diagnostics](/docs/battery-diagnostics).
 - **ECU and DID.** An ECU is a computer. A DID is a question you ask it. One module answers many
   identifiers.
 - **DTC and freeze frame.** A DTC is the code that says a fault happened. A freeze frame is the

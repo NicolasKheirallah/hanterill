@@ -1,22 +1,23 @@
 import { EcuReference } from "@/components/docs/mdx/EcuReference";
 
-Ett fordon är inte en dator. Den är dussintals små datorer, kallade ECU:er (electronic control units),
-sammanlänkade. Var och en kör något: bromsarna, fönstren, batteriet, radion. Hanterill frågar var och
-en vad den är, vilken mjukvara den kör och om något är fel.
+Ett fordon är inte en dator. Den är dussintals små datorer, kallade ECU:er (electronic control
+units), som är sammanlänkade. Var och en kör något: bromsarna, fönstren, batteriet, radion.
+Hanterill frågar var och en vad den är, vilken mjukvara den kör och om något är fel.
 
-Den här sidan är listan över varje ECU Hanterill vet hur den ska prata med på CMA-plattformen, med
-adressen den svarar på.
+Den här sidan listar varje ECU som Hanterill kan prata med på CMA-plattformen, med adressen
+som var och en svarar på.
 
 ## Registret
 
-CMA-registret innehåller 49 poster. Fyrtio av dem annonserar stöd för felkoder. Fem poster är märkta
-`ref`: referensrader från leverantörsdokumentation som aldrig observerats på ett riktigt fordon. På
-ett helt elektriskt fordon svarar dessa fem inte alls, och Hanterill registrerar tystnaden som
-förväntad istället för som ett fel.
+CMA-registret innehåller 49 poster. Fyrtio av dem annonserar stöd för felkoder. Fyrtiofyra har
+observerats på ett levande fordon; de återstående fem är `ref`-rader: referensposter från
+leverantörsdokumentation som aldrig svarat. På ett helt elektriskt fordon svarar dessa fem inte alls,
+och Hanterill registrerar tystnaden som förväntad i stället för som ett fel. En BEV ser med andra ord
+en lista på 44, medan 49-raderslistan är hela CMA/ICE-mappningen.
 
 Varje post bär en DoIP-logisk adress. Se den som en anknytning inuti fordonet: `0x1635` är alltid
-batteristyrenheten, på samma sätt som 432 alltid är samma skrivbord. Hanterill skickar en begäran
-till en anknytning och svaret kommer tillbaka från den.
+batteristyrenheten, på samma sätt som 432 alltid är samma skrivbord. Hanterill skickar sin begäran
+till en anknytning, och den anknytningen svarar.
 
 ## Gateway
 
@@ -25,9 +26,9 @@ centrala karossdator.
 
 <EcuReference domain="gateway" />
 
-VGM är värd en notering: skrivningar till den kräver en säkerhetsnyckel som är unik per fordon.
-Läsningar fungerar utan den, vilket är anledningen till att varje skrivskyddad funktion i Hanterill
-"bara fungerar" på ett anslutet fordon.
+Skrivningar till VGM kräver en säkerhetsnyckel som är unik per fordon.
+Läsningar fungerar utan en sådan, så varje skrivskyddad funktion i Hanterill körs på ett anslutet
+fordon utan extra inställning.
 
 ## Energi
 
@@ -37,8 +38,15 @@ släpper gasen).
 
 <EcuReference
   domain="energy"
-  caption="ECM, TCM, DEM, MVBM och NRCM är referensrader för förbränning och 48 V. De är registrerade så att en hybridbil kan kartläggas senare; på en BEV förblir de tysta."
+  caption="TCM, NRCM, SUM, DEM och MVBM är de fem referensraderna. De är registrerade så att en hybrid- eller luftfjädringsbil kan kartläggas senare; på ett helt elektriskt fordon förblir de tysta."
 />
+
+<Callout kind="note" title="Varför ECM inte är en motorns styrenhet här">
+På den här plattformen är modulen som kallas ECM live-verifierad och är drivlinans/växelriktarens
+styrenhet, inte en motorstyrenhet. Luftfjädringsmodulen SUM är den referensrad man vanligtvis
+förväntar sig i dess ställe. Namnet på boxen är en etikett, inte en beskrivning; registret säger
+vilka moduler som faktiskt svarade.
+</Callout>
 
 ## Chassi
 
@@ -58,7 +66,7 @@ moduler som de flesta aldrig tänker på.
 
 ## Hur Hanterill pratar med dem
 
-Två UDS-tjänster gör det mesta av arbetet:
+Fyra UDS-tjänster gör det mesta av arbetet:
 
 <SpecList rows={[
   ["0x22", "ReadDataByIdentifier: be en modul om ett numrerat värde, som dess VIN (0xF190) eller dess mjukvaruversion (0xF195)"],
@@ -81,14 +89,22 @@ Eftersom Hanterill läser dessa från varje ECU och inte bara från batteriet, p
 fullständig hårdvaru- och mjukvaruinventering av fordonet. Det är vad [firmwarevyn](/docs/firmware-and-inventory)
 diffar mellan besök.
 
+## Andra plattformar har egna register
+
+Listan ovan är CMA-registret, det som Hanterill byggdes och kontrollerades mot. SPA och SEA1 bär egna,
+mindre register. SPA har en separat CAN-erauppsättning och en DoIP-uppsättning, och SEA1 har sin egen.
+En definition delas aldrig mellan plattformar. En modul som finns på referensfordonet kan saknas
+någon annanstans, eller svara på en annan adress, så varje plattform löses på sina egna villkor i
+stället för genom familjelikhet.
+
 ## Inte varje modul svarar på allt
 
-Vissa moduler svarar på identitetsläsningar men har inga felkoder att rapportera. De är märkta
-`DTCs: no` ovan, och Hanterill hoppar över dem under en felkodsskanning istället för att registrera
-ett misslyckande. En modul som inte svarar alls är ett tredje fall: den registreras som icke
-observerad, aldrig som trasig.
+Vissa moduler svarar på identitetsläsningar men har inga felkoder att rapportera. Nio av CMA-posterna
+är i det läget. De är märkta `DTCs: no` ovan, och Hanterill hoppar över dem under en felkodsskanning i
+stället för att registrera ett misslyckande. En modul som inte svarar alls är ett tredje fall: den
+registreras som icke observerad, aldrig som trasig.
 
 <Callout kind="note" title="En timeout är inte en diagnos">
-En modul som inte svarar kan betyda att den inte är monterad, sover, eller inte finns på fordonets
+När en modul inte svarar kan den vara omonterad, sova eller inte finnas på fordonets
 bygglista. Hanterill säger "svarade inte" och lämnar bedömningen till dig.
 </Callout>

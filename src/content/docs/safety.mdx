@@ -27,8 +27,9 @@ Nothing in that set changes the car, and it is the same set in every build.
 
 ## Writing exists, and it asks first
 
-The released build ships the state-changing commands, because a workshop tool that cannot clear a
-code after a repair is only half a tool. What makes that safe is consent rather than absence:
+The released build ships the state-changing commands. A workshop tool that cannot clear a code
+after a repair is only half a tool. What keeps that safe is the confirmation step, not the absence
+of the commands:
 
 - Every write is a separate, explicitly confirmed action in the interface.
 - The running binary publishes a capability manifest, and the interface only offers what the
@@ -39,17 +40,18 @@ code after a repair is only half a tool. What makes that safe is consent rather 
   and never performs programming services.
 
 <SafetyNotice level="adaptation" title="What the write surface covers">
-Clearing fault codes (`0x14`), starting service routines (`0x31`), ECU reset (`0x11`, used only by
-the opt-in force-reset step in the clear flow), and gated memory reads (`0x23`) with a 256-byte cap
-and a caller-verified address list. The routine identifiers are reverse-engineered. Even on a
-write-capable build, steering-angle and ADAS targets must not be actuated without the
-manufacturer's procedure: Hanterill exposes the capability, not a licence to use it.
+This surface covers clearing fault codes (`0x14`), starting service routines (`0x31`), ECU reset (`0x11`) and
+gated memory reads (`0x23`). ECU reset is used only by the opt-in force-reset step in the clear
+flow, and memory reads have a 256-byte cap and a caller-verified address list. The routine
+identifiers are reverse-engineered. Even on a write-capable build, steering-angle and ADAS targets
+must not be actuated without the manufacturer's procedure: Hanterill exposes the capability, not a
+licence to use it.
 </SafetyNotice>
 
 ## The clear flow, step by step
 
-Clearing fault codes is the write most people will actually use, and it is worth knowing what
-happens after you confirm:
+Clearing fault codes is the write most people will actually use. This is what happens after you
+confirm:
 
 1. Enter an extended session with each module. Manufacturer modules reject a clear in the default
    session, so this step is required.
@@ -68,8 +70,8 @@ usage mode.
 A diagnostic tool can flood a car just by being eager. Hanterill keeps its request volume bounded:
 
 - Scans run bounded loops with request budgets, so a sweep cannot flood the gateway.
-- Cancellation is cooperative and checked between requests, so stopping is immediate rather than
-  after the whole sweep finishes.
+- Cancellation is cooperative: Hanterill checks between requests, so you can stop immediately
+  instead of waiting for the whole sweep to finish.
 - Sessions are meant for a parked car. Keep the car in Park with the parking brake on.
 - Recovery never resets a module just because a request timed out.
 
@@ -84,8 +86,8 @@ inverters or the orange cabling requires the manufacturer's procedures, equipmen
 ## Not a replacement for the manufacturer's tooling
 
 Hanterill is independent and is not affiliated with Volvo Cars, Polestar or Geely. Do not make a
-safety-critical repair decision on Hanterill output alone, especially on a platform still marked
-Testing or Research where decoding has not been checked against a real car.
+safety-critical repair decision on Hanterill output alone. This matters most on a platform still
+marked Testing or Research, where decoding has not been checked against a real car.
 
 ## If something looks wrong
 
@@ -95,5 +97,7 @@ against a second scan or a known-good car, and ask in the project's discussions 
 
 ## Next
 
+- [Service functions](/docs/service-functions): the routines that change the car, and what cannot be
+  undone.
 - [Connection](/docs/connection): safe hardware setup.
 - [DTC scanning](/docs/dtc-scanning): what clearing actually does.

@@ -8,15 +8,15 @@ each one has got.
 
 ## Reachable is not the same as supported
 
-Two different things:
+Two different things, and the difference matters:
 
 - **Reachable** means Hanterill can get a connection to the car over DoIP.
 - **Supported** means the diagnostic functions are written and checked against known-good
   readings.
 
-A car can be reachable and still tell you almost nothing useful, because the decoder that turns
-raw bytes into a battery percentage has not been written or verified for that platform yet. The
-labels on this site always describe the second thing.
+A car can be reachable and still tell you almost nothing useful. The decoder that turns raw bytes
+into a battery percentage has not been written or verified for that platform yet. The labels on
+this site always describe the second thing.
 
 ## What the labels mean
 
@@ -25,9 +25,7 @@ labels on this site always describe the second thing.
 | Supported | Verified against a live car. Battery, fault codes, ECU identification and live data are exercised regularly. |
 | Partial | Some functions verified, others not covered yet on this model. |
 | Testing | The code exists but has not been checked against the real car. Treat every reading as provisional. |
-| WIP | Under active development. It connects, but decoding is incomplete. |
 | Research | We are still figuring out how the platform works. Not usable for diagnostics. |
-| Planned | On the roadmap. Nothing written yet. |
 
 ## Platforms
 
@@ -48,10 +46,10 @@ The full capability breakdown for the reference car:
 ### SPA
 
 Partially supported. Ships as catalogue data: pack topologies, a CAN-era BECM registry and
-decoders, ported from community research with citations. Combustion cars on this platform have
-been exercised through the engine reference lane, but the hybrid and EV battery path has not been
-checked against a live car: on first-generation SPA the battery answers over older CAN wiring,
-which the current DoIP transport cannot reach, so live battery scanning is not possible yet.
+decoders, ported from community research with citations. The hybrid and EV battery path has not been
+checked against a live car. On first-generation SPA the battery answers over older CAN wiring. An
+ISO-TP CAN transport is implemented in the app, but no hardware adapter ships yet, so live battery
+scanning waits on that adapter, not on software that does not exist.
 
 <Callout kind="caution" title="Battery path not verified on a live car">
 The SPA battery definitions were ported from reference research, not measured on a car Hanterill
@@ -60,10 +58,11 @@ has seen. Do not rely on SPA battery figures.
 
 <PlatformSupport platform="SPA" />
 
-### SEA
+### SEA1
 
 The EX30-class definitions exist in the catalogue: ECU registry, routing addresses, identifier
-maps and cell mapping. Every one of them is unconfirmed by hardware.
+maps and cell mapping. Every one of them is unconfirmed by hardware. The platform is called SEA1 in
+the app; "SEA" is the family name.
 
 <Callout kind="caution" title="Hardware confirmation pending">
 SEA1 ships as definitions held up by synthetic test data. Zeekr and other sub-platforms
@@ -91,10 +90,13 @@ Each pack layout records how many cell groups it has and how they are arranged:
 
 | Platform | Layout | State |
 | --- | --- | --- |
-| CMA | 108 groups: 27 modules of 4 | Verified on the reference car |
+| CMA | 108 groups: 27 modules of 4 (78 kWh) | Verified on the reference car |
+| CMA | 108 groups: 27 modules of 4 (82 kWh) | Catalogued from catalogue and decoder evidence |
 | CMA | 96 groups: 24 modules of 4 (69 kWh) | Defined from catalogue and decoder evidence |
-| SPA | 96 (69 kWh), 108 (78 kWh), hybrid 102 | Catalogued, waiting on hardware |
-| SEA1 | 107 (69 kWh NMC), 120 (51 kWh LFP), 110 | Catalogued, waiting on hardware |
+| SPA | 96 (69 kWh), 108 (78 kWh), hybrid 102 (T8) | Catalogued, waiting on hardware |
+| SPA | hybrid 96 (early T8, 11.6 kWh) | Catalogued, waiting on hardware |
+| SEA1 | 107 (69 kWh NMC), 120 (51 kWh LFP) | Catalogued, waiting on hardware |
+| SEA1 | 110 (100 kWh NMC, Zeekr-class) | Catalogued, waiting on hardware |
 
 A pack is judged complete at its own cell count. A 102-cell hybrid is never marked incomplete for
 not having 108.

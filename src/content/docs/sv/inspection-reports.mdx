@@ -14,90 +14,128 @@ Poängsättningen lägger till aritmetik, aldrig trafik.
 
 ## De fyra utlåtandena
 
-Rapporten slutar i ett av fyra tydliga svar:
+Rapporten slutar i ett av fyra tydliga svar. Reglernas namn och orden på skärmen skiljer sig
+något; båda visas här så att en sparad rapport och appen stämmer överens.
 
-| Utlåtande | Betydelse |
-| --- | --- |
-| Gott skick | Ingen regel reste en invändning och poängen är hög. |
-| Anmärkningar | Något värt att känna till, men inget säkerhetskritiskt. |
-| Uppmärksamhet | En hård regel utlöstes, eller poängen är låg. Läs fynden innan du beslutar något. |
-| Inconclusive | Inte tillräckligt många svarade för att förtjäna ett utlåtande. |
+| Utlåtande | På skärmen | Betydelse |
+| --- | --- | --- |
+| Gott skick | "Utan anmärkning" | Ingen regel reste en invändning och poängen är hög. |
+| Anmärkningar | "Utan anmärkning – mindre noteringar" | Något värt att känna till, men inget säkerhetskritiskt. |
+| Uppmärksamhet | "Kräver åtgärd" | En hård överstyrning utlöstes, eller poängen är låg. Läs fynden innan du beslutar något. |
+| Ofullständigt | "Ofullständig – täckningen räcker inte" | Inte tillräckligt många svarade för att förtjäna ett utlåtande. |
 
-Inconclusive är ett riktigt utfall, inte ett misslyckande. Om batterihälsan inte kunde läsas vägrar
-rapporten gissa istället för att poängsätta bilen på ofullständiga bevis.
+Ofullständigt är ett riktigt utfall, inte ett misslyckande. Om batterihälsan inte kunde läsas vägrar
+rapporten gissa i stället för att poängsätta fordonet på ofullständiga bevis.
 
-## Regelkatalogen (v1.0.0)
+## Poängen själv
 
-Sex grupper av regler bär poängvikt:
+En inspelad körning ger en poäng, inte en poäng per system. Aritmetiken är enkel:
 
-| Regelgrupp | Vad den tittar på |
-| --- | --- |
-| Batterinedbrytning | Hälsotillstånd mot publicerade band, inklusive tillverkarens garanti golv |
-| Cellbalans | Spänningsspridning över cellgrupper, med bevakningsband från publicerad community-forskning |
-| 12 V-stödbatteri | Vilospänningen i lågvoltsbatteriet, som startar fordonets elektronik |
-| 12 V-viloström | Hur mycket ström bilen drar medan den sover, från sin egen uppmätta historik |
-| Felallvarlighet | Koder viktade efter ISO 14229-statusklass och SAE J2012-kodklass, inte räknade platt |
-| Mätarställningskonsistens | Mätarställning korsläst över moduler; oenighet är ett eget fynd |
+```
+poäng = kläm(100 − (summan av varje utlöst regels poäng), 0, 100)
+```
 
-Allt annat i rapporten är en notering: termisk spridning, ett försenat serviceintervall, spridning i
-drifttid, en laddbegränsning, antal nycklar. De beskriver vad som sågs och flyttar aldrig poängen.
+Börja på 100, dra av varje regel som utlöstes, och gå aldrig under 0. Utlåtandet följer sedan
+poängen, om inte en regel tvingade fram ett starkare. I ordning, första träffen vinner:
+
+1. En hård överstyrning utlöstes → **uppmärksamhet**.
+2. En regel tvingade fram uppmärksamhet → **uppmärksamhet**; en regel tvingade fram anmärkningar →
+   **anmärkningar**.
+3. Poäng 85 eller högre → **gott skick**.
+4. Poäng 60 eller högre → **anmärkningar**.
+5. Under 60 → **uppmärksamhet**.
+6. Ingen poäng alls → **ofullständigt**.
+
+## Vad som faktiskt bär poängvikt (v1.0.0)
+
+Fyra indata flyttar siffran. Det här är hela listan som den levereras:
+
+| Indata | Band | Poäng |
+| --- | --- | --- |
+| Batteriets hälsotillstånd | under 70 % | −30 |
+| | 70 % upp till 80 % | −14 |
+| | 80 % upp till 90 % | −4 |
+| | 90 % och över | 0 (endast notering) |
+| 12 V-vilospänning | under 12,2 V | −16 |
+| | 12,2 V upp till 12,5 V | −6 |
+| | 12,5 V och över | 0 (endast notering) |
+| Felkoder | bekräftad, pågående och varningslampa, klass P eller U | −12 styck, högst −30 totalt |
+| | bekräftad men inte pågående | −5 styck, högst −20 totalt |
+| | endast väntande | −2 styck, högst −8 totalt |
+| | bekräftad och pågående på en säkerhetsmodul | −8 styck, plus den hårda överstyrningen |
+| Mätarställning | lagrade kopior skiljer sig mer än 20 km | −25, plus den hårda överstyrningen |
+
+Några regler om reglerna:
+
+- Under 70 % SoH är den publicerade garantigränsen. Rapporten beskriver var läsningen ligger mot
+  villkoren 8 år / 160 000 km; den gör ingen bedömning av garantitäckning.
+- En läsning på eller över cirka 13 V på 12 V-skenan stöds av omvandlaren och är inte i vila.
+  Ingen bedömning av laddningsnivån görs i det fallet, och inget dras av.
+- Felkoder viktas, räknas inte platt. Hanterill läser statusbitarna för att se om en kod är aktiv,
+  väntande eller lagrad, och kodklassen för att se om det är en drivlina-/nätverkskod.
+- Cellbalans och viloförbrukning bär ingen poängvikt i den här versionen. Cellbalans är ett
+  granskningsband i batterivyerna; poängmotorn läser aldrig historiken över viloström. Om du har sett
+  dem beskrivna som poängsatta regelgrupper ligger den beskrivningen före den levererade motorn.
+
+## Vad som förblir en notering
+
+Allt annat i rapporten beskriver vad som sågs och flyttar aldrig poängen: termisk spridning i
+kylvätskeslingan, ett försenat serviceintervall, spridning i drifttid, en laddbegränsning, antal
+nycklar, och noteringen om en ren skanning. En notering kan ändå vara värd att läsa; den kan bara
+inte ändra utlåtandet.
 
 ## Varje regel anger sina bevis
 
-Varje regel citerar en bevisklass, och klassen
-sätter ett tak för hur starkt utlåtande den regeln kan tvinga fram:
+Varje regel citerar en bevisklass, och klassen sätter ett tak för hur starkt utlåtande den regeln kan
+tvinga fram:
 
 | Klass | Exempel | Starkaste utlåtande den kan tvinga fram |
 | --- | --- | --- |
-| Publicerad standard | ISO-statusbitars betydelse | Uppmärksamhet |
+| Publicerad standard | ISO-statusbitars betydelse och kodklasser | Uppmärksamhet |
 | Tillverkarspecifikation | Garantigolvet 8 år / 160 000 km | Uppmärksamhet |
-| Fordonsfångst | Uppmätt vilospänning och viloförbrukning från hårdvarusessioner | Anmärkningar |
-| Community-forskning | Bevakningsband för cellobalans | Anmärkningar |
+| Fordonsfångst | En mätarställning läst över flera moduler | Anmärkningar |
+| Community-forskning | Vilospänningsbanden för 12 V-batteriet | Anmärkningar |
 | Heuristik | En gissning om laddarens tak | Endast notering, påverkar aldrig poängen |
 
 En regel som vilar på en avkodare som fortfarande är preliminär nedgraderas en klass automatiskt.
-Det är därför vissa fynd läses som observationer snarare än bedömningar: verktyget redovisar vad det
-ännu inte vet.
+Hälsotillståndsreglerna är preliminära, och det är därför även ett kraftigt nedsatt paket landar som
+**anmärkningar** i stället för **uppmärksamhet**. Batteridata ensamt kan inte ge "Kräver åtgärd" i
+den här versionen. Bara en hård överstyrning, eller en låg poäng driven av andra fynd, kommer dit.
 
 ## De två hårda överstyrningarna
 
-Två fynd hoppar över aritmetiken och tvingar fram ett Uppmärksamhet-utlåtande på egen hand:
+Två fynd hoppar över aritmetiken och tvingar fram ett uppmärksamhetsutlåtande på egen hand:
 
 - Ett bekräftat, just nu pågående fel i ett säkerhetssystem (krockkuddar, ABS/ESP, styrvinkel,
   ADAS).
-- Lagrade mätarställningskopior som skiljer sig mer än normal drift. Den oenigheten är den starkaste
-  signalen om mätarställningsfusk en begagnatkontroll kan hitta, och rapporten anger storleken på
-  avvikelsen, aldrig en anklagelse.
+- Lagrade mätarställningskopior som skiljer sig mer än normal drift (mer än 20 km). Den oenigheten är
+  den starkaste signalen om mätarställningsfusk en begagnatkontroll kan hitta, och rapporten anger
+  storleken på avvikelsen, aldrig en anklagelse.
+
+En överstyrning går före allt, även en saknad poäng. Ett pågående säkerhetsfel tvingar fortfarande
+fram uppmärksamhet även när batterihälsan aldrig lästes.
 
 ## När indata saknas
 
-Saknade indata degraderar rapporten mot inconclusive snarare än mot ett falskt allt-är-bra:
+Saknade indata degraderar rapporten mot ofullständigt snarare än mot ett falskt allt-är-bra:
 
 - En kanal som aldrig svarade listas som en täckningslucka. Den kan inte godkänna en kontroll och
   inte underkänna en.
-- En DTC-skanning som inte nådde varje modul markerar kodbevisen som ofullständiga, och kodregler kan
-  då inte på egen hand trycka utlåtandet högre än anmärkningar.
+- Hälsotillståndet är den enda indata som tar bort poängen helt. Utan den är poängen tom, inte
+  noll, och utlåtandet blir ofullständigt om inte en överstyrning utlöstes.
+- En felkodsskanning som inte nådde varje modul registreras som en täckningslucka och märker
+  kodbevisen som ofullständiga. Regler för felkoder utanför säkerhetssystemen begär i vilket fall som
+  helst högst anmärkningar, så en delvis skanning kan inte tyst bli ett allt-är-bra.
 - Rapporten skriver ut sin egen regelversion, sin täckning och en SHA-256-kontrollsumma, så en senare
   läsning kan spåras till de regler som producerade den.
-- Att poängsätta en sparad session under ett nyare regelset är en lokal beräkning. Ingen bil behövs.
+- Att poängsätta en sparad session under ett nyare regelset är en lokal beräkning. Inget fordon
+  behövs.
 
 ## Termiska fynd förblir noteringar
 
 Paketets temperatursensorer har ingen fastställd mappning till enskilda moduler än, så termisk
 spridning rapporteras som en observation utan effekt på poängen. Den blir en riktig regel först när
 placeringen styrks av bevis.
-
-## Poängen själv
-
-Aritmetiken är enkel: börja på 100, dra av varje regels poäng, golva på 0. Utlåtandet följer sedan
-poängen, om inte en regel tvingade fram ett starkare:
-
-- 85 eller högre, utan något framtvingat uppåt: **gott skick**
-- 60 eller högre, eller någon anmärkningsregel utlöst: **anmärkningar**
-- under 60, eller en hård överstyrning utlöst: **uppmärksamhet**
-
-Om batterihälsan inte kunde läsas lämnas poängen tom istället för gissad, och utlåtandet blir
-**inconclusive**.
 
 ## Platsintegritet
 
@@ -111,7 +149,8 @@ innehåller koordinater avrundas de till tre decimaler, ungefär 110 meter. Se
 - **Utskrift**: webbläsarens egen utskriftsväg med anpassad print-CSS, så papperskopian matchar
   skärmen.
 - **Sessioner**: sparade sessioner poängsätts om under aktuella regler utan att återansluta till
-  bilen.
+  fordonet.
 
-Det fullständiga designdokumentet, inklusive varje band och poängvärde, finns i appens repository på
-`docs/product/ppi-intelligence-and-scoring.md`.
+Det fullständiga designdokumentet, inklusive motivet bakom varje band, finns i appens repository på
+`docs/product/ppi-intelligence-and-scoring.md`. Där dokumentet och den levererade motorn skiljer sig
+är motorn det som körs: den är den enda implementationen bakom appen, CLI:t och varje sparad session.

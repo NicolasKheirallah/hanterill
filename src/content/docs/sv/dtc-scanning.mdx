@@ -1,99 +1,186 @@
 import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
-import { ScreenShot } from "@/components/docs/mdx/ScreenShot";
 
-Bilen rapporterar sina egna problem. Varje problem registreras som en DTC: en felkod, en kort kod som
-`P0A80` som pekar på ett specifikt fel i ett specifikt system. Hanterill läser dem från varje modul som
-vill prata.
+Ett fordon rapporterar sina egna problem. Varje rapport är en DTC: en felkod som namnger ett fel i ett
+system. Hanterill läser dem och avkodar den statusbyte som följer med varje kod.
 
-## En kod är inte hela historien
+## Vilka moduler tillfrågas
 
-Varje DTC kommer med en statusbyte: extra bitar som säger mer om felet än koden själv. Hanterill gör
-om de bitarna till tydliga tillstånd:
+En skanning ropar inte ut till varje modul som vill svara. Målen kommer från en fast kataloglista för
+den upptäckta plattformen, filtrerad till de moduler som är katalogiserade som DTC-kapabla. På CMA
+listar den listan 49 rader: 40 annonserar stöd för felkoder och 9 är flaggade som utan DTC, så 40 är
+mål. Samma filter gäller på de andra plattformarna, och en modul utanför det tillfrågas inte alls.
 
-| Tillstånd | Betydelse |
-| --- | --- |
-| Aktiv | Felet pågår just nu. |
-| Väntande | Det hände en gång, men har inte bekräftats över tillräckligt många körcykler än. |
-| Lagrad | Bekräftat och registrerat av modulen. |
-| Historisk | Det sattes, rensades sedan, men modulen behåller fortfarande posten. |
-
-En varningslampa kan ligga ovanpå en enda aktiv kod och fem gamla historiska. Statusen är det som
-skiljer dem. Hanterill öppnar fellistan filtrerad till det som behöver uppmärksamhet först, med den
-tysta historiken ett tangenttryck bort.
-
-## Frysta ramdata
-
-När en modul sätter ett fel sparar den ofta en ögonblicksbild av fordonet i exakt det ögonblicket:
-hastighet, pakettemperatur, spänning, vad föraren bad om. Den ögonblicksbilden kallas frysta
-ramdata, och den är oftast mycket mer användbar än koden själv.
-
-Hanterill läser dem tillsammans med koden där de finns. Inte varje fel har några.
+Planerad täckning är storleken på den filtrerade listan, inte antalet moduler som råkar svara.
 
 ## Vad en skanning faktiskt skickar
 
-Hanterill använder fyra ReadDTCInformation-delfunktioner: räkna koderna per statusmask, lista koderna
-per statusmask, läs en snapshot-post och läs en utökad datapost.
+Hanterill använder fem ReadDTCInformation-delfunktioner i sina felkodsytor: räkna koderna för en
+statusmask (`19 01`), lista dem per statusmask (`19 02`), lista vilka (kod, post)-par en modul har
+(`19 03`), läsa en snapshot-post (`19 04`) och läsa en utökad datapost (`19 06`). En normal skanning
+skickar bara den andra.
 
-Huvudutbytet, med byten på tråden:
+Förhandskontrollen `19 01` är valfri och avstängd som standard. När den är på läser den varje moduls
+status-tillgänglighetsmask och dess egen räkning före kodläsningen. Kodläsningen sker ändå, och en
+misslyckad förhandskontroll får aldrig modulen att misslyckas i sig. Med förhandskontrollen av får
+varje mål exakt en begäran:
 
 <DiagnosticExample
   service="ReadDTCInformation, report DTCs by status mask"
   request="19 02 FF"
   response="59 02 FF <dtc><status> <dtc><status> ..."
-  note="Masken FF ber om varje status. Varje trebyteskod följs av en statusbyte; Hanterill avkodar den byten till aktiv, väntande, lagrad eller historisk."
+  note="Masken FF ber om varje statusbit. Varje trebyteskod följs av en statusbyte, och alla åtta bitar i den byten avkodas separat."
 />
 
-Skanningen körs per modul och samlas i en lista, grupperad per modul. En modul som inte svarar listas
-som icke observerad, aldrig som frisk. Ett rent skanningsresultat berättar hur många moduler som
-svarade, inte enbart att inget hittades.
+Det finns exakt ett återförsök, och bara för de två negativa svar som betyder "fråga igen": `0x21`
+busyRepeatRequest och en `0x78` responsePending som inte lösts. En timeout görs inte om. En tappad
+länk hanteras av återanslutningspasset som beskrivs under täckningen.
 
-<ScreenShot
-  root="/assets/fault-codes.png"
-  alt="Vyn Felkoder: koder grupperade per modul med status, tillgång till frysta ramdata och bevispanelen"
-  caption="Felkoder: varje kod med sin statusklass, modulen som rapporterade den och dess bevis"
-/>
+## Att läsa statusbyten
+
+Statusbyten bär åtta oberoende bitar enligt ISO 14229-1 Annex D: testFailed, failed-this-cycle,
+pending, confirmed, not-completed-since-clear, failed-since-clear, not-completed-this-cycle och
+begäran om varningslampa/MIL. Hanterill behåller alla åtta och klassar byten i åtta tillstånd, inte
+fyra:
+
+| Tillstånd | Bitarna bakom | Vad det betyder |
+| --- | --- | --- |
+| Ren (`Clean`) | Inga bitar satta | Inget att rapportera för posten. |
+| Aktiv, bekräftad (`ActiveConfirmed`) | testFailed + confirmed | Fallerar vid senaste testet och är moget. |
+| Aktiv, väntande (`ActivePending`) | testFailed + pending, inte confirmed | Fallerar nu och är på väg mot bekräftelse. |
+| Aktiv, obekräftad (`ActiveUnconfirmed`) | testFailed, varken pending eller confirmed | Fallerar nu, ännu inte moget. |
+| Historisk, bekräftad (`HistoricalConfirmed`) | Inte fallerande, confirmed och failed-since-clear | Verifierat tidigare, passerar senaste testet, finns kvar som post. |
+| Historisk, intermittent (`HistoricalIntermittent`) | Inte fallerande, obekräftad, failed-since-clear | Har uppstått sedan senaste rensningen, pågår inte nu, aldrig moget. |
+| Körcykelfel (`PendingCycle`) | Inte fallerande, fallerade tidigare i cykeln | Föll en gång under denna körcykel, passerar nu. |
+| Passerat sedan rensning (`PassedSinceClear`) | Inte fallerande, inte failed-since-clear, monitorn klar | Monitorn kördes och passerade efter senaste rensningen. |
+
+"Historisk" betyder inte "sattes, rensades sedan och behölls". Det betyder att felet har uppstått sedan
+senaste rensningen och inte pågår nu. En post som faktiskt rensas försvinner normalt. Statusbyten är
+också därför en varningslampa kan ligga ovanpå en enda aktiv felkod och flera historiska.
+
+Felkodslistan öppnas på Alla statusar. Statusen visas på varje rad och kan filtreras, men standardvyn
+döljer inte de tysta posterna.
+
+## Täckningsredovisning
+
+Varje mål räknas en gång, som lyckat, misslyckat, utan stöd eller överhoppat. En styrenhet som får
+timeout blir Failed(Timeout) och förblir synlig. Den visas aldrig som ren. Varje icke-lyckat resultat
+gör skanningen ofullständig, och en ofullständig skanning märker kodbevisen i inspektionsrapporten som
+ofullständiga.
+
+Två budgetar för hela skanningen sätter gränsen: 5 000 behållna poster och 512 begäranden. Ett mål som
+budgeten inte kan täcka registreras som överhoppat med sitt skäl. Per modul behåller appen upp till 512
+råa svarsbyten plus en SHA-256-sammanfattning av hela svaret, så en avkodning kan bevisas igen senare
+utan fordonet.
+
+Om länken dör mitt i svepet behåller de rader där transporten faktiskt dog ett ärligt transportdödsfel.
+Hanterill kan återansluta en gång och återuppta exakt de raderna, och slår ihop dem till en artefakt.
+En färsk länk passerar en identitetskontroll först, och en VIN-avvikelse vägrar återupptagningen.
+
+## Frysta ramdata
+
+När en styrenhet sätter ett fel sparar den ofta en ögonblicksbild av förhållandena i det ögonblicket.
+Hanterill läser den på begäran för den valda felkoden, inte för hela skanningen. Läsningen är `19 04`
+för ett (kod, post)-par. `19 03` listar vilka par modulen har, och appen provar post `0x00`, sedan
+`0x01`, sedan `0xFF` innan den ger upp.
+
+De avkodade fälten är matningsspänning, HV-paketspänning, motorvarvtal, kylar- eller invertertemperatur,
+omgivningstemperatur och en förekomsträknare. Många koder har inga frysta ramdata alls, och frånvaron
+rapporteras som en frånvaro.
+
+Fordonshastighet visas alltid som inte rapporterad: ingen verifierad byte-layout finns för den på dessa
+moduler, så avkodaren vägrar hitta på ett värde, och det finns inget fält för förarens begäran heller.
+Innan raderingen fångar raderingsflödet värdena från ögonblicksbilden för varje kod (spänning och
+förekomsträknare bland dem) eftersom raderingen tar bort dem.
+
+## Hur koder namnges
+
+En kods identitet är dess modul plus dess tre råa byten. Appen skriver ut identiteten som sju tecken: en
+bokstav, två siffror och sedan de två återstående byten i hex, som `B171D57` eller `U2C7292`. Formen med
+fem tecken som vissa verktyg skriver, som `P0A80`, är bara baskoden. Den tappar feltypbyten och
+identifierar inte en post på egen hand.
+
+Den inledande bokstaven är P, C, B eller U, avgjord av de höga bitarna i första byten: drivlina,
+chassi, kaross eller nätverk. Den sista byten är feltypbyten och avkodas till en subtyp som
+"Circuit open" eller "Signal erratic".
+
+Det finns en lokal ordlista: en referensdatabas med 18 499 koder inbakad i binären. Uppslagningen sker
+modulspecifikt först, sedan globalt, sedan baskod plus felsubtyp, och gränssnittet visar vilken källa
+som gav texten.
+
+## Hur fel påverkar poängen
+
+Inspektionsrapporten läser statusbitarna och modulen, inte bara antalet koder:
+
+- Ett bekräftat, just nu fallerande fel på en säkerhetsmodul (krockkuddar, styrvinkel, förarstöd,
+  bromsar och stabilitet) är en hård överstyrning till Uppmärksamhet.
+- En bekräftad, just nu fallerande felkod i drivlinan eller nätverket där varningslampan begärs drar 12
+  poäng styck, högst 30, och kan tvinga fram anmärkningar.
+- En bekräftad felkod som inte fallerar nu drar 5 styck, högst 20.
+- En enbart väntande felkod drar 2 styck, högst 8.
+
+Varje täckningsbrist från en skanning märker kodbevisen som ofullständiga, och ofullständiga bevis kan
+inte i sig lyfta utlåtandet över anmärkningar. Hela aritmetiken och de två hårda överstyrningarna finns
+i [Inspektionsrapporter](/docs/inspection-reports).
 
 ## Före och efter: diffen
 
-Det mest användbara du kan göra med felkoder är att jämföra två skanningar. Skanna före reparationen,
-skanna efter, och öppna DTC-diffen. Tillagda koder, rensade koder, statusändringar och de frysta ramdata
-från före raderingen ligger sida vid sida.
+Diffen jämför två skanningar enbart efter (modul, kod)-närvaro. Varje rad hamnar under en av fyra
+etiketter:
 
-Båda sessionerna är redan sparade lokalt, så jämförelsen är en lokal beräkning. Ingen bil behövs.
+| Etikett | Betydelse |
+| --- | --- |
+| Nya utlösta | Finns i målskanningen, saknas i baslinjen. |
+| Åtgärdade | Finns i baslinjen, saknas i målet, och modulen hade täckning i målet. |
+| Kvarstående | Finns i båda skanningarna. |
+| Overifierade | Finns i baslinjen, saknas i målet, men modulen hade ingen eller misslyckad täckning i målet. |
+
+Overifierade läggs aldrig ihop med Åtgärdade: en modul som inte nåddes i den andra skanningen
+rapporterade inte ett rent felminne, och appen gör inte den luckan till en reparation. Nettosiffran är
+nya minus åtgärdade.
+
+Statusbyten visas på raderna men ingår inte i jämförelsen, så en statusändring ensam är ingen
+diffkategori. En avvikelse mellan olika fordon eller kontraktsversioner blockerar jämförelsen helt.
+Frysta ramdata ligger inbäddade i en baslinjefångst, men diffvyn renderar dem inte, så ögonblicksbilder
+före och efter ligger inte sida vid sida där.
 
 ## Att radera koder
 
-Radering är en skrivning, och Hanterill behandlar den som en. Den ligger bakom en uttrycklig
-bekräftelse och körningens kapacitetskontroll, och ett bygge kompilerat utan skrivfunktionen avvisar
-den med ett typat svar istället för att misslyckas obegripligt.
+Radering är en skrivning, och den är grindad två gånger: av det körande byggets kapacitetsmanifest och
+av en bekräftelse med riskknapp som namnger målet. Är appen skrivskyddad görs knappen om till
+"Jämför före/efter" och ingenting skickas.
 
-När åtgärden körs följer den en orkestrerad sekvens modellerad på referensverktyget:
+När åtgärden körs följer den en sekvens per modul:
 
-1. Öppna en utökad session med varje modul.
-2. Fånga de frysta ramdata först, eftersom raderingen förstör dem.
-3. Skicka bulkraderingen.
-4. Vänta ut modulens "upptagen"-fönster.
-5. Försök igen per modul där det behövs.
-6. Läs om för att verifiera, och rapportera de moduler som fortfarande håller koder (den envetna
-   mängden).
+1. Öppna en utökad diagnostisk session.
+2. Radera hela felminnesgruppen (`14 FF FF FF`).
+3. Återställ standardsessionen i bästa möjliga mån.
 
-Ett valfritt force-reset-steg startar om de envetna modulerna, reparerar länken och raderar en gång
-till. Det är opt-in och undertrycks medan fordonet rapporterar körläge.
+Efter bulkpasset följer ett väntefönster på 3 sekunder, men bara för en modul som svarade `0x78`
+responsePending. En reservradering per modul täcker de moduler som bulkpasset inte nådde, och den är
+på som standard. En verifierande omläsning letar sedan efter envetna moduler: varje mål vars räkning
+fortfarande är över noll. Det valfria force-reset-steget startar om de modulerna hårt (`11 01`), väntar
+cirka 5,5 sekunder på att länken ska komma tillbaka och raderar sedan en gång till. Det är avstängt som
+standard och undertrycks i körläge.
 
-Per-modul-radering ("radera denna modul") använder samma maskineri med ett mål. Hela körningen sparas
-som bevis i sessionsarkivet.
+En radering per modul ("radera denna modul") är samma flöde med ett mål och ingen force-reset. När
+körningen är klar tvingar gränssnittet fram en ny skanning och öppnar diffen mot baslinjen före
+raderingen, och hela körningen sparas som en sessionsartefakt.
 
 <Callout kind="caution" title="Att radera är inte att reparera">
-Att radera en kod tar bort posten, inte felet. Om det underliggande problemet finns kvar kommer koden
-tillbaka. Använd diffen för att bevisa en reparation, inte för att få en lampa att slockna.
+Att radera en felkod tar bort posten, inte felet. Om det underliggande problemet finns kvar kommer
+koden tillbaka. Använd diffen för att bevisa en reparation, inte för att få en lampa att slockna.
 </Callout>
 
 ## Exporter
 
-Skanningar exporteras till JSON och CSV. CSV-exportören neutraliserar formelinjektion i kalkylprogram
-(en cell som börjar med `=`, `+`, `-` eller `@` kan inte köras i Excel), och VIN maskeras som standard.
+Den export som finns på skärmen för en felkodslista är endast CSV, och exportören neutraliserar
+formelinjektion i kalkylprogram, så en cell som börjar med `=`, `+`, `-` eller `@` kan inte köras i
+Excel. DTC-CSV:n har ingen VIN-kolumn alls. JSON är inte ett alternativ på skärmen här: det är formatet
+för den sparade sessionsartefakten, som behåller utfall per modul, statusbiträkningar, råa bevis och
+proveniens för senare jämförelse.
 
 ## Nästa steg
 
 - [Batteridiagnostik](/docs/battery-diagnostics): den andra halvan av en typisk session.
 - [Inspektionsrapporter](/docs/inspection-reports): hur fel påverkar poängen.
+- [Sessioner och bevis](/docs/sessions-and-evidence): var en skanning och en radering sparas.

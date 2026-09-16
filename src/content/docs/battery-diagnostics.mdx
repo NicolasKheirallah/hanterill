@@ -19,13 +19,31 @@ Everything on this page is a read. Hanterill asks the BECM for values and decode
 does not write to the module and does not change how the pack is managed.
 </SafetyNotice>
 
-## State of Health, the short version
+## Three things called "battery health"
 
-State of Health (SoH) is the number you want before buying a used EV. It compares the pack's
-current capacity to what it had when new. A pack at 91% SoH has lost 9% of its original capacity.
+The phrase covers three different numbers in this app, and only one of them is handed over by the
+car. You have to keep them apart to read the battery screens correctly.
 
-The BECM calculates this itself. Hanterill reads it through the identifier `0x496D`, where the
-answer is a 32-bit integer in hundredths of a percent.
+| What people call it | Where it comes from | What it answers |
+| --- | --- | --- |
+| The **State of Health** percentage | Read from the BECM. The car calculates it. | How much capacity is left compared with new. |
+| The **per-cell summary** | Calculated by Hanterill from three per-cell blocks. | How uniform the cells are, and what their average condition is. |
+| The **report health score** (out of 100) | Calculated by Hanterill's scoring rules. | How the whole car looks, with the battery as one input. |
+
+## State of Health: read, not calculated
+
+State of Health (SoH) compares the pack's current capacity to what it had when new. A pack at 91%
+SoH has lost 9% of its original capacity. It is the number you want before buying a used EV.
+
+The BECM calculates it. Hanterill reads the answer and validates it:
+
+- On the CMA platform the answer is a four-byte integer in hundredths of a percent. A raw value of
+  9114 is displayed as **91.14%**.
+- A second platform sends the same kind of figure under a different contract: two bytes with the
+  same hundredths-of-a-percent scaling, but a separate definition. It is community research and is
+  not verified against a car.
+- Every SoH reading is range-checked to 0–100%. A payload of the wrong length, or a value
+  outside that range, never becomes a number.
 
 <DiagnosticExample
   service="ReadDataByIdentifier, SoH on the BECM"
@@ -34,17 +52,48 @@ answer is a 32-bit integer in hundredths of a percent.
   note="The payload 0x0000239A is 9114. Divided by 100 that is 91.14% SoH. This exact decode is verified against the reference car."
 />
 
-## What else you get
+SoH is a report from the battery controller, not a capacity test performed by Hanterill. The
+battery certificate says so in as many words, and prints no letter grade.
 
-- State of Charge (SoC): how full the pack is, read as a live channel (`0x4A89`)
-- Pack voltage (`0x4803`) and pack current (`0x4802`), read live
-- Every cell-group potential on the pack layout in force: 108 on CMA (27 modules of 4 groups)
-- Minimum, maximum and spread across those groups
-- Pack temperature channels (`0x4980`), shown as provisional: the sensor-to-module mapping is not
-  established yet, so the values are displayed as pack channels, never as one module's temperature
-- Per-cell SoH and learned-capacity blocks (`0x480E`, `0x4982`, `0xDA02`)
-- Cross-checks that compare one measured signal against another
-- BECM hardware and software part numbers, read with the standard identity identifiers
+## State of Charge: read live
+
+State of Charge (SoC) is how full the pack is right now. It is read live and shown at the time of
+capture. SoH and SoC answer different questions: a pack can be 90% healthy and 20% charged at the
+same time.
+
+The BECM reports two independent SoC figures. Hanterill shows both and compares them:
+
+- If the two agree, nothing is raised.
+- If they differ by **2 percentage points or more**, the app raises a review item and shows both
+  readings. It never averages them and never silently picks one.
+
+A separate per-cell SoC block adds a mean and a spread across the cells. The 12 V support battery
+has its own state-of-charge assessment, from its rested voltage; that one feeds the report score and
+is described in [Inspection reports](/docs/inspection-reports).
+
+## What Hanterill calculates: the per-cell summaries
+
+Hanterill reads and summarises three per-cell blocks:
+
+| Block | Unit | What is reported |
+| --- | --- | --- |
+| Per-cell SoH | % | mean and spread |
+| Learned capacity | Ah | mean |
+| Per-cell SoC | % | mean and spread |
+
+Each block is a series of 16-bit slots, with each bit worth 0.01 of the unit. A full CMA pack has
+108 slots, but the decode is topology-aware and also accepts 96, 102, 107, 110 and 120. A hybrid
+pack is therefore not rejected for not being 108.
+
+From each block the app works out:
+
+- **mean** = the sum of the raw values, divided by the number of slots, divided by 100
+- **spread** = the highest value minus the lowest
+
+Each block is range-gated: per-cell SoH 0–100%, learned capacity 0–400 Ah, per-cell SoC 0–100%. If
+a block's mean falls outside its range, both the mean and the spread are left empty rather than
+defaulted. If no block answers at all, the whole summary is empty. A value the car did not provide
+is shown as missing, never as zero.
 
 ## Why a cell matrix instead of one number
 
@@ -67,23 +116,72 @@ groups each. The layout comes from a catalogue entry for the car's pack, not a n
 the code. A 102-cell hybrid pack is treated as complete at 102.
 </Callout>
 
+### What the balance bands mean
+
+"Balance" is the spread between the highest and the lowest cell-group potential at rest. Hanterill
+bands that spread for a human reader:
+
+| Spread at rest | Band | How to read it |
+| --- | --- | --- |
+| 20 mV or less | Tight | Every group is sitting close to its neighbours. |
+| 20–35 mV | Normal | Ordinary rest-voltage tolerance for this chemistry. |
+| 35–60 mV | Watch | One group may be lagging, or balancing may be weak. Worth a repeat reading. |
+| Above 60 mV | Imbalanced | Persistent spread points at a weak cell or a balancing fault. |
+
+Two rules come with those bands:
+
+- They apply only to a complete cell read. A partial sweep is a coverage gap and is shown as
+  "not banded"; it never earns a verdict from an incomplete set of cells.
+- They are review bands, not vehicle specifications and not score points. They tell you where to
+  look. Hanterill does not deduct score for them.
+
 ## The temperature history
 
-The BECM also stores a lifetime record: how many hours the pack has spent in each temperature band.
-Hanterill shows it as a histogram with the total operating hours and how much of that time was in
-the comfortable window. Heat is what ages a battery, so time spent very hot or very cold is worth
-seeing before you buy.
+The BECM also stores a lifetime record: how many hours the pack has spent in each of twelve
+ten-degree temperature bands, from +75 °C down to −35 °C. Hanterill shows it as a histogram with the
+total operating hours and how much of that time was in the comfortable window.
+
+- The **optimal-window percentage** is the share of lifetime hours spent in the three middle bands,
+  centred on 35 °C, 25 °C and 15 °C, the 15–35 °C window the decoder names.
+- The **thermal stress index** (0–100) weights the hot bands (10, 6, 4, 2) and the cold bands
+  (2, 5, 10), scales by lifetime hours, and caps at 100. A low number means little time was spent
+  where the pack ages fastest.
+
+Heat is what ages a battery, so time spent very hot or very cold is worth seeing before you buy.
+Live pack temperatures are a separate matter: the sensor-to-module mapping is not established yet,
+so those values are displayed as pack channels, marked provisional, and never as one module's
+temperature.
 
 ## Cross-checks
 
-Hanterill compares signals that should agree with each other and reports where they do not: the
+Hanterill compares signals that should agree with each other and reports where they do not:
 reported pack voltage against the sum of the cell groups, calculated power against reported power,
-current flow while parked, and more. There are ten of these checks.
+current flow while parked, and more. There are fourteen of these checks, and four of them are
+battery-specific:
+
+- per-cell SoH spread across the pack
+- per-cell SoH against the pack-level SoH
+- per-cell SoC spread
+- per-cell capacity plausibility
 
 The verdict vocabulary matters more than the count. A check can come back consistent, a warning, a
 signal disagreement, decoder uncertain, or insufficient data. An input that never answered is
 recorded as missing, never treated as a pass. No check claims a hardware fault, and none goes beyond
 a warning.
+
+## What the battery contributes to the report score
+
+The scored inspection report takes only part of the battery picture:
+
+- SoH drives the score. Below 70% deducts 30 points, 70–80% deducts 14, 80–90% deducts 4, and
+  90% or above deducts nothing. A pack below 70% is below the published warranty floor.
+- The 12 V rested rail also scores: below 12.2 V deducts 16, and 12.2–12.5 V deducts 6.
+- Cell balance and thermal spread do not score. They stay observations and review bands.
+- If no SoH reading arrives, the score is left empty and the verdict is inconclusive. Hanterill
+  does not guess a score from partial evidence, and it does not treat a missing reading as a zero.
+
+The full arithmetic, the verdict bands and the two hard overrides are in
+[Inspection reports](/docs/inspection-reports).
 
 ## Reading it over the wire
 

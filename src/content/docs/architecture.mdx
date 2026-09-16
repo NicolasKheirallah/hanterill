@@ -1,7 +1,8 @@
 import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 
-Hanterill is a stack of layers, each one small enough to understand on its own. At the bottom,
-Ethernet. At the top, a screen that shows a battery percentage. This page walks the whole path.
+Hanterill is a stack of layers, each one small enough to understand on its own. Ethernet sits at the
+bottom, and a screen that shows a battery percentage sits at the top. This page walks the whole
+path.
 
 Nothing in it is a proprietary cloud API. Every layer is a public standard or a table Hanterill
 ships with.
@@ -13,13 +14,27 @@ Hanterill            desktop app and CLI, Rust and Tauri v2
 Application layer    use cases, sessions, sweeps, policy
 ISO 14229 UDS        unified diagnostic services (the questions)
 ISO 13400 DoIP       diagnostics over IP (the envelope)
+ISO 15765 ISO-TP     diagnostics over CAN (the second link)
 TCP / UDP            sockets, discovery, routing activation
 Ethernet             passive ENET cable, RJ45
+CAN                  OBD-II pins, hardware adapter required
 Vehicle gateway      CEM / VGM on CMA
 ```
 
 The full module-to-module wiring behind that gateway is a live map of its own: every unit, bus
 segment and documented pin row sits in the [CMA Network Explorer](/network).
+
+### The CAN lane
+
+Most cars are reached over DoIP, but the transport also speaks ISO-TP over CAN. That is the older
+OBD-II path: CAN frames carrying the same UDS questions. It is implemented and needs a hardware
+adapter; Hanterill ships none. The [Connection](/docs/connection) page covers what each link needs.
+
+### The 44-row live registry and the 49-row roster
+
+The [ECU reference](/docs/ecu-reference) page lists 49 rows: the full CMA/ICE roster Hanterill knows
+how to talk to. A live audit walks the smaller registry the car actually announces: 44 rows on a
+BEV. The catalogue is the map; the registry is what that car presented.
 
 <ProtocolStack />
 
@@ -27,19 +42,19 @@ segment and documented pin row sits in the [CMA Network Explorer](/network).
 
 ## What happens when you press Connect
 
-1. **Find the car.** Hanterill sends a vehicle identification request over UDP on port 13400 and
-   listens for announcements.
-2. **Open a channel.** It opens a TCP connection to the car on the same port, 13400.
-3. **Get permission.** It sends a routing activation request. The car accepts or refuses, and until
-   it accepts, no diagnostic message will be answered.
-4. **Say hello to each module.** A `TesterPresent` keeps the session alive; a functional broadcast
-   can ask every module at once, with individual probes only for the quiet ones.
-5. **Ask a question.** A UDS request goes out inside a DoIP envelope. The car wraps the reply the
-   same way.
-6. **Decode the answer.** The bytes are matched against a platform-specific definition. A response
-   that does not match the contract is refused as a typed outcome, never coerced into a number.
-7. **Store it.** The observation is written to the local session archive with its source,
-   timestamp and decoder version.
+1. Find the car. Hanterill sends a vehicle identification request over UDP on port 13400 and listens
+   for announcements.
+2. Open a channel. It opens a TCP connection to the car on the same port, 13400.
+3. Get permission. It sends a routing activation request. The car accepts or refuses, and until it
+   accepts, no diagnostic message will be answered.
+4. Say hello to each module. A `TesterPresent` keeps the session alive; a functional broadcast can
+   ask every module at once, with individual probes only for the quiet ones.
+5. Ask a question. A UDS request goes out inside a DoIP envelope. The car wraps the reply the same
+   way.
+6. Decode the answer. The bytes are matched against a platform-specific definition. A response that
+   does not match the contract is refused as a typed outcome, never coerced into a number.
+7. Store it. The observation is written to the local session archive with its source, timestamp and
+   decoder version.
 
 A single request travels the same path every time, and the answer comes back along it:
 
@@ -75,10 +90,11 @@ layer of its own rather than a few socket calls.
 
 ## What UDS adds
 
-UDS is the language of the questions. Every request starts with a service identifier, and the
-services used here are a short list: `0x10` to open a session, `0x19` for fault codes, `0x22` to
-read a value, `0x2A` for periodic reads, `0x31` for routines, `0x14` to clear. The
-[ECU reference](/docs/ecu-reference) and [Safety](/docs/safety) pages go through them one by one.
+UDS defines the questions. Every request starts with a service identifier. The services used here
+are a short list: `0x10` to open a session, `0x19` for fault codes, `0x22` to read a value, `0x2A`
+for periodic reads, `0x31` for routines, `0x3E` for `TesterPresent`, and `0x14` to clear, which is
+present only in write-capable builds. The [ECU reference](/docs/ecu-reference) and
+[Safety](/docs/safety) pages go through them one by one.
 
 ## Components
 
@@ -91,8 +107,9 @@ read a value, `0x2A` for periodic reads, `0x31` for routines, `0x14` to clear. T
 - **Decoders**: per-platform, per-module definitions with explicit payload contracts: expected
   length, scaling, privacy class and maturity. CMA decoders are verified against a real car; SPA and
   SEA1 definitions ship marked as awaiting hardware confirmation.
-- **Pack topologies**: the cell matrix is data, not code. CMA 108-cell, CMA 96-cell, SPA 96 and 108
-  and hybrid 102, and the SEA1 layouts each carry their own count and arrangement.
+- **Pack topologies**: the cell matrix is data, not code. CMA 108-cell, CMA 96-cell, CMA 82 kWh,
+  SPA 96 and 108 and hybrid 102, the SPA early-hybrid 96, and the SEA1 layouts each carry their own
+  count and arrangement.
 - **Policy**: the [inspection scoring engine](/docs/inspection-reports) and the cross-signal checks
   sit on top of the observations. They never add traffic.
 - **Sessions**: an atomic, durable local archive with operator notes and corrupt-file recovery.
@@ -105,16 +122,16 @@ read a value, `0x2A` for periodic reads, `0x31` for routines, `0x14` to clear. T
 ## One build
 
 Hanterill compiles as a single build with every feature on by default: the diagnostic reads, the
-all-modules DID scanner, and the write surface that asks for confirmation. There is no edition flag to explain
-and no hidden mode. A stripped `--no-default-features` build exists so the read-only gate keeps a
-compile-time edge that CI can exercise, and it is a development configuration rather than a
+all-modules DID scanner, and the write surface that asks for confirmation. There is no edition flag
+to explain and no hidden mode. A stripped `--no-default-features` build exists so the read-only gate
+keeps a compile-time edge that CI can exercise, and it is a development configuration rather than a
 release.
 
 ## Why Rust and Tauri
 
 The protocol work suits Rust: many small concurrent operations with error handling that has to be
 explicit. Tauri keeps the binary small and uses the operating system's own webview instead of
-shipping a browser engine, so the app feels native rather than like a web page in a window. The
+shipping a browser engine. The app feels native rather than like a web page in a window. The
 interface is React and TypeScript, typed against contracts generated from the engine.
 
 ## Next

@@ -61,7 +61,7 @@ export const platformMeta: Record<
     status: "partial",
     testedAgainst: ["2018 V90 T6 (combustion)"],
   },
-  SEA: { label: "SEA", status: "testing", testedAgainst: [] },
+  SEA: { label: "SEA1", status: "testing", testedAgainst: [] },
   SPA2: { label: "SPA2", status: "research", testedAgainst: [] },
 };
 

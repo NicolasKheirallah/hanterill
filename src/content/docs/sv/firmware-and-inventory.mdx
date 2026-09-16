@@ -4,38 +4,51 @@ det genom att läsa versionerna, spara listan och visa dig skillnaden senare.
 
 ## Vad en modul kan berätta om sig själv
 
-Varje modul svarar på fyra identitetsläsningar:
+Varje modul svarar på en uppsättning identitetsläsningar. Auditen håller nio räknare per modul,
+bland dem diagnostik-, hårdvaru- och startpartnummer. Fyra av dem är huvudläsningarna:
 
 | Identifierare | Vad den innehåller |
 | --- | --- |
 | `0xEDA0` | Det sammansatta identitetsblocket: modulens egen identitetspost |
-| `0xF18C` | ECU:ns serienummer, hårdvaruenhetens eget serienummer |
+| `0xF18C` | Styrenhetens serienummer, hårdvaruenhetens eget serienummer |
 | `0xF194` | Leverantörens mjukvarunummer |
 | `0xF195` | Leverantörens mjukvaruversion |
 
-Skillnaden mellan `0xF194` och `0xF195` är värd att hålla fast vid. Den ena namnger mjukvarudelen, den
+Skillnaden mellan `0xF194` och `0xF195` spelar roll. Den ena namnger mjukvarudelen, den
 andra namnger dess version. En reparation som byter en modul ändrar serienumret. En mjukvaruuppdatering
 ändrar versionen. Det är olika sorters ändring och diffen säger det.
 
 ## Auditen
 
-En audit sveper modulerna och läser de fyra identifierarna från var och en. Den körs inom en uttrycklig
-budget: ett tak för hur många moduler den läser, och en deadline för hela körningen. När endera
-gränsen nås stannar auditen och returnerar vad den redan samlat in.
+En audit sveper modulerna och läser identifierarna från var och en. Den körs inom en uttrycklig
+budget: ett tak för hur många moduler den läser, och en deadline för hela körningen.
 
 Det är avsiktligt. En modullista presenteras aldrig som komplett när den inte är det. Resultatet bär:
 
-- **Täckning**: hur många moduler som planerades, svarade, misslyckades eller hoppades över.
-- **En rad per modul**, inklusive de som aldrig tillfrågades, var och en med orsaken till att den
-  inte lästes.
-- **Fälttäckning**: hur många moduler som levererade vart och ett av de fyra fälten, så du kan se att
-  40 moduler svarade men bara 32 hade en mjukvaruversion att ge.
-- **Varför den stannade**, om en gräns var orsaken.
+- Täckning: hur många moduler som identifierades, saknade identifierare, misslyckades eller hoppades
+  över.
+- En rad per modul, inklusive de som aldrig tillfrågades, var och en med orsaken till att den inte
+  lästes.
+- Fälttäckning: hur många moduler som levererade var och en av de nio räknarna, så du kan se att 40
+  moduler identifierades men bara 32 hade en mjukvaruversion att ge.
+- Varför den stannade, om en gräns var orsaken.
 
 <Callout kind="note" title="En räkning av moduler är inte ett resultat">
-"41 moduler svarade" säger inget om huruvida du fick mjukvaruversionerna. Hanterill rapporterar
-per-fält-räkningarna av den anledningen.
+"41 moduler identifierades" säger inget om huruvida du fick mjukvaruversionerna. Hanterill
+rapporterar per-fält-räkningarna av den anledningen.
 </Callout>
+
+### Standardbudgeten
+
+Standardtaket är 64 styrenheter, och timeouten kan ställas in mellan 1 och 1800 sekunder. När endera
+gränsen nås stannar auditen och returnerar vad den redan samlat in. Den avbryter också i förtid vid
+en timeout för det sammansatta identitetsblocket: om läsningen av `0xEDA0` inte svarar i tid väntar
+auditen inte ut resten av deadlinen.
+
+### Vilken förteckning auditen går igenom
+
+Auditen går igenom den förteckning fordonet annonserar i stället för en fast lista: 44 moduler på en
+BEV, eller alla 49 rader i den fullständiga CMA/ICE-förteckningen.
 
 ## Diffen
 
@@ -46,12 +59,18 @@ Två auditer av samma bil jämförs modul för modul. Varje modul hamnar i ett a
 | Oförändrad | Samma på båda sidor |
 | Mjukvara ändrad | Mjukvarunumret eller versionen skiljer sig; hårdvaruserienummer gjorde det inte |
 | Hårdvara ändrad | Serienumret skiljer sig, så den fysiska enheten är inte samma |
-| Ny ECU | Finns i den andra auditen, saknas i den första |
-| Saknad ECU | Finns i den första auditen, saknas i den andra |
+| Ny styrenhet | Finns i den andra auditen, saknas i den första |
+| Saknad styrenhet | Finns i den första auditen, saknas i den andra |
 | Okänd | Adresserad på båda sidor men aldrig identifierad, så det finns inget att jämföra |
 
-En ECU som hittas på exakt en sida är ny eller saknad, aldrig "ändrad". En
+En styrenhet som hittas på exakt en sida är ny eller saknad, aldrig "ändrad". En
 modul som dök upp mellan besöken monterades, den uppdaterades inte.
+
+### När fordonet ändras mellan auditer
+
+Två auditer är bara jämförbara när de kommer från samma fordon. En identitetsvakt läser fordonets
+identitet och vägrar diffa två olika fordon, så ett fordons avläsningar aldrig blandas in i ett
+annat fordons historik.
 
 ## Ett genomarbetat exempel
 
@@ -63,12 +82,12 @@ Ett fordon kommer in efter en verkstadsvisit, och ägaren vill veta vad besöket
 3. Jämför de två. Moduler vars mjukvara ändrades är de besöket rörde.
 4. Allt som läses som `Oförändrad` uppdaterades inte, vad fakturan än säger.
 
-Samma arbetsflöde fungerar för en modul du bytte själv: serienumret ändras och tillståndet läses som
-`Hårdvara ändrad`, vilket bekräftar att den nya delen är den som nu pratar på bussen.
+Samma arbetsflöde fungerar för en modul du bytte själv. Serienumret ändras, så tillståndet läses
+som `Hårdvara ändrad`, vilket bekräftar att den nya delen är den som nu pratar på bussen.
 
 <Callout kind="caution" title="En oförändrad version är inte bevis på att inget hände">
 En modul som inte svarade registreras som okänd, aldrig som oförändrad. Om auditen inte kunde läsa en
-modul någon av gångerna kan diffen inte säga om något hände med den.
+modul någon av gångerna kan diffen inte säga huruvida något hände med den.
 </Callout>
 
 ## I CLI:et
@@ -81,8 +100,9 @@ hanterill firmware-audit --discover --json > after.json
 hanterill firmware-diff before.json after.json
 ```
 
-`firmware-audit` accepterar en uttrycklig modullista, ett modultak och en timeout, så den kan riktas
-mot en misstänkt modul istället för hela bilen.
+`firmware-audit` accepterar en uttrycklig modullista, ett modultak (64 som standard) och en timeout
+(ställbar mellan 1 och 1800 sekunder). Då kan du rikta den mot en misstänkt modul i stället för
+hela fordonet.
 
 ## Firmware och sessioner
 

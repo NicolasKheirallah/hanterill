@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { Container, SectionHeading, MoreLink } from "@/components/ui/layout";
 
 const readOnlyKeys = ["battery", "ecuId", "faultCodes", "telemetry", "export"] as const;
-const writeKeys = ["clear", "routines", "adaptations", "udsWrite"] as const;
+const writeKeys = ["clear", "routines", "reset"] as const;
 
 export function SafetySection() {
   const t = useTranslations("safety");

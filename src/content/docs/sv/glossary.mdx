@@ -3,7 +3,7 @@ import { GlossaryList } from "@/components/docs/mdx/GlossaryList";
 Diagnostik har sin egen vokabulär, och det mesta är akronymer. Den här sidan är uppslagsverket: varje
 term som resten av dokumentationen använder, utskriven en gång och förklarad på vanligt språk.
 
-Om du bara läser en sektion, läs Diagnostik-gruppen. Det är där orden du möter på den första vyn bor.
+Om du bara läser en sektion, läs Diagnostik-gruppen. Dess termer är de du möter på den första vyn.
 
 <GlossaryList />
 
@@ -13,6 +13,10 @@ Några par snubblar folk på, så de är värda att säga direkt:
 
 - **SoH och SoC.** State of Health är hur mycket kapacitet paketet har kvar jämfört med nytt. State of
   Charge är hur fullt det är just nu. Ett paket kan vara 90 % friskt och 20 % laddat samtidigt.
+- **Batterihälsa, SoH och rapportpoängen.** Tre olika siffror. Hanterill läser SoH-procenten från
+  batteristyrenheten. Den cellvisa sammanställningen räknas fram ur tre cellvisa block, och
+  rapportpoängen av 100 räknas fram ur hela fordonet, med SoH som en indata. Se
+  [Batteridiagnostik](/docs/battery-diagnostics).
 - **ECU och DID.** En ECU är en dator. En DID är en fråga du ställer till den. En modul svarar på
   många identifierare.
 - **DTC och frysta ramdata.** En DTC är koden som säger att ett fel hände. Frysta ramdata är

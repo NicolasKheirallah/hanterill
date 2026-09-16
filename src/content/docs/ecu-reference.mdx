@@ -5,19 +5,20 @@ control units), wired together. Each one runs something: the brakes, the windows
 battery, the radio. Hanterill asks each of them what it is, what software it runs, and
 whether anything is wrong.
 
-This page is the list of every ECU Hanterill knows how to talk to on the CMA platform,
-with the address it answers on.
+This page lists every ECU Hanterill can talk to on the CMA platform, with the address
+each one answers on.
 
 ## The registry
 
-The CMA registry holds 49 entries. Forty of them advertise fault-code support. Five
-entries are marked `ref`: reference rows from vendor documentation that have never
-been observed on a real car. On a battery-electric car those five stay quiet,
-and Hanterill records the silence as expected instead of a fault.
+The CMA registry holds 49 entries. Forty of them advertise fault-code support. Forty-four
+have been observed on a live car; the remaining five are `ref` rows: reference entries from
+vendor documentation that have never answered. On a battery-electric car those five stay
+quiet, and Hanterill records the silence as expected instead of a fault. In other words, a
+BEV sees a roster of 44, while the 49-row list is the full CMA/ICE mapping.
 
 Each entry carries a DoIP logical address. Think of it as a desk extension inside the
 car: `0x1635` is always the battery controller, the same way 432 is always the same
-desk. Hanterill sends a request to one extension and the reply comes back from it.
+desk. Hanterill sends its request to one extension, and that extension answers.
 
 ## Gateway
 
@@ -26,9 +27,8 @@ the CEM is the car's central body computer.
 
 <EcuReference domain="gateway" />
 
-The VGM is worth a note: writes to it need a security key that is unique per car. Reads
-work without it, which is why every read-only feature in Hanterill runs on a
-connected vehicle without extra setup.
+VGM writes need a security key that is unique per car. Reads work without one, so
+every read-only feature in Hanterill runs on a connected vehicle without extra setup.
 
 ## Energy
 
@@ -38,8 +38,15 @@ current (and back, when you lift off).
 
 <EcuReference
   domain="energy"
-  caption="ECM, TCM, DEM, MVBM and NRCM are combustion and 48 V reference rows. They are registered so a hybrid car can be mapped later; on a BEV they stay silent."
+  caption="TCM, NRCM, SUM, DEM and MVBM are the five reference rows. They are registered so a hybrid or air-suspension car can be mapped later; on a battery-electric car they stay silent."
 />
+
+<Callout kind="note" title="Why ECM is not an engine controller here">
+On this platform the module called ECM is live-verified and is the drive-unit/inverter
+controller, not an engine controller. The air-suspension module, SUM, is the reference row
+people usually expect to find in its place. The name on the box is a label, not a
+description; the registry says which modules actually answered.
+</Callout>
 
 ## Chassis
 
@@ -59,7 +66,7 @@ modules most people never think about.
 
 ## How Hanterill talks to them
 
-Two UDS services do most of the work:
+Four UDS services do most of the work:
 
 <SpecList rows={[
   ["0x22", "ReadDataByIdentifier: ask a module for a numbered value, such as its VIN (0xF190) or its software version (0xF195)"],
@@ -80,16 +87,24 @@ The common identity identifiers, read from every module that answers:
 
 Because Hanterill reads these from every ECU rather than only the battery, one scan
 produces a full hardware and software inventory of the car. That is what the
-[firmware view](/docs/cli) diffs between visits.
+[firmware view](/docs/firmware-and-inventory) diffs between visits.
+
+## Other platforms keep their own registries
+
+The list above is the CMA registry, the one Hanterill was built and checked against. SPA and
+SEA1 carry their own, smaller registries. SPA has a separate CAN-era set and DoIP set, and
+SEA1 has its own. A definition is never shared between platforms. A module that is present
+on the reference car can be absent elsewhere, or answer at a different address, so each
+platform is resolved on its own terms rather than by family resemblance.
 
 ## Not every module answers everything
 
-Some modules answer identification reads but have no fault codes to report. Those are
-marked `DTCs: no` above, and Hanterill skips them during a fault scan instead of
-recording a failure. A module that stays completely silent is a third case: it is
-recorded as not observed, never as broken.
+Some modules answer identification reads but have no fault codes to report. Nine of the CMA
+entries are in that state. Those are marked `DTCs: no` above, and Hanterill skips them during
+a fault scan instead of recording a failure. A module that stays completely silent is a third
+case: it is recorded as not observed, never as broken.
 
 <Callout kind="note" title="A timeout is not a diagnosis">
-A module that does not answer can mean it is not fitted, asleep, or not on this car's build
-list. Hanterill says "did not answer" and leaves the judgement to you.
+When a module does not answer, it may not be fitted, may be asleep, or may not be on this
+car's build list. Hanterill says "did not answer" and leaves the judgement to you.
 </Callout>

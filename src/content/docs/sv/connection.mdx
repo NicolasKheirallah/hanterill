@@ -1,5 +1,5 @@
 Hanterill kommunicerar med fordonet över Ethernet. En modern bil är ett litet nätverk, och ett av
-dess uttag talar vanlig internetprotokoll. Den här sidan går igenom kabeln, nätverket och vad du gör
+dess uttag talar vanligt internetprotokoll. Den här sidan går igenom kabeln, nätverket och vad du gör
 när fordonet inte dyker upp.
 
 ## Kabeln
@@ -24,7 +24,7 @@ Vilken passiv OBD-II till Ethernet-kabel som helst fungerar, även de som säljs
 ## Hur fordonet hittas på nätet
 
 Fordon som stöder detta använder länklokal IPv4-adressering, intervallet `169.254.x.x`. Det är samma
-princip som när du kopplar en nätverkskabel direkt mellan två datorer: var sida väljer en adress
+princip som när du kopplar en nätverkskabel direkt mellan två datorer: varje sida väljer en adress
 utan att någon router behövs.
 
 Oftast löser fordonet och adaptern detta själva. Om operativsystemet väntar på en DHCP-server som
@@ -44,10 +44,10 @@ eller ur kabeln mitt i en session upptäcks det utan omstart.
 
 Arbeta dig nedåt i listan. De två första punkterna löser de flesta fall:
 
-- Är fordonet på tändning? Ett fordon som sover svarar inte.
+- Är tändningen påslagen? Ett fordon som sover svarar inte.
 - Sitter RJ45-kontakten i ett Ethernet-uttag, inte i ett uttag som bara har USB?
 - Blockerar en VPN eller brandvägg UDP 13400? Stäng av dem tillfälligt och försök igen.
-- Prova en annan Ethernet-adapter. En del billiga USB-adapter tappar länklokal trafik.
+- Prova en annan Ethernet-adapter. En del billiga USB-adaptrar tappar länklokal trafik.
 - Håller något annat diagnosverktyg anslutningen? Bara ett verktyg i taget kan tala med fordonet.
 
 <Callout kind="caution" title="En kabel, ett fordon">
@@ -57,21 +57,39 @@ fordonets nätverk med ditt vanliga nätverk.
 
 ## När länken tappas
 
-Transporten har inbyggd återhämtning, så ett kort avbrott kostar dig inte sessionen:
+Transporten har inbyggd återhämtning, så ett kort avbrott kostar dig inte sessionen.
 
-- Tappas TCP-anslutningen aktiverar Hanterill routningen igen på den länk som finns kvar.
+### Återhämtningsstegen
+
+Återhämtningen klättrar en stege, och bara det steg som behövs körs:
+
+1. Aktivera routningen igen. Om länken finns kvar skickar Hanterill routningsaktiveringen på nytt
+   över den.
+2. Återanslut TCP-kanalen. Om socketen är borta öppnas en ny TCP-anslutning på port 13400, och
+   routningen aktiveras på den kanalen.
+3. Upptäck på nytt. Om kanalen inte går att bygga upp börjar den om från upptäckten: en
+   UDP-broadcast på 13400, sedan en ny kanal.
+
+Vid sidan av stegen:
+
 - Svar från den gamla anslutningen avvisas som föråldrade, så ett sent svar inte kan misstas för ett
   aktuellt.
 - En keepalive (`TesterPresent` varannan sekund) hindrar fordonet från att försätta moduler i vila
-  mitt i en längre skanning.
+  mitt i en längre skanning. En TCP-keepalive körs vid sidan av, så en länk som tystnat upptäcks i
+  stället för att väntas på.
 - Rapporterar fordonet en annan identitet efter en återanslutning avslutas sessionen, i stället för
   att avläsningar från två fordon blandas i samma fil.
 
-## Trådlöst
+## Trådlöst och trådbundet
 
-En del fordon exponerar diagnostik över sin egen Wi-Fi-accesspunkt. Finns det och stöder Hanterill
-det, fungerar upptäckt och routning på samma sätt över det trådlösa gränssnittet. Den trådbundna
-vägen är den testade.
+Den trådbundna vägen över Ethernet och ENET-kabeln är den testade. Två andra länktyper finns:
+
+- **CAN / ISO-TP** är en andra länktyp, implementerad i transporten. Den talar över fordonets
+  OBD-II-stift och kräver en hårdvaruadapter som stöds; Hanterill levererar ingen, så
+  Ethernet-kabeln är vägen in.
+- **Wi-Fi** är trådlöst. En del fordon exponerar diagnostik över sin egen accesspunkt, och om den
+  finns och Hanterill stöder den, fungerar upptäckt och routning på samma sätt över det trådlösa
+  gränssnittet.
 
 ## Nästa steg
 

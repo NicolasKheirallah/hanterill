@@ -1,0 +1,124 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+Det mesta i Hanterill ställer frågor till fordonet. En servicefunktion säger åt fordonet att göra
+något: dra tillbaka parkeringsbromsen, nolla en styrvinkelsensor, återställa ett serviceintervall,
+köra en luftning av kylvätskan. Den här sidan förklarar vad som levereras, hur varje åtgärd bekräftas
+och vad som inte kan ångras.
+
+<SafetyNotice level="adaptation" title="De här åtgärderna ändrar fordonet">
+Allt på den här sidan sänder en tillståndsändrande begäran. Inget av det körs utan en uttrycklig
+bekräftelse per åtgärd, och ett bygge kompilerat utan skrivfunktionen avvisar det direkt.
+</SafetyNotice>
+
+## Två slags förfrågningar
+
+- **Läsningar** frågar efter ett värde: identifikation, felkoder, uppmätta kanaler, det sparade
+  resultatet av en rutin som redan körts. Läsningar är standard överallt i appen och ändrar aldrig
+  fordonet.
+- **Servicefunktioner** startar en rutin eller skickar ett kommando som aktiverar hårdvara.
+
+Tre familjer avvisas avsiktligt i varje bygge: att skriva ett värde via identifierare, styrning av
+in- och utgångar, och att låsa upp security access för att skriva. Security access används bara för
+att inspektera seed- och key-tillståndet, aldrig för att låsa upp något. Programmering och flashning
+är inte implementerade alls.
+
+## Bekräftelsekontraktet
+
+Ett verkstadsverktyg som inte kan radera en felkod efter en reparation är bara halva verktyget, så
+skrivytan finns. Det som gör det säkert är samtycke, inte frånvaro av funktionen:
+
+- Den körande binären publicerar ett kapacitetsmanifest, och gränssnittet erbjuder bara det som
+  bygget faktiskt kan utföra.
+- Varje åtgärd öppnar en bekräftelsedialog som namnger fordonet, målmodulen och den exakta
+  begäran. Utför-knappen förblir inaktiverad tills varje förutsättningsruta är ibockad. En rutin
+  med hög risk får en bekräftelse som är tydligt märkt som farlig.
+- Bara en aktivering körs i taget.
+- Granskningsloggen registrerar svaren som faktiskt kom tillbaka, inte avsikten.
+- Ett bygge kompilerat utan skrivfunktionen svarar med ett typat `read_only_build`-avslag i stället
+  för att misslyckas obegripligt. Den strippade konfigurationen finns för CI och utveckling; det är
+  inte den som släpps.
+
+## Innan du börjar
+
+Förutsättningarna **intygas av dig, de upprätthålls inte av verktyget**. Varje rutin förväntar sig ett
+parkerat fordon på jämnt underlag med parkeringsbromsen åtdragen och stödklossar där proceduren
+kräver dem. Den förväntar sig också tändningen i läge II med 12 V-stöd och en positiv kvittens från
+modulen. Varje rutin har sin egen enradiga förutsättning. Behandla dem som en checklista att ha gjort
+klart, inte som en varning att klicka förbi.
+
+## Rutinkatalogen
+
+Sexton rutiner levereras, alla med samma rutinkontrolltjänst. Risknivån är appens egen bedömning.
+
+| System | Vad den gör | Risk |
+| --- | --- | --- |
+| Elektrisk parkeringsbroms | Dra tillbaka till serviceläge för byte av bromsbelägg | Hög |
+| Elektrisk parkeringsbroms | Återställ från serviceläget | Medel |
+| Styrvinkel | Nolla styrvinkelsensorn | Hög |
+| 12 V-batteri | Återställ adaptionen efter ett batteribyte | Medel |
+| TCAM-stödbatteri | Konditionera telematikens stödbatteri | Medel |
+| Extra kylvätskepump | Kör pump 1, pump 2 eller båda (guidad luftning) | Medel |
+| ADAS-kamera | Återställ den främre kameran | Medel |
+| ADAS-radar | Återställ den främre radarn | Medel |
+| 360-kamera | Lär in kamerorna runt om fordonet | Medel |
+| Dödvinkelradar | Återställ vänster och höger dödvinkelradar | Medel |
+| Servisintervall | Återställ räknaren för serviceintervall | Låg |
+| Klimatreglering | Kalibrera klimatanläggningens spjäll | Låg |
+| Taklucka och fönster | Normalisera efter ett strömavbrott | Låg |
+| Grillspjäll | Kalibrera det aktiva grillspjället | Låg |
+| Användningsläge | Sätt fordonet i ett aktivt användningsläge | Medel |
+| Användningsläge | Sätt fordonet i ett inaktivt användningsläge | Medel |
+
+## Den guidade luftningen av kylvätskan
+
+Den extra kylvätskepumpen är den enda rutinen med ett guidat flöde i stället för en enkel åtgärd.
+Den går igenom en sekvens i fem steg där du väljer pump 1, pump 2 eller båda, och den skiljer mellan
+"stannade för att du bad om det" och "stannade för att det inte kunde bekräftas". Ett obekräftat
+stopp rapporteras som obekräftat, aldrig tyst presenterat som säkert.
+
+## Att radera felkoder
+
+Radering är ett eget flöde med en egen sida. Stegen är att öppna utökade sessioner, fånga frysta
+ramdata innan de förstörs, bulkradering, nytt försök, och en verifierande omläsning som namnger de
+moduler som fortfarande håller koder. Det valfria force-reset-steget startar om envetna moduler och
+reparerar rutten efteråt; det är opt-in och vägrar köra medan fordonet rapporterar körläge. Se
+[Felkodsskanning](/docs/dtc-scanning) för hela sekvensen.
+
+## Återställning av styrenhet
+
+En modulåterställning finns som en separat åtgärd, och det är också vad force-reset-steget i
+raderingsflödet använder. Den startar om målmodulen i stället för att ändra ett lagrat värde. Som
+varje annan skrivning ligger den bakom samma bekräftelsekontrakt.
+
+## Vad som kan ångras och vad som inte kan
+
+Tre saker har ett omvänt steg: återställningen av parkeringsbromsen, det omvända användningsläget och
+avstängningen av kylvätskepumpen. Allt annat är **enkelriktat**: nollning av styrvinkeln, ADAS- och
+kameraåterställningar, kalibreringsrutiner, adaptionsåterställningar. Det går
+inte att rulla tillbaka. Gränssnittet säger det innan du bekräftar.
+
+## Ärliga begränsningar
+
+- Rutinidentifierarna är reverse-enginerade och bär därför ingen säkerhetskonstruktion per
+  operation från tillverkaren. Hanterill exponerar kapaciteten, inte en licens att använda den;
+  styrvinkel- och ADAS-mål bör inte aktiveras utan tillverkarens arbetsordning.
+- Tillgängligheten beror på fordonsmappningen. Hanterill avvisar en rutin vars målmodul inte är
+  upplöst för den plattformen i stället för att försöka mot en gissad adress.
+- Rutiner sänder direkt utan att eskalera diagnossessionen. Bara raderingsflödet öppnar en utökad
+  session först.
+- Det finns ingen separat spärr som döljer servicefunktioner på plattformar märkta Testas eller
+  Utreds. Utgå inte från att en finns.
+
+## Fel och negativa svar
+
+En rutin lyckas bara vid ett positivt svar från rutinkontrollen. Appen lyfter fram ett negativt svar
+med modulen och rutinen som producerade det, i stället för att försöka igen blint. Appen rapporterar
+allt annat som felformat. En timeout behandlas aldrig som framgång, och appen återställer inte en
+modul bara för att bli av med en timeout.
+
+## Nästa steg
+
+- [Säkerhet](/docs/safety): hela gränsen mellan skrivskyddad läsning och åtgärder som ändrar
+  fordonet.
+- [Felkodsskanning](/docs/dtc-scanning): raderingsflödet och diffen före och efter.
+- [Sessioner och bevis](/docs/sessions-and-evidence): hur en skrivning registreras.

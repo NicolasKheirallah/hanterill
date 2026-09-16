@@ -1088,7 +1088,7 @@
         [
           "12 V-batteri",
           "Nollställning av adaptation efter byte",
-          "WriteDataByIdentifier"
+          "RoutineControl"
         ],
         [
           "Servicepåminnelse",
@@ -1114,7 +1114,7 @@
       "hClearing": "Rensa felkoder",
       "pClearing": "När du bekräftat den matchar rensningsvägen referensverktygets omvända orkestrering: öppna den utökade sessionen per modul, samla frysta ramdatas före raderingen (rensningen raderar dem), bulkrensning, vänta ut det väntande fönstret, försök igen med de besvärliga per ECU, läs sedan om och rapportera kvarvarande. En valfri force-reset-loop startar om besvärliga moduler och reparerar DoIP-routningen efteråt. Den är undertryckt medan fordonet rapporterar ett körningsläge. Tillståndet före radering och efter rensning matar den inbyggda <link>DTC-diffen</link>.",
       "hAvail": "Tillgänglighet",
-      "pAvail": "Rutinstöd beror på ECU:n och plattformen. En rutin som inte är implementerad för ett visst fordon visas inte. Test- och researchplattformar exponerar inga servicefunktioner alls, och rutinidentifierarna själva är reverse-enginerade, så de bär ingen säkerhetsdesign per operation.",
+      "pAvail": "Rutinstöd beror på styrenheten och plattformen. En rutin som inte är implementerad för ett visst fordon visas inte, och tillgängligheten styrs av byggets kapacitetsmanifest. Rutinidentifierarna själva är reverse-enginerade, så de bär ingen säkerhetsdesign per operation.",
       "safetyDocs": "Säkerhetsdokumentation"
     },
     "inspectionReports": {

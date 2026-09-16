@@ -4,7 +4,8 @@ answers it by reading the versions, saving the list, and showing you the differe
 
 ## What a module can tell you about itself
 
-Each module answers four identification reads:
+Each module answers a set of identification reads. The audit tracks nine counters for a module,
+including the diagnostic, hardware and boot part numbers. Four of them are the headline reads:
 
 | Identifier | What it holds |
 | --- | --- |
@@ -14,27 +15,39 @@ Each module answers four identification reads:
 | `0xF195` | The supplier software version |
 
 The distinction between `0xF194` and `0xF195` matters. One names the software part, the
-other names its version. A repair that replaces a module changes the serial. A software update changes
-the version. Those are different kinds of change and the diff reports them separately.
+other names its version. A repair that replaces a module changes the serial. A software update
+changes the version. Those are different kinds of change, and the diff reports them separately.
 
 ## The audit
 
-An audit sweeps the modules and reads those four identifiers from each. It runs inside an explicit
-budget: a cap on how many modules it will read, and a deadline for the whole pass. When either bound
-is hit, the audit stops and returns what it already gathered.
+An audit sweeps the modules and reads those identifiers from each. It runs inside an explicit
+budget: a cap on how many modules it will read, and a deadline for the whole pass.
 
 A module list is never presented as complete when it is not. The result carries:
 
-- **Coverage**: how many modules were planned, answered, failed, or were skipped.
-- **A row per module**, including the ones never asked, each with the reason it was not read.
-- **Field coverage**: how many modules supplied each of the four fields, so you can see that 40
-  modules answered but only 32 had a supplier software version to give.
-- **Why it stopped**, if a bound was the reason.
+- Coverage: how many modules were Identified, how many returned NoIdentifiers, how many Failed, and
+  how many were Skipped.
+- A row per module, including the ones never asked, each with the reason it was not read.
+- Field coverage: how many modules supplied each of the nine counters, so you can see that 40
+  modules were Identified but only 32 had a supplier software version to give.
+- Why it stopped, if a bound was the reason.
 
 <Callout kind="note" title="A count of modules is not a result">
-"41 modules answered" says nothing about whether you got the software versions. Hanterill reports the
-per-field counts for this reason.
+"41 modules identified" says nothing about whether you got the software versions. Hanterill reports
+the per-field counts for this reason.
 </Callout>
+
+### The default budget
+
+The default cap is 64 ECUs, and the timeout can be set anywhere between 1 and 1800 seconds. When
+either bound is hit, the audit stops and returns what it already gathered. It also aborts early on a
+composite identifier timeout: if the `0xEDA0` read does not answer in time, the audit does not wait
+out the rest of the deadline.
+
+### Which roster the audit walks
+
+The audit walks the roster the car announces rather than a fixed list: 44 modules on a BEV, or all
+49 rows on the full CMA/ICE roster.
 
 ## The diff
 
@@ -52,6 +65,12 @@ Two audits of the same car compare module by module. Each module ends up in one 
 An ECU found on exactly one side is new or missing, never "changed". A module that appeared between
 visits was fitted, not updated.
 
+### When the car changes between audits
+
+Two audits are only comparable when they come from the same car. An identity guard reads the car's
+identity and refuses to diff two different cars, so one vehicle's readings are never mixed into
+another's history.
+
 ## A worked example
 
 A car comes in after a dealer service, and the owner wants to know what the visit actually did.
@@ -62,7 +81,7 @@ A car comes in after a dealer service, and the owner wants to know what the visi
 3. Compare the two. Modules whose software changed are the ones the visit touched.
 4. Anything that reads `Unchanged` was not updated, whatever the invoice says.
 
-The same workflow works for a module you replaced yourself: the serial changes and the state reads
+The same workflow works for a module you replaced yourself. The serial changes, so the state reads
 `Hardware changed`, which confirms the new part is the one now talking on the bus.
 
 <Callout kind="caution" title="An unchanged version is not proof of nothing">
@@ -80,8 +99,9 @@ hanterill firmware-audit --discover --json > after.json
 hanterill firmware-diff before.json after.json
 ```
 
-`firmware-audit` accepts an explicit module list, a module cap and a timeout, so it can be pointed at
-one suspected module instead of the whole car.
+`firmware-audit` accepts an explicit module list, a module cap (64 by default) and a timeout
+(configurable between 1 and 1800 seconds). That way you can point it at one suspected module
+instead of the whole car.
 
 ## Firmware and sessions
 

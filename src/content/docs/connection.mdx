@@ -32,9 +32,9 @@ sits waiting for a DHCP server that will never come, set the adapter to link-loc
 private addressing manually.
 
 <Callout kind="note" title="What Hanterill actually does">
-It sends a discovery broadcast on UDP port 13400, listens for a car to announce itself, opens a
-TCP connection to that same port, and asks the car to activate a diagnostic route before sending
-anything else. The [Architecture](/docs/architecture) page covers each step.
+It sends a discovery broadcast on UDP port 13400 and listens for a car to announce itself. It then
+opens a TCP connection to that same port and asks the car to activate a diagnostic route before
+sending anything else. The [Architecture](/docs/architecture) page covers each step.
 </Callout>
 
 Hanterill picks the network interface for you. It ranks every adapter it can see, ignores virtual
@@ -45,7 +45,7 @@ out mid-session, it notices without needing a restart.
 
 Work down this list. The first two cover most cases:
 
-- Is the car at ignition-on? A sleeping car answers nothing.
+- Is the ignition on? A sleeping car answers nothing.
 - Is the RJ45 end in an Ethernet port, not a USB-only port?
 - Is a VPN or firewall blocking UDP 13400? Try disabling them briefly.
 - Try another Ethernet adapter. Some cheap USB adapters drop link-local traffic.
@@ -58,21 +58,38 @@ bridge the car's network to your normal network.
 
 ## When the link drops
 
-Link recovery is built into the transport, so a brief interruption does not cost you the session:
+Link recovery is built into the transport, so a brief interruption does not cost you the session.
 
-- If the TCP connection drops, Hanterill re-activates the route on the surviving link.
+### The recovery ladder
+
+Recovery climbs a ladder, and only the rung that is needed runs:
+
+1. Reactivate the route. If the link survives, Hanterill re-sends routing activation on it.
+2. Reconnect the TCP channel. If the socket is gone, it opens a fresh TCP connection on port 13400
+   and activates the route on that channel.
+3. Rediscover. If the channel cannot be rebuilt, it starts over from discovery: a UDP broadcast on
+   13400, then a new channel.
+
+Alongside the ladder:
+
 - Replies from the old connection are rejected as stale, so a late answer cannot be mistaken for a
   fresh one.
-- A keepalive (`TesterPresent` every couple of seconds) stops the car from putting modules to sleep
-  in the middle of a long scan.
+- A keepalive (`TesterPresent` every two seconds) stops the car from putting modules to sleep in the
+  middle of a long scan. A TCP keepalive runs alongside it, so a link that has gone quiet is noticed
+  rather than waited on.
 - If the car itself reports a different identity after a reconnect, Hanterill ends the session
   rather than mixing two cars' readings into one file.
 
-## Wireless
+## Wireless vs wired
 
-Some cars expose diagnostics over their own Wi-Fi access point. If that is available and Hanterill
-supports it, discovery and routing work the same way over the wireless interface. The wired path is
-the tested one.
+The wired Ethernet path over the ENET cable is the tested one. Two other link types exist:
+
+- **CAN / ISO-TP** is a second link type, implemented in the transport. It speaks over the car's
+  OBD-II pins and needs a supported hardware adapter; Hanterill ships none, so the Ethernet cable
+  remains the way in.
+- **Wi-Fi** is wireless. Some cars expose diagnostics over their own access point, and if that is
+  available and Hanterill supports it, discovery and routing work the same way over the wireless
+  interface.
 
 ## Next
 
