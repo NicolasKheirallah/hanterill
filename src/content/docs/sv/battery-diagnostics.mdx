@@ -41,8 +41,8 @@ BECM räknar fram den. Hanterill läser svaret och kontrollerar det:
 - På CMA-plattformen är svaret ett fyra byte långt heltal i hundradels procent. Råvärdet 9114 visas
   som **91,14 %**.
 - En andra plattform skickar samma slags siffra enligt ett annat kontrakt: två byte med samma
-  skalning i hundradels procent, men en separat definition. Den kommer från community-research och
-  är inte verifierad mot ett fordon.
+  skalning i hundradels procent, men en separat definition. Den kommer från referensdata och behöver
+  testas på fler fordon.
 - Varje SoH-läsning räckviddskontrolleras mot 0–100 %. En nyttolast med fel längd, eller ett
   värde utanför intervallet, blir aldrig en siffra.
 
@@ -205,12 +205,11 @@ registrering i stället för att ställa samma fråga i en loop.
 
 ## Andra plattformar
 
-<Callout kind="warning" title="Inte hårdvaruverifierat på SPA och SEA">
+<Callout kind="warning" title="SPA och SEA1 behöver fler fordon">
 SPA och SEA1 har egna BECM-definitioner: olika cellantal och olika nyttolastkontrakt. Samma
 identifierarnummer kan vara ett 4-bytevärde på CMA och ett 2-bytevärde på SPA, så de är separata
-definitioner, aldrig delade. De levereras under community-research-proveniens och inget är verifierat
-mot ett levande SPA- eller SEA-fordon än. Batteridata från dessa fordon märks overifierad och bör inte
-användas för beslut.
+definitioner, aldrig delade. De behöver testas på fler fordon. Tills dess bör batteridata från dessa
+fordon behandlas som preliminär.
 </Callout>
 
 ## Nästa steg

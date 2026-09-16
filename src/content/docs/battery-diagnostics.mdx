@@ -40,8 +40,7 @@ The BECM calculates it. Hanterill reads the answer and validates it:
 - On the CMA platform the answer is a four-byte integer in hundredths of a percent. A raw value of
   9114 is displayed as **91.14%**.
 - A second platform sends the same kind of figure under a different contract: two bytes with the
-  same hundredths-of-a-percent scaling, but a separate definition. It is community research and is
-  not verified against a car.
+  same hundredths-of-a-percent scaling, but a separate definition.
 - Every SoH reading is range-checked to 0–100%. A payload of the wrong length, or a value
   outside that range, never becomes a number.
 
@@ -203,12 +202,11 @@ instead of asking the same question in a loop.
 
 ## Other platforms
 
-<Callout kind="warning" title="Not hardware-verified on SPA and SEA">
+<Callout kind="warning" title="SPA and SEA1 need more cars">
 SPA and SEA1 carry their own BECM definitions: different cell counts and different payload
 contracts. The same identifier number can be a 4-byte value on CMA and a 2-byte one on SPA, so they
-are separate definitions, never shared ones. They ship under community-research provenance and
-nothing is verified against a live SPA or SEA car yet. Battery data from those cars is marked
-unverified and should not be used for decisions.
+are separate definitions, never shared ones. They still need testing on more cars. Until then, treat
+battery data from those cars as provisional.
 </Callout>
 
 ## Next

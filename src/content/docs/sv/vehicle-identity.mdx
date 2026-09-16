@@ -1,0 +1,123 @@
+Innan Hanterill läser något måste appen veta vilket fordon som finns i andra änden av länken. Den här
+sidan förklarar hur appen hittar och läser VIN, hur den avgör plattformen, vad en utlöst fordonsprofil
+innehåller, och vakten som hindrar att två fordon behandlas som ett.
+
+## Hur VIN hittas
+
+VIN-regeln är en enda funktion: 17 alfanumeriska tecken efter trimning, enligt ISO 3779. En last som
+fallerar regeln är inget VIN, vad som än svarade. Sökningen går i en tillitsordning och stannar vid
+första giltiga svar:
+
+<SpecList rows={[
+  ["1", "det VIN som ett fordonsmeddelande bar vid upptäckten, vilket inte kostar någon trafik"],
+  ["2", "den routade entitetens adress: en riktad läsning av 0xF190"],
+  ["3", "en funktionell läsning av 0xF190, där flera moduler svarar på samma identifierare"],
+  ["4", "en svepning över de moduler som rapporterar en aktiv diagnostisk session, var och en tillfrågad om sitt VIN"],
+]} />
+
+Tystnad i ett steg går vidare till nästa; det är inget fel i sökningen. Avbrytning är det enda fel
+sökningen returnerar.
+
+## Hur VIN läses
+
+VIN kommer från DID `0xF190` (ReadDataByIdentifier) genom samma DID-väg som varje annan läsning
+använder. Ett svar som inte är 17 UTF-8-byte är ett typat fel, inte ett tomt värde. En modul som inte
+stöder identifieraren förblir ostödd, och en som är tyst registreras som tyst i stället för som ett
+fordon utan VIN.
+
+Identitetsläsningen hämtar också CEM-blocket `0xEDA0`, som bär diagnostik-, hårdvaru- och
+serienummer. De två läsningarna är oberoende, så ett fel i den ena döljer inte svaret från den andra.
+
+## Var identiteten visas
+
+Fordonssidan sätter modell och plattform högst upp, VIN under och källan samt fångsttiden längst ned.
+VIN maskeras som standard och kan visas från samma verktygsrad. Det observerade VIN:et publiceras
+också till ett delat lager, så en annan sida inte behöver läsa det igen.
+
+## Hur plattformen avgörs
+
+Arkitekturdetekteringen poängsätter bevis som samlats på ett fingeravtryck. Klasserna och deras vikter
+är fasta:
+
+<SpecList rows={[
+  ["15", "fordonsidentitet (VIN och modellhintar) och topologi"],
+  ["45", "exakt styrenhetsidentitet, en diagnostisk signatur, eller en DoIP-entitetssignatur"],
+]} />
+
+Upprepade bevis inom en klass ger ingen extra poäng. Sedan gäller två regler: vinnaren behöver minst
+60 poäng över minst två oberoende klasser, och en marginal på 25 poäng ned till tvåan. Under det läses
+utslaget som en kandidat eller tvetydigt, och när inget kvalar in läses plattformen som okänd. Enbart
+livebevis kan välja plattform; cachade och syntetiska observationer höjer aldrig säkerheten.
+
+## Vad en fordonsprofil löser ut
+
+Den utlösta fordonsposten bär allt en senare användning behöver: arkitekturen och dess säkerhet,
+modellen, årsmodellen, katalogprofilen, paketets topologi med sin egen säkerhet, drivlinevarianten och
+orsaksslugarna bakom varje reservväg och standardval.
+
+Två gränser spelar roll. Katalogprofilen finns bara när plattform, modell och årsmodell alla är
+fastställda; saknas någon av dem förblir profilen tom och luckan namnges. Årsmodellen kommer från
+konfigurations- eller fabriksbevis och härleds aldrig ur VIN eller en byggvecka. Själva modellidentiteten
+härleds en gång, på samma ställe som detektorn poängsätter med, så varje sida namnger samma modell.
+
+Topologins säkerhet är separat från arkitekturutslaget. Den läses som fastnaglad när det fyllda
+cellantalet landar på en topologi vars plattform stämmer, som härledd när antalet är särskiljande men
+plattformen inte är bekräftad, och som standardval när det inte finns något användbart antalsbevis
+eller när antalet ensamt är tvetydigt. En läsning på 108 celler kan inte skilja två plattformar åt på
+egen hand, så den fastnaglar aldrig i tysthet.
+
+## Identitetsvakten
+
+Vakten har två halvor. Vid anslutningen fångar appen CEM:s VIN en gång och armar vakten enbart på ett
+välformat VIN. Vid en stegövergång läser den live-VIN:et igen och jämför:
+
+<SpecList rows={[
+  ["Same", "live-VIN:et är lika med det kända VIN:et; körningen fortsätter"],
+  ["Silent", "inget svarade eller lasten var felformad; tystnad är inget bevis för ett byte, så körningen fortsätter"],
+  ["Mismatch", "ett annat fordon svarade; körningen stoppas och bär det observerade VIN:et som bevis"],
+]} />
+
+Policyn bor i en modul så varje flöde ärver den. DID-skanningen över alla moduler gör en ny kontroll
+vid stegövergången, och felkodssvepningens återanslutning vägrar slå samman rader som lästs från ett
+annat fordon. Oprövade rader förblir oprövade efter en avvikelse.
+
+<Callout kind="note" title="En demosession körs utan vakt">
+Utan ett välformat VIN att fånga förblir vakten oarmad i stället för att arma på en gissning. Det är
+ett medvetet val, och det betyder att en overifierad session inte bär något identitetsbevis.
+</Callout>
+
+Samma regel täcker fabriksbyggposten `0xF114`. Den avkodas mot VIN:et från anslutningen, och om
+postens VIN avviker blir posten ett typat icke-tillämpligt fel i stället för ett faktum om detta
+fordon. Ett okänt VIN från anslutningen är tystnad, aldrig en avvikelse.
+
+## Att avvisa jämförelser mellan fordon
+
+Innan två sessioner jämförs jämför appen den fordonsreferens var och en registrerade. När båda bär en
+referens och referenserna skiljer sig returnerar kontrollen ett avvikande-fordon-resultat med
+jämförelsen avvisad: deltan tagna över två fordon vilseleder. När någon sida saknar registrerad
+identitet blir resultatet en varning om overifierat fordon i stället för ett stopp, och appen ber dig
+bekräfta att båda sessionerna hör till samma fordon. Kontraktsversionerna måste också stämma.
+Difframverket och dess matchningsregler beskrivs i [sessioner och bevis](/docs/sessions-and-evidence).
+
+## Hur styrenhetsadresser löses ut
+
+Anropare namnger en roll eller ett registerkortnamn plus det utlösta fordonet och får adressen för den
+plattformen. CMA löses ur det liveverifierade registret; SPA och SEA1 löses enbart ur sina egna
+DoIP-register, och ett namn utan mappning på den plattformen returnerar inget. En oavgjord arkitektur
+använder CMA:s reservväg vid första kontakt, och svaret flaggas som antaget. SPA2 returnerar inget. En
+roll som grenar ut över flera styrenheter, som drivlinan, returnerar inget eftersom ingen enskild
+adress är rätt; anroparen registrerar läsningen som inte försökt i stället för att gissa.
+
+## Vad appen inte kan säga
+
+- VIN-sökningen kan returnera inget. En demo- eller overifierad session körs då utan vakten.
+- Modellidentiteten hänger på VIN-grammatiken eller en liveidentitet. Ett fordon som grammatiken inte
+  känner igen förblir oidentifierat, och sidan visar plattformen utan modell.
+- Ingen årsmodell betyder ingen katalogprofil, hur säkert plattformsutslaget än är.
+- SPA2-adresser är inte mappade, så rolluppslag där returnerar inget.
+
+## Nästa steg
+
+- [Stödda fordon](/docs/supported-vehicles): var varje plattform står.
+- [Styrenhetsreferens](/docs/ecu-reference): registret som svarar på rolluppslag.
+- [Fordonskonfiguration](/docs/vehicle-configuration): vad appen läser när den vet vilket fordon det är.

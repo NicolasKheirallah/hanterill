@@ -24,7 +24,7 @@ this site always describe the second thing.
 | --- | --- |
 | Supported | Verified against a live car. Battery, fault codes, ECU identification and live data are exercised regularly. |
 | Partial | Some functions verified, others not covered yet on this model. |
-| Testing | The code exists but has not been checked against the real car. Treat every reading as provisional. |
+| Testing | The code exists but still needs testing on more cars. Treat every reading as provisional. |
 | Research | We are still figuring out how the platform works. Not usable for diagnostics. |
 
 ## Platforms
@@ -46,14 +46,13 @@ The full capability breakdown for the reference car:
 ### SPA
 
 Partially supported. Ships as catalogue data: pack topologies, a CAN-era BECM registry and
-decoders, ported from community research with citations. The hybrid and EV battery path has not been
-checked against a live car. On first-generation SPA the battery answers over older CAN wiring. An
-ISO-TP CAN transport is implemented in the app, but no hardware adapter ships yet, so live battery
-scanning waits on that adapter, not on software that does not exist.
+decoders. The hybrid and EV battery path still needs testing on more cars. On first-generation SPA
+the battery answers over older CAN wiring. An ISO-TP CAN transport is implemented in the app, but no
+hardware adapter ships yet, so live battery scanning waits on that adapter, not on software that does
+not exist.
 
-<Callout kind="caution" title="Battery path not verified on a live car">
-The SPA battery definitions were ported from reference research, not measured on a car Hanterill
-has seen. Do not rely on SPA battery figures.
+<Callout kind="caution" title="Battery path needs more cars">
+The SPA battery definitions still need testing on more cars before you rely on the figures.
 </Callout>
 
 <PlatformSupport platform="SPA" />
@@ -61,11 +60,11 @@ has seen. Do not rely on SPA battery figures.
 ### SEA1
 
 The EX30-class definitions exist in the catalogue: ECU registry, routing addresses, identifier
-maps and cell mapping. Every one of them is unconfirmed by hardware. The platform is called SEA1 in
-the app; "SEA" is the family name.
+maps and cell mapping. Every one of them still needs testing on more cars. The platform is called
+SEA1 in the app; "SEA" is the family name.
 
-<Callout kind="caution" title="Hardware confirmation pending">
-SEA1 ships as definitions held up by synthetic test data. Zeekr and other sub-platforms
+<Callout kind="caution" title="Needs testing on more cars">
+SEA1 ships as definitions that still need testing on more cars. Zeekr and other sub-platforms
 deliberately do not inherit the EX30 map, because family resemblance is not evidence.
 </Callout>
 
@@ -73,8 +72,8 @@ deliberately do not inherit the EX30 map, because family resemblance is not evid
 
 ### SPA2
 
-Under investigation. The gateway and security model work differently, and no verified
-implementation exists.
+Under investigation. The gateway and security model work differently, and no implementation has
+been tested on a car yet.
 
 <Callout kind="note" title="Research">
 Detection and registry entries only. Nothing on this platform produces a reading you should act
@@ -93,10 +92,10 @@ Each pack layout records how many cell groups it has and how they are arranged:
 | CMA | 108 groups: 27 modules of 4 (78 kWh) | Verified on the reference car |
 | CMA | 108 groups: 27 modules of 4 (82 kWh) | Catalogued from catalogue and decoder evidence |
 | CMA | 96 groups: 24 modules of 4 (69 kWh) | Defined from catalogue and decoder evidence |
-| SPA | 96 (69 kWh), 108 (78 kWh), hybrid 102 (T8) | Catalogued, waiting on hardware |
-| SPA | hybrid 96 (early T8, 11.6 kWh) | Catalogued, waiting on hardware |
-| SEA1 | 107 (69 kWh NMC), 120 (51 kWh LFP) | Catalogued, waiting on hardware |
-| SEA1 | 110 (100 kWh NMC, Zeekr-class) | Catalogued, waiting on hardware |
+| SPA | 96 (69 kWh), 108 (78 kWh), hybrid 102 (T8) | Catalogued, needs testing on more cars |
+| SPA | hybrid 96 (early T8, 11.6 kWh) | Catalogued, needs testing on more cars |
+| SEA1 | 107 (69 kWh NMC), 120 (51 kWh LFP) | Catalogued, needs testing on more cars |
+| SEA1 | 110 (100 kWh NMC, Zeekr-class) | Catalogued, needs testing on more cars |
 
 A pack is judged complete at its own cell count. A 102-cell hybrid is never marked incomplete for
 not having 108.

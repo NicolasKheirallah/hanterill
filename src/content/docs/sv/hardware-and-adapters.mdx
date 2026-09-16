@@ -1,0 +1,117 @@
+Hanterill når ett fordon genom ett nätverksuttag, inte genom en egen hårdvarubox. Transporten känner
+till två länktyper, men bara en av dem har hårdvara du kan koppla in idag. Den här sidan går igenom
+den trådbundna länken, nätverket den behöver, den andra länken som är implementerad i mjukvara och vad
+du själv skaffar. Stegen för upptäckt och routning i ordning finns på [Anslutning](/docs/connection)
+och [Arkitektur](/docs/architecture).
+
+## Den trådbundna länken
+
+En ENET-kabel kopplar bestämda stift i OBD-II-uttaget till en vanlig RJ45-kontakt. Den innehåller
+ingen elektronik och ingen firmware, så den kräver ingen drivrutin. Kedjan är kort:
+
+```text
+OBD-II-uttaget i fordonet
+  -> ENET-kabel
+  -> RJ45
+  -> Ethernet-uttag eller USB Ethernet-adapter
+  -> datorn som kör Hanterill
+```
+
+Vilken passiv OBD-II till Ethernet-kabel som helst fungerar, även kablar som säljs för andra märken.
+Hanterill säljer ingen hårdvara och kräver ingen märkeskabel.
+
+## Nätverksinställning
+
+DoIP körs över vanligt IP. Fordon som stöder detta använder länklokal IPv4-adressering, intervallet
+`169.254.x.x`: varje sida väljer en adress utan att någon router behövs. Oftast kommer fordonet och
+adaptern överens om detta själva. Om operativsystemet väntar på en DHCP-server som aldrig svarar,
+ställ in adaptern på länklokal adressering manuellt.
+
+Ingen statisk rutt, ingen DNS-post och ingen internetanslutning ingår. Kabeln går mellan datorn och
+fordonets diagnosuttag. Den går aldrig till hemmaroutern, och fordonets nätverk ska inte bryggas ihop
+med ditt vanliga nätverk.
+
+<Callout kind="note" title="Vad Hanterill gör med länken">
+Appen skickar en förfrågan om fordonsidentifiering över UDP på port 13400, lyssnar efter att ett
+fordon annonserar sig och öppnar sedan en TCP-anslutning på samma port. Därefter ber den fordonet
+aktivera en diagnostikrutt. Tills fordonet accepterar den rutten svarar ingen modul på något.
+</Callout>
+
+## Vilket gränssnitt Hanterill väljer
+
+Hanterill räknar upp varje IPv4-gränssnitt och rangordnar dem, så du behöver inte känna till något
+enhetsnamn. En trådbunden länklokal adress hamnar först. Avvisningar är tydliga i stället för dolda:
+
+<SpecList rows={[
+  ["Länklokal, trådbunden", "Accepteras och föredras. Adressen kommer från fordonssidan, 169.254.x.x"],
+  ["Länklokal, annan", "Accepteras men rangordnas lägre. Även ett Wi-Fi-gränssnitt kan ha en länklokal adress"],
+  ["Inte länklokal", "Avvisas för automatisk upptäckt. En routed adress är oftast ett hem- eller kontorsnät"],
+  ["Virtuellt", "Avvisas. VPN, loopback, brygga och containergränssnitt hoppas över"],
+  ["Länk nere", "Avvisas. Adaptern rapporterar ingen bärvåg"],
+]} />
+
+Två accepterade trådbundna gränssnitt avgörs av en stabil identifierare, så en ny sökning visar samma
+ordning. Du kan också namnge gränssnittet själv: kommandoraden tar `--interface`, och appen listar de
+rangordnade adaptrarna så att du kan välja en.
+
+## In- och urkoppling
+
+En bakgrundsövervakare tar en ögonblicksbild av gränssnittslistan med jämna intervall och jämför varje
+bild med den förra. Den upptäcker att en adapter kommer eller försvinner, att en länk går ner och att
+en adress ändras. En ändring i det gränssnitt en session är bunden till räknas som länkförlust och
+startar återhämtningen. Du behöver inte starta om appen efter att ha kopplat in eller ur kabeln.
+
+## Vad du själv skaffar
+
+Hanterill levererar ingen hårdvara. Du tar med:
+
+- En passiv OBD-II till Ethernet-kabel (ENET).
+- Ett Ethernet-uttag på datorn, eller en USB Ethernet-adapter när ett sådant saknas.
+- En dator som kör appen eller kommandoraden och som får öppna UDP och TCP port 13400.
+
+Fordonet måste vara vaket. Ett fordon som sover svarar inte.
+
+## CAN- och ISO-TP-länken
+
+Transporten talar också ISO-TP över CAN. Det är den äldre OBD-II-vägen: 8-byte CAN-ramar som bär
+samma UDS-frågor, med Single Frame, First Frame, Consecutive Frame och Flow Control för meddelanden
+längre än 7 byte. Koden är implementerad och körs mot en skriptad buss, och den sätter ihop svar i
+flera ramar med samma handskakning som en riktig modul använder.
+
+Länken går inte att använda direkt. Transporten definierar en gränssnittsyta för in- och utgående
+ramar, och att öppna bussen, ställa in bithastigheten, filtrera och stänga den tillhör den som
+implementerar ytan. Hanterill levererar ingen CAN-adapter och ingen bussdrivrutin, så det finns ingen
+enhet att koppla in idag. Ethernet-kabeln är vägen in. CAN-länken adresserar moduler med 11-bitars
+arbitration-id, till exempel paret `0x735` för begäran och `0x635` för svar, vilket är ett annat
+adressrum än en DoIP-logisk adress.
+
+<Callout kind="caution" title="Ingen adapter levereras">
+CAN-koden är färdig nog att köra mot en buss, men någon adapter som stöds ingår inte i någon version.
+Betrakta den som implementerad mjukvara utan medföljande hårdvara.
+</Callout>
+
+## Trådlöst
+
+Hanterill klassar trådlösa gränssnitt och överväger ett som har en länklokal adress som kandidat för
+upptäckt, rangordnat under en trådbunden adapter. När en kandidat har valts skiljer inget i transporten
+en trådlös DoIP-väg från en trådbunden: samma upptäckt och samma routningsaktivering körs.
+
+Det som är testat är den trådbundna ENET-vägen. Om ett visst fordon exponerar diagnostik över sin egen
+accesspunkt är en egenskap hos det fordonet, och Hanterill gör inget påstående om en specifik modell.
+Om ett trådlöst gränssnitt är den enda accepterade kandidaten provar upptäckten det.
+
+## Kontrollera länken själv
+
+Upptäckten skickar en förfrågan om fordonsidentifiering över UDP port 13400 och lyssnar efter
+annonseringar. Två mönster fungerar: en aktiv broadcast som ber alla fordon på länken att svara, och
+passiv lyssning efter ett fordon som annonserar sig när aktiveringsledningen i OBD-II-kontakten
+aktiveras. Sökningen gör också ett försök med IPv6 länklokal multicast.
+
+För att bekräfta länken utan Hanterill, kontrollera att adaptern har en `169.254.x.x`-adress och att
+kabeln sitter i ett Ethernet-uttag och inte i ett uttag som bara har USB.
+
+## Nästa steg
+
+- [Anslutning](/docs/connection): upptäckten och routningen steg för steg.
+- [Felsökning](/docs/troubleshooting): vad varje fel betyder och vad du kan prova.
+- [Gränssnitt och språk](/docs/interface-and-language): behörigheter per operativsystem.

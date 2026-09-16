@@ -1,0 +1,147 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+The subsystem screens answer one question each: what is this part of the car doing right now. They
+read a fixed set of signals, show the current value of each, and name the module and identifier that
+answered.
+
+<SafetyNotice level="read-only">
+Every screen on this page is a read. Each signal is fetched with `0x22 ReadDataByIdentifier` and
+decoded locally. Nothing here writes to a module, starts a routine, or changes how the car behaves.
+</SafetyNotice>
+
+## Beyond live telemetry
+
+Live telemetry is a polling loop over a channel set you choose, and its point is how a signal moves
+over time. Subsystem telemetry is the opposite shape: a single pass over a fixed question list, one
+current answer per signal. Use the subsystem screens to check whether a value is plausible now. Use
+[Live telemetry](/docs/live-telemetry) to watch it change under load. Both read the same car over the
+same transport, and both keep the source of every reading.
+
+## How a subsystem read works
+
+Each signal carries its own state: `measured` when the module answered and the payload decoded,
+`unsupported` when the module refuses that identifier, `failed` when the read timed out or the
+payload was malformed, and `not_attempted` when the platform cannot map the module at all.
+
+Two rules follow:
+
+- A missing or failed reading is shown as missing, never as zero. A zero on these screens is a
+  measured zero.
+- A decoded value that is physically impossible for its sensor fails closed. It becomes a typed
+  failure instead of a number.
+
+The screen shows the source as an address and a DID, so an empty row still tells you what was asked.
+
+## Climate and the heat pump
+
+The climate screen reads thirteen signals from three modules: the VCU1 refrigerant and heater
+circuits, the CCM evaporator, and the ECM heat-pump temperatures and radiator fan. They cover the
+refrigerant inlet and outlet pressure and temperature, the heater circuit inlet and outlet, the
+electric compressor speed, the evaporator core, the compressor inlet, the condenser, the battery
+cooling circuit, the heat exchanger, and the radiator fan duty.
+
+Each value is range-gated before it is displayed:
+
+- refrigerant pressure 0 to 40 bar
+- circuit and core temperatures −40 to 150 °C, evaporator −40 to 80 °C
+- compressor speed 0 to 15000 rpm
+- radiator fan duty 0 to 100 %
+
+A normal reading is a compressor turning when cooling is demanded, an evaporator colder than the
+cabin, and an inlet-to-outlet pressure difference across the running loop. A suspect reading is a
+compressor at zero rpm while cooling is demanded, inlet and outlet pressure sitting on top of each
+other with the compressor running, or one temperature failing plausibility while its neighbours on
+the same module answer.
+
+The screen draws the loop as a schematic and lists the same thirteen values in a table. The pack
+cooling circuit temperature is one row there. The full module temperature map is a battery read, and
+its sensor placement is still provisional; see [Battery diagnostics](/docs/battery-diagnostics).
+
+## Drive units
+
+The motors screen reads the front drive unit (IHFA) and the rear drive unit (IEM), nine signals per
+axle: stator winding 1 and 2 temperatures, rotor speed, axle torque, inverter HV bus voltage,
+coolant inlet and outlet, inverter HV current, and the fuse-side terminal voltage from the BECM.
+
+A normal parked car shows rotor speed near zero, torque near zero, both windings close to the
+coolant, and an HV bus voltage near the pack voltage. Under load, torque and current rise together
+and the windings run warmer than the coolant.
+
+The screen classifies rotor motion with a near-zero deadband and keeps the raw value on display next
+to it. A small parked reading, such as −7.3 rpm, is classified as stationary without altering the
+number. The raw value is what the inverter sent.
+
+Below the two axles is a front/rear comparison: stator temperature delta, front share of absolute
+drive torque, HV bus delta, coolant inlet delta, and the electrical power of each axle (volts ×
+amps). If either side did not measure, the comparison is left empty rather than filled with a zero.
+A torque split is also left empty when both axles read zero torque, because a split of nothing is
+undefined, not 50/50. A zero HV current payload (`62 98 61 00 00`) is the inverter no-data default on
+a parked car, not a current, so the app leaves the current and any power derived from it empty.
+
+## Charging and power
+
+The charging tab reads the AC inlet on the on-board charger: the plug lock state (unlocked, locked,
+or an unknown raw code), the connected pilot cable current rating, and the pack voltage at the
+charger terminals. The lock state is the reliable row. The cable rating and the pack voltage scaling
+are unverified heuristics, because neither encoding is pinned to a capture, and both are labelled
+that way. The app does not read a charge session, a charge curve, or DC fast charging here, and it
+stores no charge history. The charge-limit diagnosis that does ship is on [Charging](/docs/charging).
+
+The power tab reads the on-board charger AC input (AC power, AC voltage, AC current, and whether the
+charger reports actively charging), the DC-DC converter (HV input, 12 V output voltage and current,
+and output power), and three auxiliary-battery signals: 12 V state of charge, 12 V terminal voltage,
+and the quiescent current average. The OBC and DC-DC reads go through an extended diagnostic session.
+Both were unavailable on the 2026-09-02 software profile, and the app reports them that way instead
+of showing zero volts or zero watts. An unavailable converter keeps its row and its source
+identifier.
+
+## TCAM: backup battery and GPS
+
+The TCAM screen reads the telematics backup battery. That identifier is discriminated by response
+length: a short 4-byte or 7-byte record decodes as battery voltage, state of charge, and, when the
+record carries them, internal resistance and temperature. The same identifier returned a 2048-byte
+snapshot on the 2026-09-02 vehicle. That layout is not decoded, and the screen shows its length, a
+SHA-256 of the full response, and a bounded hex prefix, labelled exploratory. An unknown snapshot
+never becomes a battery verdict.
+
+The GPS screen reads the TCAM position fix only when you ask for it, behind a consent gate. It shows
+latitude, longitude, altitude, fix type, and the timestamp the module attached. A second read pulls
+the multi-constellation GNSS buffer and lists the satellites and the reported fix quality. This is
+the car's telematics position, not this computer's location, and it is not a track: the app stores no
+route from this screen.
+
+## Steering
+
+The steering screen cannot measure steering angle on this platform. Steering wheel angle is not
+served as a diagnostic identifier by any module over DoIP/UDS; it is a periodic broadcast on the Mid
+1 CAN bus (frame `0x16`). An earlier build guessed an identifier on the steering-angle module and it
+never answered. That guess is gone. The read now reports `not_attempted` with the reason and sends no
+request. No angle, rate, or calibration value is fabricated. Zeroing the steering-angle sensor is a
+separate service function with its own confirmation; see
+[Service functions](/docs/service-functions).
+
+## Service schedule
+
+The service screen reads three interval definitions from the DIM: distance in kilometres, time in
+days, and motor-hours. It also reads the counters since the last service and the counters used
+toward the next one. The countdown takes the dimension closest to its limit and reports whichever
+comes first: distance, time, or motor-hours. The screen prints the arithmetic and the identifier
+behind every counter, so a countdown can be checked against the raw values. A counter the DIM does
+not answer keeps its failure state instead of reading as zero. The vendor service-dialog status rows
+are a separate raw read on the capabilities surface, shown as hex with no decoded value.
+
+## Platforms and honest limits
+
+Module addresses ride the platform registry. A platform that cannot map a module answers
+`not_attempted` with a named reason, and no request is sent to a guessed address. That is why a
+screen can be empty on one car and populated on another without either being a fault.
+
+CMA is the verified platform, and the observations behind these screens were taken on it. SPA and
+SEA carry their own definitions and still need testing on more cars; treat readings from them as
+provisional. The steering screen applies to no platform, because the signal is not on the diagnostic bus at all.
+
+## Next
+
+- [Live telemetry](/docs/live-telemetry): the polling loop for signals that only move under load.
+- [Charging](/docs/charging): the charge-limit diagnosis built on the charging and battery reads.
+- [Battery diagnostics](/docs/battery-diagnostics): the pack-level reads and their cross-checks.

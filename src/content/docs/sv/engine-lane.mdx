@@ -1,0 +1,149 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+Motorkörfältet är Hanterills väg för förbränning och hybrid. Det läser värden för
+motor, efterbehandling och transmission från ett fordon med förbränningsmotor
+eller laddhybrid, åtskilt från den helt elektriska vägen. Varje begäran är en `0x22`
+ReadDataByIdentifier som skickas från en utökad session, och varje svar avkodas av
+ett recept från en referensinsamling. Körfältet startar inga rutiner och skriver
+ingenting.
+
+<SafetyNotice level="read-only" title="Skrivskyddat genom konstruktionen">
+Körfältet når transporten enbart genom det skrivskyddade gränssnittet. Rutinnamnen
+som listas har ingen `0x31`-identifierare, så det finns inget att aktivera.
+</SafetyNotice>
+
+## Vad körfältet är
+
+Det mesta i Hanterill svarar på en fråga om en modul. Motorkörfältet svarar på en
+fast uppsättning frågor om förbränningsdrivlinan: hur varm motorn och dess olja är,
+hur mycket bränsle som återstår, hur belastat partikelfiltret är och hur varm
+transmissionen är i en automatlåda.
+
+Det har tre ytor. Motorrapporten sonderar vilka moduler som svarade och läser de
+bundna kanalerna. Live-läsningen hämtar en kort lista namngivna getters. Katalogvyn
+visar vad som finns offline, inklusive rader som aldrig sänds.
+
+## Vilka plattformar det gäller
+
+Körfältet prövar inte plattformsnamnet i sig. Det frågar samma
+tillämplighetsinstans som avgör varje annan läsning om dess bundna referenspar
+tillåts på detta fordon. På ett CMA-fordon, och på ett fordon vid första kontakt
+där arkitekturen ännu inte är fastställd, tillåts de och körfältet kör. På SPA,
+SEA1 och SPA2 tillåts de inte, så rapporten kommer tillbaka tom i stället för att
+skicka CMA-läsningar till ett fordon som inte är CMA.
+
+SPA omfattar hybridfordon, men deras motorkvantiteter kommer som periodiska
+CAN-ramar, inte som UDS-identifierare. Appens DoIP-transport läser ännu inte råa
+CAN-ramar, så dessa kanaler är katalogiserade och väntar på en CAN-adapter. De läses
+inte på ett levande SPA-fordon i dag.
+
+## Vilka moduler den sonderar
+
+Rapporten sonderar tio moduler för närvaro med en enda VIN-läsning, `0xF190`, innan
+den läser någon kanal: ECM (motorns styrenhet på denna variant, och den modul som
+bär de flesta bundna kanalerna), TCM, NRCM, MVBM, CCM, DIM, CEM, BECM, TEM och VCM.
+
+En modul räknas som monterad när den svarar alls. Ett svar vars form VIN-kontraktet
+avvisar bevisar fortfarande att modulen finns, och det gör ett svar om att tjänsten
+inte stöds också. Bara ett transportfel räknas som frånvaro.
+
+## Vilka kanaler den läser
+
+Varje bunden identifierare läses en gång per modul och fördelas sedan till en rad
+per funktion som äger den. Två funktioner kan dela ett block av identifierare, som
+CCM:s spjällkalibreringar gör, så en läsning kan ge flera rader.
+
+Funktionsytan innehåller 66 rader. Sex är bundna till referensidentifierare, 27 är
+enbart kandidater, 30 är oåterställda och tre är hjälpare som ytan inte läser. Bara
+de sex bundna funktionerna sänds. En kandidat eller oåterställd funktion förblir
+synlig med den fångade orsaken, så en lucka läses som en lucka.
+
+<SpecList rows={[
+  ["ECM på 0x1630", "10 identifierare under funktionen för långtidsbränsleanpassning"],
+  ["TCM på 0x1632", "2 identifierare under funktionen för anpassningsmätarställning"],
+  ["NRCM på 0x163D", "1 identifierare som rapporterar ureanivån"],
+  ["MVBM på 0x1652", "2 identifierare, bland dem laddningsnivån för 48 V"],
+  ["CCM på 0x1A11", "ett delat block av kalibreringsidentifierare för två funktioner"],
+]} />
+
+Rapporten räknar också täckning. Planerat är raderna som lästes plus de rader som
+hoppades över eftersom deras modul saknades. En rad lyckas när dess observation bär
+ett värde, uppmätt eller härlett. Misslyckade, icke stödda och överhoppade räknas
+för sig, så en modul som aldrig svarade läggs inte in i antalet lyckade.
+
+Felkoder ingår inte i detta körfält. Den separata felkodsskanningen läser dem från
+varje modul som svarade, och [Felkoder](/docs/dtc-scanning) täcker den vägen.
+
+## Live-data för motor och bränsle
+
+Live-läsningen hämtar 13 namngivna getters, var och en bunden till en kanonisk rad.
+Den går in i den utökade sessionen en gång per modul och läser modulens getters i en
+enda omgång. Laddningsnivån för 48 V är den enda gettern som läses utanför den
+utökade sessionen.
+
+<SpecList rows={[
+  ["Kylvätska och olja", "Motorns kylvätsketemperatur (0xF405), motorns oljetemperatur (0xDA2C), motorns oljenivå (0xDA63)"],
+  ["Bränsle", "Bränslenivå (0xD9CA), bränslepumpens anpassning klar (0xD9E8), lågtryckspumpens arbetscykel (0xE52F)"],
+  ["Efterbehandling", "Slutlig askmängd (0xDBE7), sotmassa i GPF (0xE3B8), körsträcka sedan senaste regenerering (0xDBE6), flagga för begärd regenerering (0xDBE9)"],
+  ["Transmission", "Transmissionsoljans temperatur (0xDA3B), mätarställning när anpassningen återställdes (0xD912)"],
+  ["48 V", "Laddningsnivå för 48 V-batteriet (0x4028)"],
+]} />
+
+En getter vars modul inte kan mappas på detta fordon rapporteras som ej försökt med
+den orsaken. En getter som modulen avvisar rapporteras som icke stödd. Ingen av dem
+blir en siffra. Om inträdet i den utökade sessionen avvisas körs läsningarna ändå,
+eftersom en modul som redan är i den sessionen svarar likadant, och ytan säger att
+inträdet avvisades i stället för att kasta bort det.
+
+## Hur ett värde avkodas
+
+Varje kanal avkodas genom en av två nivåer. En kanonisk rad anger sin nyttolasts
+bredd, tecken och aritmetik i avkodarnamnet, så receptet läses ur namnet. En opak
+rad är en som leverantören avkodar men vars aritmetik inte är säker att läsa ur
+namnet; den behålls som råa byte och visas aldrig som en siffra med gissad
+matematik.
+
+En kanonisk avkodning avvisar en nyttolast vars längd inte stämmer med receptet, och
+den avvisar markören med enbart `0xFF` som betyder ogiltig. En flyttalsnyttolast som
+inte är ändlig avvisas också. En maskad avkodare returnerar en tillståndsetikett i
+stället för en siffra, vilket är hur en flagga som begäran om regenerering läses.
+
+## Vad som bara är referens
+
+Avkodningsrecepten kommer från en referensinsamling daterad 2026-09-13. De är
+referenspåståenden, inte läsningar från ett fordon som Hanterill har anslutit till.
+Katalogvyn anger gränsen med samma ord som motorn använder: ingen nivå-1-insamling
+från fordon finns ännu för dessa rader, och alla är nivå-2-referens eller
+nivå-4-utforskande.
+
+Motorkörfältets referens jämförs mot bevarade skanningar, och de bevarade
+skanningarna är helt elektriska baslinjer, så ingen rad når klassen verifierad genom
+skanning. Ingenting från detta körfält befordras in i den levererade DID-katalogen.
+
+Det som har prövats på riktig hårdvara är närvarosonderingen, samma `0xF190`-läsning
+som resten av appen använder. Inget Hanterill-fordon har svarat på en
+motoridentifierare. Behandla ett motorvärde som ett katalogvärde tills ett matchande
+förbränningsfordon har mätts.
+
+<Callout kind="note" title="Ett namn är inte ett kontrakt">
+På det helt elektriska referensfordonet svarar adressen `0x1630` som en styrenhet för
+drivlinan. På varianten med förbränningsmotor eller laddhybrid är samma adress
+motorns styrenhet, med ett annat identifierarkontrakt. Registret anger vilken modul
+som svarade på en adress, inte vad ett schema kallar den.
+</Callout>
+
+## Hur den skiljer sig från batterivägen
+
+Batterivägen skrevs och kontrollerades mot ett CMA-fordon, så dess CMA-avkodare bär
+uppmätta bevis. Motorkörfältet har inga sådana bevis ännu; dess recept är enbart
+referens. De två vägarna läser också olika saker. En batteriläsning är knuten till
+en packlayout som väljs från fordonet, med ett cellantal och en modulindelning.
+Motorkörfältet har inget packbegrepp. Det läser skalära kanaler på namngivna moduler
+och rapporterar täckning i stället för fullständighet mot ett cellantal.
+
+## Nästa
+
+- [Styrenhetsreferensen](/docs/ecu-reference): modulerna och adresserna bakom dessa läsningar.
+- [Stödda fordon](/docs/supported-vehicles): hur långt varje plattform har nått.
+- [Felkoder](/docs/dtc-scanning): läsvägen som detta körfält inte täcker.
+- [Live-telemetri](/docs/live-telemetry): vad live-ytan gör med en läsning.

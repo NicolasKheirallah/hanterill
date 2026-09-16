@@ -371,7 +371,7 @@ export const glossary: GlossaryEntry[] = [
   {
     term: "SEA",
     full: "Sustainable Experience Architecture",
-    meaning: "The Geely-family electric platform under the EX30 class. Definitions exist, hardware confirmation does not.",
+    meaning: "The Geely-family electric platform under the EX30 class. Definitions exist and still need testing on more cars.",
     group: "Platforms and bodies",
     doc: "/docs/supported-vehicles",
   },

@@ -1,0 +1,120 @@
+En diagnossession misslyckas på ett fåtal sätt: inget på länken, inget hittat, en tyst modul, en
+timeout, en vägrad skrivning eller en länk som försvinner. Varje fall betyder något olika och har
+olika nästa steg. Den här sidan går igenom dem. Själva uppsättningen finns på
+[Anslutning](/docs/connection), och vad skrivytan gör finns på [Säkerhet](/docs/safety).
+
+## Arbeta nedåt från den fysiska länken
+
+Börja vid kabeln och arbeta mot fordonet. Varje steg nedan förutsätter att steget ovanför är i
+ordning, och de två första löser de flesta sessioner. Ändra en sak i taget så att du vet vilken
+ändring som hjälpte.
+
+## Ingen länk alls
+
+Kommandoraden skriver `No link-local (169.254.x.x) interface found.` och faller tillbaka på alla
+gränssnitt. Appen visar `No Usable Ethernet Adapter`, eller en Adapter-tabell utan innehåll.
+
+Vad det betyder: inget gränssnitt har en adress i fordonets intervall, så det finns inget nätverk att
+upptäcka på. Vad du kan prova:
+
+- Kontrollera att kabeln sitter i OBD-II-uttaget och i ett Ethernet-uttag, inte i ett uttag som bara
+  har USB.
+- Kontrollera att adaptern visar en länklampa och att operativsystemet ger den en `169.254.x.x`-adress.
+- Sök igen. En adapter som kommer sent fångas upp utan omstart.
+
+Adaptertabellen har en bedömning per gränssnitt. "No link detected" betyder att bärvågen saknas.
+"Suboptimal: routed network, not the car" betyder att adressen finns men inte tillhör fordonets
+länklokala nät.
+
+## Upptäckten hittar inget
+
+Kommandoraden rapporterar `no vehicles found on the network` efter ett kort fönster med omförsök.
+Appen stannar på söksteget. Upptäckten skickar en broadcast med en förfrågan om fordonsidentifiering
+och väntar på svar. Ett fordon som just har vaknat annonserar sig i stället för att svara, så
+kommandoraden lyssnar efter en annonsering under ett fönster till innan den ger upp.
+
+Vad det betyder: länken är uppe, men inget fordon svarade. Vad du kan prova:
+
+- Slå på tändningen. Ett fordon som sover svarar inte. På många fordon väcks gatewayen med en tryckning
+  på varningsblinkersen eller en tryckning på bromspedalen.
+- Kontrollera att inget blockerar UDP port 13400. En VPN eller brandvägg kan svälja broadcasten.
+- Kontrollera att inget annat diagnosverktyg håller fordonet. Bara ett verktyg i taget kan tala.
+- Kontrollera vilket gränssnitt du valde. En routed adress ser aldrig ett länklokalt fordon.
+
+## En modul är tyst
+
+De flesta moduler svarar på en funktionell broadcast. De som inte gör det provas en och en. En modul
+som är tyst över flera svep går ner till en kortare timeoutnivå, och en cache per fordon som nycklas
+på en VIN-hash minns vad som saknades förra gången, så nästa skanning slipper betala hela timeouten
+igen.
+
+Vad det betyder: en tyst modul är inte ett fel i sig. Den visas som en rad med orsaken till att den
+inte svarade. `--present-only` läser bara det som svarade och rapporterar att inget lästes när ingen
+modul svarade. En modul som fanns vid ett tidigare besök och är tyst nu är värd en skanning till innan
+du misstänker modulen.
+
+## Begäranden tar timeout
+
+En timeout betyder att inget svar kom före tidsgränsen. Budgeten per begäran är två sekunder som
+standard, med ett omförsök innan transporten går vidare till länkåterhämtning.
+
+En del långsamma svar är inte fel. Ett `0x78` responsePending säger att modulen fortfarande arbetar och
+förlänger väntan i stället för att avsluta den. Ett upptaget `0x21` görs också om. Båda är normala vid
+en lång rutin.
+
+Vad du kan prova: låt en väntande begäran bli klar och läs sedan om. Om timeouter återkommer över
+flera moduler, misstänk länken i stället för modulen. En enstaka timeout rapporteras som typen
+`timeout` och markeras som möjlig att göra om. Ett negativt svar som inte är tillfälligt mappas till
+`unsupported` eller `negative_response` och görs inte om.
+
+## Ett skrivskyddat bygge vägrar en skrivning
+
+Varje skrivning är en separat åtgärd som kräver bekräftelse, och den körande binären redovisar vad den
+kan göra. Ett bygge som kompilerats utan skrivfunktionen vägrar tillståndsändrande kommandon med svaret
+`read_only_build`. Kommandoraden skriver att de tillståndsändrande underkommandona är avstängda i ett
+strippat skrivskyddat bygge och hänvisar till att bygga om utan `--no-default-features`.
+
+Vad det betyder: detta är inte ett fel och inte ett behörighetsproblem. Den strippade konfigurationen
+finns för CI och utveckling. Den skarpa versionen innehåller skrivytan och begär bekräftelse innan den
+agerar. [Säkerhet](/docs/safety) listar vilka tjänster varje bygge tillåter.
+
+## Problem med behörighet och port
+
+DoIP använder UDP och TCP port 13400. Socketen för upptäckt ställer in adressåteranvändning innan den
+binder, så en andra lyssnare på port 13400 stoppar inte Hanterill i sig.
+
+Vad du kan prova:
+
+- Tillåt appen genom operativsystemets brandvägg.
+- Stäng av en VPN tillfälligt. Den kan fånga broadcasten som upptäckten skickar.
+- Läs behörighetsnoterna per operativsystem på [Gränssnitt och språk](/docs/interface-and-language).
+- Stäng andra diagnosverktyg som kan hålla fordonet.
+
+## En länk som tappas mitt i en skanning
+
+Ett kort avbrott kostar dig inte sessionen. Återhämtningen kör bara det steg som behövs: aktivera
+routningen igen på den levande länken, återanslut TCP och aktivera routningen på den nya kanalen,
+eller upptäck på nytt och öppna en ny kanal. Svar från den gamla anslutningen avvisas som föråldrade,
+så ett sent svar inte kan misstas för ett aktuellt. En keepalive (`TesterPresent` varannan sekund)
+hindrar moduler från att somna mitt i en skanning, och en TCP-keepalive upptäcker en länk som tystnat.
+
+En skanning som dör mitt i ett svep återupptas på en ny anslutning. Kommandoraden rapporterar hur många
+moduler som återupptogs, eller att återanslutningen misslyckades och att delresultaten behölls. Om den
+nya anslutningen svarar med ett annat VIN vägras återupptagningen och delresultaten behålls, så
+avläsningar från två fordon aldrig blandas. Om fordonet rapporterar en annan identitet efter en
+återanslutning avslutas sessionen.
+
+## Innan du ber om hjälp
+
+Exportera sessionen och behåll det ofullständiga resultatet. En skanning som stoppade innehåller
+fortfarande de rader den läste, var och en med orsaken till att en modul inte svarade. Exporten av
+supportpaketet är rensad för delning, och [Integritet](/docs/privacy) beskriver vad den innehåller.
+
+Kör ingen rutin för att "laga" en avläsning du inte förstår. [Säkerhet](/docs/safety) förklarar
+varför, och hur du jämför en misstänkt avläsning mot en ny skanning först.
+
+## Nästa steg
+
+- [Anslutning](/docs/connection): kabeln, nätverket och återhämtningsstegen.
+- [Säkerhet](/docs/safety): lässytan, skrivytan och gränsen mellan dem.
+- [Fordon som stöds](/docs/supported-vehicles): vad som är verifierat idag.

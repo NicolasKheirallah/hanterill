@@ -105,8 +105,8 @@ present only in write-capable builds. The [ECU reference](/docs/ecu-reference) a
   probes only for the quiet ones. Modules that stay silent across several sweeps drop to a shorter
   timeout tier, and a per-car cache keyed by a VIN hash remembers what was absent last time.
 - **Decoders**: per-platform, per-module definitions with explicit payload contracts: expected
-  length, scaling, privacy class and maturity. CMA decoders are verified against a real car; SPA and
-  SEA1 definitions ship marked as awaiting hardware confirmation.
+  length, scaling, privacy class and maturity. CMA decoders are verified against a real car; the SPA
+  and SEA1 definitions still need testing on more cars.
 - **Pack topologies**: the cell matrix is data, not code. CMA 108-cell, CMA 96-cell, CMA 82 kWh,
   SPA 96 and 108 and hybrid 102, the SPA early-hybrid 96, and the SEA1 layouts each carry their own
   count and arrangement.

@@ -1,0 +1,148 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+Two ways of collecting data share one idea: ask a roster of modules in a fixed order and keep what
+each one answers. A full capture is wide and aimed at inventory. A sweep is narrow and aimed at one
+question.
+
+<SafetyNotice level="read-only">
+Both paths are reads. The full capture sends `0x22` reads, presence probes and, for uncatalogued
+answers, a `0x24` scaling probe. The quiet-module sweep sends `0x3E`, `0x10`, `0x22` and `0x19`.
+Neither path unlocks a module: a `0x33` security refusal is recorded, never retried into an unlock.
+</SafetyNotice>
+
+## What a full capture collects
+
+The desktop's all-module DID scanner is the full capture. You choose a scope of modules, an optional
+discovery preset, and which phases to run, then confirm before anything is transmitted. The plan
+preview shows the planned request count per stage before the run starts.
+
+The scope defaults to every module in the catalogue, and you can narrow it to a group. Each module
+in scope gets three presence DIDs: `0xEDA0`, `0xF190` and `0xF186`. From there the capture walks the
+catalogue for the identifiers that module is expected to carry.
+
+## The five phases
+
+| Phase | What it does |
+| --- | --- |
+| P0 presence | Probes three DIDs per module and classifies it as present, present with an unsupported probe, or unknown |
+| P1/P2 catalogue | Reads the catalogued identifiers from the modules that answered presence, normal or extended |
+| P3 discovery | Walks the selected preset ranges, if you selected any |
+| P4 verification | Re-samples up to 64 decode-quality unknowns from the earlier phases |
+| P5 scaling probes | Asks up to 64 uncatalogued positives for their `0x24` composite value descriptor |
+
+A silent module is classified as unknown, not absent. Silence is not proof that a module is missing,
+so the catalogue phase runs only on the modules that answered and the rest stay visible in the
+coverage tab. A module that answered but refused the presence probe is still present.
+
+Between presence and the catalogue, the app rechecks the VIN. If the live VIN differs from the one
+the session was opened against, the run stops with an identity mismatch instead of mixing two cars
+into one capture.
+
+## Progress during a run
+
+Progress is reported per phase and per read. Each phase announces itself with a planned read count,
+each transmitted read reports its module, identifier and outcome, and each phase closes with its own
+totals. The desktop streams those rows into a live tail and keeps the most recent 400 on screen. The
+finished run then reports requests sent, positives, refusals, gated rows, failures and how many
+modules were present.
+
+## Pausing, resuming and cancelling
+
+The desktop run can be paused, resumed and cancelled while it is in progress. Pausing holds the run
+between reads, and the connection is still checked while it is held, so a disconnect ends the hold
+instead of parking the run indefinitely.
+
+Cancellation is checked between probes. Every planned read that was not transmitted because of a
+cancellation is recorded with an explicit outcome rather than dropped, so the artifact stays valid
+and the coverage stays honest. A run cut short by a budget follows the same rule: the result is
+incomplete, says which reason stopped it, and still names every read it did not make.
+
+## Request budgets
+
+A full capture runs under one budget that spans every phase, so no single phase can spend the whole
+allowance. The defaults are:
+
+<SpecList
+  rows={[
+    ["Requests", "4000 across the whole run"],
+    ["DIDs per module", "256"],
+    ["Positive responses", "2000"],
+    ["Response bytes", "4 MiB in total, 512 KiB per module"],
+    ["Wall clock", "180 seconds"],
+    ["Delay between requests", "10 ms"],
+    ["Per-read response timeout", "500 ms, retried once"],
+  ]}
+/>
+
+The desktop exposes the request count and the per-module DID cap; both start at 4000 and 256. The
+rest are the run's defaults. A discovery phase also holds back a verification reserve, the smaller
+of 64 requests and a quarter of the request budget, so a preset sweep can never starve the
+verification pass.
+
+A read whose definition expects a large payload buys more time: the timeout scales to 250 ms plus
+2 ms per expected byte, capped at 8 seconds, and never drops below the base timeout. An uncatalogued
+read keeps the flat timeout unless an earlier read of the same identifier taught the app its length.
+
+## What a sweep is
+
+A sweep answers one question across a list of modules: has this module answered, and what did it
+say. Several features ride the same seam rather than each writing its own loop: the module uptime
+read, the quiet-module cascade and the ECU inventory. Only the per-flow bounds stay with the flow,
+such as a record count, a deadline or a module cap.
+
+Each step of a sweep is either a probe or a skip, and a skip always carries its reason. That is what
+keeps coverage visible: a module that was not probed is still named in the result, with the reason
+it was passed over.
+
+## Ordering, cancellations and known-absent skips
+
+The seam fixes three behaviours:
+
+- **Present-first order.** When the session already knows which modules answered, they are probed
+  before the ones that did not, so useful answers stream before silent timeouts. Only the wire order
+  changes; every module still appears in the result.
+- **Cancellation between probes.** Once the cancellation flag is raised, no further probe is
+  transmitted. The current probe finishes, and every remaining module surfaces as a cancelled skip.
+- **Known-absent skip, opt in.** A sweep can skip modules the session has learned are absent. The
+  default is not to skip: the ECU inventory deliberately probes known-absent modules with a short
+  timeout instead.
+
+The quiet-module cascade is the sweep that exists for silence. It runs five stages against each
+module: a `0x3E 0x00` presence check, a `0x10 0x03` extended session, identity reads, a fault-count
+read, and a teardown back to the default session on every path. A module is reported as silent, as
+present but default-session only, or as present and extended. Probes use unicast addressing only,
+never a broadcast, and the per-probe budget defaults to 600 ms because a silent module should not
+cost a full point-read timeout.
+
+## The battery capture view
+
+The inspection side has its own capture. One pass over the bus produces the battery report and the
+pack-temperature maximum together, so the cross-signal checks and the charge diagnosis share one
+sweep instead of each reading the pack twice. Channels are looked up by their catalogue key rather
+than by position, and each value carries whether it came from an experimental decoder.
+
+If a channel did not answer, it stays absent rather than defaulting, and the composition reports
+insufficient data instead of re-reading or aborting the pass. That is what lets a partly silent bus
+still produce an honest report with a stated gap.
+
+## Where the result lands
+
+A finished capture is stored as a `did-scan-all/2` artifact in the session archive, alongside the
+per-subsystem artifacts such as the diagnostic report, the battery and cells, the module inventory,
+the firmware audit and the parasitic drain. The artifact carries every evidence row with its module,
+identifier, phase, outcome, preserved negative response code, catalogue name, decoded value, payload
+digest, latency and attempt count, plus the per-phase totals and the honest stop reason.
+
+Export routes through the backend's privacy-tiered exporter, so the redaction rule for each
+identifier is applied where the artifact is written rather than by a client that could forget it.
+The desktop exports JSON or CSV at the support tier. A follow-up retry can be restricted to the
+modules whose runs carried a wire failure; a gated `0x33` row is never a retry target.
+
+The full archive shape, its retention and its comparison rules are in
+[Sessions and evidence](/docs/sessions-and-evidence).
+
+## Next
+
+- [Parasitic drain](/docs/parasitic-drain): the sleep-current record read from the CEM.
+- [Sessions and evidence](/docs/sessions-and-evidence): how artifacts are stored and compared.
+- [Live telemetry](/docs/live-telemetry): the sampling loop for signals that change.

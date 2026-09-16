@@ -1,0 +1,145 @@
+Two different questions decide what a screen offers. The first is about the build: does this binary
+contain the feature at all? The second is about the car in front of you: does this vehicle have the
+module a feature needs? Hanterill answers them separately and never lets a guess stand in for either.
+This page explains the capability manifest, the capability matrix, software gating and the read-only
+build distinction.
+
+## What the app claims, and what it refuses to claim
+
+A capability in Hanterill is either measured on the wire, derived from something measured by a named
+rule, or openly unobservable. Every row states which of the three it is, and an unobservable row names
+the input that is missing. An unknown is never folded into an absent. That is the whole shape: the
+app would rather say "I cannot see this" than publish a boolean it did not earn.
+
+## The capability manifest a running binary publishes
+
+The running binary publishes a manifest under the `getCapabilities` command. It is session-independent
+and it describes the build, not the car. It carries a schema version, the runtime name, the app
+version, and a `commands` object.
+
+<SpecList rows={[
+  ["read", "Always true"],
+  ["write", "True only when the binary was compiled with the write feature"],
+  ["clearDtcs", "Its own flag so fault-code clearing can gate independently of the blanket write bit"],
+  ["didScan", "Single-module identifier scanning, always wired"],
+  ["didScanAll", "The all-module scanner, true only with the scanner feature"],
+  ["didWatch", "Identifier watching, follows the same scanner feature"],
+  ["iceRead", "Combustion and hybrid reference reads"],
+  ["live", "Live sampling"],
+  ["exportReport", "Report export"],
+]} />
+
+The interface reads this manifest instead of assuming. A command reported false is not offered, and
+the all-module scanner route is hidden when its feature is absent while single-module scanning is
+unaffected. Every flag is backed by a wired command handler, so a true value always has an
+implementation behind it.
+
+## Capability rows and how they are established
+
+The capability matrix answers "does this car have X" from evidence. Each row names its method:
+
+<SpecList rows={[
+  ["ecu-presence", "Measured: the named module or modules answered a presence read"],
+  ["derived-from-presence", "Derived by a named rule over measured presence"],
+  ["unobservable", "Needs evidence a read-only client cannot gather, and the missing input is named"],
+]} />
+
+The measured rows cover the engine or drive control module, transmission, the urea aftertreatment
+module, the 48 V mild-hybrid battery, air suspension, the blind-spot radars, forward camera 2, the
+AWD differential electronics module and the vehicle gateway. One row is derived: a present urea
+aftertreatment module implies diesel aftertreatment support, and the rule travels with the row so the
+inference is visible.
+
+Four rows are unobservable, and each names why. Petrol versus diesel needs a powertrain variant signal
+that neither module presence nor the VIN grammar separates. Panoramic roof and tyre-pressure
+monitoring need a decoded car-configuration parameter, and the byte layout for DID `0xF120` is not
+recovered. A corner-position module needs a registry mapping for a vendor address the app's module
+registry does not carry. None of those is answered `absent`; they are answered `unknown` with the gap.
+
+The interface shows a row's state, its derivation, the modules it names, and either its method or its
+missing input.
+
+## Presence is a wire answer, not a guess
+
+Presence is established by reading `0xF190` on the named module. Any wire answer proves the module is
+there, including a reply that a stricter check would reject. A gateway or driver-assistance module
+that answers with its own 13 to 14 byte serial instead of a 17 byte VIN is a contract rejection, but
+the module answered, so the row reads present. Only a transport failure, a timeout or a disconnect,
+counts as no answer. A module the connected platform has no address for is absent without a read,
+because the app will not transmit to a guessed address.
+
+## Software gating
+
+Software gating keeps the vendor's "which software level is this" vocabulary but fills each row from
+the best read-only evidence, or leaves it unknown:
+
+<SpecList rows={[
+  ["Infotainment software version", "Measured from the IHU at 0xD904"],
+  ["Climate module boot software version", "Measured from the CCM at 0xF124"],
+  ["Body control module build level", "Measured from BCM2 at 0xDD0C"],
+  ["Urea aftertreatment module reference level", "Measured from the NRCM at 0xD97C"],
+  ["Head-up display level", "Unobservable: no registry mapping for the vendor address"],
+  ["CEM generation counter", "Unobservable: no recovered DID for the vendor counter"],
+  ["Known-buggy software predicate", "Unobservable: the vendor's bug-list table is server-held and was not recovered"],
+]} />
+
+A measured row may still surface as a gap. A row publishes text only when the answer is printable
+text with padding stripped. An answer that is a control byte is reported as unreadable, with the
+reason named, instead of being printed as a version. There is deliberately no "this version is buggy"
+verdict, because the table behind that verdict is not in any recovered layer.
+
+## Service families and their honest states
+
+The service-family index says how far each service surface reaches in this build. Every family names
+the capability rows that gate it and the shipped routines or read use case, or states its exact
+unrecovered boundary. A family is never called supported unless the client can transmit every request
+it needs.
+
+<SpecList rows={[
+  ["read-only", "Data reads only, no actuation"],
+  ["unsafe-write-ops", "Actuation routines exist and are compiled under the write feature"],
+  ["unrecovered", "The identifiers are not in any recovered layer, so no build can transmit them"],
+  ["refused-by-design", "Refused at the read gate in every build, and no use case exists"],
+]} />
+
+The shipped table uses three of those states. Actuating families such as camera and ADAS calibration,
+climate, steering, service reset, usage mode, parking brake and grille shutter are write-capable.
+Families such as DPF regeneration, urea aftertreatment service, transmission adaptation and 48 V
+mild-hybrid service are unrecovered: the read side ships, and the boundary names the capture that
+would close them. Generic UDS writes are refused by design. Capability gating is real: camera and ADAS
+calibration is gated on the forward camera or blind-spot radars, grille shutter on the engine or drive
+control module, and so on. A family with no capability keys is always applicable.
+
+## Per-family status, read raw
+
+Service dialogs in the vendor tooling key off per-module status DIDs. Hanterill reads those rows raw
+and attaches the reference description, the module and the reference payload size. It never fabricates
+a decoded number for a row the recovered layer cannot decode, so the value column is the payload as
+uppercase hex or a named gap. The read enters the extended session once per module rather than once
+per row, and a module the platform cannot map is not transmitted to. The report counts planned,
+measured and unattempted rows, and says plainly when a requested family has no status rows at all.
+The document is versioned as `service-status/1`.
+
+## Read-only versus write-capable builds
+
+The write surface is a compile-time feature. The released build includes it. A build compiled without
+it answers every state-changing command with a typed `read_only_build` refusal instead of failing
+mysteriously, and its manifest reports `write: false`, so the interface keeps the control disabled.
+That stripped configuration exists for continuous integration and development. It is not what ships.
+The read surface is identical in both builds. See [Safety](/docs/safety) for the full boundary and
+[Service functions](/docs/service-functions) for what the write surface does.
+
+## What gating does not decide
+
+The capability matrix does not answer entitlement or permission questions, because those are held on
+a server and are not observable from the car. It has no row for a vehicle-line predicate outside the
+supported scope. Software gating reports a measured version but makes no judgement about whether that
+version is good. And there is no separate hidden gate that removes service functions from platforms
+marked Testing or Research. Do not assume one exists.
+
+## Next
+
+- [Service functions](/docs/service-functions): the routines these gates protect.
+- [Safety](/docs/safety): the read-only versus vehicle-changing boundary.
+- [Supported vehicles](/docs/supported-vehicles): platform status labels.
+- [Data identifiers](/docs/did-catalogue): the reads the capability probes use.

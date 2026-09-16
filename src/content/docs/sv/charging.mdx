@@ -1,0 +1,149 @@
+import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+Laddning läses från ombordladdaren (OBC). Appen frågar OBC om det intag den styr: är kontakten låst,
+vilken ström klarar den anslutna kabeln och vilken spänning ligger vid laddarens poler. Ovanpå de tre
+läsningarna finns en diagnos som försöker förklara varför laddningseffekten är låg, och som avstår
+från att förklara när underlaget inte fastställer någon orsak.
+
+<SafetyNotice level="read-only">
+Laddningsskärmen är en läsning. Den startar, stoppar, schemalägger eller begränsar ingen laddning, och
+den ändrar ingen laddinställning i fordonet. Varje värde avkodas från ett svar på
+`0x22 ReadDataByIdentifier`.
+</SafetyNotice>
+
+## Vad laddningsskärmen läser
+
+Tre signaler kommer från OBC:
+
+- uttagslåsets solenoidläge: olåst, låst eller en okänd rå kod
+- den anslutna pilotkabelns strömkapacitet i ampere
+- dragbatteriets spänning vid laddarens poler i volt
+
+Varje rad bär sitt eget tillstånd: measured, unsupported, failed eller not_attempted. En misslyckad
+rad behåller sin källidentifierare och visar inget värde, så en tom rad säger fortfarande vad som
+efterfrågades.
+
+## AC-intag, inte en laddsession
+
+Skärmen läser AC-intaget på ombordladdaren. Det finns ingen skärm för DC-snabbladdning, och appen
+läser inte en laddsession som ett objekt: den kan inte säga när en session startade, hur länge den
+pågick, hur mycket energi som gick in eller hur laddkurvan såg ut. Ingen laddhistorik lagras.
+
+Den gränsen är värd att säga rakt ut, eftersom den formar vad resten av sidan kan påstå. En enstaka
+ögonblicksbild av intaget säger vad hårdvaran gör i stunden du trycker på knappen. Den säger inte vad
+som hände under laddningen.
+
+## Uttagslåset och kabeln
+
+Låsläget är den pålitliga raden. Det avkodas till olåst eller låst när OBC rapporterar någon av de
+två kända koderna, och till ett okänt läge som bär den råa byten i övriga fall. Skärmen märker det
+okända fallet som okänt i stället för att gissa att kontakten är inne eller ute.
+
+Kabelkapaciteten är inte pålitlig på samma sätt. Tråden bär ett 16-bitarsvärde, och vilken kodning
+OBC använder är inte fastställd mot en mätning. Avkodaren väljer mellan ett rakt amperevärde och en
+skalad, förskjuten form, och den är uttryckligen experimentell; appen märker utdata som overifierad.
+Behandla siffran som en antydan om den anslutna kabeln, inte som en mätning.
+
+<DiagnosticExample
+  service="ReadDataByIdentifier, uttagslås"
+  request="22 EE 8C"
+  response="62 EE 8C 02"
+  note="0x02 avkodas till låst. 0x01 avkodas till olåst, och varje annan byte visas som ett okänt läge med den råa koden bevarad i stället för att mappas till något av de två."
+/>
+
+## Batterispänning vid laddaren
+
+Den tredje raden är den batterispänning OBC ser vid sina poler. Inte heller skalningen på den
+identifieraren är fastställd mot en mätning, så avkodaren är en heuristik: den väljer mellan tre
+skalningar utifrån råvärdets storlek. En nyttolast kortare än två byte stängs av i stället för att
+returnera en trovärdig konstant.
+
+Läs raden som en korsreferens mot den paketspänning BECM rapporterar. De två bör stämma inom en liten
+marginal när fordonet är anslutet och vaket. En stor avvikelse pekar på mätningen, inte på paketet.
+Själva BECM-läsningen beskrivs i [Batteridiagnostik](/docs/battery-diagnostics).
+
+## Att diagnostisera en laddningsgräns
+
+Diagnosknappen svarar på en annan fråga: givet att fordonet laddar långsamt, vilken begränsning är
+den troliga orsaken. Den samlar sex ingångar i en enda genomgång:
+
+| Ingång | Varifrån den kommer |
+| --- | --- |
+| Faktisk laddningseffekt | OBC:s rapporterade AC-ineffekt |
+| Laddar nu | OBC:s egen laddningsflagga |
+| Pakettemperatur | Den varmaste pakettemperaturkanalen |
+| Laddningsnivå | Den primära paketkanalen |
+| Tak för laddningsgräns | Paketets egen gräns för laddningseffekt |
+| Kabelkapacitet | Laddningsskärmens kabelrad |
+
+Reglerna körs i fast ordning, och den första vars underlag håller avgör svaret:
+
+1. **Batteritemperatur.** Paketet är under 5 °C eller över 45 °C medan den faktiska effekten är under
+   7,0 kW. Kalla och varma paket begränsar laddningseffekten på den här plattformen.
+2. **Laddningsnivå.** Nivån är över 90 % medan den faktiska effekten är under 7,0 kW. Paketet trappar
+   ner nära fullt av konstruktion.
+3. **Kabelkapacitet.** Pilotkapaciteten ger ett lägre tak än batteriets egen gräns, och den faktiska
+   effekten ligger vid det kabeltaket. Räkneoperationen behandlar kapaciteten som en enfasig 230
+   V-matning, så taket är kapaciteten i ampere × 0,23, med 1 kW tolerans.
+4. **Ombordladdarens tak.** Den faktiska effekten ligger inom 1 kW från ett tak på 11 kW.
+5. **Går inte att hänföra.** Ingen signal fastställer någon orsak.
+
+Ordningen spelar roll när underlaget överlappar, eftersom den tidigaste matchande regeln behåller
+omdömet. Varje svar skriver ut meningen med underlaget bakom sig, och skärmen listar varje ingång med
+sitt värde eller ett streck. Pakettemperaturen, laddningsnivån och laddningsgränsen är samma kanaler
+som batteriskärmarna läser; faktisk effekt och laddningsflaggan kommer från OBC.
+
+<Callout kind="caution" title="Trösklarna är preliminära heuristiker">
+Fönstret 5 °C och 45 °C, golvet 7,0 kW, nivån 90 %, kabelräkningen vid 230 V och laddarens 11
+kW-märkning är kodens egna preliminära trösklar, inte tillverkarspecifikationer och inte verifierade
+mot ett fordon. Laddarens märkning är i synnerhet katalogkunskap som väntar på bekräftelse i den här
+profilen. Läs omdömet som ett spår att kontrollera, inte som en diagnos av ett fel.
+</Callout>
+
+## När diagnosen inte säger något
+
+Två grindar körs före varje regel. Utan uppmätt laddningseffekt finns inget att förklara, och svaret
+går inte att hänföra. Om OBC rapporterar att den inte laddar finns heller ingen begränsning att
+förklara.
+
+Det är det ärliga utfallet i ett fordon där OBC inte svarar alls. Mjukvaruprofilen 2026-09-02
+returnerade ingen användbar nyttolast för OBC:s effektläsning, och ingången för faktisk effekt tas
+från den läsningen. I ett sådant fordon kan diagnosen bara returnera går inte att hänföra, oavsett
+vad temperatur och laddningsnivå säger. En saknad ingång begränsar analysen; den fylls aldrig med en
+nolla.
+
+## Vad appen kan och inte kan se
+
+Det appen kan se:
+
+- AC-intagets låsläge, kabelkapacitet och batterispänning vid laddaren
+- den laddningseffekt OBC rapporterar och dess laddningsflagga
+- pakettemperatur, laddningsnivå och paketets egen laddningsgräns
+
+Det appen inte kan se:
+
+- DC-snabbladdning, som inte läses på den här skärmen
+- laddsessioner, sessionshistorik eller tillförd energi
+- laddkurvan över tid, eller en målnivå du ställer in
+- någon kabel- eller laddboxdata utöver den pilotkapacitet fordonet rapporterar
+
+## Laddning och inspektionspoängen
+
+Laddningsläsningarna fångas i inspektionsrapporten, men en laddningsbegränsning är en notering, inte
+en poängingång. Den kan inte ändra omdömet. De fyra ingångar som bär poängvikt är batteriets
+hälsotillstånd, den vilande 12 V-skenan, felkoder och vägmätarnas samstämmighet. Regeln bakom
+laddarens tak är klassad som heuristik, vilket per konstruktion begränsar den till en notering. Se
+[Inspektionsrapporter](/docs/inspection-reports) för hela räkneoperationen.
+
+12 V-sidan av samma fångst bidrar däremot till poängen, via den vilande skenans spänning. Den
+läsningen finns på effektfliken; se [Delsystemstelemetri](/docs/subsystem-telemetry).
+
+## Nästa
+
+- [Delsystemstelemetri](/docs/subsystem-telemetry): intagsläsningarna i sammanhanget av de andra
+  delsystemskärmarna.
+- [Batteridiagnostik](/docs/battery-diagnostics): paketspänningen, hälsotillståndet och
+  laddningsgränsen som diagnosen lutar sig mot.
+- [Livedata](/docs/live-telemetry): spela in laddningseffekt över tid, eftersom den här skärmen inte
+  kan.

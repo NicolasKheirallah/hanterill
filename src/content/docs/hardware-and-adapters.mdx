@@ -1,0 +1,118 @@
+Hanterill reaches a car through a network plug, not a proprietary box. The transport knows two link
+types, but only one of them has hardware you can plug in today. This page covers the wired link, the
+network it needs, the second link that is implemented in software, and what you supply. For the
+discovery and routing steps in order, see [Connection](/docs/connection) and
+[Architecture](/docs/architecture).
+
+## The wired link
+
+An ENET cable connects specific OBD-II pins to a standard RJ45 plug. It contains no electronics and
+no firmware, so it needs no driver. The chain is short:
+
+```text
+OBD-II port in the car
+  -> ENET cable
+  -> RJ45
+  -> Ethernet port or USB Ethernet adapter
+  -> the computer running Hanterill
+```
+
+Any passive OBD-II to Ethernet cable works, including cables sold for other brands. Hanterill sells
+no hardware and does not require a branded cable.
+
+## Network setup
+
+DoIP runs over ordinary IP. Cars that support it use IPv4 link-local addressing, the `169.254.x.x`
+range: each side picks an address without a router. Most cars and adapters agree on this by
+themselves. If the operating system waits for a DHCP server that will never answer, set the adapter
+to link-local or automatic private addressing manually.
+
+No static route, DNS entry, or internet connection is involved. The cable runs between the computer
+and the car's diagnostic port. It never goes to a home router, and the car's network should not be
+bridged to your normal network.
+
+<Callout kind="note" title="What Hanterill does with the link">
+It sends a discovery request over UDP port 13400, listens for a car to announce itself, then opens a
+TCP connection on the same port and asks the car to activate a diagnostic route. Until the car
+accepts that route, no diagnostic message is answered.
+</Callout>
+
+## Which interface Hanterill picks
+
+Hanterill enumerates every IPv4 interface and ranks them, so you do not need to know a device name.
+A wired link-local address ranks first. Rejections are explicit rather than hidden:
+
+<SpecList rows={[
+  ["Link-local, wired", "Accepted and preferred. The address comes from the car side, 169.254.x.x"],
+  ["Link-local, other", "Accepted but ranked lower. A Wi-Fi interface can hold a link-local address too"],
+  ["Not link-local", "Rejected for automatic discovery. A routed address is usually a home or office network"],
+  ["Virtual", "Rejected. VPN, loopback, bridge, and container interfaces are skipped"],
+  ["Link down", "Rejected. The adapter reports no carrier"],
+]} />
+
+Two accepted wired interfaces break the tie by a stable identifier, so a rescan shows the same order.
+You can also name the interface yourself: the CLI takes `--interface`, and the desktop app lists the
+ranked adapters and lets you pick one.
+
+## Hot-plug and link changes
+
+A background monitor snapshots the interface list on a fixed interval and diffs each snapshot against
+the previous one. It notices an adapter arriving or disappearing, a link going down, and an address
+changing. A change to the interface a session is bound to counts as link loss and starts recovery.
+You do not need to restart the app after plugging the cable in or out.
+
+## What you supply
+
+Hanterill ships no hardware. You bring:
+
+- A passive OBD-II to Ethernet cable (ENET).
+- An Ethernet port on the computer, or a USB Ethernet adapter when there is none.
+- A computer that runs the desktop app or the CLI and may open UDP and TCP port 13400.
+
+The car has to be awake. A sleeping car answers nothing.
+
+## The CAN and ISO-TP link
+
+The transport also speaks ISO-TP over CAN. That is the older OBD-II path: 8-byte CAN frames carrying
+the same UDS questions, with Single Frames, First Frames, Consecutive Frames, and Flow Control for
+messages longer than 7 bytes. The code is implemented and exercised against a scripted bus, and it
+reassembles multiframe answers with the same flow-control handshake a real module uses.
+
+This link is not usable out of the box. The transport defines a frame input and output seam, and
+opening the bus, setting the bitrate, filtering, and closing it belong to whatever implements that
+seam. Hanterill ships no CAN adapter and no bus driver, so there is no device to plug in today. The
+Ethernet cable is the way in. The CAN lane addresses modules by 11-bit arbitration id, for example
+the request and reply pair `0x735` and `0x635`, which is a different address space from a DoIP logical
+address.
+
+<Callout kind="caution" title="No adapter ships">
+The CAN code path is complete enough to run against a bus, but a supported adapter is not part of any
+release. Treat it as implemented software without shipping hardware.
+</Callout>
+
+## Wireless
+
+Hanterill classifies wireless interfaces, and it will consider one that holds a link-local address as
+a discovery candidate, ranked below a wired adapter. Once a candidate is chosen, nothing in the
+transport distinguishes a wireless DoIP path from a wired one: the same discovery and routing
+activation run.
+
+What is tested is the wired ENET path. Whether a given car exposes diagnostics over its own access
+point is a property of that car, and Hanterill makes no claim about a specific model. If a wireless
+interface is the only accepted candidate, discovery tries it.
+
+## Checking the link yourself
+
+Discovery sends a Vehicle Identification Request over UDP port 13400 and listens for announcements.
+Two patterns work: an active broadcast that asks any car on the link to answer, and passive listening
+for a car that announces itself when the activation line on the OBD-II connector is asserted. The
+probe also makes a best-effort IPv6 link-local multicast attempt.
+
+To confirm the link without Hanterill, check that the adapter holds a `169.254.x.x` address and that
+the cable is in an Ethernet port rather than a USB power port.
+
+## Next
+
+- [Connection](/docs/connection): the discovery and routing steps in order.
+- [Troubleshooting](/docs/troubleshooting): what each failure means and what to try.
+- [Interface and languages](/docs/interface-and-language): per-OS permission notes.

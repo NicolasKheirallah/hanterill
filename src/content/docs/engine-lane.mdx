@@ -1,0 +1,150 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+The engine lane is Hanterill's combustion and hybrid path. It reads engine,
+aftertreatment and transmission values from an ICE or PHEV car, separate from the
+battery-electric path. Every request is a `0x22` ReadDataByIdentifier sent from an
+extended session, and every answer is decoded by a recipe from a reference capture.
+The lane starts no routines and writes nothing.
+
+<SafetyNotice level="read-only" title="Read-only by construction">
+The lane reaches the transport through the read-only interface only. The routine
+names it lists have no `0x31` identifier, so there is nothing to actuate.
+</SafetyNotice>
+
+## What the lane is
+
+Most of Hanterill answers one question about one module. The engine lane answers a
+fixed set of questions about the combustion drivetrain: how hot the engine and its
+oil run, how much fuel is left, how loaded the particulate filter is, and how warm
+the transmission is on an automatic.
+
+It has three surfaces. The engine report probes which ICE modules answered and
+reads the bound channels. The live-data read fetches a short list of named getters.
+The catalogue view shows what exists offline, including rows that are never
+transmitted.
+
+## Which platforms it applies to
+
+The lane does not test the platform name by itself. It asks the same applicability
+authority that gates every other read whether its bound reference pairs are allowed
+on this vehicle. On a CMA car, and on a first-contact car whose architecture is not
+yet established, they are, and the lane runs. On SPA, SEA1 and SPA2 they are not, so
+the report comes back empty instead of sending CMA engine reads to a car that is
+not CMA.
+
+SPA covers hybrid cars, but their engine quantities arrive as periodic CAN frames,
+not as UDS identifiers. The app's DoIP transport does not read raw CAN frames yet,
+so those channels are catalogued and await a CAN adapter. They are not read on a
+live SPA car today.
+
+## Which modules it probes
+
+The report probes ten modules for presence with one VIN identification read,
+`0xF190`, before it reads any channel: ECM (the engine control module on this
+variant, and the module that carries most of the bound channels), TCM, NRCM, MVBM,
+CCM, DIM, CEM, BECM, TEM and VCM.
+
+A module counts as fitted when it answers at all. A reply whose shape the VIN
+contract rejects still proves the module is there, and so does an unsupported
+reply. Only a transport failure counts as absence.
+
+## Which channels it reads
+
+Each bound identifier is read once per module, then fanned out to one row per
+function that owns it. Two functions can share a block of identifiers, as the CCM
+damper calibrations do, so one read can feed several rows.
+
+The function surface holds 66 rows. Six are bound to reference identifiers, 27 are
+candidates only, 30 are unrecovered, and three are helpers that the surface does not
+read. Only the six bound functions are transmitted. A candidate or unrecovered
+function stays visible with the captured reason, so a gap reads as a gap.
+
+<SpecList rows={[
+  ["ECM at 0x1630", "10 identifiers under the long-term fuel adaptation function"],
+  ["TCM at 0x1632", "2 identifiers under the adaptation mileage function"],
+  ["NRCM at 0x163D", "1 identifier that reports the urea level"],
+  ["MVBM at 0x1652", "2 identifiers, including the 48 V state of charge"],
+  ["CCM at 0x1A11", "a shared block of damper calibration identifiers for two functions"],
+]} />
+
+The report also counts coverage. Planned is the rows read plus the rows skipped
+because their module was absent. A row succeeds when its observation carries a
+value, measured or derived. Failed, unsupported and skipped are counted apart, so a
+module that never answered is not folded into the success count.
+
+Fault codes are not part of this lane. The separate fault-code scan reads them from
+any module that answered, and [Fault codes](/docs/dtc-scanning) covers that path.
+
+## Engine and fuel live data
+
+The live read fetches 13 named getters, each bound to a canonical row. It enters
+the extended session once per module and reads that module's getters in one pass.
+The 48 V state of charge is the one getter read outside the extended session.
+
+<SpecList rows={[
+  ["Coolant and oil", "Engine coolant temperature (0xF405), engine oil temperature (0xDA2C), engine oil level (0xDA63)"],
+  ["Fuel", "Fuel level (0xD9CA), fuel pump adaptation complete (0xD9E8), low-pressure fuel pump duty cycle (0xE52F)"],
+  ["Aftertreatment", "Final ash amount (0xDBE7), soot mass in the GPF (0xE3B8), distance since the last regeneration (0xDBE6), regeneration request flag (0xDBE9)"],
+  ["Transmission", "Transmission oil temperature (0xDA3B), mileage when adaptation was reset (0xD912)"],
+  ["48 V", "48 V battery state of charge (0x4028)"],
+]} />
+
+A getter whose module cannot be mapped on this car is reported as not attempted
+with that reason. A getter the module refuses is reported as unsupported. Neither
+becomes a number. If the extended-session entry is refused, the reads still run,
+because a module already in that session answers the same way, and the surface says
+the entry was refused instead of discarding the fact.
+
+## How a value is decoded
+
+Every channel is decoded through one of two tiers. A canonical row states its
+payload width, signedness and arithmetic in the decoder name, so the recipe is read
+off the name. An opaque row is one the vendor decodes but whose arithmetic is not
+name-safe; it stays raw bytes and is never rendered as a number with guessed math.
+
+A canonical decode rejects a payload whose length disagrees with the recipe, and it
+rejects the all-`0xFF` marker that means invalid. A float payload that is not
+finite is rejected too. A masked decoder returns a state label instead of a number,
+which is how a flag such as the regeneration request reads.
+
+## What is reference-only
+
+The decode recipes come from a reference capture dated 2026-09-13. They are
+reference claims, not readings from a car Hanterill has connected to. The catalogue
+view states the boundary in the same words the engine uses: no Level-1 vehicle
+capture exists for these rows yet, and all of them are Level-2 reference or Level-4
+exploratory.
+
+The ICE reference lane is compared against retained scans, and those scans are
+battery-electric baselines, so no row reaches the verified-by-scan class. Nothing
+from this lane is promoted into the shipped DID catalogue.
+
+What has been exercised on real hardware is presence probing, the same `0xF190`
+read the rest of the app uses. No Hanterill car has answered an ICE identifier.
+Treat an engine figure as a catalogue value until a matching combustion car is
+measured.
+
+<Callout kind="note" title="A name is not a contract">
+On the battery-electric reference car the address `0x1630` answers as a drive-unit
+controller. On the ICE and PHEV variant the same address is the engine control
+module, with a different identifier contract. The registry records which module
+answered at an address, not what a diagram calls it.
+</Callout>
+
+## How it differs from the battery path
+
+The battery path was written and checked against a CMA car, so its CMA decoders
+carry measured evidence. The engine lane has no such evidence yet; its recipes are
+reference-only.
+
+The two paths also read different things. A battery read is tied to a pack layout
+selected from the car, with a cell count and a module arrangement. The engine lane
+has no pack concept. It reads scalar channels on named modules and reports coverage
+rather than completeness against a cell count.
+
+## Next
+
+- [ECU reference](/docs/ecu-reference): the modules and addresses behind these reads.
+- [Supported vehicles](/docs/supported-vehicles): how far each platform has got.
+- [Fault codes](/docs/dtc-scanning): the read path this lane does not cover.
+- [Live telemetry](/docs/live-telemetry): what the live surface does with a reading.

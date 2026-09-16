@@ -1,0 +1,118 @@
+A diagnostic session fails in a small number of ways: nothing on the link, nothing found, one silent
+module, a timeout, a refused write, or a link that disappears. Each has a different meaning and a
+different next step. This page works through them. For the setup itself see [Connection](/docs/connection),
+and for what the write surface does see [Safety](/docs/safety).
+
+## Work down from the physical link
+
+Start at the cable and move toward the car. Every step below assumes the step above it is sound, and
+the first two fix most sessions. Change one thing at a time so you know which change mattered.
+
+## No link at all
+
+The CLI prints `No link-local (169.254.x.x) interface found.` and falls back to all interfaces. The
+desktop app shows `No Usable Ethernet Adapter`, or an adapter table with nothing in it.
+
+What it means: no interface holds an address in the car's range, so there is no network to discover
+on. What to try:
+
+- Check the cable is seated in the OBD-II port and in an Ethernet port, not a USB power port.
+- Check the adapter shows a link light, and that the operating system gives it a `169.254.x.x`
+  address.
+- Rescan. A late adapter is picked up without a restart.
+
+The adapter table carries a verdict per interface. "No link detected" means the carrier is missing.
+"Suboptimal: routed network, not the car" means the address is real but it is not the car's link-local
+network.
+
+## Discovery returns nothing
+
+The CLI reports `no vehicles found on the network` after a short retry window. The desktop app stays
+on the search step. Discovery broadcasts a Vehicle Identification Request and waits for an answer. A
+car that just woke announces itself instead of answering, so the CLI listens for an announcement for
+a further window before it gives up.
+
+What it means: the link is up, but no car answered. What to try:
+
+- Switch the ignition on. A sleeping car answers nothing. On many cars, waking the gateway takes a
+  hazard switch press or a brake pedal press.
+- Check that nothing blocks UDP port 13400. A VPN or a firewall can swallow the broadcast.
+- Check that another diagnostic tool is not holding the car. Only one tool talks at a time.
+- Check the interface you selected. A routed address will never see a link-local car.
+
+## A module stays silent
+
+Most modules answer a functional broadcast. The ones that do not are probed individually. A module
+that stays silent across several sweeps drops to a shorter timeout tier, and a per-car cache keyed by
+a VIN hash remembers what was absent last time, so the next scan does not pay the full timeout again.
+
+What it means: a silent module is not an error by itself. It appears as a row with the reason it did
+not answer. `--present-only` reads only what answered, and reports that nothing was read when no
+module responded. A module that was present on an earlier visit and silent now is worth a second
+scan before you suspect the module.
+
+## Requests time out
+
+A timeout means no reply arrived before the deadline. The per-request budget is two seconds by
+default, with one retry before the transport escalates to link recovery.
+
+Some slow answers are not failures. A `0x78` responsePending says the module is still working and
+extends the wait instead of ending it. A busy `0x21` is likewise retried. Both are normal on a long
+routine.
+
+What to try: let a pending request finish, then retry the read. If timeouts repeat across several
+modules, suspect the link rather than the module. A single timeout is reported as typed `timeout` and
+marked retryable. A negative response that is not transient maps to `unsupported` or
+`negative_response` and is not retried.
+
+## A read-only build refuses a write
+
+Every write is a separate, confirmed action, and the running binary publishes what it can do. A build
+compiled without the write feature refuses state-changing commands with a typed `read_only_build`
+response. The CLI prints that the state-changing subcommands are disabled in a stripped read-only
+build and points at rebuilding without `--no-default-features`.
+
+What it means: this is not a fault and not a permission problem. The stripped configuration exists
+for CI and development. The released build ships the write surface and asks for confirmation before
+it acts. [Safety](/docs/safety) lists the services each build allows.
+
+## Permission and port problems
+
+DoIP uses UDP and TCP port 13400. The discovery socket sets address reuse before it binds, so a second
+listener on port 13400 does not by itself stop Hanterill.
+
+What to try:
+
+- Allow the app through the operating system firewall.
+- Disable a VPN briefly. It can capture the discovery broadcast.
+- Check the per-OS permission notes in [Interface and languages](/docs/interface-and-language).
+- Close other diagnostic tools that may hold the car.
+
+## A link that drops mid-scan
+
+A brief interruption does not cost the session. Recovery runs only the rung it needs: reactivate
+routing on the live link, reconnect TCP and activate routing on the new channel, or rediscover and
+open a fresh channel. Replies from the old connection are rejected as stale, so a late answer cannot
+be mistaken for a current one. A keepalive (`TesterPresent` every two seconds) stops modules sleeping
+mid-scan, and a TCP keepalive notices a link that has gone quiet.
+
+A scan that dies mid-sweep is resumed on a fresh connection. The CLI reports how many modules were
+resumed, or that the reconnect failed and the partial results were kept. If the fresh connection
+answers with a different VIN, the resume is refused and the partial results are kept, so readings from
+two cars are never merged. If the car reports a different identity after a reconnect, the session
+ends.
+
+## Before you ask for help
+
+Export the session and keep the partial artifact. A scan that stopped still holds the rows it read,
+each with the reason a module did not answer. The support bundle export is scrubbed for sharing, and
+[Privacy](/docs/privacy) covers what it contains.
+
+Do not run a routine to fix a reading you do not understand. [Safety](/docs/safety) explains why, and
+how to compare a suspicious reading against a second scan first.
+
+## Next
+
+- [Connection](/docs/connection): the cable, the network, and the recovery ladder.
+- [Safety](/docs/safety): the read surface, the write surface, and the line between them.
+- [Supported vehicles](/docs/supported-vehicles): what is verified today.

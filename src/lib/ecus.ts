@@ -6,8 +6,8 @@
  * mirrors how the vehicle network is laid out around the gateway.
  *
  * Five entries (TCM, DEM, NRCM, MVBM, SUM) are ICE/PHEV reference rows:
- * registered from vendor reference data, never observed on a Hanterill
- * vehicle, and `variant: true` marks them as such. On a BEV they simply stay
+ * registered from vendor reference data that still needs testing on more cars,
+ * and `variant: true` marks them as such. On a BEV they simply stay
  * silent, and a presence timeout is expected rather than a fault.
  */
 export type Ecu = {
@@ -21,7 +21,7 @@ export type Ecu = {
   diagnostic: boolean;
   /** Advertises DTC support (ReadDTCInformation). */
   dtc: boolean;
-  /** Reference-data row that has never been observed on a Hanterill vehicle. */
+  /** Reference-data row that still needs testing on more cars. */
   variant?: boolean;
 };
 

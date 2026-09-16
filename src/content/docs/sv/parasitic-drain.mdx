@@ -1,0 +1,139 @@
+import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+
+Ett parkerat fordon är aldrig helt avstängt. Datorerna håller en liten ström flytande ur 12 V-batteriet,
+och när en av dem inte somnar förblir strömmen hög. Hanterill läser CEM:s egen registrering av den
+strömmen och visar hur den fördelar sig över tid, inte bara en siffra.
+
+<SafetyNotice level="read-only">
+Allt på den här sidan är läsningar. Hanterill frågar CEM efter två dataidentifierare och avkodar
+svaren. Den skriver inte till modulen och ändrar inte hur fordonet somnar.
+</SafetyNotice>
+
+## Vad vilström är
+
+Vilström är den ström ett fordon drar ur 12 V-batteriet när det har somnat, mätt i milliampere. Ett
+friskt fordon sjunker till en låg nivå och stannar där. En modul som väcks om och om igen, eller som
+aldrig somnar, håller nivån uppe och tömmer batteriet under dagar av parkering.
+
+Hanterill klämmer ingen amperemeter runt batteriet. CEM (central elektronikmodul) registrerar redan
+mätningen, och Hanterill läser den registreringen över `0x22 ReadDataByIdentifier`.
+
+## De två poster som CEM håller
+
+| DID | Vad den håller | Format på tråden |
+| --- | --- | --- |
+| `0x4025` | Medelvilström i mA | 2 byte, big-endian med tecken, i tiondels milliampere |
+| `0x40D7` | Hur tidigare viloprov föll i strömband | 7 räknare, 2 byte vardera, minst 14 byte |
+
+Medelvärdet har tecken: ett negativt värde betyder ström ut ur batteriet, vilket är det vanliga.
+Råvärdet `0x012C` är 300 tiondelar och visas som **30,0 mA**.
+
+<DiagnosticExample
+  service="ReadDataByIdentifier, viloströmmens medelvärde i CEM"
+  request="22 40 25"
+  response="62 40 25 01 2C"
+  note="Nyttolasten 0x012C är 300. Delat med 10 blir det 30,0 mA."
+/>
+
+Läsningen av histogrammet krävs. Om CEM inte svarar på den misslyckas hela läsningen med ett typat
+fel och vyn förblir tom. Medelvärdet är frivilligt: om den läsningen misslyckas lämnas medelvärdet
+tomt och statusen säger att viloströmmen inte rapporterades. Hanterill fyller aldrig i en nolla.
+
+<Callout kind="note" title="Ingen CEM-adress, ingen läsning">
+På en plattform där Hanterill inte har någon adress för CEM försöker den inte läsa viloströmmen alls.
+Den rapporterar att funktionen inte är tillämplig i stället för att läsa en gissad adress. En CEM som
+avvisar histogrammets identifierare rapporteras som att den inte stöds.
+</Callout>
+
+## Histogrammet över viloström
+
+Histogrammet är en registrering av tidigare viloprov, grupperade i sju strömband. Banden är fasta i
+avkodaren:
+
+| Band | Prov som räknas |
+| --- | --- |
+| `0–9 mA` | viloström under 10 mA |
+| `10–19 mA` | |
+| `20–29 mA` | |
+| `30–39 mA` | |
+| `40–79 mA` | ett brett band |
+| `80–119 mA` | ett brett band |
+| `120+ mA` | öppet uppåt, med 255 mA som vedertaget tak |
+
+Vyn ritar de sju räknarna som staplar på en kvadratrotsskala, skriver antalet prov över varje stapel
+och ritar ett band utan prov som en ärlig nolla. Under staplarna ligger en tabell med samma siffror:
+antal prov och andel av totalen. Histogrammet räknar prov, det är ingen strömmätning, så en hög stapel
+betyder "ofta", inte "mycket".
+
+## Vad banden betyder
+
+Hanterill färgar banden och märker dem för en läsare:
+
+- **0–39 mA** är normalt. Vyn anger att normal OEM-vila ligger under 50 mA.
+- **40–119 mA** är förhöjt: en modul väcks sannolikt med jämna mellanrum.
+- **120 mA och över** är kritiskt: vid den nivån har fordonet inte somnat.
+
+Vyn namnger det högsta band som hade minst ett prov och säger vad dess klass betyder. Den föreslår
+också ett nästa steg som följer läsningen: serviceschemat vid ett normalt resultat, felkoder och
+TCAM-modulen vid ett förhöjt, felkoder vid ett kritiskt.
+
+<Callout kind="caution" title="Backend klassificerar ingenting">
+Viloströmsrapporten bär bara en beskrivande status. Den lyder antingen "Measured standby current, no
+diagnostic policy applied" eller "Standby current not reported". Bandfärgerna, klassorden och raden
+för nästa steg är vyens läs hjälpmedel, inte en versionerad diagnostikpolicy. Behandla histogrammet
+som mätbevis och klassen som tolkning.
+</Callout>
+
+## Medelvärdet mot histogrammet
+
+Medelvärdet (`0x4025`) och histogrammet (`0x40D7`) är oberoende läsningar och kan därför gå isär. För
+att fånga en grov oenighet räknar Hanterill fram ett antytt medelvärde ur histogrammet genom att vikta
+varje bandräknare med bandets mittpunkt, och jämför det med det rapporterade medelvärdet.
+
+- Toleransen är det största av **15 mA** och **0,75 gånger det största av de två medelvärdena**.
+- Inom toleransen är de två överens.
+- Utanför den visar vyn en varningsruta om motstridiga läsningar med båda siffrorna och antalet prov.
+  En av de två läsningarna är fel, och att visa dem som ett tyst par skulle dölja det.
+
+Mittpunkterna står i stället för en fördelning som histogrammet inte bär, så kontrollen är en
+trådlös utlösare, aldrig en dom. Det öppna bandet `120+ mA` använder 255 mA som mittpunkt, samma
+vedertagna tak som banden.
+
+## Vad håller ett fordon vaket
+
+En förbrukning som aldrig faller kan komma från en modul som aldrig somnar. Modulernas drifttidsräknare
+är ledtråden: Hanterill läser DID `0xDD00` från huvudmodulerna, där varje räknare är fyra byte i
+tiondels sekunder sedan modulen startade.
+
+Räknarna jämförs med varandra. När minst två moduler svarade och deras drifttider stämmer inom **en
+timme** behandlar appen räknarna som startade tillsammans, så ingen av dessa moduler har återställts
+eller stängts av sedan dess. En stor samstämmig drifttid betyder alltså att huvudmodulerna har varit
+kontinuerligt strömförsörjda under hela den tiden. Det är en användbar ledtråd vid jakt på
+viloförbrukning, och inte ett bevis i sig: en modul kan ändå hålla bussen vaken medan de andra sover.
+
+## Att hitta moduler som förblir tysta
+
+Även andra riktningen spelar roll, och en vanlig genomsökning kan missa den. Vissa monterade moduler
+svarar inte på ett enkelt svep, så de behöver antingen kaskaden för tysta moduler eller en närmare
+titt. Det svepet beskrivs i [Insamlingar och svep](/docs/captures-and-sweeps). På viloströmssidan är
+frågan enkel: om en modul svarar när fordonet borde sova är den en kandidat till strömmen som
+histogrammet visar.
+
+## Batterisidan och inspektionspoängen
+
+Viloströmsvyn och batterivyn läser olika datorer och svarar på olika frågor. Batterisidan läser BECM
+och täcker hälsotillstånd, laddningsnivå och cellbalans. Viloströmsvyn läser CEM och täcker 12
+V-viloströmmen. Batterisidan länkar vidare till viloströmsvyn, och histogrammet följer med in i
+hälsoregistreringen och bäddas in i inspektionsrapporten som ett eget avsnitt.
+
+Ingen viloströmssiffra poängsätts. Inspektionspoängen använder bara två batteriingångar: hälsotillstånd
+och den vilade 12 V-skenan från BECM. En skena under 12,2 V drar 16 poäng, och 12,2 till 12,5 V drar
+6. Medelviloströmmen och histogrammet bärs som observationer och ingår inte i räkningen. Hela
+policyn finns i [Inspektionsrapporter](/docs/inspection-reports).
+
+## Nästa
+
+- [Insamlingar och svep](/docs/captures-and-sweeps): den fullständiga insamlingen och det delade svepet.
+- [Batteridiagnostik](/docs/battery-diagnostics): paketsidan av samma 12 V-fråga.
+- [Sessioner och bevis](/docs/sessions-and-evidence): var viloströmsartefakten lagras.

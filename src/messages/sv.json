@@ -629,7 +629,7 @@
   },
   "platforms": {
     "title": "CMA testad. SPA delvis unterstött. SEA1 katalogiserad.",
-    "lead": "Polestar 2 och CMA-Volvorna är de testade plattformarna. SPA levereras som katalogdata och stöds nu delvis: bilar med förbränningsmotor har testats via referensbanan för motorstyrning, medan batterivägen fortfarande väntar på hårdvara. SEA1-definitionerna är katalogiserade men obekräftade. Att nå en bil är inte samma sak som att stödja den.",
+    "lead": "Polestar 2 och CMA-Volvorna är de testade plattformarna. SPA levereras som katalogdata och stöds nu delvis: bilar med förbränningsmotor har testats via referensbanan för motorstyrning, medan batterivägen fortfarande behöver testas på fler fordon. SEA1-definitionerna är katalogiserade och behöver testas på fler fordon. Att nå en bil är inte samma sak som att stödja den.",
     "moreLink": "Fullständig kompatibilitet och status",
     "disclaimer": "Kompatibilitet är inget påstående om tillverkarstöd. Hanterill är ett oberoende projekt och är inte anslutet till Volvo Cars, Polestar eller Geely.",
     "verifiedFunctions": "Verifierade funktioner",
@@ -659,13 +659,13 @@
     "blurbs": {
       "CMA": "Compact Modular Architecture. Den testade plattformen: Polestar 2 och de mindre eldrivna Volvo-modellerna. 108 cellgrupper, 27 moduler om fyra. CMA-bilar med förbränningsmotor och hybrid stöds delvis via referensbanan för motorstyrning.",
       "SPA": "Scalable Product Architecture. Stöds delvis. Hybrid- och EV-pakettopologierna, CAN-eran av BECM-kartan och avkodarna levereras i katalogen, och bilar med förbränningsmotor har testats via referensbanan för motorstyrning.",
-      "SEA": "Sustainable Experience Architecture. SEA1-registret, DoIP-adresser för routning, DID-katalog och cellmappning för EX30-klassen är definierade. Hårdvarubekräftelse återstår.",
+      "SEA": "Sustainable Experience Architecture. SEA1-registret, DoIP-adresser för routning, DID-katalog och cellmappning för EX30-klassen är definierade. Definitionerna behöver testas på fler fordon.",
       "SPA2": "Andra generationens SPA. Annan gateway- och säkerhetsmodell. Under utredning."
     },
     "statusNotes": {
       "supported": "Verifierad implementation i drift. Batteri, felkoder, styrenhetsidentifiering och realtidsdata testas regelbundet.",
       "partial": "Vissa funktioner är implementerade och verifierade. Andra täcks ännu inte på detta fordon.",
-      "testing": "Koden finns, men den har ännu inte kontrollerats mot en känd, korrekt referens.",
+      "testing": "Koden finns, men den behöver testas på fler fordon.",
       "wip": "Under aktiv utveckling. Den ansluter, men avkodningen är ofullständig och ändras från version till version.",
       "research": "Arkitekturen undersöks. Inte användbar för diagnostik.",
       "planned": "På färdplanen. Ingen implementation ännu."
@@ -859,7 +859,7 @@
       },
       {
         "q": "Vilka fordon stöds egentligen?",
-        "a": "Polestar 2 och CMA-plattformens Volvo-modeller (XC40/EX40, C40/EC40) är de testade plattformarna. SPA stöds delvis: bilar med förbränningsmotor har testats via referensbanan för motorstyrning, medan hybrid- och EV-batterivägen är katalogiserad men inte liveverifierad. SEA1 (EX30, Polestar 4) är katalogiserad och väntar på hårdvarubekräftelse. Zeekr, Lynk & Co och SPA2 återstår att utreda."
+        "a": "Polestar 2 och CMA-plattformens Volvo-modeller (XC40/EX40, C40/EC40) är de testade plattformarna. SPA stöds delvis: bilar med förbränningsmotor har testats via referensbanan för motorstyrning, medan hybrid- och EV-batterivägen är katalogiserad och behöver testas på fler fordon. SEA1 (EX30, Polestar 4) är katalogiserad och behöver testas på fler fordon. Zeekr, Lynk & Co och SPA2 återstår att utreda."
       },
       {
         "q": "Kan Hanterill skada min bil?",
@@ -885,7 +885,7 @@
     "compat": [
       {
         "q": "Fungerar Hanterill med vilken Volvo eller Polestar som helst?",
-        "a": "Nej. Hanterill är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA stöds delvis: bilar med förbränningsmotor har testats via referensbanan för motorstyrning, medan hybrid- och EV-batterivägen är katalogiserad men inte liveverifierad. SEA1 är katalogiserad och väntar på hårdvarubekräftelse. Zeekr, Lynk & Co och SPA2 utreds."
+        "a": "Nej. Hanterill är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA stöds delvis: bilar med förbränningsmotor har testats via referensbanan för motorstyrning, medan hybrid- och EV-batterivägen är katalogiserad och behöver testas på fler fordon. SEA1 är katalogiserad och behöver testas på fler fordon. Zeekr, Lynk & Co och SPA2 utreds."
       },
       {
         "q": "Vad är skillnaden mellan plattformskompatibilitet och stöd?",
@@ -975,6 +975,7 @@
       "pCadence": "Versioner följer SemVer-taggar. Panelen visar den senaste publicerade utgåvan och dess filer; kan GitHub inte nås länkar den till utgåvesidan.",
       "hHardware": "Vilken hårdvara du behöver",
       "pHardware": "En passiv ENET-kabel och ett riktigt Ethernet-gränssnitt. Kabeln innehåller ingen krets: OBD-II i ena änden, RJ45 i den andra, dragen rakt igenom till fordonets diagnospinnar. Allt annat är vanligt Ethernet.",
+      "hBudget": "Vad det kostar",
       "pBudget": "En kabel kostar några hundra kronor och en USB-Ethernet-adapter ungefär lika mycket, om din dator saknar port. Det finns ingen dongel att köpa, ingen prenumeration att förnya och inget konto att skapa.",
       "releasesDocsLink": "Utgåvor och versioner",
       "allReleasesLink": "Alla utgåvor på GitHub"
@@ -1029,7 +1030,7 @@
       "hNoSubstitute": "Ingen ersättning för tillverkarens verktyg",
       "pNoSubstitute": "Hanterill är ett oberoende projekt. Det ersätter inte det diagnostiksystem tillverkaren tillhandahåller, och det är inte knutet till Volvo Cars, Polestar eller Geely. Använd det för att förstå ditt fordon, inte som ensam grund för ett säkerhetskritiskt reparationsbeslut.",
       "hUnverified": "Overifierade plattformar",
-      "pUnverified": "På plattformar under testning eller research är avkodningen inte verifierad. Lita inte på batterisiffror eller feltolkning, och fatta inte köp- eller reparationsbeslut utifrån dem."
+      "pUnverified": "På plattformar under testning eller research behöver avkodningen testas på fler fordon. Lita inte på batterisiffror eller feltolkning, och fatta inte köp- eller reparationsbeslut utifrån dem."
     },
     "batteryHealth": {
       "hWhere": "Var siffran kommer ifrån",
@@ -1045,7 +1046,7 @@
         "Korskontroller: rapporterad packspänning mot cellsumman, rapporterad effekt mot beräknad"
       ],
       "hTopologies": "Packtopologier",
-      "pTopologies": "Cellmatrisen är inte hårdkodad. Katalogen modellerar CMA 108S, SPA EV 96S och 108S pack, SPA-hybridens 102-cellers T8-pack och SEA-varianterna 107S och 110S, och ett 102-cellers pack rapporteras som fullständigt vid 102. Endast CMA-topologin är verifierad på ett rullande fordon; de övriga är katalogiserade och väntar på bekräftelse mot hårdvara.",
+      "pTopologies": "Cellmatrisen är inte hårdkodad. Katalogen modellerar CMA 108S, SPA EV 96S och 108S pack, SPA-hybridens 102-cellers T8-pack och SEA-varianterna 107S och 110S, och ett 102-cellers pack rapporteras som fullständigt vid 102. Endast CMA-topologin är verifierad på ett rullande fordon; de övriga behöver testas på fler fordon.",
       "pEngineering": "Växla panelen till <strong>Engineering</strong> för styrenhet, transport, service och identifierare. <docs>Batteridiagnostikdokumenten</docs> har hela lässekvensen.",
       "moreSoh": "Hur hälsotillstånd läses"
     },
@@ -1142,7 +1143,7 @@
         ]
       ],
       "hRules": "Regler, inte gissningar",
-      "pRules": "Poängen produceras av en deterministisk, versionerad regelmotor. Varje regel anger den bevisklass den vilar på, och klassen takar den starkaste dom regeln får tvinga fram. En publicerad standard kan flagga uppmärksamhet. En community-heuristik kan bara lägga till en not. Provisionella avkodare nedgraderar sina regler automatiskt.",
+      "pRules": "Poängen produceras av en deterministisk, versionerad regelmotor. Varje regel anger den bevisklass den vilar på, och klassen takar den starkaste dom regeln får tvinga fram. En publicerad standard kan flagga uppmärksamhet. En referensheuristik kan bara lägga till en not. Provisionella avkodare nedgraderar sina regler automatiskt.",
       "hMissing": "När indata saknas",
       "pMissing": "En obesvarad kanal registreras som saknad och betyget degraderar mot inconclusive. Saknad data läses aldrig som ett godkännande och aldrig som ett underkännande: den visas som vad den är. Samma motor bär rådgivande regler, som kylmedelstemperaturspridning, förfallna serviceintervall och DC-DC-busspänning, vilka annoterar rapporten utan att flytta poängen.",
       "hReport": "Rapporten själv",

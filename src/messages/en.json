@@ -173,6 +173,7 @@
       "pCadence": "Versions follow SemVer tags. The panel shows the latest published release and its assets; if GitHub cannot be reached it links to the releases page.",
       "hHardware": "What hardware you need",
       "pHardware": "One passive ENET cable and any real Ethernet interface. The cable has no chip in it: OBD-II on one end, RJ45 on the other, wired straight through to the car's diagnostic pins. Everything else is ordinary Ethernet.",
+      "hBudget": "What it costs",
       "pBudget": "A cable costs a few tens of euros and a USB Ethernet adapter about the same, if your laptop has no port. There is no dongle to buy, no subscription to renew, and no account to create.",
       "releasesDocsLink": "Releases and versions",
       "allReleasesLink": "All releases on GitHub",
@@ -212,7 +213,7 @@
       "hNoSubstitute": "Not a substitute for manufacturer tooling",
       "pNoSubstitute": "Hanterill is an independent project. It does not replace the diagnostic system supplied by the manufacturer, and it is not affiliated with Volvo Cars, Polestar or Geely. Use it to understand your vehicle, not as the sole basis for a safety-critical repair decision.",
       "hUnverified": "Unverified platforms",
-      "pUnverified": "On Testing or Research platforms, decoding is not verified. Do not rely on battery figures or fault interpretation, and do not make purchase or repair decisions from them."
+      "pUnverified": "On Testing or Research platforms, the decoding still needs testing on more cars. Do not rely on battery figures or fault interpretation, and do not make purchase or repair decisions from them."
     },
     "batteryHealth": {
       "hWhere": "Where the number comes from",
@@ -228,7 +229,7 @@
         "Cross-signal checks: reported pack voltage against the cell sum, reported power against calculated"
       ],
       "hTopologies": "Pack topologies",
-      "pTopologies": "The cell matrix is not hard-coded. The catalogue models CMA 108S, the SPA EV 96S and 108S packs, the SPA hybrid 102-cell T8 pack and the SEA 107S and 110S variants, and a 102-cell pack reports complete at 102. Only the CMA topology is verified on a live vehicle; the others are catalogued and awaiting hardware confirmation.",
+      "pTopologies": "The cell matrix is not hard-coded. The catalogue models CMA 108S, the SPA EV 96S and 108S packs, the SPA hybrid 102-cell T8 pack and the SEA 107S and 110S variants, and a 102-cell pack reports complete at 102. Only the CMA topology is verified on a live vehicle; the others still need testing on more cars.",
       "pEngineering": "Switch the panel to <strong>Engineering</strong> for the control module, transport, service and identifiers. <docs>Battery diagnostics docs</docs> have the full read sequence.",
       "moreSoh": "How state of health is read"
     },
@@ -325,7 +326,7 @@
         ]
       ],
       "hRules": "Rules, not guesses",
-      "pRules": "The score is produced by a deterministic, versioned rule engine. Every rule cites the class of evidence it rests on, and the class caps the strongest verdict the rule may force. A published standard can flag attention. A community heuristic can only add a note. Provisional decoders downgrade their rules automatically.",
+      "pRules": "The score is produced by a deterministic, versioned rule engine. Every rule cites the class of evidence it rests on, and the class caps the strongest verdict the rule may force. A published standard can flag attention. A reference heuristic can only add a note. Provisional decoders downgrade their rules automatically.",
       "hMissing": "When inputs are missing",
       "pMissing": "An unanswered channel is recorded as missing and the grade degrades toward inconclusive. Missing data is never read as a pass and never read as a failure: it is shown as what it is. The same engine carries advisory-only rules, such as coolant temperature spread, overdue service intervals and DC-DC bus voltage, which annotate the report without moving the score.",
       "hReport": "The report itself",
@@ -907,7 +908,7 @@
   },
   "platforms": {
     "title": "CMA tested. SPA partially supported. SEA1 catalogued.",
-    "lead": "Polestar 2 and the CMA Volvos are the tested platforms. SPA ships as catalogue data and is now partially supported: combustion cars have been exercised through the engine reference lane, while the battery path still waits on hardware. SEA1 definitions are catalogued but unconfirmed. Reaching a car is not the same as supporting it.",
+    "lead": "Polestar 2 and the CMA Volvos are the tested platforms. SPA ships as catalogue data and is now partially supported: combustion cars have been exercised through the engine reference lane, while the battery path still needs testing on more cars. SEA1 definitions are catalogued and still need testing on more cars. Reaching a car is not the same as supporting it.",
     "moreLink": "Full compatibility and status",
     "disclaimer": "Compatibility is not a claim of manufacturer support. Hanterill is an independent project and is not affiliated with Volvo Cars, Polestar or Geely.",
     "verifiedFunctions": "Verified functions",
@@ -937,13 +938,13 @@
     "blurbs": {
       "CMA": "Compact Modular Architecture. The tested platform: Polestar 2 and the smaller electric Volvos. 108 cell groups, 27 modules by 4. Combustion and hybrid CMA cars are partially supported through the engine reference lane.",
       "SPA": "Scalable Product Architecture. Partially supported. The hybrid and EV pack topologies, the CAN-era BECM map and the decoders ship in the catalogue, and combustion cars have been exercised through the engine reference lane.",
-      "SEA": "Sustainable Experience Architecture. The SEA1 registry, DoIP routing addresses, DID catalogue and cell mapping for EX30-class cars are defined. Hardware confirmation is pending.",
+      "SEA": "Sustainable Experience Architecture. The SEA1 registry, DoIP routing addresses, DID catalogue and cell mapping for EX30-class cars are defined. The definitions still need testing on more cars.",
       "SPA2": "Second-generation SPA. Different gateway and security model. Under investigation."
     },
     "statusNotes": {
       "supported": "Verified runtime implementation. Battery, DTC, ECU identification and live data are exercised regularly.",
       "partial": "Some functions are implemented and verified. Others are not yet covered on this vehicle.",
-      "testing": "The code is there, but it has not been checked against a known-good reference yet.",
+      "testing": "The code is there, but it still needs testing on more cars.",
       "wip": "Under active development. It connects, but the decoding is incomplete and changes from release to release.",
       "research": "Architecture is being investigated. Not usable for diagnostics.",
       "planned": "On the roadmap. No implementation yet."
@@ -1137,7 +1138,7 @@
       },
       {
         "q": "Which vehicles are actually supported?",
-        "a": "Polestar 2 and the CMA-platform Volvos (XC40/EX40, C40/EC40) are the tested platforms. Combustion and hybrid cars are partially supported through the engine reference lane. SPA and SEA1 (EX30, Polestar 4) have battery catalogues and decoders shipping in the app, but the battery path on those cars is not hardware-verified yet, so they are labelled Testing. Zeekr, Lynk & Co and SPA2 remain research."
+        "a": "Polestar 2 and the CMA-platform Volvos (XC40/EX40, C40/EC40) are the tested platforms. Combustion and hybrid cars are partially supported through the engine reference lane. SPA and SEA1 (EX30, Polestar 4) have battery catalogues and decoders shipping in the app, but the battery path on those cars still needs testing on more cars, so they are labelled Testing. Zeekr, Lynk & Co and SPA2 remain research."
       },
       {
         "q": "Can Hanterill damage my car?",
@@ -1163,7 +1164,7 @@
     "compat": [
       {
         "q": "Does Hanterill work with any Volvo or Polestar?",
-        "a": "No. Hanterill is CMA-first. Polestar 2 and the CMA Volvos (XC40/EX40, C40/EC40) are the tested platforms. SPA is partially supported: combustion cars have been exercised through the engine reference lane, while the hybrid and EV battery path is catalogued but not live-verified. SEA1 is catalogued and awaiting hardware confirmation. Zeekr, Lynk & Co and SPA2 are Research."
+        "a": "No. Hanterill is CMA-first. Polestar 2 and the CMA Volvos (XC40/EX40, C40/EC40) are the tested platforms. SPA is partially supported: combustion cars have been exercised through the engine reference lane, while the hybrid and EV battery path is catalogued and still needs testing on more cars. SEA1 is catalogued and needs testing on more cars. Zeekr, Lynk & Co and SPA2 are Research."
       },
       {
         "q": "What is the difference between platform compatibility and support?",
@@ -1171,7 +1172,7 @@
       },
       {
         "q": "My car is listed as Partial, Testing or Research. Can I use it?",
-        "a": "You can connect and, on some, read identification data. Do not rely on battery figures or fault interpretation, and do not run service routines. Partial, Testing and Research all mean the decoding is not fully verified on that car."
+        "a": "You can connect and, on some, read identification data. Do not rely on battery figures or fault interpretation, and do not run service routines. Partial, Testing and Research all mean the decoding still needs testing on more cars."
       },
       {
         "q": "Is this endorsed by Volvo or Polestar?",
