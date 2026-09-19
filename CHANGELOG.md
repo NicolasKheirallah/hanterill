@@ -2,6 +2,103 @@
 
 All notable changes to Hanterill. Versions follow [SemVer](https://semver.org/).
 
+## [0.2.1] - 2026-09-19
+
+This release adds more than 20,000 manufacturer-reference entries covering over
+100 vehicle modules, expands diagnostics for combustion and plug-in hybrid
+vehicles, and improves scan recovery and reporting. Hanterill now distinguishes
+more clearly between values reported by the vehicle, manufacturer-reference
+data, unverified information, and unavailable data.
+
+### Added
+
+- Added more than 20,000 documented manufacturer-reference entries across over
+  100 vehicle modules. Selected entries can be checked against a connected
+  vehicle.
+- Added a Capabilities view for supported systems, modules, service information,
+  and vehicle capabilities.
+- Added an Engine view for supported combustion and plug-in hybrid vehicles,
+  backed by hundreds of additional engine-related reference definitions.
+  Unverified values remain marked until they are confirmed against a matching
+  vehicle.
+- Added live readings for engine coolant temperature, engine oil level and
+  temperature, fuel level, fuel-pump status, diesel particulate filter data,
+  gearbox oil temperature, gearbox adaptation mileage, and 48V battery charge.
+- Added scan previews that show the expected support and approximate scope of an
+  advanced scan before it begins.
+- Added collection of fault-related operating conditions and counters when the
+  module provides them.
+- Added raw diagnostic responses to session history so module replies remain
+  available after the vehicle disconnects.
+- Added vehicle-wide ECU reset with state checks. Functions that have not been
+  verified on vehicles remain unavailable.
+- Added an optional update check in Settings. It is disabled by default, never
+  downloads or installs an update, and sends no vehicle information.
+
+### Changed
+
+- Fault clearing now targets modules with detected faults by default, with a
+  separate option for clearing the whole vehicle. Progress identifies the
+  module currently being cleared, verified, or reset, and preserves the before
+  and after results for comparison.
+- Compatible reads from the same module now share a diagnostic session, reducing
+  repeated vehicle communication during larger scans.
+- A non-responsive module no longer blocks the rest of a scan. Hanterill reports
+  the missing response and continues with the remaining modules.
+- Fault-code scans can recover from temporary connection loss. Before combining
+  results, Hanterill checks that the same vehicle has reconnected.
+- Platform-specific scans now account for module addressing and omit
+  combustion-only modules when scanning an electric vehicle.
+- Battery diagnostics show more health information, record connection and
+  disconnection activity, and sort module readings more clearly.
+- Temperature channels that remain static or otherwise look unreliable are
+  identified instead of being presented as confirmed measurements.
+- Modules for equipment that was never fitted can be marked as expected absent,
+  with the related option or system shown when known.
+- Reports and snapshots show the full VIN by default. VIN masking remains
+  available when preparing data for sharing.
+- Measurements use appropriate precision, conflicting service values are easier
+  to identify, and each service value names its source module.
+- Compatible diagnostic requests can be grouped, and long recordings are
+  written progressively to reduce memory use.
+- Large visual components load only when needed.
+- Keyboard navigation now covers battery cells, module views, and ECU lists more
+  consistently. Buttons and overlays respond sooner, and live charts retain
+  their zoom level.
+- Revised all eight translations, including broader rewrites of the Danish and
+  Norwegian text and shorter interface labels where needed.
+
+### Fixed
+
+- Corrected TCAM backup-battery response handling on CMA vehicles. The change was
+  verified on a connected Polestar 2.
+- Battery certificates no longer pass when required measurements are missing.
+  Cell comparisons appear only when the required cell data was collected, and
+  missing measurements use consistent labels.
+- Reaching a configured scan limit no longer appears as a cable or vehicle
+  communication failure.
+- Fixed vehicle-wide requests occasionally missing very fast module responses.
+- A failed first recovery step no longer closes a diagnostic session that can
+  still recover.
+- Restored missing battery, fault-code, ECU inventory, and parasitic-drain data
+  in exports, and fixed imports of affected saved sessions.
+- Fixed modules that could not be selected in scan-scope controls.
+- Fixed software-capability checks that could stop before contacting the
+  vehicle.
+- Empty module responses are now reported as unavailable instead of being
+  decoded as current measurements.
+- Corrected radar and module mappings, incomplete-reply handling, stored scan
+  results, cancellation during long operations, connection recovery, and
+  service-status reporting.
+
+### Reliability and safety
+
+- Operations that can change vehicle state remain protected by safety checks.
+- Functions without enough verification on real vehicles remain disabled or
+  carry an explicit unverified status.
+- Missing and unsupported values remain unavailable instead of being replaced
+  with assumed results.
+
 ## 0.2.0 - 2026-09-13
 
 This release covers the first full hardware-in-the-loop campaign: read-only
