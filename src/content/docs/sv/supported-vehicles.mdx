@@ -27,6 +27,24 @@ den här sajten beskriver alltid det andra.
 | Testas | Koden finns men behöver testas på fler fordon. Behandla varje avläsning som preliminär. |
 | Utreds | Vi kartlägger fortfarande hur plattformen fungerar. Inte användbar för diagnostik. |
 
+## Innan du köper en adapter
+
+Tabellen beskriver anslutningsvägen, inte ett löfte om verifierade avläsningar. En passiv
+ENET-kabel är den dokumenterade vägen för CMA-referensbilen. Andra bilar kan behöva annan
+kabeldragning. En katalogpost bevisar inte att bilen svarar.
+
+| Fordonsfamilj | Anslutningsunderlag | Kontrollera före köp |
+| --- | --- | --- |
+| Polestar 2 / CMA-Volvo | Polestar 2 är live-referensen för DoIP; CMA delar katalog, men varianter behöver egna kontroller | Passiv OBD-II till RJ45 ENET-kabel och Ethernet-port eller USB-C-adapter. Kontrollera modell och årsmodell nedan. |
+| SPA1-Volvo (XC60, XC90, V60, S60) | Preliminär DoIP-diagnostik kom i 0.2.2: identitet, felkoder och tidiga batteri-DID, med modulistan och avkodare fortfarande under bekräftelse på fler bilar | Samma passiva ENET-kabel. Behandla varje avläsning som preliminär och kontrollera vyn **Kapabiliteter** för funktionen du behöver. |
+| Äldre SPA-Volvo och T8-hybrider | Batteriet svarar över äldre CAN. Appen har en ISO-TP CAN-transport, men en CAN-adapter levereras inte med den | En ENET-kabel når inte denna batteriväg. Live-skanning av batteriet väntar på CAN-hårdvara som Hanterill inte levererar. |
+| EX30 / Polestar 4 / Zeekr / SEA1 | 0.2.2 når bilar som förblir tysta vid upptäckten genom att öppna DoIP rakt mot gatewayen, verifierat på en Zeekr 001. Diagnostikdefinitionerna behöver fortfarande testas på fler bilar | Samma passiva ENET-kabel, tändning på. Anslutningen är inte längre hindret; avläsningarna är fortfarande preliminära. |
+| EX90 / Polestar 3 / SPA2 | Endast forskning | Ingen köprekommendation för Hanterill-diagnostik ännu. |
+
+Läs [Hårdvara och adaptrar](/docs/hardware-and-adapters) för kablar och gränssnitt. Om bilen
+ansluter men en avläsning saknas visar vyn **Kapabiliteter** funktionens bevittnade stödnivå.
+[Tolka resultat](/docs/reading-results) förklarar etiketterna.
+
 ## Plattformar
 
 Tabellerna nedan genereras från samma stöddata som resten av sajten använder, så de kan inte avvika

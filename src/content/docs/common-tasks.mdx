@@ -1,0 +1,39 @@
+Start with the job you need to do. These paths use the app's screen names; each linked page explains
+the readings and limits in detail.
+
+## Check a used car
+
+1. Confirm the model and diagnostic path in [Supported vehicles](/docs/supported-vehicles).
+2. Connect with the car parked, then confirm its identity on **Overview** and **Vehicle Entity**.
+3. Run **Fault Codes** and **Battery Health**. Note any missing modules or cells.
+4. Open **Inspection Report** and read the findings and coverage gaps beside the score.
+5. Save the session and export a report if you need to share it. Check VIN masking before sharing.
+
+A **Not evaluated** verdict means there was too little evidence. On a Testing or Research platform,
+do not treat decoded values as a purchase decision. See [Reading results](/docs/reading-results).
+
+## Investigate a warning light
+
+1. Run **Fault Codes** and look at active versus stored codes and the modules that answered.
+2. Open the relevant code to read its status and any freeze frame.
+3. Save the scan before repairing anything. The freeze frame may be lost if codes are cleared.
+4. Use [DTC scanning](/docs/dtc-scanning) to interpret the code and coverage.
+
+Clearing codes changes the car and erases evidence. Read [Safety](/docs/safety) before using it.
+
+## Check a repair
+
+1. Open the saved session from before the repair.
+2. Run a new scan on the same car and save it.
+3. Use **Diff since last scan** or **DTC History Diff** for new, persistent and resolved faults.
+4. Compare battery cells, ECU inventory or firmware in **Sessions & Reports** when those domains
+matter to the repair.
+
+A code missing from a module that did not answer is **unverified**, not resolved.
+[Sessions and evidence](/docs/sessions-and-evidence) explains the comparison rules.
+
+## Check whether software changed
+
+Run **Firmware SBOM** before and after the visit, save each session, then open the firmware diff.
+Compare module addresses, part numbers, software versions and serials. A replaced module and a
+software update are different changes. See [Firmware and inventory](/docs/firmware-and-inventory).

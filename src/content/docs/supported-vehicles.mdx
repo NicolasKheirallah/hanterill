@@ -32,6 +32,25 @@ this site always describe the second thing.
 The tables below are generated from the same support data the rest of the site uses, so they
 cannot drift from the [vehicles page](/vehicles).
 
+## Before you buy an adapter
+
+This table describes the connection path, not a promise that every reading is verified. A standard
+passive ENET cable is the documented route for the CMA reference car. Other cars can need different
+wiring, and a catalogue entry alone does not prove that the car will answer.
+
+| Vehicle family | Connection evidence | What to buy or check first |
+| --- | --- | --- |
+| Polestar 2 / CMA Volvos | The Polestar 2 is the live DoIP reference; CMA shares a diagnostic catalogue, but individual variants still need their own checks | Passive OBD-II to RJ45 ENET cable and an Ethernet port or USB-C Ethernet adapter. Confirm your model and year in the table below. |
+| SPA1 Volvos (XC60, XC90, V60, S60) | Provisional DoIP diagnostics arrived in 0.2.2: identity, fault codes and early battery DIDs, with the module roster and decoders still being confirmed on more cars | The same passive ENET cable. Treat every reading as provisional and check the **Capabilities** screen for the function you need. |
+| Older SPA Volvos and T8 hybrids | The battery answers over older CAN wiring. The app implements an ISO-TP CAN transport, but no CAN adapter ships with it | An ENET cable cannot reach this battery path. Live battery scanning waits on CAN hardware Hanterill does not supply. |
+| EX30 / Polestar 4 / Zeekr / SEA1 | 0.2.2 reaches cars that stay silent during discovery by opening DoIP straight at the gateway, verified on a Zeekr 001. The diagnostic definitions still need testing on more cars | The same passive ENET cable, ignition on. Connection is no longer the blocker; the readings are still provisional. |
+| EX90 / Polestar 3 / SPA2 | Research only | No purchase recommendation for Hanterill diagnostics yet. |
+
+For the cable and interface details see [Hardware and adapters](/docs/hardware-and-adapters).
+If your car connects but does not show a reading, the **Capabilities** screen explains the
+function's witnessed support level. [Reading results](/docs/reading-results) explains how to use
+that label.
+
 ### CMA
 
 The tested platform. Polestar 2 and the CMA Volvos share one high-voltage layout, so a feature

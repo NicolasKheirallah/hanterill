@@ -1,0 +1,33 @@
+Ett värde hjälper bara om du vet vad som svarade, hur gammalt svaret är och hur appen tolkade
+det. Öppna radens underlag när ett resultat verkar oväntat.
+
+## Fyra kontroller innan du litar på ett resultat
+
+| Kontroll | Titta efter | Om det saknas |
+| --- | --- | --- |
+| Fordon och plattform | Fordonsidentitet och stödstatus | En bil kan gå att ansluta utan att avkodningen är verifierad. |
+| Täckning | Moduler, kanaler eller cellgrupper som tillfrågades och svarade | Ett uteblivet svar är en lucka, aldrig en frisk nolla. |
+| Aktualitet | Tidpunkt eller status för dataströmmen | Ett gammalt prov beskriver inte bilens nuvarande läge. |
+| Källa | ECU, dataidentifierare, råsvar och avkodningens mognad där de visas | Ett beräknat värde eller en preliminär avkodare kräver mer försiktighet. |
+
+## Tre exempel
+
+**Batterihälsa:** SoH läses från batteristyrenheten. Cellbalans beräknas från grupperna som
+svarade. Om grupper saknas, kontrollera antalet celler och avläsningsresultaten innan du använder
+spridningen. [Batteridiagnostik](/docs/battery-diagnostics) beskriver måtten.
+
+**Felkoder:** ”Inga aktiva koder” gäller bara modulerna som skanningen täckte. Om en modul var
+tyst rapporteras ofullständig täckning. En lagrad kod och en aktiv kod svarar på olika frågor.
+Läs [Felkodsskanning](/docs/dtc-scanning).
+
+**Inspektionspoäng:** Läs fynden och de saknade indata tillsammans med poängen. **Inte
+utvärderad** är ett väntat omdöme när underlaget är för tunt. Låt inte en poäng från en plattform
+märkt Testing styra köp eller reparation. Läs [Inspektionsrapporter](/docs/inspection-reports).
+
+## Plattformsetiketter
+
+**Supported** betyder att en relevant väg verifierats på ett riktigt fordon. **Partial** betyder
+att bara vissa funktioner har det underlaget. **Testing** betyder att en väg eller avkodare finns
+men behöver fler fordonsprov. **Research** går inte att använda för diagnostiska beslut.
+Status kan skilja sig mellan funktioner på samma bil. Kontrollera
+[Fordon som stöds](/docs/supported-vehicles) och appens vy **Kapabiliteter**.

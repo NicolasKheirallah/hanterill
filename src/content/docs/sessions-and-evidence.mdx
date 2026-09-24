@@ -78,6 +78,14 @@ the app.
 
 The session dialog offers five choices, and ZIP is only packaging, never a content format:
 
+<Callout kind="caution" title="Check privacy and import before choosing a format">
+For a person to read, use the report builder's PDF or print view. For a spreadsheet, choose CSV.
+For a machine-readable archive, choose the modular JSON files. **Single JSON currently writes the
+full vehicle reference even when VIN masking is selected.** The app's exported files also do not
+match its Import schema, so do not use Import as a backup restore plan. Review the file before
+sharing it.
+</Callout>
+
 | Choice | What it produces |
 | --- | --- |
 | CSV ZIP (default) | the modular CSV set, packaged as one archive |

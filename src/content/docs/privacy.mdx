@@ -17,8 +17,8 @@ no account, and nothing to sign in to.
 - No diagnostic data uploaded anywhere
 - No third-party crash reporting
 
-That list is short on purpose. The app contains no networking code that talks to anything other than the
-car.
+The optional update check is the one internet exception. It is off by default and sends no vehicle
+data. See [Network activity](#network-activity).
 
 ## VIN and location redaction
 
@@ -48,8 +48,11 @@ removes them for good.
 
 ## Network activity
 
-During a session, Hanterill speaks only to the car over the local link. The app needs no internet
-connection to run, and it has no update check that contacts a server on its own.
+During a diagnostic session, Hanterill speaks to the car over the local link. It needs no internet
+connection to run. In **Settings → Updates**, you can check for a published release now or opt in
+to a check on launch, at most once a day. This sends a request to GitHub's public release API;
+GitHub sees your IP address, but the request carries no VIN, vehicle data, diagnostic content or
+build identity. The app only displays a notice. It never downloads or installs an update.
 
 This website is separate: it reads the GitHub API to show the latest release and repository
 statistics. That is the website, not the app.

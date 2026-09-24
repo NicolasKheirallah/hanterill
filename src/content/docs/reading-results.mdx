@@ -1,0 +1,34 @@
+A number is useful only when you know what answered, how recent the answer is, and how the app
+interpreted it. Open a row's evidence details when a result looks surprising.
+
+## Four checks before relying on a result
+
+| Check | What to look for | What it means if missing |
+| --- | --- | --- |
+| Vehicle and platform | The connected vehicle identity and support label | A reachable car may still have unverified decoders. |
+| Coverage | Modules, channels or cell groups attempted and answered | No answer is a gap, never a healthy zero. |
+| Freshness | Capture time or live stream state | An old sample does not describe the current car. |
+| Source | ECU, data identifier, raw response and decoder maturity where shown | A derived value or provisional decoder needs more caution than a direct verified read. |
+
+## Three examples
+
+**Battery health:** SoH is read from the battery controller. Cell balance is calculated from the
+groups that answered. If some groups are missing, inspect the cell count and read outcomes before
+using the spread as evidence. [Battery diagnostics](/docs/battery-diagnostics) explains the
+different battery measures.
+
+**Fault codes:** “No active codes” describes only modules covered by that scan. If a module was
+silent, the scan reports incomplete coverage; it cannot clear that module by inference. A stored
+code and an active code answer different questions. See [DTC scanning](/docs/dtc-scanning).
+
+**Inspection score:** Read the findings and missing inputs with the number. **Not evaluated** is an
+expected verdict when evidence is insufficient. A score from a platform marked Testing should not
+drive a purchase or repair decision. See [Inspection reports](/docs/inspection-reports).
+
+## Platform labels
+
+**Supported** means a live vehicle has verified the relevant path. **Partial** means only some
+functions have that evidence. **Testing** means a decoder or route exists but needs more vehicle
+checks. **Research** is not usable for diagnostic decisions. The label can differ by function on
+the same car. Check [Supported vehicles](/docs/supported-vehicles) and the app's **Capabilities**
+screen for the specific vehicle and function.

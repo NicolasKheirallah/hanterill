@@ -1,48 +1,48 @@
 {
   "meta": {
     "title": "Hanterill | Fordonsdiagnostik för Volvo & Polestar",
-    "description": "Källkodstillgänglig fordonsdiagnostik, batterihälsa och realtidsdata för Volvo- och Polestar-fordon som stöds, över DoIP och UDS. Lokalt, privat och gratis för personligt bruk."
+    "description": "Fordonsdiagnostik med tillgänglig källkod för Volvo och Polestar som stöds. Läs batterihälsa och realtidsdata via DoIP och UDS. Allt körs lokalt och är gratis för privat bruk."
   },
   "seo": {
     "home": {
       "title": "Hanterill | Fordonsdiagnostik för Volvo & Polestar",
-      "desc": "Källkodstillgänglig fordonsdiagnostik, batterihälsa och realtidsdata för Volvo- och Polestar-fordon som stöds, över DoIP och UDS. Lokalt, privat och gratis för personligt bruk."
+      "desc": "Fordonsdiagnostik med tillgänglig källkod för Volvo och Polestar som stöds. Läs batterihälsa och realtidsdata via DoIP och UDS. Allt körs lokalt och är gratis för privat bruk."
     },
     "features": {
       "title": "Funktioner",
-      "desc": "Alla sju funktioner: batterihälsa, felkoder, live-data, systemtelemetri, inspektionsrapport, sessioner och servicefunktioner."
+      "desc": "Sju funktioner, från batterihälsa och felkoder till livedata, systemdata, inspektionsrapporter, sessioner och serviceåtgärder. Se vad de läser och kräver."
     },
     "batteryHealth": {
       "title": "Batterihälsa",
-      "desc": "Läs hälsotillstånd och laddning, paketspänning, potentialer per cellgrupp, obalans och termisk data som fordonets batteristyrning rapporterar."
+      "desc": "Läs batteriets hälsotillstånd och laddningsnivå, spänning, cellgruppernas värden, obalans och temperatur från fordonets batterihanteringssystem."
     },
     "vehicleDiagnostics": {
       "title": "Fordonsdiagnostik",
-      "desc": "Upptäckt av styrenheter via DoIP, identifieringsdata, felkoder efter status med ögonblicksbilder, DID-skanning av alla moduler, firmwareinventering och radering bakom en uttrycklig bekräftelse."
+      "desc": "Upptäck styrenheter via DoIP. Läs identitet, felkoder och frysta ramdata, skanna dataidentifierare och jämför programvaruversioner. Radering kräver bekräftelse."
     },
     "liveData": {
       "title": "Realtidsdata",
-      "desc": "Realtidstelemetri för ingenjörer: paketspänning och -ström, batteri- och växelriktartemperatur, motormoment och 12 V-spänning, med periodisk provtagning på begäran."
+      "desc": "Följ batterispänning och ström, batteri- och växelriktartemperatur, motorns vridmoment och 12 V-systemets spänning med avläsningar på begäran."
     },
     "systemTelemetry": {
       "title": "Subsystemstelemetri",
-      "desc": "Avläsningssidor utöver batteriet: klimatslinga, drivenheter, laddning och effekt, TCAM, styrning, serviceschema, GPS och fordonets inställningskarta."
+      "desc": "Följ fler system än batteriet: klimatanläggning, drivenheter, laddning, TCAM, styrning, serviceintervall, GPS och fordonskonfiguration."
     },
     "inspectionReports": {
       "title": "Inspektionsrapporter",
-      "desc": "En poängsatt besiktningsrapport byggd på skrivskyddad diagnostik: batteridegradering, cellbalans, felallvar och odometerkonsistens, där varje omdöme kan spåras till en versionerad regel."
+      "desc": "En poängsatt kontroll inför köp, baserad på skrivskyddad diagnostik. Varje bedömning av batteri, felkoder och mätarställning kan spåras till en dokumenterad regel."
     },
     "sessionsEvidence": {
       "title": "Sessioner och underlag",
-      "desc": "Diagnossessioner arkiveras lokalt och jämförs i appen: felkodsdiffar, cellhistorik modul för modul, firmware före och efter, operatörsanteckningar och exporter."
+      "desc": "Spara diagnossessioner lokalt och jämför felkoder, cellvärden och programvaruversioner före och efter en åtgärd. Lägg till anteckningar och exportera resultaten."
     },
     "serviceFunctions": {
       "title": "Servicefunktioner",
-      "desc": "Skrivoperationer som följer med varje utgåva, var och en bakom sin egen bekräftelse: rensning av felkoder, servicefunktioner, adaptationer och ECU-omstart."
+      "desc": "Serviceåtgärder som kan ändra fordonet kräver var sin bekräftelse, bland annat radering av felkoder, servicerutiner, anpassningar och omstart av styrenheter."
     },
     "vehicles": {
       "title": "Fordon som stöds",
-      "desc": "Vilka Volvo-, Polestar-, Zeekr- och Lynk & Co-modeller Hanterill läser idag, med verifieringsstatus för varje plattform och vad som testats på riktig hårdvara."
+      "desc": "Se vilka Volvo-, Polestar-, Zeekr- och Lynk & Co-modeller Hanterill kan läsa, hur stödet har verifierats och vad som har testats på riktiga fordon."
     },
     "download": {
       "title": "Ladda ner",
@@ -50,7 +50,7 @@
     },
     "screenshots": {
       "title": "Skärmbilder",
-      "desc": "Hanterill på en Volvo och Polestar som stöds: översikt, batterihälsa, felkoder, realtidsdata, subsystemssidor och den poängsatta inspektionsrapporten."
+      "desc": "Se Hanterill på Volvo- och Polestar-fordon som stöds: översikt, batterihälsa, felkoder, livedata, systemvyer och inspektionsrapport."
     },
     "safety": {
       "title": "Säkerhet",
@@ -62,11 +62,11 @@
     },
     "about": {
       "title": "Om Hanterill: ett oberoende diagnosprojekt",
-      "desc": "Hanterill är ett oberoende, källkodstillgängligt fordonsdiagnostikprojekt för Volvo och Polestar, för privat bruk, inte anslutet till någon tillverkare."
+      "desc": "Hanterill är ett oberoende fordonsdiagnostikprojekt med tillgänglig källkod för Volvo och Polestar. Det är avsett för privat bruk och saknar koppling till tillverkarna."
     },
     "projects": {
       "title": "Andra projekt",
-      "desc": "Fler oberoende projekt av samma upphovsman som Hanterill, bland annat Hisingen: Polestar- och Volvo-telemetri, nativt i macOS-menyraden."
+      "desc": "Fler oberoende projekt av Hanterills skapare, bland annat Hisingen som visar Volvo- och Polestar-data i macOS-menyraden."
     },
     "tasks": {
       "columnTask": "Om du vill",
@@ -132,19 +132,19 @@
     },
     "docs": {
       "title": "Dokumentation",
-      "desc": "Hur Hanterill fungerar, i detalj. Från att sätta i en kabel till att avkoda ett batteriblock, CLI:t och den poängsatta inspektionsrapporten."
+      "desc": "Lär dig hur Hanterill fungerar, från anslutning och batteridiagnostik till kommandoradsverktyget och inspektionsrapportens regler."
     },
     "troubleshooting": {
       "title": "Fordonet dyker inte upp",
-      "desc": "Felsök en anslutning som inte kommer upp: tändningsläge, RJ45-porten, brandväggar för UDP 13400, adapterkompatibilitet och hur länkråterställning fungerar."
+      "desc": "Felsök när fordonet inte hittas: kontrollera tändning, RJ45-anslutning, brandvägg, UDP-port 13400 och Ethernet-adapter."
     },
     "changelog": {
       "title": "Ändringslogg",
-      "desc": "Varje Hanterill-utgåva med noteringar, datum och filer, hämtat från GitHub Releases. SemVer-taggar, kontrollsummor publicerade tillsammans med binärfilerna."
+      "desc": "Se versioner, datum, versionsinformation och nedladdningsfiler från GitHub Releases. Kontrollsummor publiceras tillsammans med programfilerna."
     },
     "network": {
       "title": "Nätverksutforskaren för CMA",
-      "desc": "Interaktiv karta över modulanslutningar på CMA-plattformen: 170 enheter, 295 dokumenterade länkar över nio nätverk och 622 pinrader, som data snarare än en ritning."
+      "desc": "Utforska CMA-plattformens nätverk: 170 enheter, 295 dokumenterade anslutningar i nio nätverk och 622 stiftposter i en interaktiv karta."
     }
   },
   "common": {
@@ -170,7 +170,7 @@
     "menu": "Meny",
     "openMenu": "Öppna menyn",
     "closeMenu": "Stäng menyn",
-    "homeAria": "Hanterill startsida"
+    "homeAria": "Hanterills startsida"
   },
   "nav": {
     "features": "Funktioner",
@@ -246,24 +246,24 @@
     "network": "Nätverk"
   },
   "pricing": {
-    "promise": "Gratis för privat bruk, i varje utgåva.",
-    "detail": "Det finns ingen betald nivå, ingen prenumeration, inget konto och ingen provperiod, och ingen funktion hålls tillbaka bakom en sådan: varje diagnostikfunktion appen har finns i nedladdningen. Licensen håller en valfri kommersiell licens för verkstäder som fakturerar för arbetet, så en privat ägare betalar aldrig.",
+    "promise": "Alltid gratis för privat bruk.",
+    "detail": "Alla diagnostikfunktioner ingår i nedladdningen. Det finns ingen prenumeration, provperiod eller betald nivå. Verkstäder som tar betalt för sitt arbete kan ansöka om en separat kommersiell licens.",
     "heading": "Privat bruk kostar ingenting",
-    "body": "Hanterill är ett verktyg för ägare, inte en prenumeration. Det har ingen betald nivå, inget konto, ingen provperiod och ingen licensserver, och ingen diagnostikfunktion ligger bakom en sådan. Privat bruk förblir gratis i varje publicerad version.",
-    "commercial": "Företag är det enda undantaget. Licensen behåller ett kommersiellt alternativ för verkstäder och tjänsteleverantörer, eftersom kommersiellt bruk inte är vad CC BY-NC-ND tillåter. Privata ägare påverkas inte."
+    "body": "Hanterill är gratis för privat bruk i varje publicerad version. Alla diagnostikfunktioner ingår, utan konto, prenumeration eller licensserver.",
+    "commercial": "Verkstäder och andra företag som tar betalt för diagnostik behöver en kommersiell licens, eftersom CC BY-NC-ND inte tillåter kommersiellt bruk. Det påverkar inte privatpersoner."
   },
   "hero": {
     "eyebrow": "Oberoende fordonsdiagnostik",
-    "title": "Läs din Volvo eller Polestar direkt.",
-    "lead": "Anslut till en Volvo eller Polestar som stöds via Ethernet. Läs batterihälsa, styrenhetsfel och realtidstelemetri. Inget moln, ingen prenumeration, och gratis för privat bruk.",
+    "title": "Läs av din Volvo eller Polestar själv.",
+    "lead": "Anslut en Volvo eller Polestar som stöds via Ethernet och läs batterihälsa, felkoder och livedata. Allt sker lokalt, utan prenumeration. Gratis för privat bruk.",
     "platforms": "Windows, macOS, Linux",
-    "principles": "Källkodstillgänglig, endast lokalt, ingen telemetri, gratis för privat bruk",
-    "captures": "Fångat på referensfordonet",
+    "principles": "Tillgänglig källkod, lokal lagring, ingen telemetri, gratis för privat bruk",
+    "captures": "Skärmbilder från referensfordonet",
     "capturesLink": "Alla skärmbilder"
   },
   "connection": {
-    "title": "En passiv kabel är all hårdvara du behöver.",
-    "lead": "En passiv ENET-kabel och valfritt Ethernet-gränssnitt räcker för att nå ett fordon som stöds. Välj en del av kedjan för att se vad den gör.",
+    "title": "Det räcker med en passiv kabel.",
+    "lead": "Med en passiv ENET-kabel och en Ethernet-port kan du ansluta till ett fordon som stöds. Välj en del av anslutningen för att se vad den gör.",
     "requestLabel": "Begäran: läs data",
     "responseLabel": "Svar: 398,6 V",
     "protocolDetails": "Protokolldetaljer",
@@ -280,7 +280,7 @@
     "facts": {
       "vehicle": [
         "Diagnostikgateway",
-        "DoIP-kapabel",
+        "Stöd för DoIP",
         "TCP / UDP på port 13400"
       ],
       "enet": [
@@ -290,22 +290,22 @@
       ],
       "computer": [
         "Windows, macOS, Linux",
-        "Valfritt trådbundet Ethernet-gränssnitt",
-        "USB-C-adapter fungerar"
+        "En vanlig Ethernet-port med kabel",
+        "USB-C-adapter fungerar också"
       ],
       "hanterill": [
-        "Talar DoIP och UDS",
-        "Skriver resultat till lokal lagring",
+        "Kommunicerar via DoIP och UDS",
+        "Sparar resultat lokalt",
         "Ingenting lämnar din dator"
       ]
     },
     "linkObd": "OBD-II",
     "linkEthernet": "Ethernet",
-    "linkUsb": "USB / uttag",
+    "linkUsb": "USB eller nätverksport",
     "wire": {
       "udp": "Fordonsidentifiering",
       "tcp": "Kanal för diagnostikmeddelanden",
-      "routing": "Skickas före varje UDS-begäran",
+      "routing": "Aktiveras före UDS-begäranden",
       "read": "Läs data via identifierare",
       "dtc": "Läs DTC-information",
       "standards": "DoIP och UDS"
@@ -317,37 +317,37 @@
     }
   },
   "features": {
-    "title": "Allt som fordonet kan berätta, över en anslutning.",
-    "lead": "Batteriet, varje styrenhet, fel, realtidsdata, subsystemstelemetri och en poängsatt rapport, avläst via en anslutning. Inget lägesbyte mellan verktyg.",
+    "title": "Fordonets data samlad på ett ställe.",
+    "lead": "Läs batteri, styrenheter, felkoder och livedata via samma anslutning. Följ upp resultaten i en inspektionsrapport.",
     "batteryTitle": "Batterihälsa",
-    "batteryBody": "Hälsotillstånd och laddning, paketspänning, spridning mellan cellgrupper, min, max och differens, samt pakettemperatur. Korskontroller jämför rapporterade värden med de uppmätta cellerna och flaggar avvikelser. Procentsatsen som instrumentpanelen visar, och siffrorna bakom den.",
+    "batteryBody": "Läs batteriets hälsotillstånd och laddningsnivå, spänning, cellgruppernas värden och temperatur. Hanterill jämför rapporterade värden med cellmätningarna och markerar avvikelser. Se vad som ligger bakom instrumentpanelens procenttal.",
     "batteryCta": "Batteridiagnostik",
     "scanTitle": "Fullständig fordonsskanning",
-    "scanBody": "Hanterill upptäcker styrenheter via DoIP, identifierar vilka som talar UDS och läser identifierings-, hårdvaru- och mjukvarudata från var och en. 49 moduler i CMA-registret, 40 av dem med stöd för felkoder, i ett svep.",
+    "scanBody": "Hanterill hittar styrenheter via DoIP, kontrollerar vilka som stöder UDS och läser identitet samt hårdvaru- och programvaruversioner. CMA-registret innehåller 49 moduler, varav 40 har stöd för felkoder.",
     "scanCta": "Fordonsdiagnostik",
     "faultTitle": "Felkoder efter status",
-    "faultBody": "Hanterill läser felkoder med status: aktiv nu, väntande, lagrad eller historisk. Listan öppnas på koderna som behöver uppmärksamhet. Om styrenheten sparade en ögonblicksbild när felet uppstod får du med den också, med en inbyggd jämförelse mellan skanningar.",
+    "faultBody": "Felkoder visas med sin status: aktiva, väntande, lagrade eller historiska. Du ser först dem som behöver uppmärksamhet. Om styrenheten sparade frysta ramdata när felet uppstod visas de också. Två skanningar kan jämföras i appen.",
     "liveTitle": "Realtidstelemetri",
-    "liveBody": "Paketspänning och -ström, batteri- och växelriktartemperatur, motormoment, 12 V-systemet. Samplat via periodiska avläsningar på begäran och ritat på fasta axlar.",
+    "liveBody": "Följ batterispänning och ström, temperaturer, motorns vridmoment och 12 V-systemet. Värdena läses av regelbundet på begäran och ritas mot fasta axlar.",
     "liveCta": "Realtidsdata",
-    "systemsTitle": "Varje subsystem som svarar, på sin egen sida",
-    "systemsBody": "Klimatslinga, drivenheter med fram/bak-korskontroll, laddning med laddbegränsningsdiagnos, laddare och DC-DC-effekt, TCAM-reservbatteri, steeringvinkel, serviceschema, GPS på begäran och CEM:s inställningskarta med fabriksdata.",
+    "systemsTitle": "En egen vy för varje system",
+    "systemsBody": "Se klimatanläggning, drivenheter, laddning, DC-DC-omvandlare, TCAM:s reservbatteri, rattvinkel, serviceintervall, GPS och fordonskonfiguration. Tillgängliga värden beror på fordonet.",
     "systemsCta": "Subsystemstelemetri",
-    "reportsTitle": "En poängsatt hälsorapport du kan lämna vidare",
-    "reportsBody": "Inspektionsrapporten betygsätter batteridegradering, cellbalans, felallvar och odometerkonsistens mot ett dokumenterat, versionerat regelverk. Saknade värden sänker betyget. De gissas inte.",
+    "reportsTitle": "En inspektionsrapport att ta med",
+    "reportsBody": "Rapporten bedömer batteriets skick, cellbalans, felkodernas allvar och mätarställning mot dokumenterade regler. Om ett värde saknas framgår det av bedömningen.",
     "reportsCta": "Inspektionsrapporter",
     "serviceTitle": "Serviceåtgärder",
-    "serviceBody": "EPB-serviceläge, adaptation av 12 V-batteri, återställning av servicepåminnelse och spjällkalibrering är implementerade bakom en uttrycklig bekräftelse och drivs via den körande binärens kapacitetsmanifest.",
+    "serviceBody": "Serviceläge för parkeringsbromsen, anpassning av 12 V-batteriet, återställning av servicepåminnelse och kalibrering av klimatanläggningens spjäll kräver var sin bekräftelse. Appen visar bara åtgärder som den installerade versionen stöder.",
     "serviceCta": "Servicefunktioner",
     "evidenceTitle": "Före och efter, sida vid sida",
-    "evidenceBody": "Sessioner arkiveras lokalt och jämförs i appen: felkoder före och efter reparation, cellpotentialer modul för modul, firmware före och efter en uppdatering.",
+    "evidenceBody": "Sessioner sparas lokalt och kan jämföras i appen: felkoder före och efter en reparation, cellvärden över tid och programvaruversioner före och efter en uppdatering.",
     "evidenceCta": "Jämför diagnossessioner",
-    "shellTitle": "Byggd som mätinstrument, inte som en app",
-    "shellBody": "En kommandopalett, tvåtangentsnavigering, åtta teman plus täthetsinställning, åtta gränssnittsspråk och en fullständig tangentbordsväg genom varje vy.",
+    "shellTitle": "Utformat för snabb diagnos",
+    "shellBody": "Kommandopalett, tangentbordsnavigering, åtta teman, valbar informationstäthet och åtta gränssnittsspråk.",
     "writeAccess": "Frågar innan den skriver",
-    "readOnlyNote": "Hanterill sänder lästjänster om du inte uttryckligen bekräftar en skrivning. Den körande binären rapporterar vad den kan via ett kapacitetsmanifest, och gränssnittet döljer vad den inte kan.",
+    "readOnlyNote": "Hanterill läser data som standard. Innan en åtgärd ändrar fordonet måste du bekräfta den. Appen visar vilka åtgärder den installerade versionen kan utföra.",
     "sohLabel": "Batteriets hälsotillstånd",
-    "reportsCaption": "Inspektionspoäng · exempelvärden, inte en fordonsläsning",
+    "reportsCaption": "Inspektionspoäng · exempelvärden, inte avlästa från ett fordon",
     "systemsCaption": "Subsystemsavläsningar",
     "shellCaption": "Kommandopalett, exempel",
     "allFeatures": "Alla sju funktioner",
@@ -378,14 +378,14 @@
     "readoutMax": "Max",
     "readoutDelta": "Delta",
     "potentialsCount": "{n} potentialer",
-    "srReadoutCell": "Modul {module}, grupp {group}, {volts} volt, {mv, plural, one {# millivolt} other {# millivolt}} {direction} packmedelvärdet",
+    "srReadoutCell": "Modul {module}, grupp {group}, {volts} volt, {mv, plural, one {# millivolt} other {# millivolt}} {direction} batteripaketets medelvärde",
     "scoreLabel": "Inspektionspoäng",
     "advisoriesTag": "Anmärkningar",
     "rulesNote": "Regler v1.0.0 · varje rad anger sitt underlag",
     "scoreRows": [
       [
-        "Packdegradering",
-        "inom band",
+        "Batteriets åldrande",
+        "inom gränsvärdena",
         "ok"
       ],
       [
@@ -394,13 +394,13 @@
         "bevaka"
       ],
       [
-        "Felkodernas allvar",
+        "Felkodernas allvarlighetsgrad",
         "1 väntande",
         "bevaka"
       ],
       [
         "Mätarställningens konsistens",
-        "alla ECU:er överens",
+        "alla styrenheter överens",
         "ok"
       ],
       [
@@ -412,7 +412,7 @@
     "systemRows": [
       [
         "Klimat",
-        "värmepumpsloop, kompressor, kylmedelsdifferenser"
+        "värmepumpskrets, kompressor, temperaturskillnader i kylsystemet"
       ],
       [
         "Drivenheter",
@@ -424,7 +424,7 @@
       ],
       [
         "Effekt",
-        "OBC AC-ingång, DC-DC 12 V-ril"
+        "laddarens AC-ingång, DC-DC-omvandlare och 12 V-system"
       ],
       [
         "TCAM",
@@ -440,7 +440,7 @@
       ],
       [
         "Konfiguration",
-        "CEM:s utrustningskarta, fabriksbyggpost"
+        "CEM:s utrustningslista och fabriksspecifikation"
       ]
     ],
     "paletteKbd": "Ctrl+K",
@@ -458,47 +458,47 @@
     "hub": {
       "battery": {
         "title": "Batterihälsa",
-        "body": "Hälsotillstånd och laddningsnivå, packspänning, cellgruppotentialer över alla katalogiserade packtopologier, min/max/delta, termiska kartor och konsistenskontroller."
+        "body": "Hälsotillstånd, laddningsnivå, batterispänning, cellgruppernas värden, temperaturer och kontroller av att mätvärdena stämmer överens."
       },
       "diagnostics": {
         "title": "Fordonsdiagnostik",
-        "body": "ECU-upptäckt över DoIP, identifieringsdata, DTC:er efter status med frysta ramdatas, DID-skanningar över alla moduler och firmwareinventering."
+        "body": "Hitta styrenheter via DoIP. Läs identitet, felkoder och frysta ramdata, skanna dataidentifierare och jämför programvaruversioner."
       },
       "live": {
         "title": "Realtidsdata",
-        "body": "Packspänning och ström, batteri- och växelriktartemperatur, motorvridmoment och 12 V-system, samplat och plottat med redovisning av tapp."
+        "body": "Följ batterispänning och ström, temperaturer, motorns vridmoment och 12 V-systemet. Se även när mätvärden saknas."
       },
       "systems": {
         "title": "Systemtelemetri",
-        "body": "Klimatloop, drivenheter, laddning och effekt, TCAM, styrning, serviceschema, GPS på begäran och fordonets utrustningskarta."
+        "body": "Data från klimatanläggning, drivenheter, laddning, TCAM, styrning, serviceintervall, GPS och fordonskonfiguration."
       },
       "reports": {
         "title": "Inspektionsrapporter",
-        "body": "Ett poängsatt fordonsskick där varje bedömning kan spåras till en dokumenterad regelversion. Utskriftsbar, exporterbar och omräkningsbar."
+        "body": "En bedömning av fordonets skick där varje slutsats kan spåras till en dokumenterad regel. Rapporten kan skrivas ut, exporteras och räknas om."
       },
       "sessions": {
         "title": "Sessioner och bevis",
-        "body": "Sessioner arkiveras lokalt och jämförs i appen: DTC-diffar, cellhistorik-diffar, firmware före och efter."
+        "body": "Spara sessioner lokalt och jämför felkoder, cellvärden och programvaruversioner före och efter."
       },
       "service": {
         "title": "Servicefunktioner",
-        "body": "EPB-serviceläge, 12 V-adaptation, nollställning av servicepåminnelse och spjällkalibrering, var och en bakom en uttrycklig bekräftelse och driven via den körande binärens kapacitetsmanifest."
+        "body": "Åtgärder för bland annat parkeringsbroms, 12 V-batteri och klimatanläggning. Varje åtgärd kräver bekräftelse och visas bara om den installerade versionen stöder den."
       }
     }
   },
   "battery": {
     "eyebrow": "Batteri",
-    "matrixTitle": "Varje cellgruppspotential i batteripaketet.",
-    "matrixLead": "27 moduler, fyra cellgruppspotentialer var. Peka på någon av dem för att jämföra den med paketet.",
+    "matrixTitle": "Se spänningen i varje cellgrupp.",
+    "matrixLead": "27 moduler med fyra cellgrupper i varje. Välj en cellgrupp för att jämföra den med resten av batteriet.",
     "viewVoltage": "Spänning",
     "viewDeviation": "Avvikelse",
     "viewModule": "Modul",
-    "pack": "Paket",
+    "pack": "Batteripaket",
     "clearSelection": "Rensa val",
-    "packMean": "Paketmedel",
+    "packMean": "Batteriets medelvärde",
     "spread": "Spridning",
     "minMax": "Min / Max",
-    "packTemp": "Pakettemp",
+    "packTemp": "Batteritemperatur",
     "module": "Modul",
     "group": "Grupp",
     "average": "Medel",
@@ -508,12 +508,12 @@
     "temperature": "Temperatur",
     "moduleAverage": "Modulmedel",
     "moduleDelta": "Moduldifferens",
-    "fromPackMean": "från paketmedel",
-    "hoverHint": "Peka på eller fokusera en cellgrupp för att granska den. På en CMA-bil som stöds är detta realtidsvärden från batterimodulen; här är de fasta exempelvärden.",
+    "fromPackMean": "från batteriets medelvärde",
+    "hoverHint": "Peka på eller markera en cellgrupp för att se dess värde. På ett anslutet CMA-fordon visas avlästa värden. Här visas fasta exempelvärden.",
     "withinLegend": "inom 2 mV",
     "midLegend": "2 till 4 mV",
     "overLegend": "över 4 mV",
-    "voltageLegend": "Absolut cellgruppsspänning. Fyllningsfärgen är enhetlig i den här vyn; välj en cellgrupp för dess exakta värde.",
+    "voltageLegend": "Spänning per cellgrupp. Alla grupper har samma färg i den här vyn. Välj en grupp för att se det exakta värdet.",
     "tapModule": "Tryck på en modul för att granska den.",
     "previousModule": "Föregående modul",
     "nextModule": "Nästa modul",
@@ -538,8 +538,8 @@
     "identifiersNote": "Identifierare är representativa för CMA-batteriet. Exakta DID:er finns i styrenhetsreferensen.",
     "matrixViewAria": "Matrisvyläge",
     "gridAria": "Cellgruppspotentialer i batteriet, 27 moduler gånger 4 grupper",
-    "srAtAverage": "vid paketets medelvärde",
-    "srOffset": "{mv, plural, one {# millivolt} other {# millivolt}} {direction} paketets medelvärde",
+    "srAtAverage": "vid batteriets medelvärde",
+    "srOffset": "{mv, plural, one {# millivolt} other {# millivolt}} {direction} batteriets medelvärde",
     "srAbove": "över",
     "srBelow": "under",
     "srCell": "Modul {module}, grupp {group}, {volts} volt, {relation}",
@@ -553,13 +553,13 @@
     "detailLevelAria": "Detaljnivå",
     "howRead": "Så läses värdet",
     "provReportedBy": "Rapporterat av",
-    "provBms": "Batterihanteringssystem",
+    "provBms": "Batterihanteringssystemet",
     "provReadVia": "Avläst via",
     "provUdsDoip": "UDS över DoIP",
     "provSession": "utökad diagnostiksession, avläst via identifierare",
     "provDecodedAgainst": "Avkodat mot",
     "provCmaMap": "CMA-batterikarta",
-    "provNotScaled": "inte skalat från ett enda fält",
+    "provNotScaled": "inte beräknat från ett enda fält",
     "provRefresh": "Uppdatering",
     "provOnDemand": "Vid behov",
     "provPolled": "avläst medan vyn är öppen",
@@ -573,7 +573,7 @@
     "pack3dHint": "Dra för att rotera · klicka på en modul"
   },
   "scan": {
-    "stageIdle": "Vilar",
+    "stageIdle": "Väntar",
     "stageDiscovering": "Söker efter fordon",
     "stageDetected": "Fordon hittat",
     "stageRouting": "Aktiverar diagnosväg",
@@ -617,7 +617,7 @@
     "resumeAria": "Återuppta telemetri",
     "pauseAria": "Pausa telemetri",
     "chartAria": "Realtidstelemetri, {sec} sekunders fönster, kanaler: {list}",
-    "chartKeyboardHint": "Fokusera och använd piltangenterna för att granska värden längs serien; Escape återupptar.",
+    "chartKeyboardHint": "Fokusera diagrammet och använd piltangenterna för att granska värdena. Tryck på Escape för att återgå till uppspelningen.",
     "channelNames": {
       "pack_v": "Paketspänning",
       "pack_a": "Paketström",
@@ -628,8 +628,8 @@
     }
   },
   "platforms": {
-    "title": "CMA testad. SPA delvis unterstött. SEA1 katalogiserad.",
-    "lead": "Polestar 2 och CMA-Volvorna är de testade plattformarna. SPA levereras som katalogdata och stöds nu delvis: bilar med förbränningsmotor har testats via referensbanan för motorstyrning, medan batterivägen fortfarande behöver testas på fler fordon. SEA1-definitionerna är katalogiserade och behöver testas på fler fordon. Att nå en bil är inte samma sak som att stödja den.",
+    "title": "CMA testad. SPA stöds delvis. SEA1 kartlagd.",
+    "lead": "Polestar 2 och Volvo-modeller på CMA är testade. SPA stöds delvis: modeller med förbränningsmotor har testats, medan batteridiagnostiken behöver verifieras på fler fordon. SEA1 är kartlagd men behöver också testas vidare. Att kunna ansluta till ett fordon betyder inte att alla funktioner stöds.",
     "moreLink": "Fullständig kompatibilitet och status",
     "disclaimer": "Kompatibilitet är inget påstående om tillverkarstöd. Hanterill är ett oberoende projekt och är inte anslutet till Volvo Cars, Polestar eller Geely.",
     "verifiedFunctions": "Verifierade funktioner",
@@ -647,7 +647,7 @@
       "catalogued": "Katalogiserade",
       "exploring": "Utreds"
     },
-    "filterEmpty": "Inga fordon på den här plattformen matchar filtret.",
+    "filterEmpty": "Inga fordon på den valda plattformen matchar filtret.",
     "status": {
       "supported": "Stöds",
       "partial": "Delvis",
@@ -657,17 +657,17 @@
       "planned": "Planerat"
     },
     "blurbs": {
-      "CMA": "Compact Modular Architecture. Den testade plattformen: Polestar 2 och de mindre eldrivna Volvo-modellerna. 108 cellgrupper, 27 moduler om fyra. CMA-bilar med förbränningsmotor och hybrid stöds delvis via referensbanan för motorstyrning.",
-      "SPA": "Scalable Product Architecture. Stöds delvis. Hybrid- och EV-pakettopologierna, CAN-eran av BECM-kartan och avkodarna levereras i katalogen, och bilar med förbränningsmotor har testats via referensbanan för motorstyrning.",
-      "SEA": "Sustainable Experience Architecture. SEA1-registret, DoIP-adresser för routning, DID-katalog och cellmappning för EX30-klassen är definierade. Definitionerna behöver testas på fler fordon.",
+      "CMA": "Compact Modular Architecture. Polestar 2 och mindre eldrivna Volvo-modeller är testade här. Batteriet har 108 cellgrupper i 27 moduler. CMA-modeller med förbränningsmotor eller hybriddrift har delvis stöd.",
+      "SPA": "Scalable Product Architecture. Delvis stöd. Katalogen innehåller batterityper, styrenhetsadresser och avkodare. Modeller med förbränningsmotor har testats; batterifunktionerna behöver verifieras på fler fordon.",
+      "SEA": "Sustainable Experience Architecture. Styrenheter, DoIP-adresser, dataidentifierare och cellgrupper för SEA1 är kartlagda. Funktionerna behöver verifieras på fler fordon.",
       "SPA2": "Andra generationens SPA. Annan gateway- och säkerhetsmodell. Under utredning."
     },
     "statusNotes": {
       "supported": "Verifierad implementation i drift. Batteri, felkoder, styrenhetsidentifiering och realtidsdata testas regelbundet.",
       "partial": "Vissa funktioner är implementerade och verifierade. Andra täcks ännu inte på detta fordon.",
       "testing": "Koden finns, men den behöver testas på fler fordon.",
-      "wip": "Under aktiv utveckling. Den ansluter, men avkodningen är ofullständig och ändras från version till version.",
-      "research": "Arkitekturen undersöks. Inte användbar för diagnostik.",
+      "wip": "Under utveckling. Anslutning fungerar, men avkodningen är ofullständig och kan ändras mellan versioner.",
+      "research": "Plattformen undersöks. Diagnostikstödet är ännu inte användbart.",
       "planned": "På färdplanen. Ingen implementation ännu."
     },
     "capLabels": {
@@ -690,15 +690,15 @@
     "platformAxis": "Plattform",
     "statusAxis": "Verifiering",
     "serviceModesHeading": "Servicelägen och procedurer",
-    "serviceModesLead": "Vad appen faktiskt kan köra på en bil, per servicefamilj. Lässtöd används på varje fordon som stöds. Rutinstöd är experimentellt: rutinerna finns, de ändrar styrenheternas tillstånd, och du kör dem på egen risk.",
+    "serviceModesLead": "Se vilka serviceåtgärder appen kan utföra på olika fordon. Avläsning finns för fordon som stöds. Servicerutinerna är experimentella, ändrar styrenheternas tillstånd och ska användas med försiktighet.",
     "serviceModesModule": "Modul",
     "serviceModesService": "Service",
     "serviceModesStatus": "Status",
-    "serviceModesNote": "Rutinidentifierare är omvändkonstruerade, och att köra en är ett beslut som hör till en auktoriserad servicesession. Aktivera aldrig ett säkerhetskritiskt system, och kör aldrig något av detta på en bil du inte äger. Läsresultat finns alltid tillgängliga och ändrar aldrig bilen.",
+    "serviceModesNote": "Rutinernas identifierare har tagits fram genom analys av systemet. Följ fordonstillverkarens serviceanvisningar och utför bara åtgärder på fordon som du har rätt att arbeta med. Vanliga avläsningar ändrar inte fordonet.",
     "serviceModesSafety": "Säkerhet och gränser",
     "serviceStatus": {
       "beta": "Bekräftelse krävs",
-      "unrecovered": "Ej återvunnen",
+      "unrecovered": "Identifierare saknas",
       "refused": "Stöds inte"
     },
     "service": {
@@ -737,15 +737,15 @@
     }
   },
   "protocolStack": {
-    "title": "Byggd på fordonsstandarder.",
-    "lead": "Hanterill kommunicerar med bilens diagnostiknätverk med samma protokoll som ett verkstadsverktyg. Ingenting däremellan är en proprietär molntjänst.",
-    "paragraph": "En session börjar med UDP-upptäckt på port 13400, öppnar en TCP-kanal och aktiverar routning. Upptäckten kan också adressera alla styrenheter på en gång med en funktionell sändning. Avläsningar körs som UDS: sessionsstyrning, läsning via identifierare, läsning av DTC-information, periodisk provtagning på begäran och rutineresultat. Läsningar är standard; skrivningar är separata åtgärder som begär bekräftelse först.",
+    "title": "Byggt på fordonsstandarder.",
+    "lead": "Hanterill använder samma diagnosprotokoll som många verkstadsverktyg och kommunicerar direkt med fordonet utan någon molntjänst som mellanhand.",
+    "paragraph": "Först hittar Hanterill fordonet via UDP på port 13400. Sedan öppnas en TCP-anslutning och diagnostikvägen aktiveras. Appen kan fråga alla styrenheter samtidigt och därefter följa upp dem som inte svarar. Avläsningar görs via UDS. Åtgärder som ändrar fordonet hanteras separat och kräver bekräftelse.",
     "layers": {
-      "hanterill": "Skrivbordsapplikation och CLI, Rust och Tauri",
+      "hanterill": "App och kommandoradsverktyg, byggda med Rust och Tauri",
       "engine": "Sessioner, svep, avkodare, betygsättning",
       "uds": "Unified Diagnostic Services",
       "doip": "Diagnostics over IP",
-      "transport": "Socketar, upptäckt, routningsaktivering",
+      "transport": "Nätverksanslutning, upptäckt och routningsaktivering",
       "ethernet": "Passiv ENET-kabel, RJ45",
       "gateway": "CEM / VGM på CMA"
     },
@@ -756,7 +756,7 @@
     "wire": {
       "udp": "Fordonsidentifiering och annonsering",
       "tcp": "Kanal för diagnostikmeddelanden",
-      "routing": "Skickas före varje UDS-begäran",
+      "routing": "Aktiveras före UDS-begäranden",
       "session": "Styrning av diagnostiksession",
       "read": "Läs data via identifierare",
       "dtc": "Läs DTC-information",
@@ -773,10 +773,10 @@
     }
   },
   "privacy": {
-    "title": "Din fordonsdata stannar hos dig.",
-    "lead": "Hanterill kommunicerar med fordonet och skriver diagnosdata till din disk. Det finns ingen backend och ingen prenumeration, och ingenting om din bil laddas upp eller säljs. VIN tas bort från loggar och exporter som inte behöver det.",
+    "title": "Dina fordonsdata stannar hos dig.",
+    "lead": "Hanterill läser fordonet och sparar diagnosdata på din dator. Ingen fordonsdata laddas upp eller säljs. VIN maskeras i loggar och exporter där numret inte behövs.",
     "moreLink": "Så hanterar Hanterill data",
-    "directLink": "Direkt länk. Inget annat däremellan.",
+    "directLink": "Direkt anslutning till fordonet.",
     "vehicle": "Fordon",
     "computer": "Dator",
     "absent": {
@@ -788,8 +788,8 @@
     }
   },
   "hardware": {
-    "title": "Adaptern är bara en kabel.",
-    "lead": "En passiv ENET-kabel kopplar fordonets OBD-II-stift till en RJ45-kontakt. Därifrån är det vanlig Ethernet till din dator.",
+    "title": "Adaptern är en vanlig kabel.",
+    "lead": "En passiv ENET-kabel ansluter fordonets OBD-II-uttag till RJ45. Sedan använder du en vanlig Ethernet-port på datorn.",
     "connectionGuide": "Anslutningsguide",
     "chain": {
       "obd": "OBD-II-kontakt",
@@ -806,8 +806,8 @@
     }
   },
   "download": {
-    "title": "Fungerar på macOS, Windows och Linux.",
-    "lead": "En applikation, byggd nativt för varje plattform. Ingenting paketerar en webbläsarmotor, och ingen nedladdning startar av sig själv.",
+    "title": "För macOS, Windows och Linux.",
+    "lead": "Hanterill finns som program för varje plattform. Ingen nedladdning eller installation startar automatiskt.",
     "heading": "Ladda ner Hanterill",
     "latestRelease": "senaste utgåvan på GitHub",
     "releases": "Utgåvor",
@@ -821,13 +821,13 @@
     "readLicense": "Läs licensvillkoren"
   },
   "safety": {
-    "title": "Läser som standard. Skrivningar frågar först.",
-    "lead": "Hanterill sänder lästjänster om du inte uttryckligen bekräftar en skrivning. Åtgärderna som ändrar fordonet begär var och en sin egen bekräftelse, och appen rapporterar sina verkliga gränser via ett kapacitetsmanifest.",
+    "title": "Läser data som standard. Frågar innan något ändras.",
+    "lead": "Hanterill läser data som standard. Varje åtgärd som ändrar fordonet kräver en egen bekräftelse. Appen visar vilka åtgärder den installerade versionen stöder.",
     "readOnly": "Skrivskyddad",
     "changesVehicle": "Ändrar fordonet",
     "writeAccess": "Bekräftelse krävs",
-    "highVoltageTitle": "Högspänning.",
-    "highVoltageBody": "Elbilar har farliga högspänningssystem. Att läsa data via en kabel gör det inte säkert att arbeta med dem, och Hanterill ersätter inte tillverkarens serviceanvisningar.",
+    "highVoltageTitle": "Högspänning",
+    "highVoltageBody": "Elbilars högspänningssystem är farliga. Att läsa data genom diagnosuttaget gör det inte säkert att arbeta fysiskt med systemet. Följ alltid tillverkarens serviceanvisningar.",
     "safetyDocs": "Säkerhetsdokumentation",
     "readOnlyItems": {
       "battery": "Batteridata",
@@ -846,16 +846,16 @@
     }
   },
   "faq": {
-    "title": "Frågor folk ställer",
+    "title": "Vanliga frågor",
     "compatTitle": "Frågor om kompatibilitet",
     "home": [
       {
         "q": "Behöver jag ett särskilt diagnosverktyg eller en dongel?",
-        "a": "Nej. En passiv ENET-kabel (OBD-II till RJ45) och valfritt Ethernet-gränssnitt på datorn räcker för DoIP på fordon som stöds. Ingen av de vanliga OBD-donglarna är inblandad."
+        "a": "Nej. För fordon som stöds räcker en passiv ENET-kabel (OBD-II till RJ45) och en Ethernet-port på datorn. Vanliga OBD-donglar fungerar inte för denna anslutning."
       },
       {
         "q": "Skickar Hanterill någon data någonstans?",
-        "a": "Nej. Programmet kommunicerar bara med fordonet och skriver resultat till din disk. Det finns inget konto, ingen backend, ingen analys och ingen telemetri. VIN hålls utanför loggar och exporter om inte något behöver det."
+        "a": "Nej. Appen kommunicerar med fordonet och sparar resultat på din dator. Den har inget konto, ingen molntjänst, ingen användningsanalys och ingen telemetri. VIN maskeras i loggar och exporter där det inte behövs."
       },
       {
         "q": "Vilka fordon stöds egentligen?",
@@ -863,7 +863,7 @@
       },
       {
         "q": "Kan Hanterill skada min bil?",
-        "a": "Nej. Hanterill sänder lästjänster om du inte uttryckligen bekräftar en skrivning, och varje åtgärd som ändrar fordonet begär sin egen bekräftelse enligt säkerhetspolicyn. Ett bygge kompilerat utan skrivfunktionen avvisar dessa kommandon helt. Högspänningsservice kräver fortfarande tillverkarens anvisningar."
+        "a": "Vanliga avläsningar ändrar inte fordonet. Åtgärder som kan ändra det kräver en egen bekräftelse och kan innebära risker om de används fel. En version utan skrivstöd avvisar sådana kommandon. Följ alltid tillverkarens anvisningar vid service, särskilt kring högspänning."
       },
       {
         "q": "Är detta ett officiellt verktyg från Volvo eller Polestar?",
@@ -871,15 +871,15 @@
       },
       {
         "q": "Vad kan jag göra med batteridatan?",
-        "a": "Läs hälsotillstånd och laddning, paketspänning, potentialer per cellgrupp för alla belagda positioner (108 på CMA, plus SPA- och SEA-pakettopologier), min/max/differens och pakettemperatur, och exportera en session för att jämföra före och efter en reparation."
+        "a": "Du kan se batteriets hälsotillstånd och laddningsnivå, spänning och cellgruppernas värden, skillnaden mellan högsta och lägsta värdet samt temperaturer. Spara en session för att jämföra värden över tid."
       },
       {
         "q": "Kan jag använda den utan bil?",
-        "a": "Inte mot en verklig bil, nej - appen läser ett faktiskt fordon över kabeln och låtsas inte att ett är anslutet. Däremot levereras varje skarp version med ett deterministiskt simuleringsmål för anslutningslagret, så att du kan gå igenom gränssnittet och sessionsflödet innan du har hårdvaran. Allt den visar i det läget är märkt som simulerat. Se anslutningssidan för vad en riktig uppkoppling kräver."
+        "a": "Ja, du kan utforska gränssnittet utan bil. Appen har ett simulerat anslutningsläge med tydligt märkta exempelvärden. För att läsa ett riktigt fordon behöver du en kabel och ett fordon som stöds."
       },
       {
         "q": "Vad får jag ut av inspektionsrapporten?",
-        "a": "Ett poängsatt skickbetyg byggt av samma avläsningar: batteridegradering, cellbalans, felallvar och odometerkonsistens, spårbart till en dokumenterad regelversion. Historiska sessioner kan omvärderas när reglerna uppdateras. GPS-position förekommer aldrig i rapporter."
+        "a": "En bedömning av batteriets skick, cellbalans, felkoder och mätarställning. Varje slutsats kan spåras till en dokumenterad regel. Äldre sessioner kan bedömas igen när reglerna uppdateras. GPS-position tas inte med i rapporten."
       }
     ],
     "compat": [
@@ -889,11 +889,11 @@
       },
       {
         "q": "Vad är skillnaden mellan plattformskompatibilitet och stöd?",
-        "a": "Plattformskompatibilitet betyder att Hanterill kan nå fordonet via DoIP. Stöd betyder att diagnostikfunktionerna är implementerade och verifierade mot kända, korrekta referenser. Att vara nåbar gör inte datan tillförlitlig, och därför märks Testas- och utredningsplattformar separat."
+        "a": "Att fordonet går att nå via DoIP visar att anslutningen fungerar. Stöd för en diagnostikfunktion betyder dessutom att den är implementerad och verifierad. Därför redovisas testade och ännu ej verifierade plattformar var för sig."
       },
       {
         "q": "Min bil är märkt Delvis, Testas eller Utreds. Kan jag använda den?",
-        "a": "Du kan ansluta och, på vissa, läsa identifieringsdata. Lita inte på batterivärden eller feltolkning, och kör inga servicerutiner. Delvis, Testas och Utreds betyder att avkodningen inte är fullt verifierad på den bilen."
+        "a": "Du kan eventuellt ansluta och läsa fordonsidentitet. Batterivärden och felkodstolkning kan ännu vara obekräftade, så använd dem inte som grund för service eller köp. Kör inga servicerutiner på ett fordon där funktionen inte är verifierad."
       },
       {
         "q": "Är detta godkänt av Volvo eller Polestar?",
@@ -927,7 +927,7 @@
     "vehicleInfo": "Fordonsinformation",
     "vehicleInfoDetail": "Identifiering läst från gatewayen: VIN, modellår, variant, drivlina och de monterade modulerna.",
     "vehicleInfoModules": "Fordonsinfo · modullista",
-    "vehicleInfoModulesDetail": "De 49 moduler som gatewayen rapporterar för denna build, med de identifierare var och en svarade på.",
+    "vehicleInfoModulesDetail": "De 49 moduler som gatewayen rapporterar för den här versionen, med de identifierare som varje modul svarade på.",
     "faultCodes": "Felkoder",
     "faultCodesDetail": "Felminnet med varje kods statusbyte: aktiv, väntande, lagrad eller historisk.",
     "faultCodesDetail2": "Felkoder · frysta ramdata",
@@ -935,34 +935,34 @@
     "batteryHealth": "Batterihälsa",
     "batteryHealthDetail": "Hälsotillstånd och laddningsnivå, med cellgruppernas spridning och min, max och delta bakom.",
     "batteryHealthModules": "Batterihälsa · modulmatris",
-    "batteryHealthModulesDetail": "Alla 27 moduler och deras fyra cellgruppspotentialer, skuggade efter avvikelse från paketets medelvärde.",
+    "batteryHealthModulesDetail": "Alla 27 moduler med fyra cellgrupper vardera. Färgen visar avvikelsen från batteriets medelvärde.",
     "cellMap": "Cellkarta",
-    "cellMapDetail": "Varje cellgruppspotential i paketet på en gång, så en obalanserad modul syns som ett vertikalt band.",
+    "cellMapDetail": "Alla cellgruppers spänningar samlade i en karta, så att en avvikande modul blir lätt att hitta.",
     "connections": "Anslutningar",
-    "connectionsDetail": "Live-anslutningsstatus per buss och modul, så en tappad länk syns medan den händer.",
+    "connectionsDetail": "Anslutningsstatus för bussar och moduler visas medan appen arbetar.",
     "driveUnits": "Drivenheter",
     "driveUnitsDetail": "Telemetri för motor och växelriktare: momentfördelning, temperaturer och begärt mot levererat.",
     "heatPump": "Värmepump",
     "heatPumpDetail": "Termiska delsystemvärden, inklusive värmepumpskretsen som räckviddsberäkningen bygger på.",
     "sleepDraw": "12 V-viloförbrukning",
-    "sleepDrawDetail": "Parasitström över ett parkerat fönster, inspelad lokalt för att hitta det som håller sig vaket efter låsning.",
+    "sleepDrawDetail": "Viloström från 12 V-systemet under parkering, sparad lokalt för att hitta moduler som inte somnar.",
     "tcamGps": "TCAM GPS",
     "tcamGpsDetail": "Telematikenhetens status, inklusive den GPS-fix anslutna tjänster är beroende av.",
     "serviceRoutines": "Servicerutiner",
     "serviceRoutinesDetail": "De skrivoperationer appen kan utföra, var och en bakom sin egen bekräftelse.",
     "serviceRoutinesLive": "Servicefunktioner · rutinstatus",
-    "serviceRoutinesLiveDetail": "En rutin som körs, med sin live-resultatbyte istället för en snurra.",
+    "serviceRoutinesLiveDetail": "Pågående rutin med dess aktuella resultatkod.",
     "inspection": "Inspektionsrapport",
-    "inspectionDetail": "Den poängsatta köpgranskningsrapporten: varje utfall med den regelversion som gav det.",
+    "inspectionDetail": "Inspektionsrapporten visar poäng och regeln bakom varje bedömning.",
     "inspectionTabs": "Inspektionsrapport · flikuppdelning",
-    "inspectionTabsDetail": "De fyra poänggrupperna, så en låg total kan spåras till bevisningen bakom.",
+    "inspectionTabsDetail": "Rapportens fyra bedömningsområden gör det lättare att se vad som påverkar totalpoängen.",
     "inspectionEvidence": "Inspektionsrapport · bevisning",
-    "inspectionEvidenceDetail": "Varje poäng länkar tillbaka till den observation som gav den, i sessionsarkivet.",
+    "inspectionEvidenceDetail": "Varje bedömning länkar till observationerna som ligger bakom den.",
     "overview": "Översikt"
   },
   "cta": {
-    "title": "Ladda ner Hanterill och se vad ditt fordon har registrerat.",
-    "body": "Källkodstillgänglig, gratis för privat bruk, och förblir så. Den körs på din dator och läser fordonet direkt."
+    "title": "Ladda ner Hanterill och läs av ditt fordon.",
+    "body": "Källkoden är tillgänglig och appen är gratis för privat bruk. Den körs på din dator och läser fordonet direkt."
   },
   "body": {
     "download": {
@@ -1538,9 +1538,9 @@
     "sessionsEvidenceLead": "Sessioner arkiveras lokalt och jämförs i appen: felkoder, cellpotentialer, firmware, före och efter.",
     "systemTelemetryEyebrow": "Funktioner / Subsystemstelemetri",
     "systemTelemetryTitle": "Utöver batteriet.",
-    "systemTelemetryLead": "Varje subsystem med en avläsningsväg får sin egen sida: klima, drivenheter, laddning, effekt, TCAM, styrning, serviceschema, GPS och fordonets inställningskarta.",
+    "systemTelemetryLead": "Varje system med stöd för avläsning har en egen vy: klimatanläggning, drivenheter, laddning, 12 V-system, TCAM, styrning, serviceintervall, GPS och fordonskonfiguration.",
     "vehiclesEyebrow": "Fordon",
-    "vehiclesTitle": "CMA testad. SPA delvis unterstött. SEA1 katalogiserad.",
+    "vehiclesTitle": "CMA testad. SPA stöds delvis. SEA1 kartlagd.",
     "vehiclesLead": "Välj en plattform och ett fordon för att se exakt vilka funktioner som är verifierade. Varje statusetikett speglar vad som har kontrollerats på just den bilen, inte bara plattformen den bygger på.",
     "downloadEyebrow": "Ladda ner",
     "downloadTitle": "Skaffa Hanterill.",
@@ -1570,17 +1570,17 @@
     "projectsLicense": "Licens",
     "projectsSeparate": "Varje projekt underhålls separat, med eget arkiv, licens och releasefrekvens.",
     "networkTitle": "Nätverksutforskaren för CMA.",
-    "networkLead": "Varje styrenhet på CMA-plattformen som ett interaktivt kopplingskart. 170 enheter, 295 typade länkar över nio nätverk och 622 dokumenterade pinrader. Filtrera på buss, spåra en väg mellan två moduler och läs kontaktens pin-data som diagnostiken bygger på."
+    "networkLead": "Utforska CMA-plattformens elnät i en interaktiv karta med 170 enheter, 295 dokumenterade anslutningar i nio nätverk och 622 stiftposter. Filtrera på nätverk, följ en väg mellan moduler och läs anslutningarnas detaljer."
   },
   "projects": {
     "hisingen": {
       "tagline": "Polestar- och Volvo-telemetri i macOS-menyraden.",
       "description": "Batteriladdning, räckvidd, laddeffekt, låslägen, klimatförkonditionering och diagnostikhistorik, nativt i menyraden. Byggt med AppKit och SwiftUI, utan Electron, utan telemetrimellanled och utan molndatabas mellan dig och ditt fordon.",
       "highlights": [
-        "Batteri, räckvidd och laddstatus på en glans",
-        "Fjärrstyrd klimat, låsning och laddning",
+        "Batteri, räckvidd och laddning i en överblick",
+        "Fjärrstyrning av klimat, lås och laddning",
         "Laddhistorik med kostnadsspårning och CSV-export",
-        "Native AppKit och SwiftUI, MIT-licensierat"
+        "Byggt med AppKit och SwiftUI, MIT-licensierat"
       ]
     }
   },
@@ -1590,8 +1590,8 @@
     "source": "Visa källkod på GitHub"
   },
   "caseStudy": {
-    "title": "En bil, ett klagomål, från start till mål.",
-    "lead": "En representativ session på referensfordonet: vad som kom in, vad sökningen hittade, vad siffrorna sade och vad den andra sökningen visade efter åtgärden. Fasta exempelvärden, så varje siffra nedan går att jämföra med resten av webbplatsen.",
+    "title": "Ett fordon, ett problem, hela förloppet.",
+    "lead": "Följ en exempelgenomgång på referensfordonet: vad ägaren märkte, vad skanningen visade och hur resultaten såg ut efter åtgärden. Alla värden är fasta exempel.",
     "readout": "Sessionsutläsning",
     "vehicle": "2023 Polestar 2, Long Range Dual Motor",
     "odometer": "41 820 km",
@@ -1625,7 +1625,7 @@
     "steps": {
       "arrival": {
         "title": "Bilen kommer in med ett klagomål",
-        "body": "Ägaren berättar att räckviddsberäkningen sjönk mer än vädret förklarar, och att bilen laddade långsammare än vanligt vid en snabbladdare två gånger förra månaden. Inget i instrumentpanelen. Ingen varningslampa."
+        "body": "Ägaren berättar att den beräknade räckvidden har sjunkit mer än vädret kan förklara. Bilen har också snabbladdat långsammare än vanligt vid två tillfällen. Ingen varning visas i instrumentpanelen."
       },
       "scan": {
         "title": "Anslut och identifiera",
@@ -1633,15 +1633,15 @@
       },
       "codes": {
         "title": "Läs felminnet",
-        "body": "Fyrtionio styrenheter svarar. Tre bär koder, och var och en rapporteras med den statusbyte modulen faktiskt lagrade - inte bara kodenumret. Den skillnaden avgör om det är ett intermittentiellt fel som redan släckts eller ett som finns just nu."
+        "body": "49 styrenheter svarar. Tre har felkoder. För varje kod visar Hanterill den status som styrenheten rapporterade, så att ett tillfälligt fel kan skiljas från ett som fortfarande är aktivt."
       },
       "freeze": {
         "title": "Läs villkoren bakom dem",
-        "body": "BECM sparade en ögonblicksbild med sin kod: paketspänning, ström, laddningsnivå och temperatur när felet sattes. Ögonblicksbilden är det som gör en kod till en diagnos - den visar att paketet låg på 62 % och under last när modulen flaggade obalansen, inte på en laddare."
+        "body": "BECM sparade frysta ramdata när felkoden registrerades: batterispänning, ström, laddningsnivå och temperatur. De visar att felet uppstod vid 62 % laddning under belastning, inte vid en laddare."
       },
       "battery": {
         "title": "Läs paketet självt",
-        "body": "Hälsotillstånd 94,72 %, spridning 8 mV över 108 potentialer, modul 14 bär större delen av den. Spridningen ligger inom toleransen, vilket är varför bilen aldrig tände en lampa - och varför instrumentpanelens procenttal ensamt inte kunde ha berättat något av detta för ägaren."
+        "body": "Batteriets hälsotillstånd är 94,72 %. Skillnaden mellan högsta och lägsta cellgrupp är 8 mV, och modul 14 står för den största avvikelsen. Det ger mer information än procenttalet på instrumentpanelen."
       },
       "verdict": {
         "title": "Poängsätt den",
@@ -1649,7 +1649,7 @@
       },
       "after": {
         "title": "Sök igen och jämför",
-        "body": "Efter den modulprogramvara verkstaden lade in körs en andra sökning, och de två sessionerna jämför sig själva: vilka koder som släcktes, vilka som blev kvar, vilka som tillkom och hur spridningen förändrades. Arkivet behåller båda, så jämförelsen hänger inte på någons anteckningar."
+        "body": "Efter verkstadens programvaruuppdatering görs en ny skanning. Appen jämför vilka felkoder som försvann, vilka som finns kvar och hur cellgruppernas värden har ändrats. Båda sessionerna sparas."
       }
     },
     "disclaimer": "Representativ session med exempelvärden. Inte en verklig fordonsläsning och inte en diagnos för någon specifik bil.",
@@ -1659,26 +1659,53 @@
     "noCarTitle": "Fordonet dyker inte upp",
     "noCarLead": "Arbeta dig nedåt i listan i ordning. De två första täcker de flesta fall.",
     "steps": {
-      "ignition": { "check": "Är fordonet vaket?", "detail": "Ett sovande fordon svarar inte på diagnosbussen. Slå på tändningen - du behöver inte starta, och på en elbil finns inget att starta." },
-      "port": { "check": "Sitter RJ45-änden i en Ethernet-port?", "detail": "Inte i en USB-only-port på en docka, och inte i en port som bara för ström. Länklampan på adaptern är det snabbaste kvittot." },
-      "firewall": { "check": "Blockerar en VPN eller brandvägg UDP 13400?", "detail": "Upptäckt sker via UDP-broadcast på port 13400. En VPN-klient som fångar all trafik, eller en värdbrandvägg som blockerar inkommande UDP, gör att fordonet aldrig annonserar sig. Stäng av dem tillfälligt för att testa." },
-      "adapter": { "check": "Prova en annan Ethernet-adapter", "detail": "Vissa billiga USB-adaptrar tappar link-local-trafik eller vill inte komma upp utan DHCP. En direktport på datorn, eller en känd fungerande adapter, utesluter detta i ett steg." },
-      "exclusive": { "check": "Håller ett annat verktyg anslutningen?", "detail": "Ett verktyg talar med fordonet i taget. Stäng annan diagnosmjukvara och ge gatewayen några sekunder efter att föregående session avslutats." }
+      "ignition": {
+        "check": "Är fordonet vaket?",
+        "detail": "Ett sovande fordon svarar inte på diagnosbussen. Slå på tändningen - du behöver inte starta, och på en elbil finns inget att starta."
+      },
+      "port": {
+        "check": "Sitter RJ45-änden i en Ethernet-port?",
+        "detail": "Kontrollera att kabeln sitter i en Ethernet-port eller Ethernet-adapter, inte i en USB-port utan nätverksfunktion. Adapterlampan kan visa om länken är uppe."
+      },
+      "firewall": {
+        "check": "Blockerar en VPN eller brandvägg UDP 13400?",
+        "detail": "Upptäckt sker via UDP-broadcast på port 13400. En VPN-klient som fångar all trafik, eller en värdbrandvägg som blockerar inkommande UDP, gör att fordonet aldrig annonserar sig. Stäng av dem tillfälligt för att testa."
+      },
+      "adapter": {
+        "check": "Prova en annan Ethernet-adapter",
+        "detail": "Vissa USB-adaptrar hanterar länklokal trafik dåligt eller kräver DHCP. Prova datorns Ethernet-port eller en adapter som du vet fungerar."
+      },
+      "exclusive": {
+        "check": "Håller ett annat verktyg anslutningen?",
+        "detail": "Ett verktyg talar med fordonet i taget. Stäng annan diagnosmjukvara och ge gatewayen några sekunder efter att föregående session avslutats."
+      }
     },
     "oneCableTitle": "En kabel, ett fordon",
     "oneCableBody": "Kabeln går från din dator till fordonets diagnosuttag, aldrig till din hemmarouter och aldrig till en switch som också når ditt nätverk. Brygga inte fordonets nätverk till ditt vanliga nätverk.",
     "dropsTitle": "När länken tappas",
     "dropsLead": "Länkåterställning är inbyggd i transporten, så ett kort avbrott kostar dig inte sessionen.",
     "recovery": {
-      "route": { "label": "Återaktivering av rutt", "detail": "Om TCP-anslutningen tappas återaktiverar Hanterill rutten på den överlevande länken och fortsätter samma session." },
-      "stale": { "label": "Inaktuella svar avvisas", "detail": "Ett svar som kommer in på den gamla anslutningen kastas som inaktuellt, så ett sent svar inte kan misstas för en färsk läsning." },
-      "keepalive": { "label": "Keepalive", "detail": "En TesterPresent varannan sekund hindrar fordonet från att sova modulerna mitt i en lång svepning." },
-      "identity": { "label": "Identitetskontroll", "detail": "Om fordonet rapporterar en annan identitet efter återanslutning avslutar Hanterill sessionen i stället för att blanda två fordons läsningar i samma fil." }
+      "route": {
+        "label": "Återaktivering av rutt",
+        "detail": "Om TCP-anslutningen tappas återaktiverar Hanterill rutten på den överlevande länken och fortsätter samma session."
+      },
+      "stale": {
+        "label": "Inaktuella svar avvisas",
+        "detail": "Ett svar som kommer in på den gamla anslutningen kastas som inaktuellt, så ett sent svar inte kan misstas för en färsk läsning."
+      },
+      "keepalive": {
+        "label": "Keepalive",
+        "detail": "Hanterill skickar TesterPresent varannan sekund för att hålla diagnossessionen aktiv under långa skanningar."
+      },
+      "identity": {
+        "label": "Identitetskontroll",
+        "detail": "Om fordonet rapporterar en annan identitet efter återanslutning avslutar Hanterill sessionen i stället för att blanda två fordons läsningar i samma fil."
+      }
     },
     "wirelessTitle": "Trådlöst",
     "wirelessBody": "Vissa fordon exponerar diagnostik över sin egen Wi-Fi-accesspunkt. Där det är tillgängligt och stött fungerar upptäckt och routning på samma sätt över det trådlösa gränssnittet. Den trådade vägen är den testade.",
     "figureCaption": "Adaptrar som fungerar, och de som inte gör det",
-    "stillStuck": "Fortfarande fast? Anslutningsreferensen har all protokolldetalj, och nätverksutforskaren visar vad som borde svara.",
+    "stillStuck": "Hittar du fortfarande inte fordonet? Läs anslutningsguiden för fler kontroller och nätverksutforskaren för att se vilka moduler som bör svara.",
     "connectionGuide": "Anslutningsreferens",
     "supportedVehicles": "Vilka fordon detta fungerar på"
   },
@@ -1686,14 +1713,14 @@
     "worksLabel": "Fungerar",
     "works": [
       "En passiv ENET-kabel: OBD-II i ena änden, RJ45 i den andra. Ingen krets, ingen firmware, ingen drivrutin.",
-      "Den inbyggda Ethernet-porten på en bärbar dator, när den har en.",
+      "En inbyggd Ethernet-port på datorn.",
       "En USB-C- eller Thunderbolt-Ethernet-adapter från Apple, Belkin, Anker, UGREEN, Dell eller Lenovo.",
       "En USB-A-Ethernet-adapter med kretsen ASIX AX88179 eller Realtek RTL8153."
     ],
     "avoidLabel": "Fungerar inte",
     "avoid": [
       "ELM327 och andra generiska OBD-II-donglar. De talar ett seriellt protokoll, inte DoIP.",
-      "J2534 pass-through-gränssnitt. De är till tillverkarnas flashverktyg, inte för standard-DoIP.",
+      "J2534-gränssnitt. De är gjorda för andra diagnosarbetsflöden, inte för en vanlig DoIP-anslutning.",
       "Varje adapter som presenterar sig som en seriell port i stället för ett nätverksgränssnitt.",
       "En router eller switch mellan datorn och fordonet."
     ],

@@ -23,10 +23,10 @@ stöd utan bevis.
 
 ## Artefakter och verifiering
 
-Varje release publicerar ett paket per plattform: en `.dmg`/`.app` för macOS, en installerare och en
-fristående körbar fil för Windows, och en AppImage plus en `.deb` för Linux, tillsammans med CLI:et.
-En `SHA256SUMS.txt`-fil bär en kontrollsumma för varje artefakt, så du kan verifiera en nedladdning
-innan du kör den.
+Vilka filer som publiceras kan skilja sig mellan versioner. Versionssidan visar filerna som faktiskt
+finns för varje operativsystem och arkitektur. [Installera på datorn](/docs/installation) hjälper
+dig att välja. Om versionen innehåller `SHA256SUMS.txt`, jämför kontrollsumman för exakt den fil
+du laddade ner.
 
 <Callout kind="caution" title="macOS-signeringsstatus">
 macOS-byggen är bara ad-hoc-signerade, vilket betyder att Gatekeeper inte går i god för dem. Första
@@ -36,9 +36,12 @@ osignerade också, så SmartScreen kan varna. Kontrollera checksumfilen om det s
 
 ## Uppdateringar
 
-Uppdateringar laddas ner från den här sajten eller versionssidan. Hanterill har ingen inbyggd
-automatisk uppdaterare, och den ringer inte hem. Om du installerade på Linux från en pakethanterare,
-uppdatera genom den istället.
+Under **Inställningar → Uppdateringar** finns **Kontrollera nu** och en valfri kontroll vid start.
+Startkontrollen är avstängd som standard och körs högst en gång per dygn när den aktiveras.
+Den söker efter en ny publicerad version på GitHub och visar ett meddelande. Hanterill laddar inte
+ner eller installerar versionen åt dig; använd [nedladdningssidan](/download) eller versionssidan.
+[Integritetsskydd](/docs/privacy) beskriver förfrågan. Uppdatera genom pakethanteraren om du
+installerade på det sättet i Linux.
 
 Dina sparade sessioner överlever en uppdatering: sessionsformatet är versionssatt, och ett nyare schema
 öppnas skrivskyddat i ett äldre bygge istället för att skrivas om.
@@ -47,8 +50,12 @@ Dina sparade sessioner överlever en uppdatering: sessionsformatet är versionss
 
 | Version | Datum | Rubrik |
 | --- | --- | --- |
+| 0.2.2 | 2026-09-23 | SPA-diagnostikunderlag, stödnivå vid servicerutiner, förseglad underlagsexport och felkodsjämförelse med ett klick |
+| 0.2.1 | 2026-09-19 | Tillverkarens referensdata, servicestatus och bättre redovisning av diagnostisk täckning |
 | 0.2.0 | 2026-09-13 | Första hårdvaru-i-loopen-kampanjen på en produktions-Polestar 2, 49-modulsregister med den reverse-enginerade parkeringskameran, periodisk strömning, batteritopologier för flera plattformar, åtta gränssnittsspråk |
 | 0.1.1 | 2026-09-11 | SPA- och SEA1-plattformsomfång, DTC-radering i referensparitet, besiktningsmotor v1.0.0, funktionell broadcast-upptäckt, offline DID-intelligens, härdad maskering |
 | 0.1.0 | 2026-09-01 | Första taggade releasen: appklienten, versionssatta observationskuvert, hållbara sessioner, livscykel för livedata, CI-regressionsgrindar |
 
 Versionssidan är källan till sanning för vad som är publicerat just nu. Den här sajten läser den live.
+Tabellen ovan omfattar taggade appversioner till och med 0.2.2. Ändringar under ”Unreleased” i
+appens ändringslogg är inte publicerade förrän de finns i en taggad version.

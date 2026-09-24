@@ -1,0 +1,42 @@
+Börja med det du behöver göra. Stegen använder appens vynamn. De länkade sidorna förklarar
+avläsningarna och deras begränsningar.
+
+## Kontrollera en begagnad bil
+
+1. Kontrollera modell och anslutningsväg under [Fordon som stöds](/docs/supported-vehicles).
+2. Anslut när bilen står parkerad och kontrollera identiteten i **Översikt** och **Fordon**.
+3. Kör **Felkoder** och **Batterihälsa**. Notera moduler och celler som saknas.
+4. Öppna **Inspektionsrapport** och läs fynd och täckningsluckor bredvid poängen.
+5. Spara sessionen och exportera rapporten om du ska dela den. Kontrollera VIN-maskeringen först.
+
+**Inte utvärderad** betyder att underlaget inte räckte. Använd inte avkodade värden från en
+plattform märkt Testing eller Research som grund för ett köpbeslut. Läs
+[Tolka resultat](/docs/reading-results).
+
+## Undersök en varningslampa
+
+1. Kör **Felkoder** och kontrollera aktiva och lagrade koder samt vilka moduler som svarade.
+2. Öppna koden och läs status och eventuella frysta ramdata.
+3. Spara skanningen före en reparation. Frysta ramdata kan försvinna när koder raderas.
+4. Använd [Felkodsskanning](/docs/dtc-scanning) för att tolka kod och täckning.
+
+Radering ändrar bilen och tar bort underlag. Läs [Säkerhet](/docs/safety) först.
+
+## Kontrollera en reparation
+
+1. Öppna sessionen som sparades före reparationen.
+2. Gör en ny skanning på samma bil och spara den.
+3. Använd **Skillnad sedan förra skanningen** eller **Felkodshistorik** för nya, kvarstående
+   och lösta fel.
+4. Jämför battericeller, styrmodulregister eller firmware i **Sessioner och rapporter** om de
+   områdena hör till reparationen.
+
+En kod som saknas från en modul som inte svarade är **obekräftad**, inte löst.
+[Sessioner och bevis](/docs/sessions-and-evidence) förklarar jämförelsen.
+
+## Kontrollera om mjukvaran ändrades
+
+Kör **Firmware SBOM** före och efter besöket, spara båda sessionerna och öppna
+firmwarejämförelsen. Jämför moduladresser, artikelnummer, mjukvaruversioner och serienummer.
+En utbytt modul och en uppdaterad modul är olika förändringar. Läs
+[Firmware och inventering](/docs/firmware-and-inventory).

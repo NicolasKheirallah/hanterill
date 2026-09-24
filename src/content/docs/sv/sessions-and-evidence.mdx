@@ -78,6 +78,14 @@ appen.
 
 Sessionsdialogen erbjuder fem val, och ZIP är bara paketering, aldrig ett innehållsformat:
 
+<Callout kind="caution" title="Kontrollera integritet och import innan du väljer format">
+För en person som ska läsa, använd rapportbyggarens PDF eller utskriftsvy. Välj CSV för kalkylark
+och modulära JSON-filer för ett maskinläsbart arkiv. **Enkel JSON skriver för närvarande ut hela
+fordonsreferensen även om VIN-maskering är vald.** Appens exportfiler matchar inte heller
+importschemat, så räkna inte med Import som metod för att återställa en säkerhetskopia. Granska
+filen innan du delar den.
+</Callout>
+
 | Val | Vad det ger |
 | --- | --- |
 | CSV-ZIP (standard) | den modulära CSV-uppsättningen, paketerad som ett arkiv |

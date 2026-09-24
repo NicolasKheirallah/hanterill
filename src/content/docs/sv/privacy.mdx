@@ -17,7 +17,8 @@ backend, inget konto och inget att logga in på.
 - Inga diagnostikdata uppladdade någonstans
 - Ingen kraschrapportering från tredje part
 
-Listan är kort med avsikt. Appen har ingen nätkod som pratar med något annat än bilen.
+Den valfria uppdateringskontrollen är undantaget för internettrafik. Den är avstängd som standard
+och skickar inga fordonsdata. Se [Nätverksaktivitet](#nätverksaktivitet).
 
 ## VIN- och platsmaskering
 
@@ -46,8 +47,12 @@ tar bort dem för gott.
 
 ## Nätverksaktivitet
 
-Under en session talar Hanterill bara med bilen över den lokala länken. Appen behöver ingen
-internetanslutning för att köra, och den har ingen uppdateringskontroll som kontaktar en server på egen hand.
+Under en diagnostiksession talar Hanterill med bilen över den lokala länken. Appen behöver inte
+internet för att fungera. Under **Inställningar → Uppdateringar** kan du kontrollera en ny version
+direkt eller välja en kontroll vid start, högst en gång per dygn. Då skickas en förfrågan till
+GitHubs offentliga versions-API. GitHub ser din IP-adress, men förfrågan innehåller inget VIN,
+inga fordons- eller diagnostikdata och ingen byggidentitet. Appen visar bara ett meddelande;
+den laddar aldrig ner eller installerar en uppdatering.
 
 Den här webbplatsen är separat: den läser GitHub-API:et för att visa senaste release och
 repositorystatistik. Det är webbplatsen, inte appen.

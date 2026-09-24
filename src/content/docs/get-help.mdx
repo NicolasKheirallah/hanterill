@@ -1,0 +1,32 @@
+Keep the result from a failed operation before trying again. A partial scan can show which modules
+answered and where the connection stopped.
+
+## Try the matching fix first
+
+Use [Troubleshooting](/docs/troubleshooting) for cable, discovery, timeout and permission failures.
+If a value looks implausible, [Reading results](/docs/reading-results) explains how to check its
+source and coverage. Do not run a service routine to correct an unexplained reading.
+
+## Export a support bundle
+
+1. Open **Activity & Logs** in the desktop app.
+2. Choose **Export support bundle**.
+3. Review the export dialog, then save the bundle.
+4. Open a [GitHub issue](https://github.com/NicolasKheirallah/hanterill/issues) and attach the bundle.
+
+The Activity export combines recent command events and native troubleshooting records when they
+are available. The app scrubs VINs, addresses, coordinates, credentials and other sensitive fields
+from the support output. The separate **Settings → Developer → Export debug bundle** control is for
+a different, smaller diagnostic file; use the Activity support bundle for a connection or scan
+failure.
+
+## Describe what happened
+
+Include the app version, operating system, vehicle model and year, cable and Ethernet adapter,
+the screen or command you used, and the error text. Say whether the problem repeats and whether
+other modules answered. Do not paste a full VIN, precise GPS position or raw unredacted capture
+into a public issue. Review any file yourself before uploading it.
+
+If the issue concerns a service function, name the routine and its support level shown in the app.
+State whether the module acknowledged it, refused it or stayed silent. A timeout is not proof that
+an actuation succeeded.
