@@ -113,7 +113,7 @@ export function PlatformExplorer({ defaultPlatform = "CMA" as Platform }) {
               <ToggleGroup.Item
                 key={p}
                 value={p}
-                className="press rounded-sm px-3 py-1.5 text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
+                className="press rounded-sm px-3.5 min-h-11 text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
               >
                 {platformMeta[p].label}
               </ToggleGroup.Item>
@@ -145,7 +145,7 @@ export function PlatformExplorer({ defaultPlatform = "CMA" as Platform }) {
                 key={b}
                 value={b}
                 className={cn(
-                  "press bg-surface px-2.5 py-1.5 font-mono uppercase tracking-[length:var(--track-label)] text-text-muted transition-colors hover:text-text-primary",
+                  "press bg-surface px-3 min-h-11 font-mono uppercase tracking-[length:var(--track-label)] text-text-muted transition-colors hover:text-text-primary",
                   "data-[state=on]:bg-bg-secondary data-[state=on]:text-text-primary",
                 )}
               >

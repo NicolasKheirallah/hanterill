@@ -121,7 +121,7 @@ export function BatteryReadout() {
           ))}
         </div>
 
-        <div className="mt-1.5 flex justify-between font-mono text-[10px] text-text-muted">
+        <div className="mt-1.5 flex justify-between font-mono text-[length:var(--text-micro)] text-text-muted">
           <span>{t("spreadWithin")}</span>
           <span>{t("spreadMid")}</span>
           <span>{t("spreadOver")}</span>

@@ -50,7 +50,7 @@ export function EcuReference({
                   {e.code}
                   {e.variant ? (
                     <span
-                      className="ml-2 font-mono text-[10px] uppercase tracking-wider text-text-muted"
+                      className="ml-2 font-mono text-[length:var(--text-micro)] uppercase tracking-wider text-text-muted"
                       title="Reference row from vendor data, never observed on a Hanterill vehicle"
                     >
                       ref

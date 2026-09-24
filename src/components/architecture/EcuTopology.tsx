@@ -51,7 +51,7 @@ export function EcuTopology() {
                             >
                               <span>{e.code}</span>
                               {!e.diagnostic ? (
-                                <span className="text-[10px] uppercase text-text-muted">{t("noUds")}</span>
+                                <span className="text-[length:var(--text-micro)] uppercase text-text-muted">{t("noUds")}</span>
                               ) : null}
                             </button>
                           </li>

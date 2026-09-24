@@ -133,7 +133,7 @@ export function Field({ label, value, mono = true, tone }: { label: string; valu
 export function Metric({ label, value, unit }: { label: string; value: string; unit?: string }) {
   return (
     <div>
-      <div className="font-mono text-[10.5px] uppercase tracking-wider text-text-muted">{label}</div>
+      <div className="font-mono text-[length:var(--text-micro)] uppercase tracking-wider text-text-muted">{label}</div>
       <div className="tnum mt-1 font-mono text-[18px] text-text-primary">
         {value}
         {unit ? <span className="ml-1 text-[12px] text-text-secondary">{unit}</span> : null}

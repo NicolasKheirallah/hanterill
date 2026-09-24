@@ -105,10 +105,20 @@ async function buildOg() {
 
 async function buildCommandIndex() {
   const docsSrc = await readFile(join(ROOT, "src/lib/docs.ts"), "utf8");
-  const metas = [...docsSrc.matchAll(/slug:\s*"([a-z-]+)",\s*title:\s*"([^"]+)",\s*summary:\s*"([^"]+)",\s*group:\s*"(\w+)"/g)].map(
-    (m) => ({ slug: m[1], title: m[2], summary: m[3], group: m[4] }),
-  );
+  const metas = [
+    ...docsSrc.matchAll(
+      /slug:\s*"([a-z-]+)",\s*title:\s*"([^"]+)",\s*summary:\s*"([^"]+)",\s*group:\s*"(\w+)"(?:,\s*titleSv:\s*"([^"]*)")?(?:,\s*summarySv:\s*"([^"]*)")?/g,
+    ),
+  ].map((m) => ({
+    slug: m[1],
+    title: m[2],
+    summary: m[3],
+    group: m[4],
+    ...(m[5] ? { titleSv: m[5] } : {}),
+    ...(m[6] ? { summarySv: m[6] } : {}),
+  }));
   const dir = join(ROOT, "src/content/docs");
+  const svDir = join(dir, "sv");
   const entries = [];
   for (const d of metas) {
     let raw = "";
@@ -118,6 +128,19 @@ async function buildCommandIndex() {
       /* body stays empty; the entry is still findable by title */
     }
     entries.push({ ...d, ...extractDoc(raw) });
+    // The Swedish translation, when one exists: same fields under *Sv so the
+    // palette can index titles, summaries, headings and body text in the
+    // reader's language instead of only the English corpus.
+    if (!d.titleSv) continue;
+    let svRaw = "";
+    try {
+      svRaw = await readFile(join(svDir, `${d.slug}.mdx`), "utf8");
+    } catch {
+      /* translated title/summary still apply; no Swedish body to index */
+    }
+    const sv = extractDoc(svRaw);
+    entries.at(-1).headingsSv = sv.headings;
+    entries.at(-1).textSv = sv.text;
   }
   const outDir = join(ROOT, "src/lib/generated");
   await mkdir(outDir, { recursive: true });
@@ -125,9 +148,10 @@ async function buildCommandIndex() {
     join(outDir, "docs-index.json"),
     JSON.stringify({ generated: "prebuild", entries }),
   );
-  const chars = entries.reduce((n, e) => n + e.text.length, 0);
+  const chars = entries.reduce((n, e) => n + e.text.length + (e.textSv?.length ?? 0), 0);
+  const svDocs = entries.filter((e) => e.textSv !== undefined).length;
   console.log(
-    `prebuild: docs-index.json (${entries.length} docs, ${entries.reduce((n, e) => n + e.headings.length, 0)} headings, ${chars} searchable chars)`,
+    `prebuild: docs-index.json (${entries.length} docs, ${svDocs} with Swedish text, ${entries.reduce((n, e) => n + e.headings.length, 0)} headings, ${chars} searchable chars)`,
   );
 }
 

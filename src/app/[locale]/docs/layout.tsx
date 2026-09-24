@@ -25,7 +25,7 @@ export default async function DocsLayout({
               <CommandTrigger />
             </div>
             <DocsSidebar />
-            <p className="mt-6 border-t border-line pt-3 font-mono text-[10.5px] uppercase tracking-[0.12em] text-text-muted">
+            <p className="mt-6 border-t border-line pt-3 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
               {t("versionStamp")} {release?.version ?? t("versionUnknown")}
             </p>
           </div>
@@ -38,7 +38,7 @@ export default async function DocsLayout({
                 hidden and a phone reader could only move through the 19 pages
                 one prev/next step at a time. */}
             <details className="mt-3 rounded-sm border border-line bg-surface">
-              <summary className="cursor-pointer px-3 py-2.5 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-secondary [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-11 cursor-pointer items-center px-3 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-secondary [&::-webkit-details-marker]:hidden">
                 {t("allDocs")}
               </summary>
               <div className="max-h-[60vh] overflow-y-auto border-t border-line px-3 py-3">

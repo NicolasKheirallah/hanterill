@@ -174,8 +174,9 @@ export function Header() {
               })}
             </nav>
 
-            {/* Every control in this cluster is h-9, so the row reads as one
-              baseline instead of the four different heights it used to have. */}
+            {/* Every control in this cluster is h-11 (44px): the old h-9 row put
+              34-36px targets in reach of a thumb, below the touch floor. The
+              shared height still reads as one baseline. */}
             <div className="flex shrink-0 items-center gap-1.5">
               <CommandKButton />
               <a
@@ -183,7 +184,7 @@ export function Header() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={t("github")}
-                className="press hidden h-9 w-9 items-center justify-center rounded-sm border border-line-strong text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary xl:inline-flex"
+                className="press hidden h-11 w-11 items-center justify-center rounded-sm border border-line-strong text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary xl:inline-flex"
               >
                 <GithubMark className="h-4 w-4" />
               </a>
@@ -201,7 +202,7 @@ export function Header() {
                 aria-expanded={open}
                 aria-controls="mobile-menu"
                 onClick={() => setOpen((v) => !v)}
-                className="press ml-1 inline-flex h-9 w-9 items-center justify-center rounded-sm border border-line-strong text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary xl:hidden"
+                className="press ml-1 inline-flex h-11 w-11 items-center justify-center rounded-sm border border-line-strong text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary xl:hidden"
               >
                 {open ? (
                   <X className="h-4 w-4" strokeWidth={1.75} />

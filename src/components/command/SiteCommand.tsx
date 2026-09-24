@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { Command } from "cmdk";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
@@ -47,7 +47,11 @@ type DocsIndex = {
     title: string;
     summary: string;
     text: string;
+    titleSv?: string;
+    summarySv?: string;
+    textSv?: string;
     headings: { text: string; id: string }[];
+    headingsSv?: { text: string; id: string }[];
   }[];
 };
 
@@ -64,6 +68,7 @@ export function CommandProvider({ children }: { children: ReactNode }) {
   const tfeatures = useTranslations("features");
   const tp = useTranslations("platforms");
   const tdoc = useTranslations("docs");
+  const locale = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -139,25 +144,36 @@ export function CommandProvider({ children }: { children: ReactNode }) {
         text: `${e.code} ${e.name}`,
         href: `/docs/ecu-reference#${e.domain}`,
       })),
-      ...(docsIndex?.entries.flatMap((d) => [
-        {
-          group: groups.docs,
-          label: d.title,
-          sub: d.summary,
-          text: d.text,
-          href: `/docs/${d.slug}`,
-        },
-        ...d.headings.map((h) => ({
-          group: groups.docs,
-          label: h.text,
-          sub: d.title,
-          text: "",
-          href: `/docs/${d.slug}#${h.id}`,
-        })),
-      ]) ?? []),
+      // Docs in the reader's language: a Swedish reader gets Swedish titles,
+      // summaries and headings. The searchable body concatenates both texts so
+      // a Swedish query for "vilström" and an English one for "quiescent"
+      // both land. Titles fall back to English for docs without a translation.
+      ...(docsIndex?.entries.flatMap((d) => {
+        const sv = locale === "sv";
+        const title = (sv && d.titleSv) || d.title;
+        const summary = (sv && d.summarySv) || d.summary;
+        const text = sv ? `${d.textSv ?? ""} ${d.text}`.trim() : d.text;
+        const headings = (sv && d.headingsSv?.length ? d.headingsSv : d.headings) ?? [];
+        return [
+          {
+            group: groups.docs,
+            label: title,
+            sub: summary,
+            text,
+            href: `/docs/${d.slug}`,
+          },
+          ...headings.map((h) => ({
+            group: groups.docs,
+            label: h.text,
+            sub: title,
+            text: "",
+            href: `/docs/${d.slug}#${h.id}`,
+          })),
+        ];
+      }) ?? []),
     ];
     return out;
-  }, [t, tn, tf, tfeatures, tp, tdoc, docsIndex]);
+  }, [t, tn, tf, tfeatures, tp, tdoc, docsIndex, locale]);
 
   const hits = useMemo<Entry[]>(() => {
     const q = query.trim().toLowerCase();
@@ -342,7 +358,7 @@ export function CommandTrigger() {
     <button
       type="button"
       onClick={() => ctx?.open()}
-      className="press flex w-full items-center gap-2 rounded-sm border border-line-strong bg-surface px-3 py-2 text-left font-mono text-[length:var(--text-meta)] text-text-muted transition-colors hover:border-line-strong hover:text-text-secondary"
+      className="press flex min-h-11 w-full items-center gap-2 rounded-sm border border-line-strong bg-surface px-3 py-2 text-left font-mono text-[length:var(--text-meta)] text-text-muted transition-colors hover:border-line-strong hover:text-text-secondary"
     >
       <Search className="h-3.5 w-3.5" strokeWidth={1.75} />
       <span className="flex-1">{tsearch("searchPlaceholder")}</span>
@@ -363,7 +379,7 @@ export function CommandKButton() {
       type="button"
       onClick={() => ctx?.open()}
       aria-label={t("label")}
-      className="press hidden h-9 items-center gap-1.5 rounded-sm border border-line-strong px-2.5 font-mono text-[length:var(--text-micro)] text-text-muted transition-colors hover:border-line-strong hover:text-text-secondary md:inline-flex"
+      className="press hidden h-11 items-center gap-1.5 rounded-sm border border-line-strong px-2.5 font-mono text-[length:var(--text-micro)] text-text-muted transition-colors hover:border-line-strong hover:text-text-secondary md:inline-flex"
     >
       <Search className="h-3.5 w-3.5" strokeWidth={1.75} />
       {mac ? "⌘K" : "Ctrl K"}

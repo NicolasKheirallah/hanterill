@@ -10,6 +10,7 @@ export const dynamic = "force-static";
 const paths = [
   "",
   "/features",
+  "/features/walkthrough",
   "/features/battery-health",
   "/features/vehicle-diagnostics",
   "/features/live-data",
@@ -17,6 +18,7 @@ const paths = [
   "/features/inspection-reports",
   "/features/sessions-and-evidence",
   "/features/service-functions",
+  "/case-study",
   "/vehicles",
   "/network",
   "/download",

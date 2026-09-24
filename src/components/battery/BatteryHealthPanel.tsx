@@ -97,7 +97,7 @@ export function BatteryHealthPanel() {
 
             {level === "engineering" ? (
               <div className="mt-4 border-t border-line pt-3">
-                <div className="mb-2 font-mono text-[10.5px] uppercase tracking-wider text-text-muted">
+                <div className="mb-2 font-mono text-[length:var(--text-micro)] uppercase tracking-wider text-text-muted">
                   {t("howRead")}
                 </div>
                 <Provenance t={t} />
@@ -112,7 +112,7 @@ export function BatteryHealthPanel() {
           </motion.div>
         </AnimatePresence>
 
-        <p className="mt-4 border-t border-line pt-3 font-mono text-[10.5px] leading-relaxed text-text-muted">
+        <p className="mt-4 border-t border-line pt-3 font-mono text-[length:var(--text-micro)] leading-relaxed text-text-muted">
           {tc("representative")}
         </p>
       </div>
@@ -166,7 +166,7 @@ function TempStrip({ label, min, max }: { label: string; min: number; max: numbe
           style={{ left: `${l}%`, right: `${100 - r}%` }}
         />
       </div>
-      <div className="mt-1 flex justify-between text-[10px] text-text-muted">
+      <div className="mt-1 flex justify-between text-[length:var(--text-micro)] text-text-muted">
         <span>{LO} °C</span>
         <span>{HI} °C</span>
       </div>

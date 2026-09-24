@@ -27,7 +27,7 @@ export function LocaleSwitcher() {
   return (
     <div
       className={cn(
-        "press inline-flex h-9 overflow-hidden rounded-sm border border-line-strong font-mono text-[length:var(--text-micro)]",
+        "press inline-flex h-11 overflow-hidden rounded-sm border border-line-strong font-mono text-[length:var(--text-micro)]",
         pending && "opacity-70",
       )}
       role="group"
@@ -44,7 +44,7 @@ export function LocaleSwitcher() {
           aria-pressed={l === active}
           aria-label={l === "sv" ? "Svenska" : "English"}
           className={cn(
-            "min-w-9 px-2.5 uppercase transition-colors",
+            "min-w-11 px-3 uppercase transition-colors",
             l === active
               ? "bg-text-primary text-bg-primary"
               : "text-text-secondary hover:bg-bg-secondary hover:text-text-primary",

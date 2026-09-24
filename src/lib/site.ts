@@ -102,10 +102,16 @@ export const footerNav = [
   },
 ] as const;
 
+/**
+ * The download panel's three OS rows. No architecture claims here: which
+ * builds exist is a fact of the current release, and DownloadPanel derives
+ * that from the actual release assets so the panel cannot advertise a file
+ * that is not there.
+ */
 export const platforms = [
-  { id: "windows", label: "Windows", arch: "x64 & ARM64", artifact: "Hanterill-setup.exe / .msi", note: "Windows 10 and 11" },
-  { id: "macos", label: "macOS", arch: "Apple silicon & Intel", artifact: "Hanterill.dmg", note: "Universal build" },
-  { id: "linux", label: "Linux", arch: "x86_64 & ARM64", artifact: ".AppImage / .deb", note: "Ubuntu, Debian, Fedora, Arch" },
+  { id: "windows", label: "Windows", artifact: "Hanterill-setup.exe", note: "Windows 10 and 11" },
+  { id: "macos", label: "macOS", artifact: "Hanterill.dmg", note: "Apple silicon Macs" },
+  { id: "linux", label: "Linux", artifact: ".AppImage / .deb", note: "Ubuntu, Debian, Fedora, Arch" },
 ] as const;
 
 export type PlatformId = (typeof platforms)[number]["id"];

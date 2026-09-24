@@ -106,13 +106,85 @@ export function formatBytes(bytes: number): string {
   return `${Math.round(bytes / 1024)} KB`;
 }
 
-export function matchAssetForPlatform(assets: ReleaseAsset[], platformId: string): ReleaseAsset | null {
-  const rules: Record<string, RegExp> = {
-    windows: /\.(exe|msi)$|windows|win/i,
-    macos: /\.dmg$|mac|darwin|apple/i,
-    linux: /\.(appimage|deb|rpm|tar\.gz)$|linux/i,
-  };
-  const rule = rules[platformId];
-  if (!rule) return null;
-  return assets.find((a) => rule.test(a.name)) ?? null;
+export type OsId = "windows" | "macos" | "linux";
+
+const OS_RULES: Record<OsId, RegExp> = {
+  windows: /\.(exe|msi)$|windows|win/i,
+  macos: /\.dmg$|mac|darwin|apple/i,
+  linux: /\.(appimage|deb|rpm|tar\.gz)$|linux/i,
+};
+
+/** Every released build for one OS, most common architecture first. */
+export function assetsForPlatform(assets: ReleaseAsset[], platformId: string): ReleaseAsset[] {
+  const rule = OS_RULES[platformId as OsId];
+  if (!rule) return [];
+  const matched = assets.filter((a) => rule.test(a.name));
+  const order = ARCH_PRIORITY[platformId as OsId] ?? [];
+  return matched.sort(
+    (a, b) => archRank(a.name, order) - archRank(b.name, order),
+  );
+}
+
+const ARCH_PRIORITY: Record<OsId, string[]> = {
+  macos: ["aarch64", "arm64", "x86_64", "amd64", "x64", "universal"],
+  windows: ["x64", "amd64", "x86_64", "arm64", "aarch64"],
+  linux: ["amd64", "x86_64", "x64", "arm64", "aarch64"],
+};
+
+function archRank(name: string, order: string[]): number {
+  const lower = name.toLowerCase();
+  const i = order.findIndex((arch) => lower.includes(arch));
+  return i === -1 ? order.length : i;
+}
+
+/**
+ * Plain-language architecture for one asset filename, e.g. "aarch64.dmg" ->
+ * "Apple silicon". Returns null when the name names no architecture; callers
+ * fall back to the bare filename so the panel never invents a label. These are
+ * hardware names, not copy: they render in mono and carry no translation.
+ */
+export function assetArchLabel(name: string, platformId: string): string | null {
+  const lower = name.toLowerCase();
+  if (platformId === "macos") {
+    return /aarch64|arm64/.test(lower)
+      ? "Apple silicon"
+      : /x86_64|amd64|x64/.test(lower)
+        ? "Intel"
+        : /universal/.test(lower)
+          ? "Universal"
+          : null;
+  }
+  if (/aarch64|arm64/.test(lower)) return "ARM64";
+  if (/x86_64|amd64|x64/.test(lower)) return platformId === "windows" ? "64-bit" : "x86_64";
+  return null;
+}
+
+/** File-format tag from the asset name: ".dmg", ".exe", ".deb", ".tar.gz". */
+export function assetFormat(name: string): string {
+  if (/\.tar\.gz$/i.test(name)) return ".tar.gz";
+  const m = name.match(/(\.[a-z]+)$/i);
+  return m ? m[1].toLowerCase() : "";
+}
+
+/** The visitor's CPU family where the browser reports one. Null when it does not. */
+export async function detectArch(): Promise<"arm" | "x86" | null> {
+  if (typeof navigator === "undefined") return null;
+  const uad = (navigator as Navigator & {
+    userAgentData?: { getHighEntropyValue?: (keys: string[]) => Promise<{ architecture?: string }> };
+  }).userAgentData;
+  if (!uad?.getHighEntropyValue) return null;
+  try {
+    const { architecture } = await uad.getHighEntropyValue(["architecture"]);
+    if (architecture === "arm") return "arm";
+    if (architecture === "x86") return "x86";
+  } catch {
+    // Chrome without the hint, or a denied call: no highlight.
+  }
+  return null;
+}
+
+/** Does an asset filename match the detected CPU family? */
+export function archMatches(name: string, arch: "arm" | "x86"): boolean {
+  const lower = name.toLowerCase();
+  return arch === "arm" ? /aarch64|arm64/.test(lower) : /x86_64|amd64|x64/.test(lower);
 }

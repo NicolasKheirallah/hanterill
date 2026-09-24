@@ -53,7 +53,7 @@ export function Footer() {
         <dl className="mt-10 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-line pt-6 sm:grid-cols-4">
           {meta.map((m) => (
             <div key={m.label}>
-              <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-muted">
+              <dt className="font-mono text-[length:var(--text-micro)] uppercase tracking-[0.14em] text-text-muted">
                 {m.label}
               </dt>
               <dd className="mt-1.5 break-words font-mono text-[12.5px] text-text-secondary">{m.value}</dd>

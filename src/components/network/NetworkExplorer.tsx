@@ -9,19 +9,37 @@ import {
   type EdgeMouseHandler, type Node, type NodeMouseHandler,
 } from '@xyflow/react'
 import { toPng } from 'html-to-image'
-import { Search, Cpu, Route, X, SlidersHorizontal, ImageDown, Link2, Check, Keyboard } from 'lucide-react'
+import { Search, Cpu, Route, X, SlidersHorizontal, ImageDown, Link2, Check, Keyboard, List, Network } from 'lucide-react'
 import {
   BUSES, BUS_KEYS, DOMAINS, NODE_POS, RAW_EDGES, SEGMENT_BY_ID, STATS, UNIT_BY_ID,
   buildGraph, type AppEdge, type AppNode, type Bus, type Domain,
 } from './graph'
 import { ModuleNode, RailNode, ZoneNode } from './components/nodes'
 import { FloatingEdge, TapEdge } from './components/edges'
+import ModuleList from './components/ModuleList'
 import type { DrawerSel } from './components/DetailDrawer'
 import '@xyflow/react/dist/style.css'
 import './network.css'
 
 const DetailDrawer = lazy(() => import('./components/DetailDrawer'))
 const CommandK = lazy(() => import('./components/CommandK'))
+
+/* Phone breakpoint shared with network.css (filters/minimap/edge-tips). On a
+   390 px canvas the diagram's labels shrink past legibility, so narrow screens
+   default to the searchable module list; the diagram stays one toggle away. */
+const NARROW_QUERY = '(max-width: 880px)'
+
+function useNarrow() {
+  const [narrow, setNarrow] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(NARROW_QUERY).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(NARROW_QUERY)
+    const onChange = () => setNarrow(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return narrow
+}
 
 const nodeTypes = { module: ModuleNode, zone: ZoneNode, rail: RailNode }
 const edgeTypes = { floating: FloatingEdge, tap: TapEdge }
@@ -116,6 +134,12 @@ function NetworkExplorerInner() {
   const [copied, setCopied] = useState(false)
   const [exporting, setExporting] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
+  const narrow = useNarrow()
+  const [view, setView] = useState<'list' | 'diagram'>(
+    () => (typeof window !== 'undefined' && window.matchMedia(NARROW_QUERY).matches ? 'list' : 'diagram'))
+  /* Widening past the breakpoint returns to the diagram; the list is a
+     narrow-screen view, not a second desktop mode. Derived, not an effect. */
+  const activeView = narrow ? view : 'diagram'
   const rf = useReactFlow()
   const hoverTimer = useRef<number | null>(null)
   const helpCloseRef = useRef<HTMLButtonElement>(null)
@@ -224,10 +248,12 @@ function NetworkExplorerInner() {
         if (!c.has(u.domain)) return c
         const next = new Set(c); next.delete(u.domain); return next
       })
-      if (center) requestAnimationFrame(() =>
+      /* Centering is a diagram concern; from the phone list there is no
+         canvas to move, and fitView against an unmounted flow is a no-op. */
+      if (center && activeView === 'diagram') requestAnimationFrame(() =>
         rf.fitView({ nodes: [{ id }], duration: 600 * motion, maxZoom: 1.15, padding: 2.2 }))
     }
-  }, [rf, motion])
+  }, [rf, motion, activeView])
 
   const back = useCallback(() => {
     if (!history.length) return
@@ -450,7 +476,7 @@ function NetworkExplorerInner() {
           </span>
           <span className="micro border-l border-(--line) pl-3.5 hidden md:block">Network explorer</span>
         </div>
-        <div className="hidden lg:flex items-center gap-4 text-[10px] tracking-[0.1em] uppercase text-(--ink-3) font-medium">
+        <div className="hidden lg:flex items-center gap-4 text-[12px] tracking-[0.1em] uppercase text-(--ink-3) font-medium">
           <span><b className="text-(--ink-2)">{STATS.units + STATS.peripherals}</b> units</span>
           <span><b className="text-(--ink-2)">{STATS.edges}</b> links</span>
           <span><b className="text-(--ink-2)">{STATS.segments}</b> bus rails</span>
@@ -458,18 +484,38 @@ function NetworkExplorerInner() {
           <span><b className="text-(--ink-2)">{STATS.documented}</b> documented</span>
         </div>
         <div className="grow" />
+        {narrow && (
+          <div role="group" aria-label="Explorer view" className="flex shrink-0 overflow-hidden border border-(--line)">
+            <button
+              onClick={() => setView('list')}
+              aria-pressed={activeView === 'list'}
+              className={`flex h-11 items-center gap-1.5 bg-(--surface-2) px-3 font-mono text-[length:var(--text-micro)] uppercase tracking-[0.1em] transition-colors
+                          ${activeView === 'list' ? 'text-(--accent)' : 'text-(--ink-3) hover:text-(--ink)'}`}
+            >
+              <List size={13} /> Modules
+            </button>
+            <button
+              onClick={() => setView('diagram')}
+              aria-pressed={activeView === 'diagram'}
+              className={`flex h-11 items-center gap-1.5 bg-(--surface-2) px-3 font-mono text-[length:var(--text-micro)] uppercase tracking-[0.1em] transition-colors
+                          ${activeView === 'diagram' ? 'text-(--accent)' : 'text-(--ink-3) hover:text-(--ink)'}`}
+            >
+              <Network size={13} /> Diagram
+            </button>
+          </div>
+        )}
         <button
           onClick={() => setPaletteOpen(true)}
-          className="flex items-center gap-2.5 h-9 px-3.5 sm:min-w-56 border border-(--line) bg-(--surface-2)
+          className="flex h-11 items-center gap-2.5 px-3.5 sm:min-w-56 border border-(--line) bg-(--surface-2)
                      text-(--ink-3) text-[13px] hover:border-(--ink) transition-colors"
         >
           <Search size={13} />
           <span className="grow text-left hidden sm:block">Search units & pins…</span>
-          <kbd className="hidden sm:block text-[9px] font-semibold border border-(--line) px-1.5 py-0.5 tracking-wider">{mac ? "⌘K" : "Ctrl K"}</kbd>
+          <kbd className="hidden sm:block text-[11px] font-semibold border border-(--line) px-1.5 py-0.5 tracking-wider">{mac ? "⌘K" : "Ctrl K"}</kbd>
         </button>
         <button
           onClick={copyLink}
-          className="hidden sm:grid size-9 place-items-center border border-(--line) bg-(--surface-2) hover:border-(--ink) transition-colors shrink-0"
+          className="hidden sm:grid size-11 place-items-center border border-(--line) bg-(--surface-2) hover:border-(--ink) transition-colors shrink-0"
           aria-label="Copy share link"
           title="Copy a link to the current view"
         >
@@ -478,7 +524,7 @@ function NetworkExplorerInner() {
         <button
           onClick={exportPng}
           disabled={exporting}
-          className="hidden sm:grid size-9 place-items-center border border-(--line) bg-(--surface-2) hover:border-(--ink) transition-colors shrink-0 disabled:opacity-40"
+          className="hidden sm:grid size-11 place-items-center border border-(--line) bg-(--surface-2) hover:border-(--ink) transition-colors shrink-0 disabled:opacity-40"
           aria-label="Export diagram as PNG"
           title="Export diagram as PNG"
         >
@@ -486,7 +532,7 @@ function NetworkExplorerInner() {
         </button>
         <button
           onClick={() => setHelpOpen(true)}
-          className="hidden md:grid size-9 place-items-center border border-(--line) bg-(--surface-2) hover:border-(--ink) transition-colors shrink-0"
+          className="hidden md:grid size-11 place-items-center border border-(--line) bg-(--surface-2) hover:border-(--ink) transition-colors shrink-0"
           aria-label="Keyboard shortcuts"
           title="Keyboard shortcuts (?)"
         >
@@ -494,8 +540,11 @@ function NetworkExplorerInner() {
         </button>
       </header>
 
-      {/* ————— canvas ————— */}
+      {/* ————— canvas (desktop, or phone with the diagram view chosen) ————— */}
       <div className="relative grow min-h-0">
+        {activeView === 'list' ? (
+          <ModuleList selectedId={selectedId} onPick={(id) => select(id)} />
+        ) : (
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -537,7 +586,7 @@ function NetworkExplorerInner() {
           <Panel position="top-left" className="filters-toggle">
             <button
               onClick={() => setFiltersOpen((v) => !v)}
-              className="size-9 grid place-items-center border border-(--line) backdrop-blur-md"
+              className="size-11 grid place-items-center border border-(--line) backdrop-blur-md"
               style={{ background: 'var(--glass)' }}
               aria-label="Toggle filters"
               aria-expanded={filtersOpen}
@@ -558,7 +607,7 @@ function NetworkExplorerInner() {
                   key={b}
                   onClick={() => setBusesOn((s) => ({ ...s, [b]: !s[b] }))}
                   aria-pressed={on}
-                  className={`flex items-center gap-2.5 px-3 h-8 border text-[11px] font-medium tracking-wide
+                  className={`flex items-center gap-2.5 px-3 h-11 border text-[12px] font-medium tracking-wide
                               backdrop-blur-md transition-all text-left
                               ${on ? 'border-(--line) text-(--ink)' : 'border-transparent text-(--ink-3) opacity-60'}`}
                   style={{ background: 'var(--glass)' }}
@@ -566,23 +615,23 @@ function NetworkExplorerInner() {
                   <i className="w-4 border-t-[3px] shrink-0"
                      style={{ borderColor: BUSES[b].color, opacity: on ? 1 : 0.3 }} />
                   <span className="grow">{BUSES[b].label}</span>
-                  <span className="text-[9px] text-(--ink-3) tabular-nums">{count}</span>
+                  <span className="text-[11px] text-(--ink-3) tabular-nums">{count}</span>
                 </button>
               )
             })}
             <button
               onClick={() => setShowPeripherals((v) => !v)}
               aria-pressed={showPeripherals}
-              className={`mt-2 flex items-center gap-2.5 px-3 h-8 border text-[11px] font-medium tracking-wide
+              className={`mt-2 flex items-center gap-2.5 px-3 h-11 border text-[12px] font-medium tracking-wide
                           backdrop-blur-md transition-all text-left
                           ${showPeripherals ? 'border-(--accent) text-(--ink)' : 'border-(--line) text-(--ink-3)'}`}
               style={{ background: 'var(--glass)' }}
             >
               <Cpu size={12} className="shrink-0" />
               <span className="grow">Peripherals</span>
-              <span className="text-[9px] text-(--ink-3) tabular-nums">{STATS.peripherals}</span>
+              <span className="text-[11px] text-(--ink-3) tabular-nums">{STATS.peripherals}</span>
             </button>
-            <div className="text-[9px] leading-relaxed text-(--ink-3) px-1 pt-1">
+            <div className="text-[11px] leading-relaxed text-(--ink-3) px-1 pt-1">
               Solid = documented pin-out · dashed = inferred from block diagram.
               Click a cluster title to collapse it.
             </div>
@@ -609,13 +658,14 @@ function NetworkExplorerInner() {
                   </span>
                 )}
                 <button onClick={() => setTrace(null)} aria-label="Clear trace"
-                  className="ml-2 size-6 grid place-items-center border border-(--line) hover:border-(--ink) transition-colors">
+                  className="ml-2 size-8 grid place-items-center border border-(--line) hover:border-(--ink) transition-colors">
                   <X size={11} />
                 </button>
               </div>
             </Panel>
           )}
         </ReactFlow>
+        )}
 
         {helpOpen && (
           <div className="absolute inset-0 z-50 grid place-items-center" onClick={() => setHelpOpen(false)}>
@@ -629,7 +679,7 @@ function NetworkExplorerInner() {
               <div className="px-6 pt-5 pb-3 border-b border-(--line) flex items-center justify-between">
                 <span className="micro">Keyboard shortcuts</span>
                 <button ref={helpCloseRef} onClick={() => setHelpOpen(false)} aria-label="Close"
-                  className="size-7 grid place-items-center border border-(--line) hover:border-(--ink) transition-colors">
+                  className="size-9 grid place-items-center border border-(--line) hover:border-(--ink) transition-colors">
                   <X size={12} />
                 </button>
               </div>
@@ -642,7 +692,7 @@ function NetworkExplorerInner() {
                   ['?', 'This overlay'],
                 ] as const).map(([k, d]) => (
                   <div key={k} className="flex items-center gap-4">
-                    <kbd className="min-w-24 text-center text-[10px] font-semibold border border-(--line) bg-(--surface-2) px-2 py-1 tracking-wider">{k}</kbd>
+                    <kbd className="min-w-24 text-center text-[11px] font-semibold border border-(--line) bg-(--surface-2) px-2 py-1 tracking-wider">{k}</kbd>
                     <span className="text-(--ink-2)">{d}</span>
                   </div>
                 ))}

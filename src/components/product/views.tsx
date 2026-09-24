@@ -36,7 +36,7 @@ export function OverviewView() {
   return (
     <div className="space-y-5">
       <div>
-        <div className="font-mono text-[10.5px] uppercase tracking-wider text-text-muted">{t("vehicle")}</div>
+        <div className="font-mono text-[length:var(--text-micro)] uppercase tracking-wider text-text-muted">{t("vehicle")}</div>
         <div className="mt-1 text-[15px] text-text-primary">{demoVehicle.model}</div>
         <div className="text-[13px] text-text-secondary">{td("vehicleVariant")}</div>
       </div>

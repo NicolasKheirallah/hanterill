@@ -145,6 +145,14 @@
     "network": {
       "title": "CMA Network Explorer",
       "desc": "Interactive module-connectivity explorer for the CMA platform: 170 units, 295 documented links across nine networks and 622 harness pin rows, as data rather than a drawing."
+    },
+    "walkthrough": {
+      "title": "Feature walkthrough",
+      "desc": "The full Hanterill walkthrough: battery health, vehicle diagnostics, live data, subsystem telemetry, inspection reports, sessions and service functions, each with its live demo."
+    },
+    "caseStudy": {
+      "title": "Case study: one complete session",
+      "desc": "A representative diagnostic session on the reference Polestar 2: the complaint, codes with status, freeze frames, battery numbers, the verdict and the after-repair diff."
     }
   },
   "body": {
@@ -449,7 +457,8 @@
     "mainNav": "Main",
     "menu": "Menu",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "checkVehicle": "Check your vehicle"
   },
   "nav": {
     "features": "Features",
@@ -626,7 +635,7 @@
     "writeAccess": "Asks before it writes",
     "readOnlyNote": "Hanterill transmits read services unless you explicitly confirm a write. The running binary reports what it can do through a capability manifest, and the interface hides what it cannot.",
     "sohLabel": "Battery state of health",
-    "reportsCaption": "Inspection score \u00b7 sample values, not a vehicle reading",
+    "reportsCaption": "Inspection score · sample values, not a vehicle reading",
     "systemsCaption": "Subsystem read views",
     "shellCaption": "Command palette, sample",
     "allFeatures": "All seven features",
@@ -762,6 +771,14 @@
       "service": {
         "title": "Service functions",
         "body": "EPB service mode, 12 V adaptation, reminder reset and damper calibration, each behind an explicit confirmation and driven through the running binary's capability manifest."
+      },
+      "walkthrough": {
+        "title": "The full walkthrough",
+        "body": "All seven features in one pass, each with its live instrument."
+      },
+      "caseStudy": {
+        "title": "One session, start to finish",
+        "body": "A representative session on the reference vehicle: the complaint, the codes, the numbers and the repair."
       }
     }
   },
@@ -891,7 +908,7 @@
     "resume": "Resume",
     "channels": "Telemetry channels",
     "window": "Time window",
-    "note": "Simulated drive cycle \u00b7 sample data, not a vehicle reading",
+    "note": "Simulated drive cycle · sample data, not a vehicle reading",
     "footerNote": "Simulated drive cycle · sample data, not a vehicle reading",
     "resumeAria": "Resume telemetry",
     "pauseAria": "Pause telemetry",
@@ -1097,7 +1114,12 @@
     "viewSourceOnGitHub": "View source on GitHub",
     "licenseHeading": "License",
     "adaptersCaption": "Adaptors that work, and the ones that do not",
-    "readLicense": "Read license terms"
+    "readLicense": "Read license terms",
+    "forThisMachine": "Matches this machine",
+    "downloadFormat": "Download {format}",
+    "compatTitle": "Does it read your car?",
+    "compatBody": "The status by platform, from verified on real vehicles to catalogue only.",
+    "checkVehicle": "Check your vehicle"
   },
   "safety": {
     "title": "Read by default. Writes ask first.",
@@ -1377,6 +1399,25 @@
       "Diagnostics": "Diagnostics",
       "Reference": "Reference",
       "Project": "Project"
+    },
+    "tasks": {
+      "title": "Start from a task",
+      "connect": {
+        "title": "Connect a car",
+        "body": "Cable, interface and network setup, then your first session."
+      },
+      "support": {
+        "title": "Check what is supported",
+        "body": "Platforms, status labels and what each one means for your model."
+      },
+      "faults": {
+        "title": "Read fault codes",
+        "body": "Scan every module, read statuses and freeze frames, and clear with confirmation."
+      },
+      "battery": {
+        "title": "Understand a battery result",
+        "body": "What state of health, state of charge and the cell-group numbers actually mean."
+      }
     }
   },
   "views": {
@@ -1582,7 +1623,11 @@
     "projectsLicense": "License",
     "projectsSeparate": "Each project is maintained separately, with its own repository, license and release schedule.",
     "networkTitle": "CMA Network Explorer.",
-    "networkLead": "Every control unit on the CMA platform as an interactive wiring map: 170 units, 295 typed links across nine networks and 622 documented pin rows. Filter by bus, trace a path between any two modules, and read the connector pin-outs the diagnostics run on."
+    "networkLead": "Every control unit on the CMA platform as an interactive wiring map: 170 units, 295 typed links across nine networks and 622 documented pin rows. Filter by bus, trace a path between any two modules, and read the connector pin-outs the diagnostics run on.",
+    "walkthroughTitle": "Every feature, one walkthrough.",
+    "walkthroughLead": "What each feature reads, what it does with the values, and where its limits are. The instruments run on the same labelled sample data as the rest of the site.",
+    "caseStudyTitle": "One session on the record.",
+    "caseStudyLead": "Play through a representative session on the reference vehicle, then read the same session step by step. Fixed sample data, so every figure can be checked against the rest of this site."
   },
   "network": {
     "loading": "Loading the network explorer…",
@@ -1659,21 +1704,48 @@
     "noCarTitle": "The car does not appear",
     "noCarLead": "Work down this list in order. The first two cover most cases.",
     "steps": {
-      "ignition": { "check": "Is the car awake?", "detail": "A sleeping car answers nothing on the diagnostic bus. Turn the ignition on - you do not need to start it, and on an EV there is nothing to start." },
-      "port": { "check": "Is the RJ45 end in an Ethernet port?", "detail": "Not a USB-only port on a dock, and not a port that only carries power. The link light on the adapter is the quickest confirmation." },
-      "firewall": { "check": "Is a VPN or firewall blocking UDP 13400?", "detail": "Discovery is a UDP broadcast on port 13400. A VPN client that captures all traffic, or a host firewall set to block inbound UDP, will stop the car from ever announcing itself. Disable them briefly to test." },
-      "adapter": { "check": "Try another Ethernet adapter", "detail": "Some cheap USB adapters drop link-local traffic or refuse to come up without DHCP. A direct port on the laptop, or a known-good adapter, rules this out in one step." },
-      "exclusive": { "check": "Is another tool holding the connection?", "detail": "One tool talks to the car at a time. Close any other diagnostic software, and give the gateway a few seconds after the last session ends before reconnecting." }
+      "ignition": {
+        "check": "Is the car awake?",
+        "detail": "A sleeping car answers nothing on the diagnostic bus. Turn the ignition on - you do not need to start it, and on an EV there is nothing to start."
+      },
+      "port": {
+        "check": "Is the RJ45 end in an Ethernet port?",
+        "detail": "Not a USB-only port on a dock, and not a port that only carries power. The link light on the adapter is the quickest confirmation."
+      },
+      "firewall": {
+        "check": "Is a VPN or firewall blocking UDP 13400?",
+        "detail": "Discovery is a UDP broadcast on port 13400. A VPN client that captures all traffic, or a host firewall set to block inbound UDP, will stop the car from ever announcing itself. Disable them briefly to test."
+      },
+      "adapter": {
+        "check": "Try another Ethernet adapter",
+        "detail": "Some cheap USB adapters drop link-local traffic or refuse to come up without DHCP. A direct port on the laptop, or a known-good adapter, rules this out in one step."
+      },
+      "exclusive": {
+        "check": "Is another tool holding the connection?",
+        "detail": "One tool talks to the car at a time. Close any other diagnostic software, and give the gateway a few seconds after the last session ends before reconnecting."
+      }
     },
     "oneCableTitle": "One cable, one car",
     "oneCableBody": "The cable goes from your computer to the car's diagnostic port, never to your home router, and never to a switch that also reaches your network. Do not bridge the car's network to your normal network.",
     "dropsTitle": "When the link drops",
     "dropsLead": "Link recovery is built into the transport, so a brief interruption does not cost you the session.",
     "recovery": {
-      "route": { "label": "Route re-activation", "detail": "If the TCP connection drops, Hanterill re-activates the route on the surviving link and carries on with the same session." },
-      "stale": { "label": "Stale replies rejected", "detail": "A reply that arrives on the old connection is discarded as stale, so a late answer cannot be mistaken for a fresh reading." },
-      "keepalive": { "label": "Keepalive", "detail": "A TesterPresent every couple of seconds stops the car from putting modules to sleep in the middle of a long sweep." },
-      "identity": { "label": "Identity check", "detail": "If the car reports a different identity after a reconnect, Hanterill ends the session rather than mixing two cars' readings into one file." }
+      "route": {
+        "label": "Route re-activation",
+        "detail": "If the TCP connection drops, Hanterill re-activates the route on the surviving link and carries on with the same session."
+      },
+      "stale": {
+        "label": "Stale replies rejected",
+        "detail": "A reply that arrives on the old connection is discarded as stale, so a late answer cannot be mistaken for a fresh reading."
+      },
+      "keepalive": {
+        "label": "Keepalive",
+        "detail": "A TesterPresent every couple of seconds stops the car from putting modules to sleep in the middle of a long sweep."
+      },
+      "identity": {
+        "label": "Identity check",
+        "detail": "If the car reports a different identity after a reconnect, Hanterill ends the session rather than mixing two cars' readings into one file."
+      }
     },
     "wirelessTitle": "Wireless",
     "wirelessBody": "Some cars expose diagnostics over their own Wi-Fi access point. Where that is available and supported, discovery and routing work the same way over the wireless interface. The wired path is the tested one.",
@@ -1698,5 +1770,13 @@
       "A router or switch between the laptop and the car."
     ],
     "why": "The test is whether the adapter gives the operating system a real network interface. If it appears as a serial port, or if it terminates the link itself, Hanterill cannot reach the car through it."
+  },
+  "home": {
+    "moreTitle": "Go deeper.",
+    "moreLead": "Every instrument on this page has a full page behind it. The walkthrough takes each feature in turn; the case study follows one session from complaint to verified repair.",
+    "walkthrough": "The full feature walkthrough",
+    "features": "All features",
+    "caseStudy": "One session, start to finish",
+    "network": "The CMA network, mapped"
   }
 }

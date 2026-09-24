@@ -330,8 +330,10 @@
 .react-flow__controls-button {
   background: var(--surface);
   border-bottom: 1px solid var(--line);
-  width: 34px;
-  height: 34px;
+  /* 44px hit targets: the zoom controls were 34px squares, below every
+     touch-target floor. The stacked stack grows but stays in the corner. */
+  width: 44px;
+  height: 44px;
 }
 .react-flow__controls-button:hover {
   background: var(--surface-2);
@@ -365,7 +367,7 @@ table.pins th {
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--ink-3);
-  padding: 6px 8px 6px 0;
+  padding: 8px 8px 8px 0;
   border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
@@ -373,7 +375,8 @@ table.pins th {
   z-index: 1;
 }
 table.pins td {
-  padding: 6px 8px 6px 0;
+  /* Row height is a touch target: pin rows open the partner unit. */
+  padding: 8px 8px 8px 0;
   border-bottom: 1px solid var(--line);
   vertical-align: top;
   color: var(--ink);

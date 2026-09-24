@@ -2,11 +2,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useReducedMotionSafe } from "@/lib/use-motion-prefs";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { DUR, EASE } from "@/lib/motion";
 import { Shot } from "@/components/ui/Shot";
+import { cn } from "@/lib/cn";
 
 export type ShotItem = { root: string; label: string; href?: string };
 
@@ -36,7 +37,14 @@ const FLICK_DX = 80;
  *    and projects momentum to decide whether a flick moves one step or throws
  *    the image away.
  */
-export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
+export function ScreenshotGallery({
+  shots,
+  feature = false,
+}: {
+  shots: ShotItem[];
+  /** One full-width tile: the home page's featured capture. */
+  feature?: boolean;
+}) {
   const t = useTranslations("gallery");
   const reduce = useReducedMotionSafe();
   const [open, setOpen] = useState<number | null>(null);
@@ -145,7 +153,7 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
 
   return (
     <>
-      <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <ul className={cn("grid gap-4", !feature && "sm:grid-cols-2 xl:grid-cols-3", feature && "max-w-[52rem]")}>
         {shots.map((s, i) => (
           <li key={`${s.root}-${i}`}>
             <button
@@ -164,8 +172,12 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
                   imgClassName="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
                 />
               </span>
-              <span className="block border-t border-line px-3 py-2 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
+              <span className="flex items-center justify-between gap-3 border-t border-line px-3 py-2 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
                 {s.label}
+                <span className="inline-flex items-center gap-1.5 normal-case tracking-normal">
+                  <Maximize2 className="h-3 w-3" strokeWidth={1.75} aria-hidden />
+                  {t("viewLarger")}
+                </span>
               </span>
             </button>
           </li>
@@ -196,9 +208,11 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
                 ) : (
                   shots[open].label
                 )}
-                <span className="ml-3 text-text-muted">
-                  {open + 1} / {shots.length}
-                </span>
+                {shots.length > 1 ? (
+                  <span className="ml-3 text-text-muted">
+                    {open + 1} / {shots.length}
+                  </span>
+                ) : null}
               </span>
               <button
                 ref={closeRef}
@@ -219,14 +233,16 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
               onPointerUp={onPointerUp}
               onPointerCancel={onPointerUp}
             >
-              <button
-                type="button"
-                onClick={() => step(-1)}
-                aria-label={t("previous")}
-                className="press absolute left-2 z-10 inline-flex h-10 w-10 items-center justify-center rounded-sm border border-line-strong bg-bg-primary/80 text-text-secondary transition-colors hover:text-text-primary sm:left-6"
-              >
-                <ChevronLeft className="h-5 w-5" strokeWidth={1.75} />
-              </button>
+              {shots.length > 1 ? (
+                <button
+                  type="button"
+                  onClick={() => step(-1)}
+                  aria-label={t("previous")}
+                  className="press absolute left-2 z-10 inline-flex h-10 w-10 items-center justify-center rounded-sm border border-line-strong bg-bg-primary/80 text-text-secondary transition-colors hover:text-text-primary sm:left-6"
+                >
+                  <ChevronLeft className="h-5 w-5" strokeWidth={1.75} />
+                </button>
+              ) : null}
 
               {/* Keyed on the index with a direction, so the exit mirrors the
                   entry. Both arrow buttons used to look identical and the
@@ -251,14 +267,16 @@ export function ScreenshotGallery({ shots }: { shots: ShotItem[] }) {
                 />
               </motion.div>
 
-              <button
-                type="button"
-                onClick={() => step(1)}
-                aria-label={t("next")}
-                className="press absolute right-2 z-10 inline-flex h-10 w-10 items-center justify-center rounded-sm border border-line-strong bg-bg-primary/80 text-text-secondary transition-colors hover:text-text-primary sm:right-6"
-              >
-                <ChevronRight className="h-5 w-5" strokeWidth={1.75} />
-              </button>
+              {shots.length > 1 ? (
+                <button
+                  type="button"
+                  onClick={() => step(1)}
+                  aria-label={t("next")}
+                  className="press absolute right-2 z-10 inline-flex h-10 w-10 items-center justify-center rounded-sm border border-line-strong bg-bg-primary/80 text-text-secondary transition-colors hover:text-text-primary sm:right-6"
+                >
+                  <ChevronRight className="h-5 w-5" strokeWidth={1.75} />
+                </button>
+              ) : null}
             </div>
           </motion.div>
         ) : null}

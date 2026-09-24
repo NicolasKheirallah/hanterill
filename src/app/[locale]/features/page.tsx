@@ -19,6 +19,8 @@ const hubEntries = [
   { key: "reports", href: "/features/inspection-reports" },
   { key: "sessions", href: "/features/sessions-and-evidence" },
   { key: "service", href: "/features/service-functions" },
+  { key: "walkthrough", href: "/features/walkthrough" },
+  { key: "caseStudy", href: "/case-study" },
 ] as const;
 
 export default async function FeaturesIndex({ params }: { params: Promise<{ locale: string }> }) {

@@ -293,7 +293,7 @@ export function BatteryPack3D({
           </div>
         </div>
       ) : null}
-      <div className="pointer-events-none absolute bottom-2 right-3 font-mono text-[10px] text-text-muted">
+      <div className="pointer-events-none absolute bottom-2 right-3 font-mono text-[length:var(--text-micro)] text-text-muted">
         {hint}
       </div>
     </div>

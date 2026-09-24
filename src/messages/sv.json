@@ -145,6 +145,14 @@
     "network": {
       "title": "Nätverksutforskaren för CMA",
       "desc": "Utforska CMA-plattformens nätverk: 170 enheter, 295 dokumenterade anslutningar i nio nätverk och 622 stiftposter i en interaktiv karta."
+    },
+    "walkthrough": {
+      "title": "Genomgång av alla funktioner",
+      "desc": "Hela genomgången av Hanterill: batterihälsa, fordonsdiagnostik, livedata, subsystemtelemetri, inspektionsrapporter, sessioner och servicefunktioner, var och en med sin demo."
+    },
+    "caseStudy": {
+      "title": "Casestudie: en komplett session",
+      "desc": "En representativ diagnostiksession från referensfordonet Polestar 2: symptomen, felkoder med status, frysta ramdata, batterivärden, omdömet och diffen efter åtgärd."
     }
   },
   "common": {
@@ -170,7 +178,8 @@
     "menu": "Meny",
     "openMenu": "Öppna menyn",
     "closeMenu": "Stäng menyn",
-    "homeAria": "Hanterills startsida"
+    "homeAria": "Hanterills startsida",
+    "checkVehicle": "Kontrollera ditt fordon"
   },
   "nav": {
     "features": "Funktioner",
@@ -483,6 +492,14 @@
       "service": {
         "title": "Servicefunktioner",
         "body": "Åtgärder för bland annat parkeringsbroms, 12 V-batteri och klimatanläggning. Varje åtgärd kräver bekräftelse och visas bara om den installerade versionen stöder den."
+      },
+      "walkthrough": {
+        "title": "Hela genomgången",
+        "body": "Alla sju funktioner i en genomgång, var och en med sitt instrument."
+      },
+      "caseStudy": {
+        "title": "En session från början till slut",
+        "body": "En representativ session från referensfordonet: symptomen, koderna, värdena och åtgärden."
       }
     }
   },
@@ -818,7 +835,12 @@
     "viewSourceOnGitHub": "Visa källkod på GitHub",
     "licenseHeading": "Licens",
     "adaptersCaption": "Adaptrar som fungerar, och de som inte gör det",
-    "readLicense": "Läs licensvillkoren"
+    "readLicense": "Läs licensvillkoren",
+    "forThisMachine": "Matchar den här datorn",
+    "downloadFormat": "Ladda ner {format}",
+    "compatTitle": "Läser appen ditt fordon?",
+    "compatBody": "Status per plattform, från verifierad på riktiga fordon till endast katalogiserad.",
+    "checkVehicle": "Kontrollera ditt fordon"
   },
   "safety": {
     "title": "Läser data som standard. Frågar innan något ändras.",
@@ -1365,6 +1387,25 @@
       "Diagnostics": "Diagnostik",
       "Reference": "Referens",
       "Project": "Projekt"
+    },
+    "tasks": {
+      "title": "Börja med en uppgift",
+      "connect": {
+        "title": "Anslut en bil",
+        "body": "Kabel, gränssnitt och nätverk, sedan din första session."
+      },
+      "support": {
+        "title": "Se vad som stöds",
+        "body": "Plattformar, statusetiketter och vad varje etikett betyder för din modell."
+      },
+      "faults": {
+        "title": "Läsa felkoder",
+        "body": "Skanna alla moduler, läsa status och frysta ramdata och radera med bekräftelse."
+      },
+      "battery": {
+        "title": "Tolka ett batterivärde",
+        "body": "Vad hälsotillstånd, laddningsnivå och cellgruppernas värden egentligen betyder."
+      }
     }
   },
   "views": {
@@ -1570,7 +1611,11 @@
     "projectsLicense": "Licens",
     "projectsSeparate": "Varje projekt underhålls separat, med eget arkiv, licens och releasefrekvens.",
     "networkTitle": "Nätverksutforskaren för CMA.",
-    "networkLead": "Utforska CMA-plattformens elnät i en interaktiv karta med 170 enheter, 295 dokumenterade anslutningar i nio nätverk och 622 stiftposter. Filtrera på nätverk, följ en väg mellan moduler och läs anslutningarnas detaljer."
+    "networkLead": "Utforska CMA-plattformens elnät i en interaktiv karta med 170 enheter, 295 dokumenterade anslutningar i nio nätverk och 622 stiftposter. Filtrera på nätverk, följ en väg mellan moduler och läs anslutningarnas detaljer.",
+    "walkthroughTitle": "Alla funktioner, en genomgång.",
+    "walkthroughLead": "Vad varje funktion läser, vad den gör med värdena och var gränserna går. Instrumenten använder samma märkta exempeldata som resten av webbplatsen.",
+    "caseStudyTitle": "En session, dokumenterad.",
+    "caseStudyLead": "Spela upp en representativ session från referensfordonet och läs sedan samma session steg för steg. Fasta exempelvärden, så att varje siffra går att kontrollera mot resten av webbplatsen."
   },
   "projects": {
     "hisingen": {
@@ -1725,5 +1770,13 @@
       "En router eller switch mellan datorn och fordonet."
     ],
     "why": "Testet är om adaptern ger operativsystemet ett riktigt nätverksgränssnitt. Om den dyker upp som en seriell port, eller avslutar länken själv, kan Hanterill inte nå fordonet genom den."
+  },
+  "home": {
+    "moreTitle": "Läs vidare.",
+    "moreLead": "Varje instrument på den här sidan har en hel sida bakom sig. Genomgången tar varje funktion för sig; casestudien följer en session från symptom till verifierad åtgärd.",
+    "walkthrough": "Genomgången av alla funktioner",
+    "features": "Alla funktioner",
+    "caseStudy": "En session, från början till slut",
+    "network": "CMA-nätverket, kartlagt"
   }
 }

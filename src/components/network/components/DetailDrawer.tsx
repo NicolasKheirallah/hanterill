@@ -75,7 +75,7 @@ function PinTable({
 
   return (
     <div>
-      <div className="flex items-center gap-2 border border-(--line) bg-(--surface-2) h-8 px-2.5 mb-2.5">
+      <div className="flex items-center gap-2 border border-(--line) bg-(--surface-2) h-11 px-2.5 mb-2.5">
         <Search size={12} className="text-(--ink-2) shrink-0" />
         <input
           value={q}
@@ -173,7 +173,7 @@ function UnitBody({
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
             {busMix.map(([bus, n]) => (
-              <span key={bus} className="inline-flex items-center gap-1.5 text-[10px] text-(--ink-2)">
+              <span key={bus} className="inline-flex items-center gap-1.5 text-[11px] text-(--ink-2)">
                 <i className="size-2 inline-block" style={{ background: BUSES[bus].color }} />
                 {BUSES[bus].label} · {n}
               </span>
@@ -208,7 +208,7 @@ function UnitBody({
               <button
                 key={l.other.id}
                 onClick={() => onSelect(l.other.id)}
-                className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 border border-(--line)
+                className="inline-flex min-h-9 items-center gap-1.5 text-[12px] px-3 border border-(--line)
                            hover:border-(--accent) hover:text-(--accent) transition-colors text-left"
               >
                 <i className="size-1.5 rounded-full shrink-0" style={{ background: BUSES[l.bus].color }} />
@@ -243,7 +243,7 @@ function MessageTable({ messages }: { messages: BusMessage[] }) {
   }, [messages, q])
   return (
     <div>
-      <div className="flex items-center gap-2 border border-(--line) bg-(--surface-2) h-8 px-2.5 mb-2.5">
+      <div className="flex items-center gap-2 border border-(--line) bg-(--surface-2) h-11 px-2.5 mb-2.5">
         <Search size={12} className="text-(--ink-2) shrink-0" />
         <input
           value={q} onChange={(e) => setQ(e.target.value)}
@@ -281,7 +281,7 @@ function MsgRow({ m, open, onToggle }: { m: BusMessage; open: boolean; onToggle:
       {open && (
         <tr>
           <td colSpan={4} style={{ padding: '8px 8px 10px' }}>
-            <div className="text-[10px] text-(--ink-3) mb-1.5 font-mono">{m.hex}</div>
+            <div className="text-[11px] text-(--ink-3) mb-1.5 font-mono">{m.hex}</div>
             <pre className="msg-detail">{m.detail}</pre>
           </td>
         </tr>
@@ -327,7 +327,7 @@ function SegmentBody({ segment, onSelect }: { segment: Segment; onSelect: (id: s
                            hover:border-(--accent) hover:text-(--accent) transition-colors text-left"
               >
                 <i className="size-1.5 rounded-full shrink-0" style={{ background: BUSES[segment.bus].color }} />
-                <span className="text-(--ink-3) text-[10px] min-w-10 tabular-nums">{u.ref || '—'}</span>
+                <span className="text-(--ink-3) text-[length:var(--text-micro)] min-w-10 tabular-nums">{u.ref || '—'}</span>
                 <span className="uppercase tracking-wide">{u.name}</span>
               </button>
             ))}
@@ -384,7 +384,8 @@ export default function DetailDrawer({
           transition={{ type: 'spring', stiffness: 360, damping: 34 }}
           role="region" aria-label={`${eyebrow}: ${title}`}
           className="absolute top-3 bottom-3 right-3 w-[480px] max-w-[calc(100vw-24px)] z-40 flex flex-col
-                     border border-(--line) shadow-(--shadow) backdrop-blur-md"
+                     border border-(--line) shadow-(--shadow) backdrop-blur-md
+                     max-[880px]:inset-x-2 max-[880px]:top-2 max-[880px]:bottom-2 max-[880px]:w-auto"
           style={{ background: 'var(--glass)' }}
         >
           <div className="relative px-6 pt-5 pb-4 border-b border-(--line) shrink-0">
@@ -392,7 +393,7 @@ export default function DetailDrawer({
             <div className="flex items-center gap-2 mb-1">
               {canBack && (
                 <button onClick={onBack} aria-label="Back"
-                  className="size-6 grid place-items-center border border-(--line) bg-(--surface-2)
+                  className="size-8 grid place-items-center border border-(--line) bg-(--surface-2)
                              hover:border-(--ink) transition-colors -ml-1">
                   <ArrowLeft size={12} />
                 </button>
@@ -404,8 +405,8 @@ export default function DetailDrawer({
               <div className="mt-2.5 flex gap-2">
                 <button
                   onClick={() => onTrace(sel.unit.id)}
-                  className="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.12em]
-                             px-3 py-1.5 border border-(--line) text-(--ink-2)
+                  className="inline-flex min-h-9 items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em]
+                             px-3 border border-(--line) text-(--ink-2)
                              hover:border-(--accent) hover:text-(--accent) transition-colors"
                 >
                   <Route size={11} /> Trace path
@@ -414,7 +415,7 @@ export default function DetailDrawer({
             )}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 size-9 grid place-items-center border border-(--line)
+              className="absolute top-4 right-4 size-10 grid place-items-center border border-(--line)
                          bg-(--surface-2) hover:border-(--ink) transition-colors"
               aria-label="Close"
             >

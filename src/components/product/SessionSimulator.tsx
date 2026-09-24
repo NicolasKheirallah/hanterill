@@ -313,7 +313,7 @@ function ReportStage() {
         <h3 className="font-mono text-[13px] uppercase tracking-wider text-text-primary">
           {trep("title")}
         </h3>
-        <span className="rounded-sm border border-line px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-text-muted">
+        <span className="rounded-sm border border-line px-2 py-0.5 font-mono text-[length:var(--text-micro)] uppercase tracking-wider text-text-muted">
           {trep("exampleTag")}
         </span>
       </div>

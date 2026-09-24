@@ -179,7 +179,7 @@ export function BatteryMatrixSection() {
               <ToggleGroup.Item
                 key={v}
                 value={v}
-                className="rounded-[2px] px-2.5 py-1.5 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
+                className="rounded-[2px] px-3 min-h-11 press text-text-secondary transition-colors hover:text-text-primary data-[state=on]:bg-text-primary data-[state=on]:text-bg-primary"
               >
                 {t(VIEW_KEY[v])}
               </ToggleGroup.Item>
@@ -509,7 +509,7 @@ function MobileModules({
           );
         })}
       </ul>
-      <p className="border-t border-line px-4 py-2 font-mono text-[10px] text-text-muted">
+      <p className="border-t border-line px-4 py-2 font-mono text-[length:var(--text-micro)] text-text-muted">
         {mode === "voltage" ? t("moduleAvgVoltage") : t("moduleSpread")}. {t("tapModule")}
       </p>
     </div>
@@ -538,7 +538,7 @@ function PackScale({ mean, value }: { mean: number; value: number | null }) {
           <span className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-line-strong" />
         )}
       </div>
-      <div className="mt-1 flex justify-between font-mono text-[10px] text-text-muted">
+      <div className="mt-1 flex justify-between font-mono text-[length:var(--text-micro)] text-text-muted">
         <span>-6 mV</span>
         <span className="tnum">{t("scaleMean", { volts: mean.toFixed(3) })}</span>
         <span>+6 mV</span>

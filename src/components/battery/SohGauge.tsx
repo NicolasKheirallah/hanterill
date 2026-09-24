@@ -78,7 +78,7 @@ export function SohGauge({ value, size = 124 }: { value: number; size?: number }
                 </span>
               </span>
             </span>
-            <span className="-mt-2 font-mono text-[9px] uppercase tracking-wider text-text-muted transition-colors group-hover:text-text-secondary">
+            <span className="-mt-2 font-mono text-[length:var(--text-micro)] uppercase tracking-wider text-text-muted transition-colors group-hover:text-text-secondary">
               {t("howRead")}
             </span>
           </button>
@@ -95,7 +95,7 @@ export function SohGauge({ value, size = 124 }: { value: number; size?: number }
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: DUR.fast, ease: EASE.out }}
             >
-              <div className="mb-2 font-mono text-[10.5px] uppercase tracking-wider text-text-muted">
+              <div className="mb-2 font-mono text-[length:var(--text-micro)] uppercase tracking-wider text-text-muted">
                 {t("howRead")}
               </div>
               <Provenance t={t} />
@@ -144,7 +144,7 @@ function ProvenanceStep({
       <span>
         <span className="text-text-muted">{label}</span>{" "}
         <span className="text-text-primary">{value}</span>
-        <span className="block text-[10.5px] text-text-muted">{sub}</span>
+        <span className="block text-[length:var(--text-micro)] text-text-muted">{sub}</span>
       </span>
     </li>
   );

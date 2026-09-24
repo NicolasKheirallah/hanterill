@@ -122,7 +122,9 @@ scene background is the dark-panel anchor `#12151a`.
 - **Tracking is owned by `globals.css`** for `h1`-`h4` (`-0.022em` / `-0.019em`
   / `-0.017em`). Components do not set their own; a local override is a bug.
   `--track-label` (`0.12em`) is the one value for every uppercase mono label.
-  11px is the floor: nothing on the site sets type below it.
+  11px is the floor: nothing on the site sets type below it. The network
+  explorer's vendored chrome used to carry 9px and 10px labels; those were
+  lifted to the floor, not grandfathered.
 
 ## Spacing
 
@@ -182,6 +184,11 @@ grown - marketing at 7rem, every content and feature page at 4.5rem, 36% apart.
 
 ## Microinteractions
 
+- **Control targets.** Every interactive control clears the touch floor:
+  44px (`h-11`) for the header utility cluster, download rows, the network
+  explorer's top-bar buttons, filter chips and graph zoom controls, and the
+  docs selectors. Denser secondary controls (copy buttons, drawer chips) sit at
+  40px. A control may look compact; its hit area may not drop below this.
 - Silent success - no celebratory toasts. Optimistic update + Undo over confirm
   dialogs. Hover tooltips delay 800ms; focus tooltips 0ms.
 - `.press`: a 1px push on `:active`, pointer devices only

@@ -237,7 +237,7 @@ export function ScanSimulator({ compact = false }: { compact?: boolean }) {
         </AnimatePresence>
       </ul>
 
-      <p className="border-t border-line px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-text-muted">
+      <p className="border-t border-line px-4 py-2 font-mono text-[length:var(--text-micro)] uppercase tracking-wider text-text-muted">
         {t("footerNote")}
       </p>
     </div>

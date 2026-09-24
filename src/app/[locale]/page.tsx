@@ -2,16 +2,14 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Hero } from "@/components/hero/Hero";
 import { ConnectionDiagram } from "@/components/architecture/ConnectionDiagram";
-import { FeatureBlocks } from "@/components/features/FeatureBlocks";
 import { BatteryMatrixSection } from "@/components/battery/BatteryMatrixSection";
-import { SessionSimulator } from "@/components/product/SessionSimulator";
 import { PrivacySection } from "@/components/sections/PrivacySection";
 import { VehicleCompatibility } from "@/components/vehicles/VehicleCompatibility";
-import { CaseStudy } from "@/components/sections/CaseStudy";
 import { DownloadSection } from "@/components/download/DownloadSection";
 import { SafetySection } from "@/components/sections/SafetySection";
 import { Faq, type QA } from "@/components/sections/Faq";
 import { ClosingCta } from "@/components/sections/ClosingCta";
+import { HomeMore } from "@/components/sections/HomeMore";
 import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({
@@ -33,13 +31,15 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
     <>
       <Hero />
       <ConnectionDiagram />
-      <FeatureBlocks />
       <BatteryMatrixSection />
-      <SessionSimulator />
-      <CaseStudy />
-      <PrivacySection />
+      {/* The decision path: what it reads (the matrix above), whether it reads
+          your car, then the download. The full feature walkthrough, the
+          interactive session and the seven-step case study live on their own
+          pages, linked from HomeMore. */}
       <VehicleCompatibility />
       <DownloadSection />
+      <HomeMore />
+      <PrivacySection />
       <SafetySection />
       <Faq items={faqItems} title={tf("title")} />
       <ClosingCta />
