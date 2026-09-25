@@ -1,57 +1,35 @@
-Download Hanterill for your computer, check the file, then open the app before connecting a car.
-The [download page](/download) shows the latest published release. Features described in an
-unreleased changelog entry may not be in that download yet.
+Hanterill is a desktop app for Windows, macOS and Linux. It runs on your computer. You do not need an account or an internet connection to use it with a vehicle.
 
-## Choose a file
+## Choose a download
 
-| Computer | Choose | Before first launch |
+Open the [download page](/download) and choose the file for your computer:
+
+| Computer | File to choose | What to do |
 | --- | --- | --- |
-| Apple Silicon Mac | macOS arm64 `.dmg` | Drag the app to Applications. |
-| Intel Mac | No macOS x86_64 build has been published yet; check the assets of the release you install | |
-| Windows 10 or 11, x64 | Windows x64 setup `.exe` | The installer can fetch WebView2 if it is missing. |
-| Windows ARM64 | Use an ARM64 artifact only if the release lists one | Check the release assets; do not assume every release publishes one. |
-| Ubuntu or Debian | `.deb` | Install with your package manager so dependencies are resolved. |
-| Fedora, openSUSE and other RPM distributions | `.rpm` | Install with your package manager. |
-| Other Linux systems | The portable `.tar.gz` archive, or a package made for your distribution | WebKitGTK 4.1 is required. Check the asset list for the current release. |
+| Windows | Setup installer or MSI | Open the downloaded file and follow the installer. |
+| macOS | DMG for Apple Silicon or Intel | Open the file and drag Hanterill into Applications. |
+| Linux | DEB, RPM, AppImage or archive | Choose the format you normally use for installing apps on your distribution. |
 
-The standalone Windows executable needs the Microsoft Edge WebView2 Evergreen Runtime already
-installed. Package types vary by release; the assets on the release page are the source for the
-version you download.
+If you are unsure whether your Mac has Apple Silicon or Intel, open **About This Mac** from the Apple menu. Use the chip or processor shown there to choose the matching download.
 
-## Check the download
+## Open the app for the first time
 
-The release includes `SHA256SUMS.txt` when checksums are published. Compare the checksum of your
-download with the entry for that exact filename. On macOS or Linux, run
-`shasum -a 256 <downloaded-file>`. On Windows PowerShell, run
-`Get-FileHash <downloaded-file> -Algorithm SHA256`. A mismatch means you should discard the file
-and download it again.
+Your computer may ask you to approve an app downloaded from the internet. Check that you selected the Hanterill file you intended to install before continuing.
 
-## Open it on macOS
+### macOS
 
-Open the app from Applications. If Gatekeeper says the developer cannot be verified, Control-click
-`Hanterill.app`, choose **Open**, then confirm **Open**. The macOS build is ad-hoc signed and is not
-notarized with an Apple Developer ID. On the first vehicle connection, allow the local-network
-permission. You can review it later under **System Settings → Privacy & Security → Local Network**.
+Open **Applications**, then open Hanterill. If macOS blocks it, open **System Settings**, go to **Privacy & Security**, and use the option to open Hanterill shown next to the warning. When Hanterill asks for permission to find devices on the local network, allow it so it can reach the car through the Ethernet cable.
 
-## Open it on Windows
+### Windows
 
-Run the setup file. SmartScreen may show **Windows protected your PC** for an unsigned build. After
-checking the release source and checksum, choose **More info → Run anyway** if you want to proceed.
-If the app window does not open, check that WebView2 is installed. When Windows Firewall asks,
-allow Hanterill to use the network needed for the vehicle connection.
+Open Hanterill from the Start menu after installation. Windows may show a security prompt when you first open it. Review the app name and choose the option to continue if it matches your download. The first time you look for a car, Windows Firewall may ask whether Hanterill can use the local network. Allow access for the network used by your wired adapter.
 
-## Open it on Linux
+### Linux
 
-On Ubuntu or Debian, install a downloaded package with `sudo apt install ./<package>.deb`.
-Hanterill's vehicle connection uses ordinary UDP and TCP sockets, so the app itself does not need
-root privileges. If a portable build does not open, check for WebKitGTK 4.1 and the dependencies
-listed with that release. The [Connection](/docs/connection) guide covers a link-local adapter
-that appears in Linux but cannot reach the car.
+Install the package that matches your distribution, then open Hanterill from your application menu. An AppImage is a portable file; your file manager may ask you to mark it as executable before it will open.
 
-## After installation
+## Check that installation worked
 
-The released app needs a real vehicle for a diagnostic session. The browser's
-[simulated scan](/features/vehicle-diagnostics) lets you see the flow without one; development
-builds have a separate simulated vehicle harness. Before buying a cable, check
-[Supported vehicles](/docs/supported-vehicles) and [Hardware and adapters](/docs/hardware-and-adapters).
-Then follow [Getting started](/docs/getting-started).
+Open the **Connection** screen. You can choose a built-in simulated vehicle to explore the screens before connecting a real car. Simulated readings are labeled so they are not confused with vehicle readings.
+
+When you are ready to connect a car, follow [Getting started](/docs/getting-started). If the car does not appear, use [Troubleshooting](/docs/troubleshooting).

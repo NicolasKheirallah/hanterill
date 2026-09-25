@@ -1,99 +1,61 @@
-Hanterill talks to the car over Ethernet. A modern car is a small
-network, and one of its plugs speaks ordinary internet. This page explains the cable, the
-network, and what to do when the car does not appear.
+import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 
-## The cable
+Hanterill connects to supported cars through a wired Ethernet cable. The car's central gateway receives the app's requests and passes them to the appropriate control unit. This page covers the connection and what to check when it fails.
 
-An ENET cable connects specific OBD-II pins to a standard RJ45 plug. It contains no electronics.
-It is not an ELM327, not a J2534 interface, and not a Bluetooth adapter. The cable itself needs
-no driver.
+## How the physical connection works
 
-The chain looks like this:
+When you plug an ENET cable between your car's OBD-II port and your computer's Ethernet adapter, three things happen in order:
 
-```text
-OBD-II port in the car
-  -> ENET cable
-  -> RJ45
-  -> USB-C Ethernet adapter
-  -> your laptop
-```
+1. **The cable wakes the car's Ethernet port**: Inside the car's OBD-II socket, four pins carry standard 100 Mbps Ethernet (pins 3, 11, 12, and 13) and one pin acts as an activation line (pin 8). Applying power or a resistor signal to that activation pin tells the car's central gateway that a diagnostic tool is plugged in, so the car powers up its Ethernet port.
+2. **Both sides pick local network addresses automatically**: Neither your laptop nor your car runs a home router (DHCP server). Instead, after a few seconds of waiting, both your computer and the car automatically pick **link-local IP addresses** in the `169.254.x.x` range. Your computer's operating system will often call this a "Self-assigned IP" or "Unidentified network with no internet access". That is completely normal and is exactly what the car expects.
+3. **Hanterill opens the connection**: The car's gateway accepts the connection and passes requests to the battery, brake and other control units.
 
-Any passive OBD-II to Ethernet cable works, including the ones sold as "BMW ENET" or "E-Sys"
-cables. They are the same wiring.
+<ProtocolFlow
+  steps={[
+    { node: "Computer", detail: "169.254.x.x link-local" },
+    { node: "ENET cable", detail: "OBD-II pins 3/8/11/12/13" },
+    { node: "Vehicle gateway", detail: "CEM / VGM on port 13400" },
+    { node: "Control units", detail: "Battery, brakes, climate, body" },
+  ]}
+  request="discover vehicle and activate diagnostic routing"
+  response="routing active, ready to read modules"
+/>
 
-## How the car appears on your network
+## Step-by-step connection in the app
 
-Cars that support this use IPv4 link-local addressing, the `169.254.x.x` range. It is the same
-scheme two computers use when you plug a cable directly between them: each side picks an address
-without needing a router.
+1. **Plug in**: Connect the OBD-II plug under the driver's dashboard and the RJ45 plug to your computer.
+2. **Wake the car**: Sit in the driver's seat or press the brake pedal so the dashboard wakes up.
+3. **Pick your Ethernet adapter**: On the **Connection** screen in Hanterill, select your wired Ethernet adapter. The app automatically ranks wired adapters with a `169.254.x.x` address at the top and filters out Wi-Fi, VPN, and virtual adapters.
+4. **Click Find vehicle**:
+   - Hanterill first sends a discovery broadcast on the cable asking any vehicle gateway to announce its VIN and address.
+   - If no broadcast reply arrives within the timeout window (which is common on newer SEA-platform cars like the Volvo EX30, Polestar 4, and Zeekr models that stay silent on broadcast), Hanterill automatically tries connecting directly to the platform's standard gateway addresses (`169.254.19.1` and `169.254.1.1`) so you do not have to type IP addresses by hand.
+5. **Click Connect**: Hanterill activates routing with the gateway, identifies the vehicle platform, and displays **Connected**.
 
-Most of the time the car and your adapter sort this out on their own. If your operating system
-sits waiting for a DHCP server that will never come, set the adapter to link-local or automatic
-private addressing manually.
+## Understanding the live connection log and status badges
 
-<Callout kind="note" title="What Hanterill actually does">
-It sends a discovery broadcast on UDP port 13400 and listens for a car to announce itself. It then
-opens a TCP connection to that same port and asks the car to activate a diagnostic route before
-sending anything else. The [Architecture](/docs/architecture) page covers each step.
-</Callout>
+While connecting, the **Connection** screen shows a live, plain-language status log so you never have to guess why a connection is waiting:
 
-Hanterill picks the network interface for you. It ranks every adapter it can see, ignores virtual
-ones like VPNs and loopback, and prefers a wired link-local address. If you plug the cable in or
-out mid-session, it notices without needing a restart.
+| Status shown in the app | What it means in plain language | What to do |
+| :--- | :--- | :--- |
+| **Waiting for network address (DHCP)** | Your computer just detected the cable and is still waiting a few seconds to see if a home router is present before picking its `169.254.x.x` address. | Wait 5 to 10 seconds and click **Find vehicle** again. |
+| **Link down / No carrier** | The Ethernet adapter sees no electrical signal from the car. | Check that the car is awake, both plugs are seated, and (on EX30 / Polestar 4 / Zeekr) that your cable powers activation pin 8. |
+| **Port closed on gateway** | The car is on the network, but its diagnostic port is currently asleep or refused the connection. | Wake the dashboard (press the brake pedal or turn ignition on) and try again. |
+| **Unreadable traffic** | Data arrived on the wire that is not valid diagnostic traffic. | Disconnect any VPN client or virtual network bridge that may be intercepting local traffic. |
+| **Connected (DoIP)** | Routing is active and the car's gateway is ready to answer diagnostic requests. | Proceed to **Overview**, **Battery Health**, or **Fault Codes**. |
 
-## If the car does not appear
+## Automatic recovery if the car briefly drops the link
 
-Work down this list. The first two cover most cases:
+Vehicle gateways close idle connections if no message is sent for several seconds, or if a module restarts during a fault-code clear. Hanterill handles both automatically:
 
-- Is the ignition on? A sleeping car answers nothing.
-- Is the RJ45 end in an Ethernet port, not a USB-only port?
-- Is a VPN or firewall blocking UDP 13400? Try disabling them briefly.
-- Try another Ethernet adapter. Some cheap USB adapters drop link-local traffic.
-- Is another diagnostic tool holding the connection? Only one tool can talk to the car at a time.
+- **Automatic keep-alive**: While you are connected, Hanterill sends a lightweight heartbeat in the background so the car's gateway does not fall asleep while you are reading a screen.
+- **Automatic reconnect**: If a module reboot or brief voltage dip interrupts the connection during a scan, Hanterill waits a moment, re-opens the diagnostic channel, and continues without losing the work already collected.
 
-<Callout kind="caution" title="One cable, one car">
-The cable goes from your computer to the car's diagnostic port, never to your home router. Do not
-bridge the car's network to your normal network.
-</Callout>
+## Exploring with simulated vehicles
 
-## When the link drops
+At the bottom of the **Connection** screen, you can connect to three built-in **Simulated vehicles** whenever you do not have a car plugged in:
 
-Link recovery is built into the transport, so a brief interruption does not cost you the session.
+- **Healthy baseline**: a clean reference car for exploring every screen and report layout.
+- **Fault-injected**: a car with active, pending, and stored fault codes and freeze-frame snapshots.
+- **12 V sleep drain**: a car with an elevated parked standby current draw and module wake history.
 
-### The recovery ladder
-
-Recovery climbs a ladder, and only the rung that is needed runs:
-
-1. Reactivate the route. If the link survives, Hanterill re-sends routing activation on it.
-2. Reconnect the TCP channel. If the socket is gone, it opens a fresh TCP connection on port 13400
-   and activates the route on that channel.
-3. Rediscover. If the channel cannot be rebuilt, it starts over from discovery: a UDP broadcast on
-   13400, then a new channel.
-
-Alongside the ladder:
-
-- Replies from the old connection are rejected as stale, so a late answer cannot be mistaken for a
-  fresh one.
-- A keepalive (`TesterPresent` every two seconds) stops the car from putting modules to sleep in the
-  middle of a long scan. A TCP keepalive runs alongside it, so a link that has gone quiet is noticed
-  rather than waited on.
-- If the car itself reports a different identity after a reconnect, Hanterill ends the session
-  rather than mixing two cars' readings into one file.
-
-## Wireless vs wired
-
-The wired Ethernet path over the ENET cable is the tested one. Two other link types exist:
-
-- **CAN / ISO-TP** is a second link type, implemented in the transport. It speaks over the car's
-  OBD-II pins and needs a supported hardware adapter; Hanterill ships none, so the Ethernet cable
-  remains the way in.
-- **Wi-Fi** is wireless. Some cars expose diagnostics over their own access point, and if that is
-  available and Hanterill supports it, discovery and routing work the same way over the wireless
-  interface.
-
-## Next
-
-- [Architecture](/docs/architecture): what happens on the wire, step by step.
-- [Supported vehicles](/docs/supported-vehicles): which cars this works on today.
-- [Interface and languages](/docs/interface-and-language): per-OS permission notes and the
-  interface settings.
+Simulated sessions work completely offline and label every screen and export as simulated data.

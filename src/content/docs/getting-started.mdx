@@ -1,50 +1,66 @@
-Hanterill is a desktop app that plugs into your car with one cable and reads what the car's
-computers already know. There is no account to create, no server to reach, and nothing you read
-leaves your machine.
+import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 
-You do not need to understand the protocol to use it. This page gets you connected. The rest of
-these docs explain what each screen shows and where the numbers come from.
+This guide takes you from connecting the cable to saving your first scan. Check your model's support level before relying on a reading.
 
 ## What you need
 
-- A supported car. Polestar 2 and the CMA Volvos (XC40/EX40, C40/EC40) are the tested platforms.
-  See [Supported vehicles](/docs/supported-vehicles).
-- An ENET cable: OBD-II on one end, RJ45 on the other. It is a plain copper cable with no chip
-  inside, so there is no driver to install.
-- An Ethernet port on your computer. A USB-C to Ethernet adapter works.
-- Hanterill installed. See [Install on your computer](/docs/installation).
+- **A supported vehicle**: Polestar 2, Volvo XC40 Recharge / EX40, or Volvo C40 Recharge / EC40 on the CMA platform are fully verified. Other Volvo, Polestar, and Zeekr models have partial or provisional support (see [Supported vehicles](/docs/supported-vehicles)).
+- **An ENET cable**: an inexpensive passive OBD-II to RJ45 Ethernet cable. There is no chip inside the cable and no driver to install. Note that if you are connecting to a newer SEA-platform car (such as a Volvo EX30, Polestar 4, or Zeekr), your cable must pass 12 V power to the diagnostic activation pin so the car turns on its Ethernet port (see [Hardware and adapters](/docs/hardware-and-adapters)).
+- **An Ethernet port on your computer**: a built-in RJ45 port or any standard USB-C or USB-A Ethernet adapter.
+- **Hanterill installed**: download the app for Windows, macOS, or Linux from the [download page](/download). See [Install on your computer](/docs/installation) if your operating system shows a first-launch security prompt.
 
-## Your first session
+<Callout kind="note" title="Exploring without a car">
+Open **Connection** and choose a simulated vehicle to explore the app without a car. The available examples include a healthy car, one with fault codes and one with a 12 V battery drain. Simulated readings are labeled and kept separate from real scans.
+</Callout>
 
-1. Turn the car to ignition-on. You do not need to start it.
-2. Plug the ENET cable into the car's OBD-II port and the RJ45 end into your computer.
-3. Open Hanterill. It looks for a car on the cable and reports what it finds in the title bar.
-4. When the state reads **Connected**, open **Overview**. Hanterill reads the car's identity and a
-   battery summary in one pass.
-5. Go where you need to from there: **Fault codes** for a scan, **Battery** for the high-voltage
-   view, **Inspection report** for the scored summary.
-6. Sessions archive themselves locally as you work. The **Sessions** screen reopens them later and
-   compares any two.
+## Step 1: Plug in the cable
 
-Everything above is a read. Hanterill asks questions and writes nothing back to the car.
+1. Find the car's diagnostic socket (the OBD-II port) under the dashboard on the driver's side, near the hood release lever.
+2. Plug the wide 16-pin end of the ENET cable firmly into the car's diagnostic socket.
+3. Plug the RJ45 network end into your computer's Ethernet port or USB Ethernet adapter.
 
-## No car handy?
+## Step 2: Wake the car
 
-The released app connects to real cars only. Development builds can simulate a car for testing,
-and this website has a [simulated scan](/features/vehicle-diagnostics) you can watch, but the app
-you download expects a vehicle on the other end of the cable.
+A sleeping car shuts down its network gateway to save the 12 V battery, so it will not answer until it is awake.
 
-For a job-by-job path through the app, use [Common tasks](/docs/common-tasks).
+- **On an electric Volvo or Polestar**: sit in the driver's seat with the key present, or press the brake pedal once so the driver display lights up.
+- **On a hybrid or combustion Volvo**: press the start button or turn the start knob with your foot off the brake to wake the electronics (ignition on, engine off).
 
-## Where your data goes
+Wait about ten seconds after plugging in. Your computer and the car's central gateway will automatically give themselves local network addresses (starting with `169.254.`). You do not need Wi-Fi, internet access, or a router, and it is normal for your operating system to say the Ethernet adapter has "No internet" or a "Self-assigned IP".
 
-Sessions, reads and exports are written to your disk. Nothing is uploaded. See
-[Privacy](/docs/privacy).
+## Step 3: Connect in Hanterill
 
-## If something does not work
+1. Open Hanterill. It opens on the **Connection** screen.
+2. Select your wired Ethernet adapter from the interface list and click **Find vehicle**.
+3. Hanterill sends a discovery request over the cable (and automatically tries the car's direct gateway address if the car is configured not to broadcast its presence).
+4. When your car answers, click **Connect**. Hanterill opens a diagnostic channel to the car's central gateway, identifies the vehicle platform, and loads the matching module list and battery layout.
 
-If the car never appears, the usual causes are the cable, the adapter, or a firewall. The
-[Connection](/docs/connection) page walks through them in order. If a reading looks wrong, read
-[Safety](/docs/safety) before acting on it.
+<ProtocolFlow
+  steps={[
+    { node: "Hanterill", detail: "desktop app" },
+    { node: "ENET cable", detail: "passive Ethernet link" },
+    { node: "Vehicle gateway", detail: "CEM / VGM router" },
+    { node: "Control units", detail: "40+ modules in the car" },
+  ]}
+  request="identify vehicle and read module health"
+  response="VIN, fault codes, and battery health returned"
+/>
 
-[Get help](/docs/get-help) explains how to export a scrubbed support bundle and report a problem.
+## Step 4: Run your first scan
+
+Once connected, the best place to start is the **Overview** screen:
+
+1. Open **Overview** in the left sidebar and click **Run full check**.
+2. Hanterill asks every control unit in the car to identify itself, reads any stored or active fault codes, and checks the high-voltage battery and 12 V system.
+3. Because Hanterill can ask all modules on the network to answer at once and remembers which optional modules are not fitted to your specific car, a scan finishes quickly without waiting on empty slots.
+4. When the scan completes, the session is saved automatically on your computer. You can add your own notes (for example, *"Before summer road trip"* or *"Checking warning message"*), inspect the **Battery Health** and **Fault Codes** screens in detail, or open **Inspection Report** to print a scored summary.
+
+<Callout kind="note" title="Safe by default">
+Connecting, identifying modules, reading battery health, checking fault codes, and streaming live sensors are all **read-only** actions. They only ask the car questions and never change any setting or clear any memory. Actions that change the car (such as clearing fault codes or retracting the rear parking brake for pad replacement) live in dedicated areas and always ask for your explicit confirmation first.
+</Callout>
+
+## Where to go next
+
+- [Screen tour](/docs/workspace-tour): a plain-language guide to every screen in the app and the three audience modes (*Owner*, *Technician*, and *Engineer*).
+- [Common tasks](/docs/common-tasks): step-by-step paths for checking a used car, investigating a warning light, or checking your 12 V battery.
+- [Troubleshooting](/docs/troubleshooting): what to check if the car does not appear when you plug in.

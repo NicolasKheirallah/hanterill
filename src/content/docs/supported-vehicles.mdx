@@ -1,131 +1,54 @@
-import { PlatformSupport } from "@/components/docs/mdx/PlatformSupport";
-import { VehicleSupport } from "@/components/docs/mdx/VehicleSupport";
+Hanterill's support varies by model. A car may connect successfully while some battery or fault readings are still being checked. Use the labels below to see which functions have been tested on real cars.
 
-Hanterill was built CMA-first. The Compact Modular Architecture platform, under the Polestar 2
-and the smaller electric Volvos, is where the battery, ECU and routine coverage was written and
-checked against a real car. Other platforms are in progress, and this page says exactly how far
-each one has got.
+## What the support labels mean
 
-## Reachable is not the same as supported
+- **Supported**: Tested and verified on a real reference vehicle. Connection, module discovery, fault-code scanning, high-voltage battery health, cell-group voltages, live telemetry, and inspection reports are exercised regularly.
+- **Partial**: Core diagnostic functions (such as connecting over Ethernet, reading the fitted module list, and scanning fault codes) have been verified on a real vehicle, while other platform-specific paths (such as hybrid battery cell decoding) are still being verified.
+- **Testing**: The platform's module catalogue, diagnostic addresses, and battery pack layouts ship in the app, but still need verification across more real cars and software versions. Treat readings on these vehicles as provisional.
+- **Research**: Early-stage architectural investigation. Some cars in this group can already connect to the gateway, but full module and battery decoding is not ready for everyday diagnostic use.
 
-Two different things, and the difference matters:
+## Platform overview
 
-- **Reachable** means Hanterill can get a connection to the car over DoIP.
-- **Supported** means the diagnostic functions are written and checked against known-good
-  readings.
+### CMA (Compact Modular Architecture) - Supported
 
-A car can be reachable and still tell you almost nothing useful. The decoder that turns raw bytes
-into a battery percentage has not been written or verified for that platform yet. The labels on
-this site always describe the second thing.
+CMA is the primary reference platform for Hanterill.
 
-## What the labels mean
+- **Electric models (Supported)**: **Polestar 2**, **Volvo XC40 Recharge / EX40**, and **Volvo C40 Recharge / EC40** are fully supported across single-motor and dual-motor variants. All 49 control units in the CMA catalogue, full fault-code scanning with freeze-frame snapshots, live telemetry, subsystem screens, and high-voltage battery diagnostics are verified.
+- **Combustion and plug-in hybrid models (Partial / Research)**: Combustion and T4/T5 Twin Engine plug-in hybrid CMA cars (including **Volvo XC40** petrol/hybrid variants and **Lynk & Co 01 / 02 / 05**) share the CMA body and chassis network. Engine-specific diagnostics are supported through the dedicated [Engine diagnostics](/docs/engine-lane) path, while the center-tunnel hybrid battery pack layouts are catalogued and awaiting live verification on more cars.
 
-| Label | Meaning |
-| --- | --- |
-| Supported | Verified against a live car. Battery, fault codes, ECU identification and live data are exercised regularly. |
-| Partial | Some functions verified, others not covered yet on this model. |
-| Testing | The code exists but still needs testing on more cars. Treat every reading as provisional. |
-| Research | We are still figuring out how the platform works. Not usable for diagnostics. |
+### SPA (Scalable Product Architecture) - Partial / Testing
 
-## Platforms
+SPA underpins the larger 60-series and 90-series Volvos (**XC60, S60, V60, S90, V90, and XC90**, including **T8 Recharge** plug-in hybrids).
 
-The tables below are generated from the same support data the rest of the site uses, so they
-cannot drift from the [vehicles page](/vehicles).
+- **What works today**: Direct DoIP connection, reading vehicle identity, discovering fitted modules across the 41-module SPA catalogue, and scanning fault codes have been verified on a live 2018 Volvo V90 T6.
+- **What is in testing**: The center-tunnel plug-in hybrid battery layouts (both the 96-group and 102-group T8 packs) and SPA battery management reads ship in the catalogue, and Hanterill can also read early battery health and charge metrics via the central gateway when the battery module stays quiet over direct Ethernet. Treat SPA battery readings as provisional until more T8 hybrid vehicles are verified live.
 
-## Before you buy an adapter
+### SEA1 (Sustainable Experience Architecture) - Testing / Research
 
-This table describes the connection path, not a promise that every reading is verified. A standard
-passive ENET cable is the documented route for the CMA reference car. Other cars can need different
-wiring, and a catalogue entry alone does not prove that the car will answer.
+SEA underpins the **Volvo EX30**, **Polestar 4**, and **Zeekr 001 / 009 / X**.
 
-| Vehicle family | Connection evidence | What to buy or check first |
-| --- | --- | --- |
-| Polestar 2 / CMA Volvos | The Polestar 2 is the live DoIP reference; CMA shares a diagnostic catalogue, but individual variants still need their own checks | Passive OBD-II to RJ45 ENET cable and an Ethernet port or USB-C Ethernet adapter. Confirm your model and year in the table below. |
-| SPA1 Volvos (XC60, XC90, V60, S60) | Provisional DoIP diagnostics arrived in 0.2.2: identity, fault codes and early battery DIDs, with the module roster and decoders still being confirmed on more cars | The same passive ENET cable. Treat every reading as provisional and check the **Capabilities** screen for the function you need. |
-| Older SPA Volvos and T8 hybrids | The battery answers over older CAN wiring. The app implements an ISO-TP CAN transport, but no CAN adapter ships with it | An ENET cable cannot reach this battery path. Live battery scanning waits on CAN hardware Hanterill does not supply. |
-| EX30 / Polestar 4 / Zeekr / SEA1 | 0.2.2 reaches cars that stay silent during discovery by opening DoIP straight at the gateway, verified on a Zeekr 001. The diagnostic definitions still need testing on more cars | The same passive ENET cable, ignition on. Connection is no longer the blocker; the readings are still provisional. |
-| EX90 / Polestar 3 / SPA2 | Research only | No purchase recommendation for Hanterill diagnostics yet. |
+- **Direct gateway connection**: Unlike CMA cars that broadcast their presence as soon as you plug in, SEA vehicles often stay silent on UDP broadcast. Hanterill automatically falls back to connecting directly to the SEA gateway (`169.254.19.1`), which has been verified on a live 2024 Zeekr 001.
+- **Hardware note**: SEA vehicles require your ENET cable to supply 12 V on **OBD Pin 8** to switch on the car's Ethernet port. See [Hardware and adapters](/docs/hardware-and-adapters) if your adapter link light does not come on.
+- **Battery and module catalogues**: The 25-module SEA1 catalogue and the battery pack layouts for the EX30 (49/51 kWh LFP and 69 kWh NMC) and Polestar 4 / Zeekr 001 (100 kWh NMC) are built into the app and are currently in **Testing**.
 
-For the cable and interface details see [Hardware and adapters](/docs/hardware-and-adapters).
-If your car connects but does not show a reading, the **Capabilities** screen explains the
-function's witnessed support level. [Reading results](/docs/reading-results) explains how to use
-that label.
+### SPA2 (Volvo EX90 and Polestar 3) - Research
 
-### CMA
+Second-generation SPA vehicles use a newer core-computing gateway and security model. They are currently under research and are not yet usable for diagnostics.
 
-The tested platform. Polestar 2 and the CMA Volvos share one high-voltage layout, so a feature
-written for one works on the others.
+## Built-in battery pack layouts (11 topologies)
 
-<PlatformSupport platform="CMA" />
+When you open the **Battery Health** screen, Hanterill does not assume every car has the same battery. Instead, it selects the matching pack layout from **11 catalogued battery topologies** so that a 96-group, 102-group, 107-group, 108-group, or 110-group battery reports 100% complete at its true cell-group count, and shows where the modules physically sit in the car:
 
-The full capability breakdown for the reference car:
-
-<VehicleSupport model="Polestar 2" />
-
-### SPA
-
-Partially supported. Ships as catalogue data: pack topologies, a CAN-era BECM registry and
-decoders. The hybrid and EV battery path still needs testing on more cars. On first-generation SPA
-the battery answers over older CAN wiring. An ISO-TP CAN transport is implemented in the app, but no
-hardware adapter ships yet, so live battery scanning waits on that adapter, not on software that does
-not exist.
-
-<Callout kind="caution" title="Battery path needs more cars">
-The SPA battery definitions still need testing on more cars before you rely on the figures.
-</Callout>
-
-<PlatformSupport platform="SPA" />
-
-### SEA1
-
-The EX30-class definitions exist in the catalogue: ECU registry, routing addresses, identifier
-maps and cell mapping. Every one of them still needs testing on more cars. The platform is called
-SEA1 in the app; "SEA" is the family name.
-
-<Callout kind="caution" title="Needs testing on more cars">
-SEA1 ships as definitions that still need testing on more cars. Zeekr and other sub-platforms
-deliberately do not inherit the EX30 map, because family resemblance is not evidence.
-</Callout>
-
-<PlatformSupport platform="SEA" />
-
-### SPA2
-
-Under investigation. The gateway and security model work differently, and no implementation has
-been tested on a car yet.
-
-<Callout kind="note" title="Research">
-Detection and registry entries only. Nothing on this platform produces a reading you should act
-on.
-</Callout>
-
-<PlatformSupport platform="SPA2" />
-
-## Battery pack layouts
-
-The cell matrix takes its shape from the catalogue, never from a number written into the code.
-Each pack layout records how many cell groups it has and how they are arranged:
-
-| Platform | Layout | State |
-| --- | --- | --- |
-| CMA | 108 groups: 27 modules of 4 (78 kWh) | Verified on the reference car |
-| CMA | 108 groups: 27 modules of 4 (82 kWh) | Catalogued from catalogue and decoder evidence |
-| CMA | 96 groups: 24 modules of 4 (69 kWh) | Defined from catalogue and decoder evidence |
-| SPA | 96 (69 kWh), 108 (78 kWh), hybrid 102 (T8) | Catalogued, needs testing on more cars |
-| SPA | hybrid 96 (early T8, 11.6 kWh) | Catalogued, needs testing on more cars |
-| SEA1 | 107 (69 kWh NMC), 120 (51 kWh LFP) | Catalogued, needs testing on more cars |
-| SEA1 | 110 (100 kWh NMC, Zeekr-class) | Catalogued, needs testing on more cars |
-
-A pack is judged complete at its own cell count. A 102-cell hybrid is never marked incomplete for
-not having 108.
-
-## Independent, not affiliated
-
-Compatibility describes which cars Hanterill can communicate with. It is not a claim of
-endorsement. Hanterill is an independent project and is not affiliated with Volvo Cars, Polestar
-or Geely.
-
-## Next
-
-- [Connection](/docs/connection): getting a link to one of these cars.
-- [Battery diagnostics](/docs/battery-diagnostics): what the battery readings mean.
+| Platform & Vehicle Family | Pack Variant & Chemistry | Series Cell Groups | Module Layout | Physical Location in the Car |
+| :--- | :--- | :--- | :--- | :--- |
+| **CMA Electric** (Polestar 2, EX40, EC40) | Long Range (78 / 82 kWh NMC) | **108 groups** | 27 modules x 4 groups | Under-floor + rear footwell + center tunnel (2 layers) |
+| **CMA Electric** (Polestar 2, EX40, EC40) | Standard Range (69 kWh LFP, 2024+) | **96 groups** | 24 modules x 4 groups | Under-floor + rear footwell |
+| **CMA Plug-in Hybrid** (XC40 T4/T5, Lynk & Co 01) | Early PHEV (9.7 / 10.7 kWh) | **96 groups** | 6 modules x 16 groups | Center tunnel |
+| **CMA Plug-in Hybrid** (Lynk & Co 01 EM-P) | Long-Range PHEV (17.6 kWh) | **102 groups** | 6 modules x 17 groups | Center tunnel |
+| **SPA Plug-in Hybrid** (XC60 / S60 / V60 / S90 / V90 / XC90 T8) | Early T8 Twin Engine (10.4 / 11.6 kWh) | **96 groups** | 6 modules x 16 groups | Center tunnel (2 layers) |
+| **SPA Plug-in Hybrid** (XC60 / S60 / V60 / S90 / V90 / XC90 T8) | Extended Range T8 (18.8 kWh, 2022.5+) | **102 groups** | 6 modules x 17 groups | Center tunnel (3 layers) |
+| **SPA Electric** | Standard Range (69 kWh) | **96 groups** | 24 modules x 4 groups | Under-floor |
+| **SPA Electric** | Long Range (78 kWh) | **108 groups** | 27 modules x 4 groups | Under-floor |
+| **SEA1 Electric** (Volvo EX30) | Standard Range (49 / 51 kWh LFP) | **107 groups** | 4 modules (26-27 groups each) | Under-floor skateboard |
+| **SEA1 Electric** (Volvo EX30) | Extended Range & Twin (69 kWh NMC) | **108 groups** | 4 modules x 27 groups | Under-floor skateboard |
+| **SEA Electric** (Polestar 4, Zeekr 001) | Long Range (100 kWh NMC) | **110 groups** | 4 modules (27-28 groups each) | Under-floor skateboard |

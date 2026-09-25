@@ -1,61 +1,52 @@
-Versioner följer [SemVer](https://semver.org/). En release är en tagg i appens repository, och
-anteckningarna för varje version finns med den versionen, renderade på
-[changelog-sidan](/changelog).
+Versionsnummer har tre delar: huvudversion, delversion och rättning. Varje publicerad utgåva motsvarar en taggad version,
+och versionsanteckningarna för varje version visas på [ändringsloggsidan](/changelog).
 
-## Var du hittar saker
+## Var du hittar nedladdningar och versionsanteckningar
 
-- **[Changelog](/changelog)**: anteckningarna för varje version, renderade på den här sajten.
-- **[Versioner](https://github.com/NicolasKheirallah/hanterill/releases)**: taggade byggen med
-  installerare och en checksumfil. [Nedladdningssidan](/download) läser senaste release live från
-  GitHub.
+- **[Ändringslogg](/changelog)**: Detaljerade anteckningar för varje taggad version, presenterade på den här webbplatsen.
+- **[Ladda ned](/download)**: Aktuella installationsfiler för macOS, Windows och Linux.
 
-## Vad en version innehåller
+## Hur versionsanteckningar beskriver plattformsmognad
 
-Versionsanteckningar håller samma uppdelning mellan verifierat och overifierat som resten av sajten:
+Versionsanteckningarna använder samma tydliga mognadsnivåer som resten av dokumentationen:
 
-1. Vad som är **verifierat** på en testad plattform (CMA idag).
-2. Vad som är **katalogiserat men overifierat** för andra plattformar (SPA och SEA1 vid skrivandet).
-3. Vad som är **forskning**: fångster, proveniensdokument och öppna frågor.
+1. **Verifierat**: Funktioner och mätvärden som är bekräftade på riktiga fordon (eldrivna CMA-fordon idag).
+2. **Provisoriskt / Under utprovning**: Katalogiserade styrenheter, mätvärden och batterilayouter för SPA- och SEA1-fordon som finns inbyggda i programmet och genomgår bredare verifiering på fler fordon.
+3. **Forskning**: Nykatalogiserade datapunkter, bussfångster och pågående protokolldokumentation.
 
-En avkodare som inte bekräftats mot hårdvara levereras med den märkningen, och körmiljöns
-kapacitetsmanifest rapporterar skillnaden. Kompatibilitetsarbete blir aldrig ett påstående om
-stöd utan bevis.
+## Installationsfiler och kontrollsummor
 
-## Artefakter och verifiering
+Varje utgåva innehåller installationsfiler för macOS, Windows och Linux. Se
+[Installera på din dator](/docs/installation) för instruktioner per operativsystem. När en utgåva
+innehåller `SHA256SUMS.txt` kan du kontrollera SHA-256-kontrollsumman för din nedladdade fil innan
+du öppnar den.
 
-Vilka filer som publiceras kan skilja sig mellan versioner. Versionssidan visar filerna som faktiskt
-finns för varje operativsystem och arkitektur. [Installera på datorn](/docs/installation) hjälper
-dig att välja. Om versionen innehåller `SHA256SUMS.txt`, jämför kontrollsumman för exakt den fil
-du laddade ner.
-
-<Callout kind="caution" title="macOS-signeringsstatus">
-macOS-byggen är bara ad-hoc-signerade, vilket betyder att Gatekeeper inte går i god för dem. Första
-starten behöver en högerklickning och Öppna, eller en engångsrensning av quarantine. Windows-byggen är
-osignerade också, så SmartScreen kan varna. Kontrollera checksumfilen om det spelar roll för dig.
+<Callout kind="caution" title="Varning vid första starten på macOS och Windows">
+Utgåvor för macOS är ad-hoc-signerade, vilket innebär att macOS Gatekeeper kräver ett högerklick
+och Öppna (eller en engångsrensning av karantänflaggan) vid första starten. På Windows kan
+SmartScreen visa en varning för okänd utgivare vid första starten. Jämför gärna SHA-256-summan mot
+`SHA256SUMS.txt` för att verifiera din nedladdning.
 </Callout>
 
-## Uppdateringar
+## Uppdatera Hanterill
 
-Under **Inställningar → Uppdateringar** finns **Kontrollera nu** och en valfri kontroll vid start.
-Startkontrollen är avstängd som standard och körs högst en gång per dygn när den aktiveras.
-Den söker efter en ny publicerad version på GitHub och visar ett meddelande. Hanterill laddar inte
-ner eller installerar versionen åt dig; använd [nedladdningssidan](/download) eller versionssidan.
-[Integritetsskydd](/docs/privacy) beskriver förfrågan. Uppdatera genom pakethanteraren om du
-installerade på det sättet i Linux.
+Eftersom datorappen Hanterill gör noll internetanslutningar laddar den aldrig ned eller installerar
+uppdateringar i bakgrunden. För att uppdatera till en nyare version hämtar du den senaste
+installationsfilen från [nedladdningssidan](/download) och installerar den över din
+befintliga kopia.
 
-Dina sparade sessioner överlever en uppdatering: sessionsformatet är versionssatt, och ett nyare schema
-öppnas skrivskyddat i ett äldre bygge istället för att skrivas om.
+Dina sparade sessioner, fångster och inställningar ligger kvar vid en uppdatering: det lokala
+sessionsarkivet är versionssatt så att äldre sessioner fortsätter att öppnas normalt i nyare
+utgåvor.
 
-## Historik
+## Versionshistorik
 
-| Version | Datum | Rubrik |
+Varje version länkar till sina fullständiga anteckningar på [ändringsloggsidan](/changelog):
+
+| Version | Datum | Höjdpunkter |
 | --- | --- | --- |
-| 0.2.2 | 2026-09-23 | SPA-diagnostikunderlag, stödnivå vid servicerutiner, förseglad underlagsexport och felkodsjämförelse med ett klick |
-| 0.2.1 | 2026-09-19 | Tillverkarens referensdata, servicestatus och bättre redovisning av diagnostisk täckning |
-| 0.2.0 | 2026-09-13 | Första hårdvaru-i-loopen-kampanjen på en produktions-Polestar 2, 49-modulsregister med den reverse-enginerade parkeringskameran, periodisk strömning, batteritopologier för flera plattformar, åtta gränssnittsspråk |
-| 0.1.1 | 2026-09-11 | SPA- och SEA1-plattformsomfång, DTC-radering i referensparitet, besiktningsmotor v1.0.0, funktionell broadcast-upptäckt, offline DID-intelligens, härdad maskering |
-| 0.1.0 | 2026-09-01 | Första taggade releasen: appklienten, versionssatta observationskuvert, hållbara sessioner, livscykel för livedata, CI-regressionsgrindar |
-
-Versionssidan är källan till sanning för vad som är publicerat just nu. Den här sajten läser den live.
-Tabellen ovan omfattar taggade appversioner till och med 0.2.2. Ändringar under ”Unreleased” i
-appens ändringslogg är inte publicerade förrän de finns i en taggad version.
+| [0.2.2](/changelog) | 2026-09-23 | SPA-diagnostikunderlag, stödnivåer bredvid servicerutiner, förseglade bevispaket vid export och felkodsjämförelse med ett klick |
+| [0.2.1](/changelog) | 2026-09-19 | Utökad referenskatalog för styrenheter, skrivskyddad servicestatuskontroll och förbättrad diagnostiktäckning |
+| [0.2.0](/changelog) | 2026-09-13 | Verifiering på ett produktionsfordon (Polestar 2), CMA-styrmodulregister med 49 moduler, periodisk liveströmning, batterilayouter för flera plattformar och åtta gränssnittsspråk |
+| [0.1.1](/changelog) | 2026-09-11 | SPA- och SEA1-styrmodulregister, felkodsrensning med säkerhetskopia av ögonblicksbilder, poängmotor v1.0.0 för inspektionsrapport, gemensamt identifieringsanrop och integritetsmaskering |
+| [0.1.0](/changelog) | 2026-09-01 | Första taggade utgåvan: diagnostikapp för datorn, versionssatt sessionsarkiv, livedatavy och säkerhetsspärrar |

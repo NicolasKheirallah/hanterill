@@ -1,116 +1,43 @@
-"Uppdaterade de den faktiskt?" är en av de vanligaste frågorna om en modern bil, och en av de svåraste
-att svara på. En mjukvaruversion är oftast en sträng siffror som ingen memorerat. Hanterill svarar på
-det genom att läsa versionerna, spara listan och visa dig skillnaden senare.
+Varje styrenhet i bilen har en egen hårdvaru- och mjukvaruversion. **Mjukvara och inventering** samlar versionerna från de styrenheter som svarar. Du kan jämföra listan före och efter ett verkstadsbesök eller en uppdatering.
 
-## Vad en modul kan berätta om sig själv
+## Vad som läses av från varje styrenhet
 
-Varje modul svarar på en uppsättning identitetsläsningar. Auditen håller nio räknare per modul,
-bland dem diagnostik-, hårdvaru- och startpartnummer. Fyra av dem är huvudläsningarna:
+Under en inventering frågar Hanterill varje aktiv styrenhet i plattformens styrmodulregister efter:
 
-| Identifierare | Vad den innehåller |
-| --- | --- |
-| `0xEDA0` | Det sammansatta identitetsblocket: modulens egen identitetspost |
-| `0xF18C` | Styrenhetens serienummer, hårdvaruenhetens eget serienummer |
-| `0xF194` | Leverantörens mjukvarunummer |
-| `0xF195` | Leverantörens mjukvaruversion |
+<SpecList rows={[
+  ["Mjukvarunummer och version", "Visar exakt vilken mjukvarurevision som körs i styrenheten just nu."],
+  ["Hårdvarunummer och version", "Visar den fysiska hårdvarurevisionen för styrenhetens kretskort."],
+  ["Serienummer", "Identifierar den specifika fysiska enheten (praktiskt för att se om en modul har bytts ut)."],
+  ["Lagrat chassinummer (VIN)", "Kontrollerar att styrenheten är inprogrammerad för samma fordon som övriga moduler."],
+]} />
 
-Skillnaden mellan `0xF194` och `0xF195` spelar roll. Den ena namnger mjukvarudelen, den
-andra namnger dess version. En reparation som byter en modul ändrar serienumret. En mjukvaruuppdatering
-ändrar versionen. Det är olika sorters ändring och diffen säger det.
+## Se exakt vad en OTA- eller verkstadsuppdatering ändrade
 
-## Auditen
+Genom att spara en session före och efter en uppdatering kan du se exakt vilka styrenheter som
+uppgraderades:
 
-En audit sveper modulerna och läser identifierarna från var och en. Den körs inom en uttrycklig
-budget: ett tak för hur många moduler den läser, och en deadline för hela körningen.
+1. Gör en avläsning på skärmen **Mjukvara och inventering** innan du installerar en OTA-uppdatering eller lämnar in fordonet på service.
+2. Gör en ny avläsning efteråt.
+3. Öppna **Sessioner** (eller klicka på jämför direkt i mjukvaruvyn) för att se en tydlig tabell över alla styrenheter där mjukvaruversionen har ändrats från version A till version B.
 
-Det är avsiktligt. En modullista presenteras aldrig som komplett när den inte är det. Resultatet bär:
+På så sätt ser du direkt om en uppdatering berörde batteristyrenheten (**BECM**), växelriktarna,
+klimatstyrenheten (**CCM**), bromsstyrenheten (**BCM2**) eller bara infotainmentsystemet (**IHU**).
 
-- Täckning: hur många moduler som identifierades, saknade identifierare, misslyckades eller hoppades
-  över.
-- En rad per modul, inklusive de som aldrig tillfrågades, var och en med orsaken till att den inte
-  lästes.
-- Fälttäckning: hur många moduler som levererade var och en av de nio räknarna, så du kan se att 40
-  moduler identifierades men bara 32 hade en mjukvaruversion att ge.
-- Varför den stannade, om en gräns var orsaken.
+## Upptäcka utbytta eller felmatchade moduler
 
-<Callout kind="note" title="En räkning av moduler är inte ett resultat">
-"41 moduler identifierades" säger inget om huruvida du fick mjukvaruversionerna. Hanterill
-rapporterar per-fält-räkningarna av den anledningen.
-</Callout>
+När du inspekterar ett begagnat fordon hjälper mjukvaru- och hårdvaruinventeringen dig också att se
+om en styrenhet har bytts ut mot en begagnad del från ett annat fordon:
 
-### Standardbudgeten
+- Om en styrenhet rapporterar ett annat chassinummer (VIN) än centraldatorn (**CEM**) markeras avvikelsen direkt.
+- Tillsammans med mätarställningskontrollen på skärmen [Fordon](/docs/vehicle-identity) (som jämför miltalet över upp till 29 styrenheter) ger det en mycket tydlig bild av fordonets historik.
 
-Standardtaket är 64 styrenheter, och timeouten kan ställas in mellan 1 och 1800 sekunder. När endera
-gränsen nås stannar auditen och returnerar vad den redan samlat in. Den avbryter också i förtid vid
-en timeout för det sammansatta identitetsblocket: om läsningen av `0xEDA0` inte svarar i tid väntar
-auditen inte ut resten av deadlinen.
+## Exportera mjukvarulistan
 
-### Vilken förteckning auditen går igenom
-
-Auditen går igenom den förteckning fordonet annonserar i stället för en fast lista: 44 moduler på en
-BEV, eller alla 49 rader i den fullständiga CMA/ICE-förteckningen.
-
-## Diffen
-
-Två auditer av samma bil jämförs modul för modul. Varje modul hamnar i ett av sex tillstånd:
-
-| Tillstånd | Betydelse |
-| --- | --- |
-| Oförändrad | Samma på båda sidor |
-| Mjukvara ändrad | Mjukvarunumret eller versionen skiljer sig; hårdvaruserienummer gjorde det inte |
-| Hårdvara ändrad | Serienumret skiljer sig, så den fysiska enheten är inte samma |
-| Ny styrenhet | Finns i den andra auditen, saknas i den första |
-| Saknad styrenhet | Finns i den första auditen, saknas i den andra |
-| Okänd | Adresserad på båda sidor men aldrig identifierad, så det finns inget att jämföra |
-
-En styrenhet som hittas på exakt en sida är ny eller saknad, aldrig "ändrad". En
-modul som dök upp mellan besöken monterades, den uppdaterades inte.
-
-### När fordonet ändras mellan auditer
-
-Två auditer är bara jämförbara när de kommer från samma fordon. En identitetsvakt läser fordonets
-identitet och vägrar diffa två olika fordon, så ett fordons avläsningar aldrig blandas in i ett
-annat fordons historik.
-
-## Ett genomarbetat exempel
-
-Ett fordon kommer in efter en verkstadsvisit, och ägaren vill veta vad besöket faktiskt gjorde.
-
-1. Kör en audit före besöket och exportera den som JSON. Spara den med datumet i filnamnet.
-2. Kör samma audit efter besöket. Om fordonet inte är till hands längre fungerar en session sparad från
-   det tidigare besöket precis lika bra.
-3. Jämför de två. Moduler vars mjukvara ändrades är de besöket rörde.
-4. Allt som läses som `Oförändrad` uppdaterades inte, vad fakturan än säger.
-
-Samma arbetsflöde fungerar för en modul du bytte själv. Serienumret ändras, så tillståndet läses
-som `Hårdvara ändrad`, vilket bekräftar att den nya delen är den som nu pratar på bussen.
-
-<Callout kind="caution" title="En oförändrad version är inte bevis på att inget hände">
-En modul som inte svarade registreras som okänd, aldrig som oförändrad. Om auditen inte kunde läsa en
-modul någon av gångerna kan diffen inte säga huruvida något hände med den.
-</Callout>
-
-## I CLI:et
-
-För skriptat arbete är de två halvorna separata kommandon:
-
-```text
-hanterill firmware-audit --discover --json > before.json
-hanterill firmware-audit --discover --json > after.json
-hanterill firmware-diff before.json after.json
-```
-
-`firmware-audit` accepterar en uttrycklig modullista, ett modultak (64 som standard) och en timeout
-(ställbar mellan 1 och 1800 sekunder). Då kan du rikta den mot en misstänkt modul i stället för
-hela fordonet.
-
-## Firmware och sessioner
-
-En audit lagras i sessionsarkivet som varje annan läsning, så firmwareinventeringen från ett tidigare
-besök finns fortfarande kvar när fordonet kommer tillbaka. Det är oftast snabbare än att läsa bilen igen,
-och det betyder att jämförelsen fungerar helt utan fordon närvarande.
+Du kan exportera hela mjukvaru- och hårdvarutabellen som JSON eller CSV, eller inkludera den i en
+utskrivbar [Inspektionsrapport](/docs/inspection-reports) för din servicepärm.
 
 ## Nästa steg
 
-- [Sessioner och bevis](/docs/sessions-and-evidence): arkivet auditerna bor i.
-- [CLI](/docs/cli): hela kommandolistan och versionssatt utdata.
+- [Styrmodulregister](/docs/ecu-reference): se alla styrenheter som ingår i CMA-, SPA- och SEA1-registren.
+- [Sessioner och bevis](/docs/sessions-and-evidence): jämför två sparade sessioner sida vid sida.
+- [Fordonsidentitet](/docs/vehicle-identity): kontroll av chassinummer och mätarställning över alla moduler.

@@ -1,123 +1,71 @@
-Innan Hanterill läser något måste appen veta vilket fordon som finns i andra änden av länken. Den här
-sidan förklarar hur appen hittar och läser VIN, hur den avgör plattformen, vad en utlöst fordonsprofil
-innehåller, och vakten som hindrar att två fordon behandlas som ett.
+Hanterill identifierar bilen innan avläsningarna sparas. På skärmen **Fordon** ser du chassinummer, mätarställning och andra uppgifter som styrenheterna lämnar. Här förklaras var uppgifterna kommer ifrån och vad det kan betyda om de inte stämmer överens.
 
-## Hur VIN hittas
+## Hur Hanterill hittar och verifierar chassinumret (VIN)
 
-VIN-regeln är en enda funktion: 17 alfanumeriska tecken efter trimning, enligt ISO 3779. En last som
-fallerar regeln är inget VIN, vad som än svarade. Sökningen går i en tillitsordning och stannar vid
-första giltiga svar:
+Ett giltigt chassinummer (VIN) består alltid av 17 alfanumeriska tecken enligt den internationella
+standarden ISO 3779. Vid anslutning söker Hanterill efter chassinumret i fyra steg och stannar så
+snart ett giltigt 17-ställigt svar har tagits emot:
 
 <SpecList rows={[
-  ["1", "det VIN som ett fordonsmeddelande bar vid upptäckten, vilket inte kostar någon trafik"],
-  ["2", "den routade entitetens adress: en riktad läsning av 0xF190"],
-  ["3", "en funktionell läsning av 0xF190, där flera moduler svarar på samma identifierare"],
-  ["4", "en svepning över de moduler som rapporterar en aktiv diagnostisk session, var och en tillfrågad om sitt VIN"],
+  ["1. Gatewayens identifieringsanrop", "Läser chassinumret som gatewaymodulen skickar ut direkt när Ethernet-länken vaknar, helt utan extra diagnostiktrafik."],
+  ["2. Direkt läsning från gatewayen", "Frågar den primära gatewaymodulen direkt efter dess lagrade chassinummer."],
+  ["3. Gemensamt anrop på bussen", "Ber alla vakna styrenheter att rapportera fordonets chassinummer."],
+  ["4. Genomsökning av aktiva styrenheter", "Frågar enskilda svarande styrenheter tills ett giltigt 17-ställigt chassinummer är bekräftat."],
 ]} />
 
-Tystnad i ett steg går vidare till nästa; det är inget fel i sökningen. Avbrytning är det enda fel
-sökningen returnerar.
+Parallellt med chassinumret läser Hanterill även ut centraldatorns (CEM) hårdvaru- och
+identitetsblock så att fordonets grundprofil finns redo direkt.
 
-## Hur VIN läses
+## Vad du ser på skärmen Fordon
 
-VIN kommer från DID `0xF190` (ReadDataByIdentifier) genom samma DID-väg som varje annan läsning
-använder. Ett svar som inte är 17 UTF-8-byte är ett typat fel, inte ett tomt värde. En modul som inte
-stöder identifieraren förblir ostödd, och en som är tyst registreras som tyst i stället för som ett
-fordon utan VIN.
+Skärmen **Fordon** samlar fordonets identitet och korskontroller mellan styrenheterna på ett ställe:
 
-Identitetsläsningen hämtar också CEM-blocket `0xEDA0`, som bär diagnostik-, hårdvaru- och
-serienummer. De två läsningarna är oberoende, så ett fel i den ena döljer inte svaret från den andra.
+- **Fullständigt chassinummer (VIN) med ett klick för integritetsmaskering**: Hela det 17-ställiga chassinumret visas tydligt på skärmen Fordon och i Inspektionsrapporten så att du enkelt kan jämföra det med registreringsbeviset och chassiplåten. När du vill ta en skärmbild eller dela en rapport döljer du identifierande tecken med ett enda klick.
+- **Kontroll av mätarställning över upp till 29 styrenheter**: Moderna fordon lagrar körsträckan i en rad olika styrenheter, inte bara i förardisplayen. Hanterill läser av och jämför mätarställningen över upp till 29 moduler så att du direkt ser om alla styrenheter är överens eller om en modul har bytts ut eller manipulerats.
+- **Antal registrerade nycklar och live-avkänning av nyckeltransponder**: Visar hur många nycklar som är inprogrammerade i fordonets startspärr och visar i realtid när en nyckel eller transponder känns av i kupén. Det är extra värdefullt vid begagnatköp för att kontrollera att inga saknade nycklar ligger kvar som behöriga i fordonet.
+- **Fordonets driftläge**: Visar om fordonet befinner sig i normalt kundläge eller om det har lämnats i verkstads-, fabriks- eller transportläge.
 
-## Var identiteten visas
+## Hur fordonets plattform fastställs
 
-Fordonssidan sätter modell och plattform högst upp, VIN under och källan samt fångsttiden längst ned.
-VIN maskeras som standard och kan visas från samma verktygsrad. Det observerade VIN:et publiceras
-också till ett delat lager, så en annan sida inte behöver läsa det igen.
+Hanterill gissar aldrig plattform utifrån en enda ledtråd. I stället väger programmet samman flera
+oberoende mätbevis (chassinumrets tillverkarprefix, gatewayens signatur och vilka specifika
+styrenheter som svarar på nätverket) för att fastställa om fordonet bygger på **CMA**, **SPA**
+eller **SEA1**.
 
-## Hur plattformen avgörs
+För att en plattform ska låsas krävs samstämmiga bevis från minst två oberoende kontroller. Om ett
+fordon sover och ännu inte lämnat tillräckligt underlag markeras plattformen som en provisorisk
+kandidat i stället för att gissas.
 
-Arkitekturdetekteringen poängsätter bevis som samlats på ett fingeravtryck. Klasserna och deras vikter
-är fasta:
+## Vad en fastställd fordonsprofil innehåller
+
+När Hanterill har identifierat fordonet skapas en sessionsprofil som innehåller:
+
+- **Plattformsarkitektur** (CMA, SPA eller SEA1) och säkerhetsgrad
+- **Fabrikat, modell och årsmodell** (avläst ur fordonets konfigurationsposter)
+- **Drivlinetyp** (batteridrivet elfordon, laddhybrid, mildhybrid eller förbränningsmotor)
+- **Batteripaketets celllayout** (exempelvis 108 celler i 27 moduler på ett standardpaket på CMA, verifierat mot antalet cellgivare som faktiskt svarar)
+
+## Identitetsspärren (skydd mot sammanblandade fordon)
+
+Om du arbetar med mer än ett fordon i ett garage eller återansluter efter ett uppehåll ser
+**identitetsspärren** till att data från två olika fordon aldrig blandas i samma session eller
+rapport.
+
+Vid anslutning sparar Hanterill fordonets 17-ställiga chassinummer. Innan en ny skanningsfas startar
+eller en avbruten felkodsskanning återupptas kontrolleras chassinumret på nytt:
 
 <SpecList rows={[
-  ["15", "fordonsidentitet (VIN och modellhintar) och topologi"],
-  ["45", "exakt styrenhetsidentitet, en diagnostisk signatur, eller en DoIP-entitetssignatur"],
+  ["Samma chassinummer", "Samma fordon är anslutet; skanningen fortsätter som vanligt."],
+  ["Tillfälligt tyst styrenhet", "Om en modul är tillfälligt upptagen utlöses inget falsklarm."],
+  ["Annat chassinummer upptäckt", "Ett annat fordon sitter i andra änden av kabeln; Hanterill stoppar omedelbart körningen och håller den befintliga sessionen ren."],
 ]} />
 
-Upprepade bevis inom en klass ger ingen extra poäng. Sedan gäller två regler: vinnaren behöver minst
-60 poäng över minst två oberoende klasser, och en marginal på 25 poäng ned till tvåan. Under det läses
-utslaget som en kandidat eller tvetydigt, och när inget kvalar in läses plattformen som okänd. Enbart
-livebevis kan välja plattform; cachade och syntetiska observationer höjer aldrig säkerheten.
-
-## Vad en fordonsprofil löser ut
-
-Den utlösta fordonsposten bär allt en senare användning behöver: arkitekturen och dess säkerhet,
-modellen, årsmodellen, katalogprofilen, paketets topologi med sin egen säkerhet, drivlinevarianten och
-orsaksslugarna bakom varje reservväg och standardval.
-
-Två gränser spelar roll. Katalogprofilen finns bara när plattform, modell och årsmodell alla är
-fastställda; saknas någon av dem förblir profilen tom och luckan namnges. Årsmodellen kommer från
-konfigurations- eller fabriksbevis och härleds aldrig ur VIN eller en byggvecka. Själva modellidentiteten
-härleds en gång, på samma ställe som detektorn poängsätter med, så varje sida namnger samma modell.
-
-Topologins säkerhet är separat från arkitekturutslaget. Den läses som fastnaglad när det fyllda
-cellantalet landar på en topologi vars plattform stämmer, som härledd när antalet är särskiljande men
-plattformen inte är bekräftad, och som standardval när det inte finns något användbart antalsbevis
-eller när antalet ensamt är tvetydigt. En läsning på 108 celler kan inte skilja två plattformar åt på
-egen hand, så den fastnaglar aldrig i tysthet.
-
-## Identitetsvakten
-
-Vakten har två halvor. Vid anslutningen fångar appen CEM:s VIN en gång och armar vakten enbart på ett
-välformat VIN. Vid en stegövergång läser den live-VIN:et igen och jämför:
-
-<SpecList rows={[
-  ["Same", "live-VIN:et är lika med det kända VIN:et; körningen fortsätter"],
-  ["Silent", "inget svarade eller lasten var felformad; tystnad är inget bevis för ett byte, så körningen fortsätter"],
-  ["Mismatch", "ett annat fordon svarade; körningen stoppas och bär det observerade VIN:et som bevis"],
-]} />
-
-Policyn bor i en modul så varje flöde ärver den. DID-skanningen över alla moduler gör en ny kontroll
-vid stegövergången, och felkodssvepningens återanslutning vägrar slå samman rader som lästs från ett
-annat fordon. Oprövade rader förblir oprövade efter en avvikelse.
-
-<Callout kind="note" title="En demosession körs utan vakt">
-Utan ett välformat VIN att fånga förblir vakten oarmad i stället för att arma på en gissning. Det är
-ett medvetet val, och det betyder att en overifierad session inte bär något identitetsbevis.
-</Callout>
-
-Samma regel täcker fabriksbyggposten `0xF114`. Den avkodas mot VIN:et från anslutningen, och om
-postens VIN avviker blir posten ett typat icke-tillämpligt fel i stället för ett faktum om detta
-fordon. Ett okänt VIN från anslutningen är tystnad, aldrig en avvikelse.
-
-## Att avvisa jämförelser mellan fordon
-
-Innan två sessioner jämförs jämför appen den fordonsreferens var och en registrerade. När båda bär en
-referens och referenserna skiljer sig returnerar kontrollen ett avvikande-fordon-resultat med
-jämförelsen avvisad: deltan tagna över två fordon vilseleder. När någon sida saknar registrerad
-identitet blir resultatet en varning om overifierat fordon i stället för ett stopp, och appen ber dig
-bekräfta att båda sessionerna hör till samma fordon. Kontraktsversionerna måste också stämma.
-Difframverket och dess matchningsregler beskrivs i [sessioner och bevis](/docs/sessions-and-evidence).
-
-## Hur styrenhetsadresser löses ut
-
-Anropare namnger en roll eller ett registerkortnamn plus det utlösta fordonet och får adressen för den
-plattformen. CMA löses ur det liveverifierade registret; SPA och SEA1 löses enbart ur sina egna
-DoIP-register, och ett namn utan mappning på den plattformen returnerar inget. En oavgjord arkitektur
-använder CMA:s reservväg vid första kontakt, och svaret flaggas som antaget. SPA2 returnerar inget. En
-roll som grenar ut över flera styrenheter, som drivlinan, returnerar inget eftersom ingen enskild
-adress är rätt; anroparen registrerar läsningen som inte försökt i stället för att gissa.
-
-## Vad appen inte kan säga
-
-- VIN-sökningen kan returnera inget. En demo- eller overifierad session körs då utan vakten.
-- Modellidentiteten hänger på VIN-grammatiken eller en liveidentitet. Ett fordon som grammatiken inte
-  känner igen förblir oidentifierat, och sidan visar plattformen utan modell.
-- Ingen årsmodell betyder ingen katalogprofil, hur säkert plattformsutslaget än är.
-- SPA2-adresser är inte mappade, så rolluppslag där returnerar inget.
+Samma spärr gäller när du jämför två sparade sessioner på datorn: om de två sessionerna har olika
+chassinummer blockeras jämförelsen så att du aldrig råkar jämföra mjukvara eller batterihälsa mellan
+två olika fordon.
 
 ## Nästa steg
 
-- [Stödda fordon](/docs/supported-vehicles): var varje plattform står.
-- [Styrenhetsreferens](/docs/ecu-reference): registret som svarar på rolluppslag.
-- [Fordonskonfiguration](/docs/vehicle-configuration): vad appen läser när den vet vilket fordon det är.
+- [Fordon som stöds](/docs/supported-vehicles): se vilka modeller som hör till CMA, SPA och SEA1.
+- [Styrmodulregister](/docs/ecu-reference): utforska styrenheterna som rapporterar identitet och mätarställning.
+- [Fordonskonfiguration](/docs/vehicle-configuration): se fordonets fabrikstillval och byggblad.

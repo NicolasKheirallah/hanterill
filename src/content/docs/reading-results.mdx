@@ -1,34 +1,35 @@
-A number is useful only when you know what answered, how recent the answer is, and how the app
-interpreted it. Open a row's evidence details when a result looks surprising.
+Before relying on a reading, check whether the car answered, when the value was read and how well its interpretation has been verified. Hanterill shows these as **coverage**, **freshness** and **confidence**.
 
-## Four checks before relying on a result
+## 1. Coverage: did every module answer?
 
-| Check | What to look for | What it means if missing |
-| --- | --- | --- |
-| Vehicle and platform | The connected vehicle identity and support label | A reachable car may still have unverified decoders. |
-| Coverage | Modules, channels or cell groups attempted and answered | No answer is a gap, never a healthy zero. |
-| Freshness | Capture time or live stream state | An old sample does not describe the current car. |
-| Source | ECU, data identifier, raw response and decoder maturity where shown | A derived value or provisional decoder needs more caution than a direct verified read. |
+A modern Volvo or Polestar has dozens of individual computers (up to 49 in the CMA catalogue). Not every car has every optional module fitted, and occasionally a busy module on a secondary network takes longer to answer.
 
-## Three examples
+- **Answered versus expected**: At the top of every scan and subsystem page, Hanterill shows how many modules or parameters answered out of the total requested (for example, `108 / 108 cell groups` or `36 modules answered`).
+- **Missing is never shown as zero**: If a module or cell group did not answer, Hanterill shows an explicit **No response** or **Not supported** badge. It never fills an unanswered slot with `0 V` or `0 °C`, which in other tools can look like a dead battery cell or a broken temperature sensor.
+- **Why a module says "Not supported"**: When a module replies that it does not support a particular parameter (common when a car lacks an optional feature like a rear motor, a head-up display, or a fuel-fired heater), Hanterill records that refusal cleanly so you know the module is healthy and simply does not carry that option.
 
-**Battery health:** SoH is read from the battery controller. Cell balance is calculated from the
-groups that answered. If some groups are missing, inspect the cell count and read outcomes before
-using the spread as evidence. [Battery diagnostics](/docs/battery-diagnostics) explains the
-different battery measures.
+## 2. Freshness: when was this value read?
 
-**Fault codes:** “No active codes” describes only modules covered by that scan. If a module was
-silent, the scan reports incomplete coverage; it cannot clear that module by inference. A stored
-code and an active code answer different questions. See [DTC scanning](/docs/dtc-scanning).
+Diagnostic values over Ethernet are read when you run a scan, open a subsystem screen, or start a live telemetry stream.
 
-**Inspection score:** Read the findings and missing inputs with the number. **Not evaluated** is an
-expected verdict when evidence is insufficient. A score from a platform marked Testing should not
-drive a purchase or repair decision. See [Inspection reports](/docs/inspection-reports).
+- **Timestamps on every reading**: Each screen shows when the data was captured (or whether you are viewing a **Saved session** from your archive or a **Simulated vehicle**).
+- **Resting versus under-load readings**: Keep in mind what the car was doing when a number was read. For example, high-voltage battery **cell spread (delta in mV)** is most meaningful when the car has been parked at rest for at least a few minutes. During hard acceleration or fast DC charging, currents of several hundred amps flow through the pack, and a temporary 15 to 25 mV spread across modules is normal ohmic resistance rather than a weak cell.
 
-## Platform labels
+## 3. Confidence and verification badges
 
-**Supported** means a live vehicle has verified the relevant path. **Partial** means only some
-functions have that evidence. **Testing** means a decoder or route exists but needs more vehicle
-checks. **Research** is not usable for diagnostic decisions. The label can differ by function on
-the same car. Check [Supported vehicles](/docs/supported-vehicles) and the app's **Capabilities**
-screen for the specific vehicle and function.
+Because Hanterill supports multiple vehicle platforms and hundreds of parameters, it labels how each decoder was verified:
+
+- **Verified**: Confirmed against real reference vehicles (such as the Polestar 2 and CMA electric Volvos) and cross-checked against physical measurements.
+- **Cross-checked**: Verified by comparing two or more independent readings inside the car (for example, checking that the sum of all 108 cell-group voltages matches the overall pack voltage sensor).
+- **Provisional / Testing**: The parameter layout and scaling are defined in the catalogue (for example, on newer SEA or SPA hybrid battery paths), but still need confirmation across more real vehicles. Treat provisional values as informative rather than a basis for a major repair or purchase decision.
+
+## 4. Using Cross-Check when a number looks suspicious
+
+Whenever a single reading surprises you, open the **Cross-Check** screen in the sidebar. Cross-Check compares the same physical quantity across multiple independent modules in the car:
+
+- **Pack voltage** versus **sum of all cell groups**
+- **Battery State of Charge** across the battery computer, central gateway, and instrument cluster
+- **12 V voltage** across the 12 V battery sensor, gateway, brake controller, and cluster
+- **Odometer mileage** and **VIN** across up to 29 modules
+
+If two independent modules agree on a number, you can trust what the sensors are seeing. If only one module disagrees with the rest of the car, you have isolated the sensor or module that needs attention.

@@ -1,110 +1,111 @@
 import { EcuReference } from "@/components/docs/mdx/EcuReference";
 
-Ett fordon är inte en dator. Den är dussintals små datorer, kallade ECU:er (electronic control
-units), som är sammanlänkade. Var och en kör något: bromsarna, fönstren, batteriet, radion.
-Hanterill frågar var och en vad den är, vilken mjukvara den kör och om något är fel.
+En bil har många styrenheter. Några sköter batteri och bromsar, andra ansvarar för till exempel klimatanläggning och belysning. Hanterill kontrollerar vilka som svarar när du ansluter. Listan nedan visar de styrenheter som appen känner till på CMA-bilar. Alla finns inte i varje bil.
 
-Den här sidan listar varje ECU som Hanterill kan prata med på CMA-plattformen, med adressen
-som var och en svarar på.
+## Hur styrmodulregistret är uppbyggt
 
-## Registret
+Styrmodulregistret för CMA innehåller 49 katalogiserade styrenheter:
 
-CMA-registret innehåller 49 poster. Fyrtio av dem annonserar stöd för felkoder. Fyrtiofyra har
-observerats på ett levande fordon; de återstående fem är `ref`-rader: referensposter från
-leverantörsdokumentation som aldrig svarat. På ett helt elektriskt fordon svarar dessa fem inte alls,
-och Hanterill registrerar tystnaden som förväntad i stället för som ett fel. En BEV ser med andra ord
-en lista på 44, medan 49-raderslistan är hela CMA/ICE-mappningen.
+- **44 styrenheter** är observerade och verifierade på eldrivna produktionsfordon.
+- **40 styrenheter** stöder lagring och utläsning av felkoder (DTC).
+- **5 styrenheter** (`ref`-rader) avser förbränningsmotor, hybridväxellåda, avgasrening, mekanisk fyrhjulsdrift eller luftfjädring som bara sitter på vissa motoralternativ eller utrustningsnivåer. På ett renodlat batteridrivet fordon utan luftfjädring svarar inte dessa fem moduler, och Hanterill bokför tystnaden som förväntad snarare än som ett fel.
 
-Varje post bär en DoIP-logisk adress. Se den som en anknytning inuti fordonet: `0x1635` är alltid
-batteristyrenheten, på samma sätt som 432 alltid är samma skrivbord. Hanterill skickar sin begäran
-till en anknytning, och den anknytningen svarar.
+Varje styrenhet har en unik logisk adress på fordonets nätverk. Du kan tänka på adressen som ett
+anknytningsnummer i en telefonväxel: ett visst nummer går alltid till batteristyrenheten, ett annat
+går alltid till klimatmodulen och ett tredje till förardörrens styrenhet.
 
-## Gateway
+## Gatewaymoduler
 
-Två moduler sitter mellan din bärbara dator och allt annat. VGM är brandväggen och CEM är fordonets
-centrala karossdator.
+Två moduler sitter mellan din dator och resten av fordonet: **Vehicle Gateway Module (VGM)** fungerar
+som router och brandvägg direkt bakom OBD-II-uttaget, och **Central Electronic Module (CEM)** är
+fordonets centrala kaross- och säkerhetsdator.
 
 <EcuReference domain="gateway" />
 
-Skrivningar till VGM kräver en säkerhetsnyckel som är unik per fordon.
-Läsningar fungerar utan en sådan, så varje skrivskyddad funktion i Hanterill körs på ett anslutet
-fordon utan extra inställning.
+Alla skrivskyddade avläsningar av identitet, mätvärden och felkoder fungerar direkt genom gatewayen
+utan att några säkerhetsnivåer behöver låsas upp.
 
-## Energi
+## Energi och drivlina
 
-Det här är högspänningssidan. BECM hanterar traktionsbatteriet, VCU bestämmer hur mycket effekt
-motorerna får, och de två växelriktarna omvandlar batteriström till motorström (och tillbaka, när du
-släpper gasen).
+Den här gruppen omfattar högspänningsbatteriet och den elektriska drivlinan. **BECM** övervakar
+batteripaketet och alla enskilda celler, **VCU** samordnar gaspådrag och körlägen, och de främre och
+bakre **växelriktarna** styr elmotorerna samt återvinner bromsenergi.
 
 <EcuReference
   domain="energy"
-  caption="TCM, NRCM, SUM, DEM och MVBM är de fem referensraderna. De är registrerade så att en hybrid- eller luftfjädringsbil kan kartläggas senare; på ett helt elektriskt fordon förblir de tysta."
+  caption="TCM, NRCM, SUM, DEM och MVBM är de fem referensraderna för hybrid-, förbrännings- eller luftfjädringsutföranden. På ett batteridrivet standardfordon är de inte monterade och förblir tysta."
 />
 
-<Callout kind="note" title="Varför ECM inte är en motorns styrenhet här">
-På den här plattformen är modulen som kallas ECM live-verifierad och är drivlinans/växelriktarens
-styrenhet, inte en motorstyrenhet. Luftfjädringsmodulen SUM är den referensrad man vanligtvis
-förväntar sig i dess ställe. Namnet på boxen är en etikett, inte en beskrivning; registret säger
-vilka moduler som faktiskt svarade.
+<Callout kind="note" title="Varför ECM listas under eldrift på eldrivna CMA-fordon">
+På batteridrivna CMA-fordon svarar styrenheten med beteckningen ECM i det verkliga fordonet som en
+del av den elektriska driv- och växelriktarstyrningen snarare än som en bensinmotorstyrenhet.
+Hanterill redovisar vad som faktiskt svarar i fordonet.
 </Callout>
 
-## Chassi
+## Chassi och förarstöd
 
-Styrning, bromsar, vinkelsensorn, och kamerorna och radarerna som vakar över vägen.
+Styrning, bromsar, stabilitetskontroll, rattvinkelsensor samt de kameror och radarmoduler som
+övervakar vägen runt fordonet.
 
 <EcuReference domain="chassis" />
 
-## Kupé
+## Kupé, kaross och infotainment
 
-Skärmar, dörrar, klimat, lampor, krockkuddar, radio för telefon-som-nyckel. Den långa svansen av
-moduler som de flesta aldrig tänker på.
+Skärmar, dörrar, säten, klimatanläggning, belysning, krockkuddar, telematik och nyckellös
+radiokommunikation.
 
 <EcuReference
   domain="cabin"
-  caption="Tomma artikelnummer är positioner som den offentliga dokumentationen inte listar. Hanterill läser fortfarande identifiering direkt från ECU:n med ReadDataByIdentifier."
+  caption="Även där den offentliga dokumentationen lämnar artikelnummer tomma läser Hanterill ut faktiska hårdvaru- och mjukvarunummer direkt från styrenheten vid en skanning."
 />
 
-## Hur Hanterill pratar med dem
+## Hur Hanterill pratar med varje styrenhet
 
-Fyra UDS-tjänster gör det mesta av arbetet:
-
-<SpecList rows={[
-  ["0x22", "ReadDataByIdentifier: be en modul om ett numrerat värde, som dess VIN (0xF190) eller dess mjukvaruversion (0xF195)"],
-  ["0x19", "ReadDTCInformation: be en modul om dess lagrade felkoder"],
-  ["0x10", "DiagnosticSessionControl: be en modul öppna en diagnossession så att den svarar på de två första"],
-  ["0x3E", "TesterPresent: ett tyst \"fortfarande här\" så att fordonet inte försätter moduler i vila mitt i en skanning"],
-]} />
-
-De vanliga identitetsidentifierarna, lästa från varje modul som svarar:
+Under en vanlig skanning använder Hanterill fyra grundläggande diagnostikförfrågningar:
 
 <SpecList rows={[
-  ["0xF190", "VIN"],
-  ["0xF18C", "ECU:ns serienummer"],
-  ["0xF193", "Leverantörens hårdvaruversion"],
-  ["0xF194", "Leverantörens mjukvarunummer"],
-  ["0xF195", "Leverantörens mjukvaruversion"],
+  ["Läs mätvärden och identitet", "Ber en styrenhet om en specifik uppgift, exempelvis chassinummer (VIN), mjukvaruversion eller ett aktuellt givarvärde."],
+  ["Läs felkoder", "Ber en styrenhet att lista sina lagrade, väntande eller permanenta felkoder (DTC) och deras status."],
+  ["Öppna diagnostiksession", "Sätter en styrenhet i sitt vanliga eller utökade diagnostikläge så att alla givare och identitetsposter kan läsas ut."],
+  ["Håll-vaket-puls (Tester Present)", "Skickar en tyst periodisk puls så länge en skanning pågår så att styrenheterna inte somnar om mitt i avläsningen."],
 ]} />
 
-Eftersom Hanterill läser dessa från varje ECU och inte bara från batteriet, producerar en skanning en
-fullständig hårdvaru- och mjukvaruinventering av fordonet. Det är vad [firmwarevyn](/docs/firmware-and-inventory)
-diffar mellan besök.
+Från varje styrenhet som svarar läser Hanterill av standardiserade identitetsposter:
 
-## Andra plattformar har egna register
+<SpecList rows={[
+  ["Chassinummer (VIN)", "Bekräftar att styrenheten hör till det anslutna fordonet och avslöjar eventuella utbytta moduler."],
+  ["Styrenhetens serienummer", "Identifierar det fysiska kretskortet i modulen."],
+  ["Hårdvarunummer och version", "Visar hårdvarurevisionen som rapporteras av underleverantören."],
+  ["Mjukvarunummer och version", "Visar exakt vilken mjukvara som körs i styrenheten."],
+]} />
 
-Listan ovan är CMA-registret, det som Hanterill byggdes och kontrollerades mot. SPA och SEA1 bär egna,
-mindre register. SPA har en separat CAN-erauppsättning och en DoIP-uppsättning, och SEA1 har sin egen.
-En definition delas aldrig mellan plattformar. En modul som finns på referensfordonet kan saknas
-någon annanstans, eller svara på en annan adress, så varje plattform löses på sina egna villkor i
-stället för genom familjelikhet.
+Eftersom Hanterill hämtar dessa poster från samtliga svarande styrenheter ger en enda skanning en
+fullständig hårdvaru- och mjukvarukarta som skärmen [Mjukvara och inventering](/docs/firmware-and-inventory)
+kan jämföra mellan olika besök.
 
-## Inte varje modul svarar på allt
+## Verktyg inne i vyn Styrenheter (ECUs)
 
-Vissa moduler svarar på identitetsläsningar men har inga felkoder att rapportera. Nio av CMA-posterna
-är i det läget. De är märkta `DTCs: no` ovan, och Hanterill hoppar över dem under en felkodsskanning i
-stället för att registrera ett misslyckande. En modul som inte svarar alls är ett tredje fall: den
-registreras som icke observerad, aldrig som trasig.
+När du klickar på en enskild styrenhet under **Styrenheter** i programmet kan du:
 
-<Callout kind="note" title="En timeout är inte en diagnos">
-När en modul inte svarar kan den vara omonterad, sova eller inte finnas på fordonets
-bygglista. Hanterill säger "svarade inte" och lämnar bedömningen till dig.
+- **Granska identitet och felantal**: Se modulens fullständiga namn, nätverksdomän, avlästa mjukvaru- och hårdvaruversioner samt aktuellt antal felkoder.
+- **Kontrollera säkerhetslås (skrivskyddat)**: Fråga styrenheten om dess skyddade underhållsnivåer för närvarande är låsta eller upplåsta, helt utan att skicka upplåsningsnycklar eller ändra något i fordonet.
+- **Starta om en enskild styrenhet**: Skicka ett riktat omstartskommando när du behöver starta om en specifik modul efter felsökning, skyddat av en tydlig bekräftelsedialog.
+
+## Egna styrmodulregister för SPA och SEA1
+
+Tabellerna ovan visar **CMA-registret** med 49 styrenheter. **SPA** (41 katalogiserade styrenheter)
+och **SEA1** (25 katalogiserade styrenheter) har sina egna separata styrmodulregister. Hanterill
+gissar aldrig att en adress från en plattform gäller på en annan.
+
+## Varför vissa styrenheter förblir tysta
+
+Alla styrenheter i katalogen sitter inte i varje fordon:
+
+- **Ingen egen felkodslagring**: Nio poster i CMA-registret svarar normalt på identitetsfrågor men lagrar inga egna felkoder (`DTCs: no`). Hanterill hoppar över dem vid felkodsskanning i stället för att rapportera ett fel.
+- **Tillvalsutrustning**: Moduler för luftfjädring, baksätesvärme, dragkrok eller head-up-display svarar bara på fordon som är byggda med dessa tillval.
+
+<Callout kind="note" title="En tyst styrenhet är inte nödvändigtvis trasig">
+När en styrenhet inte svarar beror det oftast på att tillvalet inte sitter i ditt fordon eller att
+modulen sover för att tändningen är avslagen. Hanterill rapporterar ärligt "Inget svar" och lämnar
+bedömningen till dig.
 </Callout>

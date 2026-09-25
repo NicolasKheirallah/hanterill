@@ -1,32 +1,41 @@
-Spara resultatet från en misslyckad åtgärd innan du försöker igen. En ofullständig skanning kan
-visa vilka moduler som svarade och var anslutningen bröts.
+Om bilen inte går att ansluta eller ett mätvärde ser fel ut, börja med [Felsökning](/docs/troubleshooting). Om problemet kvarstår kan du spara ett supportpaket. Granska filen själv innan du delar den.
 
-## Prova rätt åtgärd först
+## 1. Kontrollera felsökningsguiden först
 
-Använd [Felsökning](/docs/troubleshooting) för kabel-, upptäckts-, tidsgräns- och
-behörighetsproblem. Om ett värde verkar orimligt visar [Tolka resultat](/docs/reading-results)
-hur du kontrollerar källa och täckning. Kör inte en servicerutin för att korrigera en avläsning
-du inte förstår.
+De vanligaste frågorna kring nätverksskanning, brandväggsinställningar, sovande styrenheter och
+tillfälliga varningsmeddelanden på förardisplayen besvaras steg för steg under
+[Felsökning](/docs/troubleshooting).
 
-## Exportera ett supportpaket
+## 2. Exportera ett anonymiserat supportpaket
 
-1. Öppna **Aktivitet och loggar** i datorappen.
-2. Välj **Exportera supportpaket**.
-3. Granska exportrutan och spara paketet.
-4. Skapa ett [GitHub-ärende](https://github.com/NicolasKheirallah/hanterill/issues) och bifoga paketet.
+När du rapporterar en bugg eller ber om hjälp med att tolka en ovanlig avläsning kan du exportera
+ett färdigt **supportpaket** inifrån programmet:
 
-Aktivitetsexporten samlar senaste kommandon och tekniska felsökningsposter när de finns.
-Appen maskerar VIN, adresser, koordinater, inloggningsuppgifter och andra känsliga fält.
-**Inställningar → Utvecklare → Exportera felsökningspaket** skapar en annan, mindre fil.
-Använd supportpaketet från Aktivitet vid anslutnings- eller skanningsfel.
+1. Öppna **Inställningar -> Om** (eller **Sessioner** för en specifik sparad session).
+2. Klicka på **Exportera supportpaket**.
+3. Välj var `.zip`-filen ska sparas på din dator.
 
-## Beskriv problemet
+### Vad supportpaketet innehåller (och vad som rensas bort)
 
-Ange appversion, operativsystem, fordonsmodell och årsmodell, kabel och Ethernet-adapter,
-vilken vy eller vilket kommando du använde samt feltexten. Säg om felet går att upprepa och
-om andra moduler svarade. Lägg inte in ett fullständigt VIN, en exakt GPS-position eller en
-omaskerad råfångst i ett offentligt ärende. Granska filen själv före uppladdning.
+Supportpaketet är utformat så att du tryggt kan dela det i en felrapport:
 
-Om ärendet gäller en servicefunktion, ange rutinen och dess stödnivå som visas i appen.
-Skriv om modulen bekräftade, nekade eller inte svarade. En tidsgräns bevisar inte att åtgärden
-lyckades.
+- **Bevaras**: Appversion, operativsystem, plattformsidentifiering (CMA, SPA eller SEA1), vilka styrenheter som svarade, felkoder, råa mätvärdessvar och sessionsloggar.
+- **Maskeras eller raderas automatiskt**: Ditt 17-ställiga chassinummer (VIN) maskeras till en kort förkortning, serienummer på hårdvara hashas, lokala IP-adresser och filvägar rensas och eventuella GPS-koordinater ersätts med `[REDACTED-GPS]`.
+
+Du kan alltid packa upp `.zip`-filen på din egen dator och granska de läsbara `.json`-filerna innan
+du delar dem.
+
+## 3. Bidra med nya plattformsfångster (SPA och SEA1)
+
+Om du har ett **SPA-** eller **SEA1-fordon** och vill hjälpa till att verifiera fler mätvärden och
+batterilayouter:
+
+1. Anslut till fordonet med aktivt tändningsläge (läge **P**).
+2. Kör en **Inspektionsrapport** eller en helfordonsskanning i appens datautforskare.
+3. Exportera sessionen med integritetsnivån **Support**. Granska filen innan du delar den och ange fordonets modell och årsmodell i din felrapport.
+
+## Nästa steg
+
+- [Felsökning](/docs/troubleshooting): vanliga orsaker när fordonet eller en styrenhet inte svarar.
+- [Integritet](/docs/privacy): hur lokal lagring och automatisk maskering fungerar.
+- [Fångster och svep](/docs/captures-and-sweeps): hur du spelar in och granskar råa fångster.

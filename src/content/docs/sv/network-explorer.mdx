@@ -1,147 +1,90 @@
-Nätverksutforskaren är kabelvyn över CMA:s elektriska arkitektur. Den ritar varje
-styrenhet, de typade länkarna mellan dem och de pinnrader som diagnostiken går
-över, som en interaktiv karta. Använd den för att se var en modul sitter, vilket
-nät den hänger på och vilka kontaktpinnar som bär länken. Det är
-referensdokumentation, inte en läsning från fordonet.
+**Nätverksutforskaren** är en karta över styrenheter och anslutningar i CMA-bilar. Använd den för att se vilka system som delar nätverk och var en styrenhet sitter. Kartan är ett uppslagsverk, inte en livekontroll av bilens kablar.
 
-## Vad kartan är
+## Vad kartan innehåller
 
-Kartan byggs från en oberoende CMA-kabelstudie, inte från en levande session. Den
-innehåller 170 enheter, 295 typade länkar över nio nät och 622 dokumenterade
-pinnrader, med 170 bussmeddelanden fångade vid sidan om. Studiens egen
-friskrivning är bokstavlig: detta är entusiastdokumentation och den är inte
-knuten till eller godkänd av någon fordonstillverkare.
+Den interaktiva kartan är en inbyggd referensdokumentation över CMA-plattformen snarare än en
+liveavläsning från ditt fordon. Den omfattar:
 
-Hanterills egen läsväg är smalare. Appen adresserar en modul via dess DoIP-logiska
-adress och skickar en begäran. Kartan namnger en modul via dess kontaktbeteckning
-och visar varje kabel som når den. Läsaren kan röra sig mellan de två, men de är
-separata beskrivningar av samma fordon.
+- **170 elektriska enheter**: Styrenheter, givare, strömställare, ställdon samt säkrings- och elcentraler.
+- **295 förbindelser över nio nätverk**: Visar hur både datatrafik och strömförsörjning går mellan enheterna.
+- **622 dokumenterade kontaktstiftsrader**: Listar stiftnummer, signalnamn och kabelfärger.
+- **170 referensmeddelanden på bussarna**: Visar hur vanliga signaler färdas mellan styrenheter.
 
-## Att läsa kanvasen
+Medan Hanterills diagnostikvyer adresserar styrenheter via deras logiska nätverksadresser, visar
+nätverksutforskaren fordonet utifrån fysiska komponenter, kablage och kontaktnummer. Du kan använda
+båda vyerna sida vid sida när du felsöker ett kommunikations- eller kabelfel.
 
-Kanvasen grupperar enheter i domänkluster: drivlina och högspänning, chassi och
-bromsar, ADAS och säkerhet, kaross och komfort, förarkontroller, skärmar och
-infotainment, anslutning och diagnostik, kärndatorer, kraftfördelning samt ett
-periferiband för sensorer, brytare och ställdon. Länkar löper i korridorer mellan
-klustren, så en lång sträcka går att läsa och en korsning är en verklig väg, inte
-en genväg i ritningen.
+## Så navigerar du i kartan
 
-Tre kontroller gör det mesta av arbetet:
+Komponenterna på ritningen är grupperade i funktionella kluster:
 
-<SpecList rows={[
-  ["Bussfilter", "Slå på eller av vart och ett av de nio näten. Kraft och diskret I/O är avstängda som standard eftersom de skulle dränka signallänkarna"],
-  ["Sökning", "Matcha ett enhetsnamn, en kontaktbeteckning, ett nätnamn eller en pinne. Öppna med Ctrl+K eller Cmd+K"],
-  ["Vägsökning", "Välj två moduler och markera den kortaste vägen mellan dem längs länkar som just nu är synliga"],
-]} />
+- Drivlina och högspänningssystem
+- Chassi, styrning och bromsar
+- Förarstöd (ADAS) och aktiv säkerhet
+- Kaross, dörrar, säten och kupékomfort
+- Förarreglage och rattstångsmoduler
+- Skärmar, ljud och infotainment
+- Uppkoppling och diagnostikgateway
+- Centrala huvuddatorer
+- Kraftfördelning och jordpunkter
+- Yttre givare, brytare och ställdon
 
-Ett klick öppnar en detaljpanel för enheten: artikelnummer, placering i fordonet
-och pinnlistan där studien dokumenterar en. En enhet utan dokumenterad pinnlista
-visar ändå de anslutningar som andra pinnlistor antyder.
-
-## De nio näten
-
-Varje nät har sin egen färg och linjetjocklek, och utforskaren låter dig ta bort
-dem du inte behöver.
+Tre verktyg högst upp gör det enkelt att hitta rätt:
 
 <SpecList rows={[
-  ["CAN", "Bussarna för kaross, chassi och diagnostik. Elva namngivna segment, flera vid 500 kHz"],
-  ["LIN", "Tretton korta lokala segment för brytare, ställdon och små moduler"],
-  ["FlexRay", "Ett stamsegment som bär kärndatorerna"],
-  ["MOST", "Mediaringen"],
-  ["Video / LVDS", "Videolänkar för kamera och skärm"],
-  ["Ethernet", "Ett segment, OBD:s Ethernet-länk"],
-  ["400 V HV", "Högspänningsvägen för traktion"],
-  ["12 V / GND", "Kraftfördelning, avstängt som standard"],
-  ["Diskret I/O", "Vanliga signalkablar, avstängda som standard"],
+  ["Bussfilter", "Slå på eller av vart och ett av de nio nätverken. 12 V-matning och diskreta signallinjer är avstängda som standard så att de inte skymmer databussarna."],
+  ["Sök (Ctrl+K / Cmd+K)", "Sök på enhetsnamn, förkortning, kontaktnummer, signalnamn eller stiftnummer."],
+  ["Vägspårning (Path trace)", "Välj två valfria enheter på kartan för att markera den kortaste vägen mellan dem över synliga bussar och gateways."],
 ]} />
 
-Segmenten bär den fysiska detalj som sammanfattningen döljer: busshastighet,
-kabelfärger för hög- och lågparet, de moduler som studiens segmentlista namnger
-och ett meddelandeantal där studien har registrerat ett.
+Klickar du på en enhet öppnas en detaljpanel med placering i fordonet, anslutna bussar och en
+komplett stifttabell.
 
-## DoIP och CAN-segmenten
+## De nio nätverken i fordonet
 
-Hanterill når ett CMA-fordon över DoIP, det vill säga diagnostik över IP. På denna
-arkitektur går den trafiken på OBD:s Ethernet-segment mellan fordonsgatewayen och
-OBD-kontakten. Kartan visar det som en enda Ethernet-länk, och det är länken som
-appen använder.
-
-CAN-segmenten är den äldre vägen. En CAN-buss bär samma UDS-frågor inuti ISO-TP-ramar,
-och CAN-segmentet för diagnostik och anslutning är det som är kopplat till
-OBD-kontakten. Hanterill har en ISO-TP-transport, men den levererar ingen
-CAN-adapter, så den vägen fungerar bara med hårdvara du skaffar själv.
-[Anslutning](/docs/connection) täcker vad varje länk kräver, och
-[Arkitektur](/docs/architecture) beskriver DoIP-höljet och ISO-TP-fallbacken
-närmare.
-
-## De två gateways
-
-Två moduler sitter mellan OBD-kontakten och resten av fordonet, och kartan
-markerar båda i kärnklustret.
+Varje nätverkstyp ritas med egen färg och linjetjocklek så att du kan granska ett system i taget:
 
 <SpecList rows={[
-  ["CEM på 4/56", "Central elektronikmodul, fordonets centrala karossdator. Den sitter på FlexRay-stammen och finns på flera CAN- och LIN-segment"],
-  ["VGM på 4/314", "Fordonsgatewayen. Den bär OBD:s Ethernet-länk och infotainmentsegmentet för CAN"],
+  ["CAN", "De primära styrbussarna för kaross, chassi, drivlina och diagnostik över elva namngivna segment (flertalet i 500 kbps)."],
+  ["LIN", "Tretton lokala låghastighetsbussar för dörrknappar, sätesmotorer, klimatspjäll samt regn- och ljussensorer."],
+  ["FlexRay", "Ett tidssynkroniserat höghastighetsnät som binder samman centraldatorerna, gatewayen, förarstödet och chassistyrningen."],
+  ["MOST", "Den digitala medieringen för infotainment och ljudförstärkare."],
+  ["Video / LVDS", "Dedikerade koaxiallänkar för 360-graders parkeringskameror, framåtriktad kamera och displayer."],
+  ["Ethernet", "Höghastighetslänken för diagnostik mellan OBD-II-uttaget och gatewaymodulen (VGM)."],
+  ["400 V HV", "Orange högspänningskablar mellan batteripaket, ombordladdare, snabbladdningsuttag, AC-kompressor, värmare och växelriktare."],
+  ["12 V / GND", "Lågspänningsmatning och chassijord (avstängt som standard)."],
+  ["Diskret I/O", "Direkta punkt-till-punkt-signalledare (avstängt som standard)."],
 ]} />
 
-FlexRay-stammen är den kortaste vägen in i fordonets kärna: CEM, VGM,
-förarinformationsmodulen, infotainmenthuvudenheten och fordonets styrenhet finns
-alla på det segmentet. När du söker en väg från en kupémodul till en drivlinemodul
-korsar den vanligtvis en gateway i stället för att gå punkt till punkt.
+## Hur diagnostiktrafiken når fordonets inre
 
-## Katalograder och levande register
+När du ansluter en Ethernet-kabel till OBD-II-uttaget pratar din dator direkt med
+**gatewaymodulen (VGM)** över OBD-Ethernet-länken. Därifrån vidarebefordrar VGM och
+**centraldatorn (CEM)** dina diagnostikfrågor ut på de interna FlexRay-, CAN- och LIN-bussarna.
 
-Kartan och Hanterills styrenhetsregister svarar på olika frågor, och antalen visar
-skillnaden tydligt. Kartan är den fysiska vyn: 170 enheter, inklusive sensorer,
-brytare, ställdon och kraftfördelning.
-[Styrenhetsreferensen](/docs/ecu-reference) är adresseringsvyn: 49 CMA-rader som
-Hanterill kan prata med över DoIP, var och en med en logisk adress.
+<SpecList rows={[
+  ["CEM (4/56)", "Central Electronic Module. Styr karossfunktioner, säkerhet och strömlägen samt kopplar samman FlexRay-stamnätet med flera CAN- och LIN-segment."],
+  ["VGM (4/314)", "Vehicle Gateway Module. Tar emot OBD-II-Ethernet-länken och styr diagnostik- och infotainmenttrafik mellan bussarna."],
+]} />
 
-Av de 49 raderna observerades 44 på ett levande helt elektriskt fordon och fem är
-referensposter som aldrig har svarat. De fem, TCM, NRCM, SUM, DEM och MVBM, är
-positioner som ett hybrid- eller luftfjädringsfordon skulle fylla. På det
-elektriska referensfordonet förblir de tysta, och Hanterill registrerar tystnaden
-som förväntad.
+## Varför kartan och Styrmodulregistret har olika antal enheter
 
-Två följder för läsningen av kartan. För det första är kartan bredare än registret,
-så en enhet på kanvasen är inte automatiskt en modul som appen kan adressera, och
-tvärtom. För det andra finns de fem hybridspecifika referensraderna inte alls som
-namngivna enheter på kartan. Kartan är inte härledd från Hanterills register, och
-registret är inte härlett från kartan.
+Nätverksutforskaren och [Styrmodulregistret](/docs/ecu-reference) beskriver fordonet ur två olika
+perspektiv:
 
-<Callout kind="note" title="Samma etikett kan betyda två saker">
-Kartan namnger en enhet ENGINE CONTROL MODULE ECM. På det helt elektriska
-referensfordonet svarade modulen på adressen `0x1630` som en styrenhet för
-drivlinan, så appens ECM-rad beskriver det beteendet, inte en motorstyrenhet. En
-etikett på ett schema och ett levande svar är två olika påståenden.
-</Callout>
+- **Nätverksutforskaren (170 fysiska enheter)**: Innehåller varje fysisk komponent på elschemat, inklusive säkringsboxar, enkla knappar, kameror och LIN-givare som saknar egen diagnostikadress.
+- **CMA-styrmodulregistret (49 diagnostikmoduler)**: Listar de primära styrenheter som svarar direkt på diagnostiska anrop genom gatewayen (44 aktiva moduler på ett batteridrivet fordon, plus 5 referensposter för hybrid, förbränning och luftfjädring).
 
-## Pinnar, noter och härledda länkar
+## Bekräftade kontaktstift kontra blockschemalänkar
 
-Heldragna linjer på kanvasen är dokumenterade pinnlistor: studien spårade kabeln
-och registrerade pinnen, nätet och kabelns färg. Streckade linjer är härledda från
-blockschemat, där anslutningen är tydlig men ingen pinnrad fångades. Skillnaden
-finns där för att du aldrig ska läsa en hypotes som ett kontinuitetsprov.
+På kartan betyder linjestilen följande:
 
-Öppna en enhet för att få dess pinntabell. Varje rad namnger ett mål, ett nät, ett
-pinnummer, kabelns färg och en eventuell not från studien. Från en pinne kan du
-hoppa till nätet och till modulen i andra änden.
+- **Heldragna linjer** visar förbindelser där kontaktstift, signalnamn och kabelfärg är dokumenterade i stifttabellen.
+- **Streckade linjer** visar förbindelser där två enheter kommunicerar på samma buss enligt blockschemat, även där det enskilda stiftnumret inte är listat.
 
-## Vad kartan inte säger
+## Nästa steg
 
-Kartan bär inga DoIP-logiska adresser, så den kan inte säga vilken modul som
-svarar på en begäran. Den bär inga mjukvaruversioner, felkoder eller levande
-värden, eftersom den är kabeldokumentation och inte en diagnostisk läsning. Den
-beskriver inte heller ett specifikt fordons utförande. Tillval och marknader
-skiljer sig, och en länk på kartan kan saknas på fordonet framför dig.
-
-[Arkitektur](/docs/architecture) täcker hur Hanterill använder gatewayen, och
-[Styrenhetsreferensen](/docs/ecu-reference) listar de adresser appen faktiskt
-pratar med.
-
-## Nästa
-
-- [Styrenhetsreferensen](/docs/ecu-reference): DoIP-registret som appen adresserar.
-- [Arkitektur](/docs/architecture): lagren en begäran färdas genom.
-- [Anslutning](/docs/connection): kabeln och adaptern varje länk kräver.
-- [Stödda fordon](/docs/supported-vehicles): vad som har verifierats per plattform.
+- [Styrmodulregister](/docs/ecu-reference): de adresserbara styrenheterna i Hanterill.
+- [Protokoll (DoIP, UDS och CAN)](/docs/architecture): hur meddelanden färdas över Ethernet och CAN.
+- [Anslut till fordonet](/docs/connection): kablar och adaptrar för respektive anslutning.
+- [Fordon som stöds](/docs/supported-vehicles): vad som är verifierat per plattform.

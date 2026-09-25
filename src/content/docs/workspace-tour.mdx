@@ -1,112 +1,60 @@
-import { TaskRouter } from "@/components/docs/mdx/TaskRouter";
+The sidebar groups Hanterill's screens by task. Start with **Overview** for a general check, then open a specific system when you need more detail.
 
-Hanterill has a lot of screens. This page is the map: what each one is for, and which ones you will
-actually use on a normal day.
+## Audience modes: choose how much detail you want
 
-The short version: **Overview** tells you what the car is. **Fault Codes (DTCs)** and
-**Battery Health** are where the real work happens, and **Sessions & Reports** keeps everything you
-did.
+Not everyone opening a diagnostic tool wants to see network addresses or protocol details. At the top of the interface (and in **Settings**), you can switch between three **Audience modes** at any time:
 
-## Find the screen for your task
+- **Owner mode**: Focuses on plain-language health summaries, battery condition, active warnings, and printable inspection reports. Technical protocol columns and raw engineering tools stay out of the way.
+- **Technician mode**: Adds module-by-module fault status, freeze-frame snapshots, subsystem pages, before-and-after session comparisons, and service procedures.
+- **Engineer mode**: Reveals every screen and detail in the app, including the parameter explorer, full-car parameter sweeps, raw response inspection, and protocol timing.
 
-If you already know what you are trying to do, skip the list and start here:
+Switching audience modes only changes what is shown on screen; it never deletes or alters your saved session data.
 
-<TaskRouter />
+## The screens you will use most often
 
-## Vehicle
+### Connection
+Where you pick your Ethernet adapter, wake and discover the car, watch the live connection log, or launch one of the built-in **Simulated vehicles** to explore the app offline. See [Connection](/docs/connection).
 
-- **Overview**: the landing page. Car identity, connection state, and a first summary of the
-  battery and any faults.
-- **Vehicle Entity**: the car's fingerprint. VIN, mileage from several modules, key count and
-  uptime, with the odometer cross-check.
-- **Connection**: pick an adapter, discover a car, see the link state and its details.
-- **Inspection Report**: the scored condition summary. See [Inspection reports](/docs/inspection-reports).
-- **Service Schedule**: service intervals and how much distance or time is left.
-- **Build Configuration**: the car's factory option list, read from the CEM.
-- **GPS Position**: a position fix from the TCAM module, requested only when you press the button.
+### Overview
+Your home screen once connected. Clicking **Run full check** scans the vehicle's control units, checks high-voltage battery health and 12 V status, counts active and stored fault codes, and saves a complete session snapshot.
 
-## Energy and battery
+### Vehicle
+Shows the car's identity and mileage verification:
+- **VIN**: shown in full on screen so you can verify the car you are inspecting, with a one-click mask toggle whenever you want to hide the VIN for screenshots or shared exports.
+- **Odometer cross-check**: compares mileage recorded across up to 29 modules (instrument cluster, brakes, central gateway, battery, and body controllers) and highlights any discrepancy.
+- **Keys and operating mode**: shows how many keys are paired to the car, live key-transponder recognition, and whether the vehicle is parked, in accessory mode, or ready to drive.
+- **Car configuration**: searches the 256 factory option slots stored in the central gateway and prints a clean configuration build sheet. See [Vehicle configuration](/docs/vehicle-configuration).
 
-- **Battery Health**: SoH, SoC, pack voltage and current, temperatures, and the cross-signal
-  checks. See [Battery diagnostics](/docs/battery-diagnostics).
-- **Cell & Thermal Map**: the cell-group data laid out physically over the pack, so a weak spot has
-  a location rather than just a number.
-- **12V Sleep Drain**: standby current history. Useful when a car has a flat battery in the morning
-  and nothing else looks wrong.
-- **Charging** and **Power (OBC/DC-DC)**: charging socket state, the 12 V rail and the converters.
-- **TCAM Battery**: the emergency backup battery in the telematics module.
+### Battery Health & Cell Map
+Reads the high-voltage traction battery directly from the battery management module:
+- **State of Health (SoH)** and **State of Charge (SoC)** (cross-checked across multiple modules).
+- **Interactive 2D and 3D Cell Map** showing every series cell-group voltage across all 11 supported battery pack layouts, highlighting the highest, lowest, and spread (delta) in millivolts.
+- **Multi-session Battery Health History** tracking how your car's battery health and cell balance evolve across visits, plus an **8-band lifetime temperature histogram** showing how much time the pack has spent in cold, moderate, and hot temperature ranges. See [Battery diagnostics](/docs/battery-diagnostics).
 
-## Powertrain and thermal
+### Fault Codes (DTCs)
+The **Fault Codes** screen scans responding control units and opens on **Needs Attention**. You can switch to older records, inspect details saved with a fault, compare scans or clear codes after a repair. See [Fault codes](/docs/dtc-scanning) for the full process.
 
-- **Drive Units**: front and rear motor and inverter telemetry, side by side.
-- **ICE engine**: the combustion and hybrid reference lane. On a battery-electric car this screen
-  stays quiet by design; it exists for the hybrid variants of the platform.
-- **Steering**: steering angle, rate and calibration state. Read-only.
-- **HVAC & Thermal**: the refrigerant loop, heater circuit and compressor.
+### Inspection Report
+Turns a vehicle scan into a scored, printable **Pre-Purchase Inspection (PPI)** report. You can switch between three printable report styles (*Executive inspection*, *Battery certificate*, and *Technical dossier*) depending on whether you are buying a used car, documenting battery condition, or filing a workshop record. See [Inspection reports](/docs/inspection-reports).
 
-The energy domains (climate, drive units, charging and power) are tabs of one workspace, so a deep
-link takes you straight to the panel you need.
+### Cross-Check
+A dedicated verification screen that compares how different computers inside the car report the same real-world fact at the same moment:
+- **VIN agreement** across the gateway, battery, instrument cluster, and safety modules.
+- **Odometer agreement** across up to 29 modules to spot mileage tampering or replaced modules.
+- **State of Charge (SoC) agreement** between the battery management module, central gateway, and driver display.
+- **12 V supply voltage agreement** across modules to spot a weak ground strap or voltage drop.
+- **Service reminder agreement** inside the instrument cluster.
 
-## Diagnostics and ECUs
+## Live & Subsystem screens
 
-- **Fault Codes (DTCs)**: the scan. Read, triage, clear and export. See [DTC scanning](/docs/dtc-scanning).
-- **ECU Inventory**: every module in the registry with its address, what it answered, and what it
-  reported. See [ECU reference](/docs/ecu-reference).
-- **DID Scanner**: a bounded sweep over identifier ranges across all modules. This is a research
-  tool: it finds what a module answers that is not in the catalogue yet.
-- **DTC History Diff**: compare two scans and see what changed.
-- **Firmware SBOM**: the software inventory. Every module's part numbers and versions in one list,
-  diffable between visits.
+- **Live Telemetry**: Streams and charts real-time measurements (pack voltage, current, motor torque, inverter temperatures, 12 V rail) and records drives for offline replay. See [Live telemetry](/docs/live-telemetry).
+- **Climate, Drive Units, Charging, Power, Steering, TCAM & GPS, Service Schedule**: Dedicated screens for each subsystem in the car, including heat-pump loop temperatures, front and rear motor comparisons, AC/DC charge-limit explanations, TCAM backup battery health, live satellite skyplot, and service countdowns. See [Subsystem telemetry](/docs/subsystem-telemetry).
+- **12 V Sleep Drain**: Shows how much current the car draws while parked and which module woke the car up overnight. See [Parasitic drain](/docs/parasitic-drain).
+- **Engine Diagnostics**: Dedicated combustion and hybrid measurements for CMA and SPA petrol, diesel, and plug-in hybrid cars. See [Engine diagnostics](/docs/engine-lane).
 
-## Telemetry and tools
+## History, Maintenance, and Reference screens
 
-- **Live Telemetry**: selected channels sampled on a fixed cadence and charted, with recording and
-  playback.
-- **DID Explorer**: read one identifier at a time, with the raw bytes and the decoded value side by
-  side. The manual override for when a screen does not show what you need.
-- **Service & Routines**: the write operations, each behind an explicit confirmation. See
-  [Service functions](/docs/service-functions) and [Safety](/docs/safety).
-
-## System
-
-- **Capabilities**: what this specific car answered it can do, and what this build of the app can
-  do. When a screen seems empty, this is where to find the reason.
-- **Sessions & Reports**: everything you have captured, with exports and comparisons.
-- **Activity & Logs**: the operator trail of what was run, with VIN redaction applied.
-- **Settings**: appearance, language, connection policy, privacy and storage.
-
-## Reading a screen
-
-Most values in Hanterill carry three levels of detail, and you can stop at whichever one answers
-your question:
-
-1. **Label, value and unit.** The number you came for.
-2. **Interpretation.** What it means, how fresh it is, and whether it is measured or derived.
-3. **Evidence.** Which module and identifier it came from, the raw bytes, and the decoder version.
-
-That third level is what makes the tool auditable. If a number looks wrong, you can see where it
-came from without trusting anyone's summary.
-
-## Missing values are shown as missing
-
-When a reading does not answer, the app shows a gap with a reason, never a zero. It lists a skipped
-module as skipped. A scan reports how many modules replied and how many did not. On a diagnostic
-tool, a fabricated zero is worse than a visible gap.
-
-## Keyboard
-
-- `Ctrl+K` or `Cmd+K` opens the command palette: jump to any screen, or search for an ECU by name.
-- `?` shows the full shortcut list.
-- Two-key chords jump straight to common screens, pressing `G` then `O` for overview, `G` then `B`
-  for battery, and so on.
-
-## Making it yours
-
-**Settings** holds language, themes, contrast, motion and the light/dark mode. See
-[Interface and languages](/docs/interface-and-language) for the full list, including which
-languages ship and what each operating system asks for on first launch.
-
-## Next
-
-- [Getting started](/docs/getting-started) if you have not connected yet.
-- [CLI](/docs/cli) for the same capabilities without the window.
+- **Sessions & Comparison**: Your local archive of every scan, with side-by-side comparison views for fault codes, battery health trends, cell voltages, module lists, and software updates. See [Sessions and evidence](/docs/sessions-and-evidence).
+- **ECU Inventory & Firmware**: Lists every module fitted to the car along with its hardware and software part numbers, so you can see exactly which modules a workshop visit or over-the-air update changed. See [Firmware and inventory](/docs/firmware-and-inventory).
+- **Service & Maintenance**: Confirmed maintenance routines such as retracting the electric parking brake for pad changes, resetting the service reminder, or calibrating climate dampers. See [Service functions](/docs/service-functions).
+- **DID Explorer, Captures & Sweeps, Capabilities, Activity Log**: Advanced tools for sweeping every readable parameter across the car, re-analyzing saved captures offline, checking what the current build and vehicle support, and reviewing the live communication log.

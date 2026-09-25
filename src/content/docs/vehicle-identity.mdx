@@ -1,124 +1,86 @@
-Before Hanterill reads anything, it has to know which car is on the other end of the link. This page
-explains how the app finds and reads the VIN, how it decides the platform, what a resolved vehicle
-profile contains, and the guard that stops two cars from being treated as one.
+Hanterill identifies the car before saving readings from it. The **Vehicle** screen shows the vehicle identification number, mileage and other details reported by its control units. This guide explains where those details come from and what to do if they disagree.
 
-## How the VIN is found
+## How Hanterill finds and verifies the VIN
 
-The VIN rule is one function: 17 alphanumeric characters after trimming, per ISO 3779. A payload that
-fails the rule is not a VIN, whatever answered. The search walks a trust order and stops at the first
-valid answer:
+A valid VIN is always a 17-character alphanumeric code following the international ISO 3779
+standard. When you connect, Hanterill checks for the VIN in order of reliability and stops as
+soon as it receives a valid 17-character answer:
 
 <SpecList rows={[
-  ["1", "the VIN a vehicle announcement carried during discovery, which costs no wire traffic"],
-  ["2", "the routed entity's address: one targeted read of 0xF190"],
-  ["3", "one functional read of 0xF190, where several modules answer the same identifier"],
-  ["4", "a sweep of the modules that report an active diagnostic session, each asked for its VIN"],
+  ["1. Gateway discovery announcement", "Reads the VIN broadcast by the Vehicle Gateway Module when the Ethernet link first comes up, requiring zero extra diagnostic traffic."],
+  ["2. Direct gateway identity read", "Asks the primary gateway module directly for its stored VIN."],
+  ["3. Broadcast identity read", "Asks all awake modules on the bus to report the vehicle VIN."],
+  ["4. Active module sweep", "Checks individual responding control units until a valid 17-character VIN is confirmed."],
 ]} />
 
-Silence at one step moves to the next; it is not a failure of the search. Cancellation is the only
-error the search returns.
+Alongside the VIN, Hanterill reads the Central Electronic Module's hardware and diagnostic
+identity block so the car's core configuration is available immediately.
 
-## How the VIN is read
+## What you see on the Vehicle screen
 
-The VIN comes from DID `0xF190` (ReadDataByIdentifier) through the same DID path every other read
-uses. A response that is not 17 UTF-8 bytes is a typed failure, not an empty value. A module that does
-not support the identifier stays unsupported, and one that stays silent is recorded as silent rather
-than as a car with no VIN.
+The **Vehicle** screen brings together the car's core identity and cross-module consistency
+checks in one place:
 
-The identity read also pulls the CEM `0xEDA0` block, which carries diagnostic, hardware and serial
-numbers. The two reads are independent, so a failure in one does not hide the answer from the other.
+- **Full VIN with one-click privacy masking**: The full 17-character VIN is shown clearly on the Vehicle screen and in Inspection Reports so you can verify the car against its registration documents and chassis plate. Whenever you want to take a screenshot or share a report, a single click masks the identifying characters.
+- **Cross-module odometer check (up to 29 modules)**: Modern cars store mileage in many control units, not just the dashboard display. Hanterill reads and compares odometer values across up to 29 modules so you can see whether all modules agree or whether a module was replaced or tampered with.
+- **Paired keys and live transponder check**: Displays how many keys are currently paired to the immobilizer and shows live recognition when a key fob or transponder is detected inside the cabin. This is especially useful when buying a used car to verify that no unaccounted keys remain registered.
+- **Vehicle operating mode**: Shows whether the car is in normal customer driving mode or left in workshop, factory, or transport mode.
 
-## Where the identity is shown
+## How the vehicle platform is detected
 
-The Vehicle page puts the model and platform at the top, the VIN below it, and the source and capture
-time underneath. The VIN is masked by default and can be revealed from the same toolbar. The observed
-VIN is also published to a shared store, so another page does not have to read it again.
+Hanterill never guesses your car's platform from a single clue. Instead, it combines multiple
+pieces of live evidence (the VIN prefix and manufacturer code, the gateway's identity
+signature, and the exact control units that answer on the network) to confirm whether the car
+is built on **CMA**, **SPA**, or **SEA1**.
 
-## How the platform is decided
+Platform detection requires agreement across at least two independent checks (for example, both
+the vehicle identity and the responding controller signatures). If a car is only partially
+awake and does not provide enough evidence yet, Hanterill marks the platform as a provisional
+candidate rather than locking in a guess.
 
-Architecture detection scores evidence collected on a fingerprint. The classes and their weights are
-fixed:
+## What a resolved vehicle profile includes
+
+Once Hanterill identifies your car, it builds a session profile containing:
+
+- **Platform architecture** (CMA, SPA, or SEA1) and how confidently it was matched
+- **Make, model, and model year** (read from the vehicle's configuration records)
+- **Powertrain type** (pure battery-electric, plug-in hybrid, mild hybrid, or combustion)
+- **High-voltage battery cell layout** (such as 108 cells across 27 modules on standard CMA packs, verified against the actual number of cell sensors that answer)
+
+## The identity guard (preventing mixed-car sessions)
+
+If you work on more than one vehicle in a garage or reconnect after a pause, Hanterill's
+**identity guard** makes sure data from two different cars is never combined into one session
+or report.
+
+When you first connect, Hanterill records the car's 17-character VIN. Before starting a
+multi-phase scan or resuming an interrupted fault-code sweep, it re-checks the live VIN from
+the car:
 
 <SpecList rows={[
-  ["15", "vehicle identity (VIN and model hints) and topology"],
-  ["45", "exact controller identity, a diagnostic signature, or a DoIP entity signature"],
+  ["Matching VIN", "The same vehicle is connected; the scan or resume continues normally."],
+  ["Module temporarily silent", "If a module is briefly busy, Hanterill does not falsely trigger a mismatch."],
+  ["Different VIN detected", "A different vehicle is on the cable; Hanterill stops immediately and keeps the existing session clean."],
 ]} />
 
-Repeated evidence inside one class earns no extra score. Two rules then apply: the winner needs at
-least 60 points across at least two independent classes, and a margin of 25 points over the runner-up.
-Below that, the verdict reads as a candidate or ambiguous, and when nothing qualifies the platform
-reads unknown. Only live evidence can select a platform; cached and synthetic observations never raise
-confidence.
+The same protection applies when comparing two saved sessions on your computer: if the two
+sessions carry different VINs, Hanterill blocks the side-by-side diff so you never accidentally
+compare firmware or battery health between two different cars.
 
-## What a vehicle profile resolves
+## How module addresses are matched to your platform
 
-The resolved vehicle record carries everything a later use case needs: the architecture and its
-confidence, the model, the model year, the catalogue profile, the pack topology with its own
-confidence, the powertrain variant, and the reason slugs behind every fallback and default.
+Every platform uses its own address book:
 
-Two limits matter. The catalogue profile exists only when platform, model and model year are all
-established; missing any one leaves the profile empty and names the gap. The model year comes from
-configuration or factory evidence and is never inferred from the VIN or a build week. The model
-identity itself is derived once, in the same place the detector scores with, so every page names the
-same model.
+- **CMA vehicles** use the 49-module CMA registry.
+- **SPA vehicles** use the 41-module SPA registry.
+- **SEA1 vehicles** use the 25-module SEA1 registry.
 
-Topology confidence is separate from the architecture verdict. It reads pinned when the populated
-cell count lands on a topology whose platform agrees, inferred when the count is distinctive but the
-platform is not confirmed, and defaulted when there is no usable count evidence or the count alone is
-ambiguous. A 108-cell read cannot separate two platforms by itself, so it never pins silently.
-
-## The identity guard
-
-The guard has two halves. At connect, the app captures the CEM VIN once and arms the guard only on a
-well-formed VIN. On a stage transition, it reads the live VIN again and compares:
-
-<SpecList rows={[
-  ["Same", "the live VIN equals the known VIN; the run continues"],
-  ["Silent", "nothing answered or the payload was malformed; silence is not proof of a swap, so the run continues"],
-  ["Mismatch", "a different vehicle answered; the run stops and carries the observed VIN as evidence"],
-]} />
-
-The policy lives in one module so every flow inherits it. The all-module DID scan rechecks on the
-stage transition, and the fault-code sweep's reconnect-and-resume refuses to merge rows read from a
-different vehicle. Un-attempted rows stay un-attempted after a mismatch.
-
-<Callout kind="note" title="A demo session runs unguarded">
-With no well-formed VIN to capture, the guard stays unarmed rather than arming on a guess. That is a
-deliberate choice, and it means an unverified session carries no identity proof.
-</Callout>
-
-The same rule covers the `0xF114` factory build sheet. It is decoded against the connect-time VIN, and
-if the record's VIN disagrees, the sheet becomes a typed not-applicable failure instead of a fact about
-this car. An unknown connect-time VIN is silence, never a mismatch.
-
-## Refusing cross-vehicle comparisons
-
-Before two sessions are compared, the app compares the vehicle reference each one recorded. When both
-carry a reference and the references differ, the check returns a mismatched-vehicle result with the
-comparison refused: deltas taken across two cars mislead. When either side has no recorded identity,
-the result is an unverified-vehicle warning rather than a block, and the app asks you to confirm both
-sessions belong to the same car. Contract versions must match as well. The diff framework and its
-alignment rules are described in [sessions and evidence](/docs/sessions-and-evidence).
-
-## How ECU addresses are resolved
-
-Callers name a role or a registry short name plus the resolved vehicle and get the address for that
-platform. CMA resolves from the live-verified registry; SPA and SEA1 resolve only from their own DoIP
-registries, and a name with no mapping on that platform returns nothing. An unresolved architecture
-uses the CMA first-contact fallback, and that answer is flagged as assumed. SPA2 returns nothing. A
-role that fans out across several controllers, such as the drivetrain, returns nothing because no
-single address is correct; the caller records the read as not attempted instead of guessing.
-
-## What the app cannot say
-
-- The VIN search can return nothing. A demo or unverified session then runs without the guard.
-- Model identity depends on the VIN grammar or a live identity. A car the grammar does not know stays
-  unidentified, and the page shows the platform without a model.
-- No model year means no catalogue profile, however confident the platform verdict is.
-- SPA2 addresses are not mapped, so role lookups there return nothing.
+If a feature asks for a control unit that does not exist on the connected platform, Hanterill
+cleanly skips that read and marks it as not applicable rather than sending messages to an
+unknown address.
 
 ## Next
 
-- [Supported vehicles](/docs/supported-vehicles): where each platform stands.
-- [ECU reference](/docs/ecu-reference): the registry that answers role lookups.
-- [Vehicle configuration](/docs/vehicle-configuration): what the app reads once it knows the car.
+- [Supported vehicles](/docs/supported-vehicles): see which models belong to CMA, SPA, and SEA1.
+- [ECU reference](/docs/ecu-reference): explore the modules that report identity and mileage.
+- [Vehicle configuration](/docs/vehicle-configuration): inspect your car's factory build options and equipment list.

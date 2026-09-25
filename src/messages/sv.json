@@ -114,15 +114,11 @@
         },
         "didMeaning": {
           "task": "Vad betyder den här identifieraren?",
-          "screen": "DID-utforskaren, eller CLI:ets did-plan"
+          "screen": "DID-utforskaren"
         },
         "customerReport": {
           "task": "Jag behöver något att lämna till en kund",
           "screen": "Sessioner & rapporter, exportera PDF"
-        },
-        "scriptScan": {
-          "task": "Jag vill skripta en skanning",
-          "screen": "kommandoraden hanterill"
         },
         "buildLimits": {
           "task": "Vad kan den här versionen faktiskt göra med fordonet?",
@@ -132,7 +128,7 @@
     },
     "docs": {
       "title": "Dokumentation",
-      "desc": "Lär dig hur Hanterill fungerar, från anslutning och batteridiagnostik till kommandoradsverktyget och inspektionsrapportens regler."
+      "desc": "Lär dig hur Hanterill fungerar, från anslutning och batteridiagnostik till felkoder, livedata och inspektionsrapportens regler."
     },
     "troubleshooting": {
       "title": "Fordonet dyker inte upp",
@@ -230,15 +226,11 @@
         },
         "didMeaning": {
           "task": "Vad betyder den här identifieraren?",
-          "screen": "DID-utforskaren, eller CLI:ets did-plan"
+          "screen": "DID-utforskaren"
         },
         "customerReport": {
           "task": "Jag behöver något att lämna till en kund",
           "screen": "Sessioner & rapporter, exportera PDF"
-        },
-        "scriptScan": {
-          "task": "Jag vill skripta en skanning",
-          "screen": "kommandoraden hanterill"
         },
         "buildLimits": {
           "task": "Vad kan den här versionen faktiskt göra med fordonet?",
@@ -646,7 +638,7 @@
   },
   "platforms": {
     "title": "CMA testad. SPA stöds delvis. SEA1 kartlagd.",
-    "lead": "Polestar 2 och Volvo-modeller på CMA är testade. SPA stöds delvis: modeller med förbränningsmotor har testats, medan batteridiagnostiken behöver verifieras på fler fordon. SEA1 är kartlagd men behöver också testas vidare. Att kunna ansluta till ett fordon betyder inte att alla funktioner stöds.",
+    "lead": "Polestar 2 och Volvo-modeller på CMA är testade. SPA stöds delvis: DoIP-anslutning, styrenhetslista och felkodsskanning har testats på en V90 T6, medan batteridiagnostiken för hybrider behöver verifieras på fler fordon. SEA1 är kartlagd och direktanslutning mot gateway är testad, men batterifunktionerna behöver testas vidare. Att kunna ansluta till ett fordon betyder inte att alla funktioner stöds.",
     "moreLink": "Fullständig kompatibilitet och status",
     "disclaimer": "Kompatibilitet är inget påstående om tillverkarstöd. Hanterill är ett oberoende projekt och är inte anslutet till Volvo Cars, Polestar eller Geely.",
     "verifiedFunctions": "Verifierade funktioner",
@@ -675,7 +667,7 @@
     },
     "blurbs": {
       "CMA": "Compact Modular Architecture. Polestar 2 och mindre eldrivna Volvo-modeller är testade här. Batteriet har 108 cellgrupper i 27 moduler. CMA-modeller med förbränningsmotor eller hybriddrift har delvis stöd.",
-      "SPA": "Scalable Product Architecture. Delvis stöd. Katalogen innehåller batterityper, styrenhetsadresser och avkodare. Modeller med förbränningsmotor har testats; batterifunktionerna behöver verifieras på fler fordon.",
+      "SPA": "Scalable Product Architecture. Delvis stöd. DoIP-anslutning, styrenhetslista och felkodsskanning är testade på V90 T6, och katalogen innehåller hybridbatteriernas layouter medan djupare batteriläsningar verifieras.",
       "SEA": "Sustainable Experience Architecture. Styrenheter, DoIP-adresser, dataidentifierare och cellgrupper för SEA1 är kartlagda. Funktionerna behöver verifieras på fler fordon.",
       "SPA2": "Andra generationens SPA. Annan gateway- och säkerhetsmodell. Under utredning."
     },
@@ -711,7 +703,7 @@
     "serviceModesModule": "Modul",
     "serviceModesService": "Service",
     "serviceModesStatus": "Status",
-    "serviceModesNote": "Rutinernas identifierare har tagits fram genom analys av systemet. Följ fordonstillverkarens serviceanvisningar och utför bara åtgärder på fordon som du har rätt att arbeta med. Vanliga avläsningar ändrar inte fordonet.",
+    "serviceModesNote": "Vissa serviceåtgärder skyddas av bilens säkerhetsnivå. Hanterill kan kontrollera om nivån är låst, men kan inte låsa upp den. Bilen kan därför neka en åtgärd som finns i listan. Följ bilens serviceanvisningar och utför åtgärderna bara på fordon som du har rätt att arbeta med. Vanliga avläsningar ändrar inte bilen.",
     "serviceModesSafety": "Säkerhet och gränser",
     "serviceStatus": {
       "beta": "Bekräftelse krävs",
@@ -756,9 +748,9 @@
   "protocolStack": {
     "title": "Byggt på fordonsstandarder.",
     "lead": "Hanterill använder samma diagnosprotokoll som många verkstadsverktyg och kommunicerar direkt med fordonet utan någon molntjänst som mellanhand.",
-    "paragraph": "Först hittar Hanterill fordonet via UDP på port 13400. Sedan öppnas en TCP-anslutning och diagnostikvägen aktiveras. Appen kan fråga alla styrenheter samtidigt och därefter följa upp dem som inte svarar. Avläsningar görs via UDS. Åtgärder som ändrar fordonet hanteras separat och kräver bekräftelse.",
+    "paragraph": "Hanterill hittar bilen genom kabeln, öppnar en diagnosanslutning och skickar frågor till styrenheterna. Vanliga kontroller läser information. Åtgärder som kan ändra bilen ligger separat och kräver bekräftelse.",
     "layers": {
-      "hanterill": "App och kommandoradsverktyg, byggda med Rust och Tauri",
+      "hanterill": "Applikation byggd med Rust och Tauri",
       "engine": "Sessioner, svep, avkodare, betygsättning",
       "uds": "Unified Diagnostic Services",
       "doip": "Diagnostics over IP",
@@ -777,8 +769,8 @@
       "session": "Styrning av diagnostiksession",
       "read": "Läs data via identifierare",
       "dtc": "Läs DTC-information",
-      "periodic": "Ett periodiskt prov på begäran (0x2A)",
-      "routineResult": "Resultat av en rutin som redan körts (0x31)"
+      "periodic": "Ett periodiskt prov på begäran",
+      "routineResult": "Resultat av en rutin som redan körts"
     },
     "wireLabels": {
       "routing": "Routningsaktivering",
@@ -881,7 +873,7 @@
       },
       {
         "q": "Vilka fordon stöds egentligen?",
-        "a": "Polestar 2 och CMA-plattformens Volvo-modeller (XC40/EX40, C40/EC40) är de testade plattformarna. SPA stöds delvis: bilar med förbränningsmotor har testats via referensbanan för motorstyrning, medan hybrid- och EV-batterivägen är katalogiserad och behöver testas på fler fordon. SEA1 (EX30, Polestar 4) är katalogiserad och behöver testas på fler fordon. Zeekr, Lynk & Co och SPA2 återstår att utreda."
+        "a": "Polestar 2 och CMA-plattformens Volvo-modeller (XC40/EX40, C40/EC40) är de testade plattformarna. CMA-fordon med förbränningsmotor eller hybriddrift har delvis stöd via referensbanan för motorstyrning. SPA stöds delvis: DoIP-anslutning, styrenhetslista och felkodsskanning har testats på en V90 T6, medan hybridbatterivägen behöver testas på fler fordon. SEA1 (EX30, Polestar 4) är katalogiserad och direktanslutning mot gateway är verifierad på Zeekr 001."
       },
       {
         "q": "Kan Hanterill skada min bil?",
@@ -901,13 +893,13 @@
       },
       {
         "q": "Vad får jag ut av inspektionsrapporten?",
-        "a": "En bedömning av batteriets skick, cellbalans, felkoder och mätarställning. Varje slutsats kan spåras till en dokumenterad regel. Äldre sessioner kan bedömas igen när reglerna uppdateras. GPS-position tas inte med i rapporten."
+        "a": "Rapporten samlar batteriets skick, cellbalans, felkoder och kontroll av mätarställningen. Du kan se vad resultatet bygger på och skapa en rapport från en sparad session senare. GPS utelämnas om du inte själv väljer att ta med den."
       }
     ],
     "compat": [
       {
         "q": "Fungerar Hanterill med vilken Volvo eller Polestar som helst?",
-        "a": "Nej. Hanterill är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA stöds delvis: bilar med förbränningsmotor har testats via referensbanan för motorstyrning, medan hybrid- och EV-batterivägen är katalogiserad och behöver testas på fler fordon. SEA1 är katalogiserad och behöver testas på fler fordon. Zeekr, Lynk & Co och SPA2 utreds."
+        "a": "Nej. Hanterill är CMA-först. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade plattformarna. SPA stöds delvis: DoIP-anslutning, styrenhetslista och felkodsskanning har testats på en V90 T6, medan hybridbatterivägen är katalogiserad och behöver testas på fler fordon. SEA1 är katalogiserad och behöver testas på fler fordon. Zeekr, Lynk & Co och SPA2 utreds."
       },
       {
         "q": "Vad är skillnaden mellan plattformskompatibilitet och stöd?",
@@ -1040,13 +1032,13 @@
       "hNetwork": "Nätverkstrafik",
       "pNetwork": "Under en session kommunicerar Hanterill endast med fordonet över den lokala Ethernet-länken. Webbplatsen kan fråga GitHub API efter den senaste utgåvan; applikationen själv kräver ingen internetanslutning för att köras.",
       "hNoSub": "Ingen prenumeration, och inget pris",
-      "pNoSub": "Det finns ingen betald nivå och ingen licensserver, och Hanterill är gratis för privat bruk i varje version. Källkoden är läsbar och det finns inget att tjäna på dina fordonsdata."
+      "pNoSub": "Hanterill är gratis för privat bruk. Du behöver inget konto eller abonnemang för att använda datorappen."
     },
     "safety": {
       "hReadOnly": "Skrivskyddat genom konstruktion",
-      "pReadOnly": "Batteridata, ECU-identifiering, felkoder och realtidstelemetri är alla läsoperationer. Att köra dem kan inte ändra fordonets konfiguration. Hanterill sänder lästjänster om du inte uttryckligen bekräftar en skrivning: vad binären kan göra rapporteras av ett kapacitetsmanifest.",
+      "pReadOnly": "Batterikontroller, felkodsskanningar och livedata ber bilen om information. De ändrar inte bilens konfiguration. Åtgärder som kan ändra bilen ligger i separata flöden och kräver bekräftelse.",
       "hChanges": "Operationer som förändrar fordonet",
-      "pChanges": "Att rensa diagnostikinformation, servicerutiner och anpassningar ändrar ECU-tillstånd. Var och en begär sin egen bekräftelse, och gränssnittet döljer varje kommando den körande binären inte kan utföra. Ett bygge kompilerat utan skrivfunktionen avvisar dem med ett typat svar.",
+      "pChanges": "Att radera felkoder, köra en servicerutin eller starta om en styrenhet kan ändra bilen. Hanterill ber dig bekräfta varje åtgärd och visar om bilen godtog den.",
       "hHv": "Högspänning",
       "pHv": "Elbilar har farliga högspänningssystem. Att läsa batteridata över en diagnostiklänk spänner inte upp något och gör inte fysisk högspänningsservice säker. HV-service kräver procedurer, utrustning och utbildning från tillverkaren.",
       "hNoSubstitute": "Ingen ersättning för tillverkarens verktyg",
@@ -1068,44 +1060,44 @@
         "Korskontroller: rapporterad packspänning mot cellsumman, rapporterad effekt mot beräknad"
       ],
       "hTopologies": "Packtopologier",
-      "pTopologies": "Cellmatrisen är inte hårdkodad. Katalogen modellerar CMA 108S, SPA EV 96S och 108S pack, SPA-hybridens 102-cellers T8-pack och SEA-varianterna 107S och 110S, och ett 102-cellers pack rapporteras som fullständigt vid 102. Endast CMA-topologin är verifierad på ett rullande fordon; de övriga behöver testas på fler fordon.",
-      "pEngineering": "Växla panelen till <strong>Engineering</strong> för styrenhet, transport, service och identifierare. <docs>Batteridiagnostikdokumenten</docs> har hela lässekvensen.",
+      "pTopologies": "Batterierna är uppbyggda på olika sätt i olika modeller. Hanterill väljer rätt layout så att en förväntad skillnad inte ser ut som ett saknat mätvärde. CMA har mest verifiering på riktiga bilar; de andra layouterna behöver provas på fler fordon.",
+      "pEngineering": "Välj <strong>Engineering</strong> för fler detaljer om batteristyrenheten och de enskilda avläsningarna. <docs>Batteriguiden</docs> förklarar hur du tolkar dem.",
       "moreSoh": "Hur hälsotillstånd läses"
     },
     "vehicleDiagnostics": {
       "hDiscovery": "Upptäckt",
-      "pDiscovery": "En UDP-identifieringsförfrågan på port 13400 räknar upp svarande. Hanterill öppnar sedan en TCP-kanal, aktiverar routing och avsöker varje adress efter en UDS-session. En funktionell broadcast kan fråga alla ECU:er på en gång, med individuella avsökningar endast för de som håller tyst. CMA-registret innehåller 49 moduler; 40 annonserar DTC-stöd.",
+      "pDiscovery": "Hanterill hittar bilen genom kabeln, öppnar en diagnosanslutning och kontrollerar vilka styrenheter som svarar. Appen kommer ihåg vilka enheter som inte finns i bilen, så att senare skanningar inte väntar på dem i onödan.",
       "hFaults": "Felkoder",
-      "pFaults": "DTC:er läses med tjänsten ReadDTCInformation och rapporteras med sin status: aktiv, väntande, lagrad eller historisk. Listan öppnas på de koder som behöver uppmärksamhet. Där styrenheten sparade en frysta ramdata hämtar Hanterill den tillsammans med koden, och en inbyggd diff jämför vilka två skanningar som helst.",
+      "pFaults": "Felkodslistan öppnas med de koder som behöver uppmärksamhet. Du kan också se äldre koder, uppgifter som bilen sparade när felet uppstod och vad som ändrats mellan två skanningar.",
       "hClearing": "Rensning",
-      "pClearing": "Rensning (UDS 0x14) speglar referensverktygets orkestrering: per-ECU-framsteg, insamling av frysta ramdatas före raderingen, en verify-omläsning som rapporterar de besvärliga, och valfri länkåterställning efter en modulomstart. Den begär bekräftelse först, och den körande binären rapporterar sina verkliga kapaciteter via ett manifest.",
+      "pClearing": "Du behöver bekräfta innan felkoder raderas. Hanterill kan spara detaljerna som hör till felen, visa förloppet per styrenhet och läsa av bilen igen för att se vilka koder som finns kvar.",
       "hDid": "DID-skanner",
-      "pDid": "En avgränsad skanning sveper kända dataidentifierare över hela katalogen i ett pass och registrerar per rad negativa svarskoder, digests och latens. DID Explorer spelar upp lagrade insamlingar offline, så en CSV från en session kan grävas i utan fordon inkopplat.",
+      "pDid": "Datautforskaren kan läsa valda värden från styrenheter som svarar. Sparade insamlingar går att öppna senare utan att bilen är ansluten.",
       "hInventory": "Inventering och firmware",
-      "pInventory": "VIN, ECU-delsnummer, hårdvaru- och mjukvaruversioner och leverantörsidentifierare läses med ReadDataByIdentifier och ger en hårdvaru- och mjukvaruinventering av bilen. Två inventeringar diffas ECU för ECU, till exempel före och efter en OTA. Fler-ECU-vägmätaravläsningar korskontrollerar varandra och flaggar oenighet.",
+      "pInventory": "Inventeringen visar hårdvaru- och mjukvaruversioner från varje styrenhet som svarar. Jämför två sparade listor för att se vad som ändrats efter service eller en uppdatering. Appen markerar också mätarställningar som inte stämmer överens.",
       "hEvidence": "Bevis",
       "pEvidence": "En session exporteras till JSON eller CSV och arkiveras lokalt. Kör en före reparationen och en efter: den inbyggda jämförelsen visar färre koder och färre aktiva fel. <link>Sessions och bevis</link> täcker jämförelsevyerna.",
       "dtcDocs": "Dokumentation för DTC-skanning"
     },
     "liveData": {
       "hChannels": "Kanaler",
-      "pChannels": "Växla kanaler ovanför diagrammet. Vilken läsbar dataidentifierare som helst kan läggas till i en livevy; vanliga drivlina- och batterikanaler grupperas som standard. Där styrenheten stödjer det använder samplingen UDS periodiska läsning (0x2A): en registrering on demand, sedan strömmar modulen. Samplingsfrekvensen begränsas av ECU:n och diagnostiksessionen, inte av Hanterill.",
+      "pChannels": "Välj vilka värden du vill följa ovanför diagrammet. Vanliga batteri- och drivlinjevärden är grupperade så att du snabbt kan komma igång. Hur ofta värdena uppdateras beror på vad bilens styrenheter kan lämna.",
       "hReading": "Läsa diagrammet",
-      "pReading": "Håll pekaren över diagrammet för ett synkroniserat kors. Tryck eller klicka <strong>Live</strong> för att pausa och granska en punkt. Strömmen har en enda vakt: en liveström i taget, avbrytbar per operation, med tappade intervall räknade och visade i stället för utjämnade bort. Spåret här är en deterministisk simulerad körcykel, inte en fordonsavläsning.",
+      "pReading": "Pausa diagrammet för att granska en punkt. Luckor i inspelningen visas som luckor, utan påhittade mätvärden. Kurvan här är simulerad och kommer inte från en bil.",
       "hExport": "Export",
       "pExport": "En körande vy kan skrivas till CSV för offlineanalys.",
       "archDocs": "Hur pollingloopen fungerar"
     },
     "serviceFunctions": {
       "warningLead": "Inget av detta sker utan din uttryckliga bekräftelse.",
-      "warningBody": "Åtgärderna nedan ändrar fordonet. Var och en kräver en uttrycklig bekräftelse, och den körande binären publicerar ett kapacitetsmanifest så att gränssnittet bara erbjuder det bygget kan utföra.",
+      "warningBody": "Åtgärderna nedan kan ändra bilen. Hanterill ber dig bekräfta var och en och visar bara åtgärder som finns i den installerade appen.",
       "thSystem": "System",
       "thRoutine": "Rutin",
       "thService": "UDS-tjänst",
       "routines": [
         [
           "Elektrisk parkeringsbroms",
-          "Serviceposition för polbyte",
+          "Serviceläge för byte av bromsbelägg",
           "RoutineControl"
         ],
         [
@@ -1130,14 +1122,14 @@
         ],
         [
           "Felkoder",
-          "Rensning för hela bilen eller per modul, med verify-omläsning",
+          "Rensning för hela fordonet eller per modul, med verify-omläsning",
           "ClearDiagnosticInformation"
         ]
       ],
       "hClearing": "Rensa felkoder",
-      "pClearing": "När du bekräftat den matchar rensningsvägen referensverktygets omvända orkestrering: öppna den utökade sessionen per modul, samla frysta ramdatas före raderingen (rensningen raderar dem), bulkrensning, vänta ut det väntande fönstret, försök igen med de besvärliga per ECU, läs sedan om och rapportera kvarvarande. En valfri force-reset-loop startar om besvärliga moduler och reparerar DoIP-routningen efteråt. Den är undertryckt medan fordonet rapporterar ett körningsläge. Tillståndet före radering och efter rensning matar den inbyggda <link>DTC-diffen</link>.",
+      "pClearing": "Innan du raderar felkoder kan du spara uppgifterna som bilen har lagrat med dem. Hanterill raderar sedan koderna i valda styrenheter och läser av igen för att visa vilka som finns kvar. En separat, valfri omstart finns för koder som ligger kvar, men den körs inte när bilen anger körläge. Jämför resultatet före och efter i <link>Felkoder</link>.",
       "hAvail": "Tillgänglighet",
-      "pAvail": "Rutinstöd beror på styrenheten och plattformen. En rutin som inte är implementerad för ett visst fordon visas inte, och tillgängligheten styrs av byggets kapacitetsmanifest. Rutinidentifierarna själva är reverse-enginerade, så de bär ingen säkerhetsdesign per operation.",
+      "pAvail": "Vilka rutiner som finns beror på bilen och den installerade versionen av Hanterill. Vissa skyddas av bilens säkerhetsnivå. Hanterill kan kontrollera om nivån är låst, men kan inte låsa upp den. Om bilen nekar en åtgärd visar appen avslaget i stället för att ange att åtgärden är klar.",
       "safetyDocs": "Säkerhetsdokumentation"
     },
     "inspectionReports": {
@@ -1165,13 +1157,13 @@
         ]
       ],
       "hRules": "Regler, inte gissningar",
-      "pRules": "Poängen produceras av en deterministisk, versionerad regelmotor. Varje regel anger den bevisklass den vilar på, och klassen takar den starkaste dom regeln får tvinga fram. En publicerad standard kan flagga uppmärksamhet. En referensheuristik kan bara lägga till en not. Provisionella avkodare nedgraderar sina regler automatiskt.",
+      "pRules": "Rapporten använder dokumenterade kontroller på avläsningarna i en session. Öppna ett fynd för att se vad det bygger på. Avläsningar som fortfarande är preliminära kan inte ensamma ligga bakom det starkaste utlåtandet.",
       "hMissing": "När indata saknas",
-      "pMissing": "En obesvarad kanal registreras som saknad och betyget degraderar mot inconclusive. Saknad data läses aldrig som ett godkännande och aldrig som ett underkännande: den visas som vad den är. Samma motor bär rådgivande regler, som kylmedelstemperaturspridning, förfallna serviceintervall och DC-DC-busspänning, vilka annoterar rapporten utan att flytta poängen.",
+      "pMissing": "Om bilen inte svarade markeras värdet som saknat. För mycket saknad data gör helhetsresultatet osäkert. Servicepåminnelser och andra observationer kan visas som noteringar utan att ändra betyget.",
       "hReport": "Rapporten själv",
-      "pReport": "Rapportsidan samlar identitets-, batteri-, fel-, ECU-, service- och termiska fynd i ett utskriftsvänligt dokument med kontrollsumma, tolerans för partiell täckning och en förklaring av hur bedömningen görs. Historiska sessioner kan poängsättas om under aktuella regler utan att röra bilen igen. GPS-position tas bort från inspektionsrapporter, och kvarvarande koordinater avrundas till ungefär 110 meter.",
+      "pReport": "Rapporten samlar identitet, batteri, felkoder och andra tillgängliga fynd i ett dokument som går att skriva ut. Den visar när saknade avläsningar begränsar resultatet. Du kan skapa en ny rapport från en sparad session utan att ansluta bilen igen. GPS utelämnas som standard och tas bara med om du väljer det.",
       "hBuying": "Köpa en begagnad elbil",
-      "pBuying": "En session över kabeln täcker vad en före-köp-inspektion behöver här: verklig hälsotillstånd från BMS, cellbalans, hela bilens felhistorik med frysta ramdatas, serviceräknare och korskontroller av manipulering. <link>Regeldesignen är dokumenterad</link> så att varje siffra i rapporten kan bestridas.",
+      "pBuying": "Vid köp av en begagnad bil samlar rapporten batterivärden, felhistorik och tillgängliga kontroller av mätarställningen. Den hjälper dig att se vad du behöver fråga om eller kontrollera vidare. Den ersätter inte en fysisk besiktning. <link>Läs hur rapporten bedöms</link>.",
       "ruleDocs": "Regeldesignen är dokumenterad",
       "sessionsLink": "Sessioner och bevis"
     },
@@ -1215,18 +1207,18 @@
         ]
       ],
       "hMeasured": "Mätt, inte tillverkat",
-      "pMeasured": "Varje fält på dessa sidor är en typad observation: värde, tillstånd, källa och avkodningsversion, eller ett registrerat misslyckande. En DID som vägrar med en negativ svarskod ger en vägran, inte en nolla. En parkerad bil med en drivande rotorsignal klassas som stillastående i visningslagret utan att röra råvärdet.",
+      "pMeasured": "Varje fält på dessa sidor är en typad observation: värde, tillstånd, källa och avkodningsversion, eller ett registrerat misslyckande. En DID som vägrar med en negativ svarskod ger en vägran, inte en nolla. Ett parkerat fordon med en drivande rotorsignal klassas som stillastående i visningslagret utan att röra råvärdet.",
       "hChecks": "Konsistenskontroller",
       "pChecks": "Tio korsignalkontroller jämför fordonets egna avläsningar mot varandra: packspänning mot summan av sina celler, rapporterad effekt mot beräknad, strömplausibilitet vid parkering, kompressorstatus mot köldmedietryck, kylmedelsdifferenser per axel. De körs på de aktuella batteri-, motor- och klimatläsningarna. En kontroll som saknar indata registrerar det som otillräcklig data. Ingen av dem påstår ett fel: värsta dom är en varning.",
       "hBoundaries": "Gränser",
-      "pBoundaries": "Avkodning av kabelklassning förblir experimentell. Utrustningsindex som katalogen inte namnger förblir numeriska. Okända layouter bevaras som utforskande bevis i stället för att göras till ett uttalande om din bil.",
+      "pBoundaries": "Avkodning av kabelklassning förblir experimentell. Utrustningsindex som katalogen inte namnger förblir numeriska. Okända layouter bevaras som utforskande bevis i stället för att göras till ett uttalande om ditt fordon.",
       "thermalDocs": "Termisk och celldokumentation"
     },
     "sessionsEvidence": {
       "diffs": [
         [
           "DTC-diff",
-          "Två skanningar av samma bil: tillkomna koder, rensade koder, statusändringar, sparad bevisning."
+          "Två skanningar av samma fordon: tillkomna koder, rensade koder, statusändringar, sparad bevisning."
         ],
         [
           "Cellhistorik-diff",
@@ -1242,14 +1234,14 @@
         ]
       ],
       "hArchive": "Arkivet",
-      "pArchive": "Varje session skrivs till en lokal varaktig lagring: atomära sparningar, återställning av korrupta filer, en historik som överlever omstarter och dina egna operatörsanteckningar per session. Ingenting lämnar maskinen. Lagringen rymmer också per-fordonsprofilcachen, nycklad till en hash av VIN så att en kataloglistning aldrig avslöjar en identitet.",
+      "pArchive": "Hanterill sparar sessioner på din dator. Du kan öppna dem efter att appen har startats om och lägga till egna anteckningar. Datorappen laddar inte upp dem.",
       "hCompare": "Välj två, jämför",
-      "pCompare": "Jämförelsevyerna tar vilka två lagrade sessioner som helst och visar dem sida vid sida över DTC-, batteri-, ECU- och firmware-domänerna. Det du får är bevis du kan peka på: färre aktiva koder efter reparationen, en stabil cellspridning efter balansering, exakt det firmware-delta en OTA lämnade.",
+      "pCompare": "Välj två sparade sessioner för att se vad som ändrats. Jämförelsen kan visa nya eller raderade felkoder, batterivärden och mjukvaruversioner sida vid sida.",
       "hReplay": "Offline-uppspelning",
-      "pReplay": "Insamlingar är data. En lagrad DID-skanning i CSV kan spelas upp och analyseras utan fordon inkopplat, och supportpaketets export skurar serienummer, privata adresser, autentiseringsuppgifter och koordinater innan en fil lämnar maskinen.",
+      "pReplay": "Öppna en sparad insamling och granska den utan att bilen är ansluten. Kontrollera ett supportpaket innan du delar det; exporten tar automatiskt bort identifierande uppgifter.",
       "hExports": "Exporter",
-      "pExports": "Sessioner och rapporter exporteras till versionerad JSON och CSV (formelinjektion neutraliserad) eller ett ZIP-paket. Rapportsidan skrivs ut via webbläsaren med stylad utskrifts-CSS, så papperskopian matchar skärmen. VIN maskeras i exporter som standard.",
-      "cliLink": "Scripta samma utdata från CLI:n",
+      "pExports": "Du kan spara en session eller rapport som fil för egna anteckningar. Innan du delar den, kontrollera om chassinumret är dolt och om du valt att ta med platsuppgifter.",
+      "cliLink": "Så fungerar sessioner och bevis",
       "pUsesArchive": "Inspektionsrapporten använder samma arkiv: <link>poängsatta skickbetyg</link> som kan räknas om från lagrat bevis när som helst."
     }
   },
@@ -1347,15 +1339,11 @@
       },
       "didMeaning": {
         "task": "Vad betyder den här identifieraren?",
-        "screen": "DID-utforskaren, eller CLI:ets did-plan"
+        "screen": "DID-utforskaren"
       },
       "customerReport": {
         "task": "Jag behöver något att lämna till en kund",
         "screen": "Sessioner & rapporter, exportera PDF"
-      },
-      "scriptScan": {
-        "task": "Jag vill skripta en skanning",
-        "screen": "kommandoraden hanterill"
       },
       "buildLimits": {
         "task": "Vad kan den här versionen faktiskt göra med fordonet?",
@@ -1570,7 +1558,7 @@
     "liveDataLead": "Hanterill pollar och prenumererar på dataidentifierare och ritar dem som instrumentprogramvara: fasta axlar, tunna linjer, ingen dekoration.",
     "serviceFunctionsEyebrow": "Funktioner / Servicefunktioner",
     "serviceFunctionsTitle": "Åtgärderna som ändrar fordonet hålls åtskilda.",
-    "serviceFunctionsLead": "Där plattformen stöder dem kan Hanterill köra servicerutiner och adaptationer. Var och en kräver en uttrycklig bekräftelse, och den körande binären rapporterar vad den faktiskt kan göra.",
+    "serviceFunctionsLead": "När bilen och den installerade appen stöder det kan Hanterill utföra vissa serviceåtgärder. Varje åtgärd kräver en egen bekräftelse. En skyddad rutin kan fortfarande nekas av bilen.",
     "inspectionReportsEyebrow": "Funktioner / Inspektionsrapporter",
     "inspectionReportsTitle": "Innan du köper: ett betyg du kan försvara.",
     "inspectionReportsLead": "Hanterill förvandlar samma avläsningar till en betygsatt besiktningsrapport, där varje omdöme kan spåras till en dokumenterad regel.",
@@ -1613,9 +1601,9 @@
     "networkTitle": "Nätverksutforskaren för CMA.",
     "networkLead": "Utforska CMA-plattformens elnät i en interaktiv karta med 170 enheter, 295 dokumenterade anslutningar i nio nätverk och 622 stiftposter. Filtrera på nätverk, följ en väg mellan moduler och läs anslutningarnas detaljer.",
     "walkthroughTitle": "Alla funktioner, en genomgång.",
-    "walkthroughLead": "Vad varje funktion läser, vad den gör med värdena och var gränserna går. Instrumenten använder samma märkta exempeldata som resten av webbplatsen.",
+    "walkthroughLead": "Se vad varje funktion visar och när ett värde behöver tolkas försiktigt. Exemplen på sidan är märkta som exempel och kommer inte från din bil.",
     "caseStudyTitle": "En session, dokumenterad.",
-    "caseStudyLead": "Spela upp en representativ session från referensfordonet och läs sedan samma session steg för steg. Fasta exempelvärden, så att varje siffra går att kontrollera mot resten av webbplatsen."
+    "caseStudyLead": "Följ ett exempel på en session steg för steg. Värdena är fasta exempel och inte en avläsning från din bil."
   },
   "projects": {
     "hisingen": {

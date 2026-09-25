@@ -1,148 +1,36 @@
-import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
-import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+If charging is slower than expected or does not start, open **Charging** and **Power**. These screens show what the car reports about the charging connection, battery limits and electrical system. They can help you narrow down the cause, although a missing reading cannot identify a fault by itself.
 
-Charging is read from the on-board charger (OBC). The app asks the OBC about the inlet it controls:
-is the plug locked, what current can the connected cable carry, and what voltage sits at the charger
-terminals. On top of those three readings sits a diagnosis that tries to explain why charge power is
-low, and declines to explain when the evidence does not establish a cause.
+## 1. How AC and DC charging differ inside the car
 
-<SafetyNotice level="read-only">
-The charging screen is a read. It does not start, stop, schedule, or limit a charge, and it does not
-change any charge setting in the car. Every value is decoded from an `0x22 ReadDataByIdentifier`
-answer.
-</SafetyNotice>
+Understanding which part of the car is in charge helps explain what you see on screen:
 
-## What the charging screen reads
+- **AC charging (home wallbox, destination charger, or domestic socket)**: Alternating current (AC) from the wall enters the car's **On-Board Charger (OBC)**. The OBC converts that AC power into high-voltage direct current (DC) to feed the battery. During AC charging, speed is limited by whichever of three things is lowest: the **cable's resistor rating**, the **wallbox pilot signal**, or the **car's own AC current limit** (set in the center screen or by the OBC's internal temperature).
+- **DC fast charging (CCS public fast chargers)**: The external charger converts AC to high-voltage DC outside the car and connects straight to the battery pack through the fast-charge contactors. During DC fast charging, the **battery management computer (BECM)** continuously tells the station the maximum current and power the pack can safely accept based on its **State of Charge** and **cell temperature**.
 
-Three signals come from the OBC:
+## 2. What the Charging screen shows
 
-- the charge socket lock solenoid state, unlocked, locked, or an unknown raw code
-- the connected pilot cable current rating in amperes
-- the traction pack voltage at the charger terminals in volts
+### Connector, lock, and cable status
+Before any power flows, the car checks the physical plug:
 
-Each row carries its own state: measured, unsupported, failed, or not attempted. A failed row keeps
-its source identifier and shows no value, so an empty row still tells you what was asked.
+- **Plug detection (Proximity pin)**: Confirms whether a charging handle is physically seated in the charge port.
+- **Charge-port lock actuator**: Shows whether the locking pin has engaged to secure the plug. (Many "charging fault" messages at public stations happen simply because a heavy cable pulled down on the handle and stopped the locking pin from sliding all the way in.)
+- **Cable amp rating**: Charging cables contain a small resistor inside the plug that tells the car the maximum current the copper wire can safely carry (for example, 13 A, 16 A, 20 A, or 32 A).
 
-## AC inlet, not a charge session
+### Live AC and DC electrical readings
+- **AC input voltage, current, and frequency** coming from the wallbox into the On-Board Charger.
+- **High-voltage DC output voltage, current, and power (kW)** flowing into the traction battery.
+- **Charger and converter temperatures**: If an On-Board Charger gets too warm inside a hot garage, it smoothly dials back charging current to protect itself.
 
-The screen reads the AC inlet on the on-board charger. There is no DC fast-charge screen, and the app
-does not read a charging session as an object: it cannot tell you when a session started, how long it
-ran, how much energy went in, or what the charge curve looked like. No charge history is stored.
+## 3. Plain-language charge-limitation diagnosis
 
-That limit is worth stating plainly because it shapes what the rest of this page can claim. A single
-snapshot of the inlet says what the hardware is doing at the moment you press the button. It does not
-say what happened during the charge.
+Instead of making you compare half a dozen raw numbers by hand, the **Charging** screen runs a **charge-limitation check** that answers the question: *"What is currently capping my charging speed?"*
 
-## The socket lock and the cable
+Depending on what the modules report, Hanterill highlights the limiting factor in plain language:
 
-The lock state is the trustworthy row. It decodes to unlocked or locked when the OBC reports one of
-the two known codes, and to an unknown state carrying the raw byte otherwise. The screen labels the
-unknown case as unknown instead of guessing that the plug is either in or out.
+1. **Limited by the charging station or wallbox**: The wallbox's pilot signal is offering less current than the car and cable can accept (common on load-shared home chargers or busy public AC posts).
+2. **Limited by the charging cable**: The cable plugged into the port is rated for lower current (for example, a 16 A cable used on a 32 A wallbox).
+3. **Limited by an in-car current limit**: A user-configured AC amp cap is active in the car's center display.
+4. **Limited by battery temperature (cold-gate)**: On DC fast charging, a cold battery pack cannot accept full fast-charge current without risking lithium plating on the cells. Once the battery heater warms the pack into its ideal window (`25 °C` to `35 °C`), the current limit rises.
+5. **Limited by high State of Charge (the normal charge curve)**: Above roughly 50% to 60% State of Charge, every lithium-ion battery gradually steps down its maximum charging current as cell voltages approach their upper ceiling.
 
-The cable rating is not trustworthy in the same way. The wire carries a 16-bit value, and the
-encoding the OBC uses is not pinned to a capture. The decoder picks between a plain ampere reading
-and a scaled, offset form, and it is explicitly experimental; the app labels the output as
-unverified. Treat the number as a hint about the connected cable, not as a measurement.
-
-<DiagnosticExample
-  service="ReadDataByIdentifier, charge socket lock"
-  request="22 EE 8C"
-  response="62 EE 8C 02"
-  note="0x02 decodes to locked. 0x01 decodes to unlocked, and any other byte is surfaced as an unknown state with the raw code retained rather than mapped to one of the two."
-/>
-
-## Pack voltage at the charger
-
-The third row is the pack voltage the OBC sees at its terminals. The scaling on that identifier is
-not pinned to a capture either, so the decoder is a heuristic: it chooses between three scalings from
-the raw magnitude. A payload shorter than two bytes fails closed instead of returning a plausible
-constant.
-
-Read this row as a cross-reference against the pack voltage reported by the BECM. The two should
-agree within a small margin when the car is connected and awake. A wide disagreement points at the
-measurement, not at the pack. The BECM reading itself is covered in
-[Battery diagnostics](/docs/battery-diagnostics).
-
-## Diagnosing a charge limit
-
-The diagnose button answers a different question: given that the car is charging slowly, which
-constraint is the likely cause. It gathers six inputs in one pass:
-
-| Input | Where it comes from |
-| --- | --- |
-| Actual charge power | The OBC's reported AC input power |
-| Charging now | The OBC's own charging flag |
-| Pack temperature | The warmest pack temperature channel |
-| State of charge | The primary pack channel |
-| Charge-limit ceiling | The pack's own charge power limit |
-| Cable rating | The charging screen's cable row |
-
-The rules run in a fixed order, and the first one whose evidence holds decides the answer:
-
-1. **Battery temperature.** The pack is below 5 °C or above 45 °C while actual power is under
-   7.0 kW. Cold and hot packs gate charge power on this platform.
-2. **State of charge.** SoC is above 90 % while actual power is under 7.0 kW. The pack tapers by
-   design near full.
-3. **Cable capability.** The pilot rating implies a lower ceiling than the battery's own limit, and
-   actual power sits at that cable ceiling. The arithmetic treats the rating as a 230 V single-phase
-   supply, so the ceiling is the rating in amps × 0.23, with a 1 kW tolerance.
-4. **On-board charger ceiling.** Actual power sits within 1 kW of an 11 kW charger ceiling.
-5. **Not attributable.** No signal establishes a cause.
-
-The order matters when evidence overlaps, because the earliest matching rule keeps the verdict. Each
-answer prints the evidence sentence behind it, and the screen lists every input with its value or a
-dash. The pack temperature, SoC and charge-limit inputs are the same channels the battery screens
-read; the actual power and charging flag come from the OBC.
-
-<Callout kind="caution" title="The thresholds are provisional heuristics">
-The 5 °C and 45 °C window, the 7.0 kW floor, the 90 % taper point, the 230 V cable arithmetic and the
-11 kW charger rating are the code's own provisional thresholds, not manufacturer specifications, and
-they still need testing on more cars. The charger rating in particular is catalogue knowledge that
-still needs testing on more cars. Read the verdict as a lead to check, not as a diagnosis of a fault.
-</Callout>
-
-## When the diagnosis says nothing
-
-Two gates run before any rule. With no measured charge power there is nothing to explain, and the
-answer is not attributable. If the OBC reports that it is not charging, there is likewise no
-limitation to explain.
-
-That is the honest outcome on a car where the OBC does not answer at all. The 2026-09-02 software
-profile returned no usable payload for the OBC power read, and the actual-power input is taken from
-that read. On such a car the diagnosis can only return not attributable, no matter what the
-temperature and state of charge say. A missing input narrows the analysis; it is never filled with a
-zero.
-
-## What the app can and cannot see
-
-What it can see:
-
-- the AC inlet lock state, cable rating, and pack voltage at the charger
-- the charge power the OBC reports, and its charging flag
-- pack temperature, state of charge, and the pack's own charge-limit value
-
-What it cannot see:
-
-- DC fast charging, which is not read on this screen
-- charge sessions, session history, or energy added
-- the charge curve over time, or a target charge limit you set
-- any cable or wallbox data beyond the pilot rating the car reports
-
-## Charging and the inspection score
-
-Charging readings are captured in the inspection report, but a charge limitation is a note, not a
-score input. It cannot change the verdict. The four inputs that carry score weight are battery state
-of health, the rested 12 V rail, fault codes, and odometer agreement. The rule behind the charger
-ceiling is classed as a heuristic, which caps it at a note by construction. See
-[Inspection reports](/docs/inspection-reports) for the full arithmetic.
-
-The 12 V side of the same capture does score, through the rested rail voltage. That read is on the
-power tab; see [Subsystem telemetry](/docs/subsystem-telemetry).
-
-## Next
-
-- [Subsystem telemetry](/docs/subsystem-telemetry): the inlet reads in the context of the other
-  subsystem screens.
-- [Battery diagnostics](/docs/battery-diagnostics): the pack voltage, SoH and charge-limit channels
-  the diagnosis leans on.
-- [Live telemetry](/docs/live-telemetry): record charge power over time, because this screen cannot.
+If a required sensor reading is unavailable or the car is not currently plugged into a charger, Hanterill states clearly that no active limit can be attributed rather than guessing.

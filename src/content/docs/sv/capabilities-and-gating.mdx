@@ -1,147 +1,85 @@
-Två olika frågor avgör vad en vy erbjuder. Den första gäller bygget: finns funktionen i binären alls?
-Den andra gäller fordonet framför dig: har det fordonet modulen som funktionen behöver? Hanterill
-besvarar dem separat och låter aldrig en gissning stå i stället för något av dem. Den här sidan
-förklarar kapacitetsmanifestet, kapacitetsmatrisen, mjukvaruspärrningen och skillnaden mellan
-skrivskyddade och skrivkapabla byggen.
+Vilka vyer och åtgärder du ser beror på Hanterill-versionen och bilens utrustning. Appen kontrollerar vilka styrenheter som svarar innan den visar bilspecifika val. Här förklarar vi varför en funktion kan finnas för en bil men saknas för en annan.
 
-## Vad appen påstår, och vad den vägrar påstå
+## Så redovisas tillgänglighet
 
-En kapacitet i Hanterill är antingen uppmätt på bussen, härledd från något uppmätt enligt en namngiven
-regel, eller öppet observerbar. Varje rad anger vilket av de tre den är, och en icke observerbar rad
-namnger den information som saknas. Ett okänt värde läggs aldrig ihop med ett frånvarande. Det är hela
-formen: appen säger hellre "det här kan jag inte se" än publicerar en boolean den inte har förtjänat.
-
-## Kapacitetsmanifestet som en körande binär publicerar
-
-Den körande binären publicerar ett manifest via kommandot `getCapabilities`. Det är oberoende av
-sessionen och beskriver bygget, inte fordonet. Det bär en schemaversion, körmiljöns namn,
-appversionen och ett `commands`-objekt.
+Hanterill beskriver varje funktion med en av tre nivåer:
 
 <SpecList rows={[
-  ["read", "Alltid sant"],
-  ["write", "Sant bara när binären kompilerades med skrivfunktionen"],
-  ["clearDtcs", "En egen flagga så att radering av felkoder kan spärras oberoende av den allmänna skrivbiten"],
-  ["didScan", "Identifierarskanning på en modul, alltid inkopplad"],
-  ["didScanAll", "Svepet över alla moduler, sant bara med skannerfunktionen"],
-  ["didWatch", "Bevakning av identifierare, följer samma skannerfunktion"],
-  ["iceRead", "Referensläsningar för förbränning och hybrid"],
-  ["live", "Livesampling"],
-  ["exportReport", "Export av rapport"],
+  ["Direkt uppmätt", "Bekräftat över kabeln eftersom den aktuella styrenheten eller givaren svarade på en diagnostikfråga."],
+  ["Härledd från uppmätt modul", "Följer av en öppen regel utifrån en styrenhet som svarade (till exempel innebär en svarande AdBlue-/avgasreningsmodul att dieselavgasvyer är tillämpliga)."],
+  ["Ej observerbar i skrivskyddat läge", "Kräver serverdata från tillverkaren eller en ännu ej avkodad intern konfigurationstabell som inte kan bekräftas med en vanlig läsning."],
 ]} />
 
-Gränssnittet läser manifestet i stället för att anta. Ett kommando som rapporteras falskt erbjuds inte,
-och rutten för svepet över alla moduler döljs när funktionen saknas medan skanning på en modul är
-opåverkad. Varje flagga har en inkopplad kommandohanterare, så ett sant värde alltid har en
-implementation bakom sig.
+När en egenskap inte kan bekräftas genom en skrivskyddad avläsning markerar Hanterill den som
+**okänd (unknown)** och berättar vilken indata som saknas, i stället för att felaktigt påstå att
+ditt fordon saknar utrustningen.
 
-## Kapacitetsrader och hur de fastställs
+## Hur Hanterill upptäcker vad som sitter i ditt fordon
 
-Kapacitetsmatrisen svarar på "har det här fordonet X" utifrån bevis. Varje rad namnger sin metod:
+I stället för att lita på en statisk tabell kontrollerar Hanterill vilka styrenheter som faktiskt
+svarar på fordonets nätverk. Utifrån dessa svar fastställer kapabilitetskontrollen om ditt fordon
+har:
+
+- Elektriska drivmoduler och batteristyrenhet för högspänningsbatteri
+- Förbränningsmotorstyrenhet eller växellådsstyrenhet för hybrid/automatlåda
+- 48-volts mildhybridbatteri
+- Luftfjädring / elektroniskt styrd fjädring
+- Fyrhjulsdrift med bakaxelkoppling / differentialstyrenhet
+- Framåtriktade förarstödskameror och hörnsensorer för döda vinkeln
+- Fordonsgateway (VGM)
+
+Varje giltigt svar från en styrenhet bevisar att hårdvaran sitter monterad i fordonet. Endast ett
+helt uteblivet svar (timeout) eller en plattform där modulen inte existerar räknas som frånvarande.
+
+### Varför några få tillval visas som "okända" tills de avkodats
+
+Ett fåtal utrustningsdetaljer (exempelvis om fordonet har panoramaglastak eller vilken typ av
+däcktrycksövervakning som används) lagras inuti ett kompakt konfigurationsblock i centraldatorn i
+stället för att ha en egen separat styrenhet. När en sådan flagga ännu inte är avkodad för din
+plattform visar Hanterill statusen som **okänd** i stället för att gissa.
+
+## Kontroll av mjukvarunivåer i styrenheter
+
+Vissa diagnostikprocedurer beror på vilken mjukvaruversion en viss styrenhet kör. Hanterill läser
+ut mjukvarunivåer direkt från de berörda modulerna i skrivskyddat läge, bland annat:
 
 <SpecList rows={[
-  ["ecu-presence", "Uppmätt: den eller de namngivna modulerna svarade på en närvaroläsning"],
-  ["derived-from-presence", "Härledd enligt en namngiven regel över uppmätt närvaro"],
-  ["unobservable", "Kräver bevis en skrivskyddad klient inte kan samla, och den saknade informationen namnges"],
+  ["Infotainmentsystemets mjukvarunivå", "Läses direkt från infotainmentsystemet (IHU)."],
+  ["Klimatstyrenhetens mjukvarunivå", "Läses direkt från klimatstyrenheten (CCM)."],
+  ["Bromsstyrenhetens mjukvarunivå", "Läses direkt från bromsstyrenheten (BCM2)."],
+  ["Avgasreningsmodulens mjukvarunivå", "Läses direkt från avgasreningsmodulen (NRCM) när den är monterad på förbränningsmodeller."],
 ]} />
 
-De uppmätta raderna täcker motorns eller drivningens styrmodul, transmissionen, ureas
-avgasreningsmodul, 48 V-mildhybridbatteriet, luftfjädringen, dödvinkelradarerna, den främre kameran,
-AWD-differentialens elektronikmodul och fordonsgatewayen. En rad är härledd: en närvarande
-ureas avgasreningsmodul innebär stöd för dieselavgasrening, och regeln följer med raden så att
-slutledningen syns.
+Hanterill visar den exakta mjukvaruversion som fordonet rapporterar. Programmet fäller inga
+automatiska omdömen om huruvida en mjukvaruversion är "föråldrad" eller "buggig", eftersom
+tillverkarens interna servicemeddelanden ligger på verkstadsservrar och inte inne i fordonet.
 
-Fyra rader går inte att observera, och var och en namnger varför. Bensin kontra diesel kräver en signal
-om drivlinevariant som varken modulnärvaro eller VIN-grammatiken skiljer ut. Panoramatak och
-däcktrycksövervakning kräver en avkodad fordonskonfigurationsparameter, och bytelayouten för DID
-`0xF120` är inte återfunnen. En modul för corner position kräver en registermappning för en
-leverantörsadress som appens modulregister inte bär. Ingen av dem besvaras som frånvarande; de besvaras
-som okända med luckan angiven.
+## Hur servicefamiljer och underhållsrutiner styrs
 
-Gränssnittet visar radens tillstånd, dess härledning, modulerna den namnger, och antingen dess metod
-eller dess saknade information.
-
-## Närvaro är ett svar på bussen, inte en gissning
-
-Närvaro fastställs genom att läsa `0xF190` på den namngivna modulen. Varje svar på bussen bevisar att
-modulen finns, även ett svar som en strängare kontroll skulle avvisa. En gateway eller en
-förarstödsmodul som svarar med sitt eget serienummer på 13 till 14 byte i stället för ett VIN på
-17 byte är en kontraktsavvikelse, men modulen svarade, så raden läses som närvarande. Bara ett
-transportfel, en timeout eller en frånkoppling räknas som inget svar. En modul som den anslutna
-plattformen inte har någon adress för är frånvarande utan läsning, eftersom appen inte sänder till en
-gissad adress.
-
-## Mjukvaruspärrning
-
-Mjukvaruspärrningen behåller leverantörens vokabulär för "vilken mjukvarunivå är det här" men fyller
-varje rad från det bästa skrivskyddade beviset, eller lämnar den okänd:
+Innan Hanterill visar en underhållsrutin eller statuspanel kontrolleras både om funktionen finns i
+programmet och om den nödvändiga hårdvaran finns i ditt fordon:
 
 <SpecList rows={[
-  ["Infotainmentets mjukvaruversion", "Uppmätt från IHU på 0xD904"],
-  ["Klimatmodulens boot-mjukvaruversion", "Uppmätt från CCM på 0xF124"],
-  ["Karosstyrningens byggnivå", "Uppmätt från BCM2 på 0xDD0C"],
-  ["Ureas avgasreningsmoduls referensnivå", "Uppmätt från NRCM på 0xD97C"],
-  ["Nivå för head-up-display", "Icke observerbar: ingen registermappning för leverantörens adress"],
-  ["CEM:s generationsräknare", "Icke observerbar: ingen återfunnen DID för leverantörens räknare"],
-  ["Predikatet för känd felaktig mjukvara", "Icke observerbar: leverantörens tabell över felaktiga versioner ligger på servern och återfanns inte"],
+  ["Skrivskyddad status tillgänglig", "Hanterill kan läsa delsystemets status- och hälsoindikatorer utan att ändra något i fordonet."],
+  ["Servicefunktion som kräver bekräftelse", "Underhållsrutinen finns inbyggd och är tillgänglig bakom säkerhetskontroller och bekräftelsedialoger."],
+  ["Skrivskyddad idag (rutin ej kartlagd än)", "Hanterill kan läsa givare och felkoder för delsystemet, medan själva aktiveringsrutinen ännu inte är kartlagd."],
+  ["Blockerad genom konstruktionen", "Godtyckliga minnesskrivningar och overifierade kommandon är permanent blockerade så att programmet aldrig kan skada en styrenhets minne."],
 ]} />
 
-En uppmätt rad kan ändå visas som en lucka. En rad publicerar text bara när svaret är utskrivbar text
-med utfyllnad borttagen. Ett svar som är en styrbyte rapporteras som oläsbart, med skälet angivet, i
-stället för att skrivas ut som en version. Det finns medvetet ingen dom om att "den här versionen är
-felaktig", eftersom tabellen bakom den domen inte finns i något återfunnet lager.
+Utrustningskontrollen förhindrar att du försöker köra en rutin som inte passar ditt fordon:
+exempelvis kräver kamera- och radarkalibrering att framåtriktad kamera eller dödavinkelradarer
+faktiskt finns i fordonet.
 
-## Servicefamiljer och deras ärliga tillstånd
+## Granska delsystemsstatus i skrivskyddat läge
 
-Servicefamiljeindexet säger hur långt varje serviceyta når i det här bygget. Varje familj namnger de
-kapacitetsrader som spärrar den och de levererade rutinerna eller läsfallet, eller anger sin exakta
-oåterfunna gräns. En familj kallas aldrig stödd om inte klienten kan sända varje begäran den behöver.
-
-<SpecList rows={[
-  ["read-only", "Bara dataläsningar, ingen aktivering"],
-  ["unsafe-write-ops", "Aktiveringsrutiner finns och kompileras med skrivfunktionen"],
-  ["unrecovered", "Identifierarna finns inte i något återfunnet lager, så inget bygge kan sända dem"],
-  ["refused-by-design", "Avvisas i läsgrinden i varje bygge, och något läsfallet finns inte"],
-]} />
-
-Den levererade tabellen använder tre av de tillstånden. Aktiverande familjer som kamera- och
-ADAS-kalibrering, klimat, styrning, servicereset, användningsläge, parkeringsbroms och grillspjäll är
-skrivkapabla. Familjer som DPF-regenerering, ureas avgasreningsservice, transmissionsadaption och
-48 V-mildhybridservice är oåterfunna: läsningen levereras, och gränsen namnger den insamling som skulle
-stänga dem. Generiska UDS-skrivningar avvisas avsiktligt. Kapacitetsspärrningen är verklig: kamera-
-och ADAS-kalibrering spärras på den främre kameran eller dödvinkelradarerna, grillspjället på motorns
-eller drivningens styrmodul, och så vidare. En familj utan kapacitetsnycklar är alltid tillämplig.
-
-## Status per familj, läst rå
-
-Servicedialoger i leverantörens verktyg nycklas på status-DID per modul. Hanterill läser de raderna rått
-och bifogar referensbeskrivningen, modulen och referensens nyttolaststorlek. Appen hittar aldrig på ett
-avkodat tal för en rad som det återfunna lagret inte kan avkoda, så värdekolumnen är nyttolasten som
-versaler i hex eller en namngiven lucka. Läsningen öppnar den utökade sessionen en gång per modul i
-stället för en gång per rad, och en modul som plattformen inte kan mappa sänds det inte till. Rapporten
-räknar planerade, uppmätta och icke försökta rader, och säger rakt ut när en begärd familj inte har
-några statusrader alls. Dokumentet versionssätts som `service-status/1`.
-
-## Skrivskyddade byggen kontra skrivkapabla byggen
-
-Skrivytan är en kompileringstidsfunktion. Den skarpa versionen innehåller den. Ett bygge kompilerat utan
-den svarar på varje tillståndsändrande kommando med ett typat `read_only_build`-avslag i stället för
-att misslyckas obegripligt, och dess manifest rapporterar `write: false`, så gränssnittet håller
-kontrollen inaktiverad. Den strippade konfigurationen finns för kontinuerlig integration och
-utveckling. Det är inte den som släpps. Lässytan är identisk i båda byggena. Se
-[Säkerhet](/docs/safety) för hela gränsen och [Servicefunktioner](/docs/service-functions) för vad
-skrivytan gör.
-
-## Vad spärrningen inte avgör
-
-Kapacitetsmatrisen besvarar inte frågor om rättigheter eller behörigheter, för de ligger på en server
-och går inte att observera från fordonet. Den har ingen rad för ett fordonslinjepredikat utanför det
-stödda omfånget. Mjukvaruspärrningen rapporterar en uppmätt version men fäller ingen dom om versionen
-är bra. Och det finns ingen separat dold spärr som tar bort servicefunktioner från plattformar märkta
-Testas eller Utreds. Utgå inte från att en finns.
+Många verkstadsrutiner har tillhörande statusvärden som visar om en kalibrering är giltig, om ett
+serviceintervall har löpt ut eller om ett delsystem är redo. Hanterill kan läsa alla dessa
+statusposter i ett enda skrivskyddat svep, grupperat per systemfamilj, så att du kan kontrollera
+fordonets underhållsstatus utan att aktivera några ställdon.
 
 ## Nästa steg
 
-- [Servicefunktioner](/docs/service-functions): rutinerna som dessa spärrar skyddar.
-- [Säkerhet](/docs/safety): gränsen mellan skrivskyddad läsning och åtgärder som ändrar fordonet.
-- [Fordon som stöds](/docs/supported-vehicles): statusetiketter för plattformar.
-- [Dataidentifierare](/docs/did-catalogue): läsningarna som kapacitetsproberna använder.
+- [Servicefunktioner](/docs/service-functions): underhållsrutinerna som skyddas av dessa kontroller.
+- [Säkerhet](/docs/safety): hur skrivskyddat läge och bekräftelsedialoger skyddar ditt fordon.
+- [Fordon som stöds](/docs/supported-vehicles): vad som är verifierat på CMA-, SPA- och SEA1-fordon.
+- [Datapunkter (DID-katalog)](/docs/did-catalogue): hur Hanterill läser enskilda mätvärden från varje styrenhet.

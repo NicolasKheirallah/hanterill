@@ -1,122 +1,28 @@
-import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+The car stores a record of its factory equipment and current configuration. **Vehicle Configuration** reads that information to help you check which features were fitted and whether a setting has changed since the car was built.
 
-Every car leaves the factory with a list of what it was built with. Hanterill reads that list from the
-Central Electronic Module (CEM), shows which entries are fitted, and compares the list between visits.
-This page explains each source the configuration pages use and what the app does with it.
+You can open this view from **Vehicle** and print the configuration report. Some entries may remain undecoded; the app should show those as unknown rather than guess their meaning.
 
-## The option presence map
+## 1. Two records inside the gateway
 
-Hanterill reads DID `0xC010` from the CEM at `0x1A01`. The response is a 256-byte map with one byte
-per factory option, and the byte position is the option index. The value says what the build carried:
+Hanterill reads two complementary configuration records from the car's central gateway:
 
-<SpecList rows={[
-  ["0", "absent: the option is not supported on this build and was never offered"],
-  ["1", "supported absent: the platform can carry it, this car does not have it"],
-  ["2", "present: the option is fitted and active"],
-  ["other", "reserved: a value the decoder does not classify, kept as it arrived"],
-]} />
+1. **The active Car Configuration Map (256 option slots)**: A table of 256 numbered feature slots that the car's modules check when they wake up. Each slot holds a setting code that tells the car what hardware or software feature is currently enabled (for example, whether Pilot Assist, Pixel LED headlights, a heat pump, a Harman Kardon sound system, or a towbar is active).
+2. **The Factory Build Record**: The original factory specification written when the car was built, including the **anchor VIN**, **exterior paint code and color name**, **interior upholstery and trim code**, **model year and market**, and the list of factory option packages.
 
-The page counts each state, then draws the whole map in memory layout: 32 bytes to a row. Named
-entries are clickable, and indexes with no dictionary entry stay numeric on the map.
+## 2. Searching and reading your car's equipment
 
-## Named options and the ledger
+On the **Vehicle Configuration** tab, you do not have to decipher numbered slots:
 
-The app ships a dictionary keyed by option index for CMA. Each named entry carries a code, a
-functional name, a domain, the controllers it depends on, a factory default and a retrofit note.
+- **Live search and category filter**: Type any word (such as `"audio"`, `"headlight"`, `"towbar"`, `"heat pump"`, or `"cruise"`) to filter the 256 configuration slots immediately.
+- **Named versus unmapped slots**: Where a slot's meaning has been verified in the Hanterill catalogue, the app shows the human-readable feature name and its current setting. Slots whose exact factory meaning has not yet been confirmed are shown honestly by their slot number and value rather than guessed.
 
-The ledger below the map lists named options only. State filters (present, supported absent, absent),
-a category filter and a search box narrow the list, and a selected entry opens a specimen card that
-puts the dictionary facts next to the state observed on this car. An index outside the dictionary is
-never given an invented name; the app says so and shows its number instead.
+## 3. Spotting retrofits, software unlocks, or replaced modules
 
-## The factory build record
+Because Hanterill reads both the **Factory Build Record** (how the car left the factory) and the **active Car Configuration Map** (how the car is configured today), comparing the two helps you spot changes made after the car was built:
 
-Separate from the option map, the CEM answers DID `0xF114` with the factory build record. The payload
-is a short header followed by CRLF-terminated ASCII records: an order number, the VIN, a chassis
-number, paint and interior codes, a build week, a trace number and other codes.
+- **Retrofitted equipment or software unlocks**: For example, a factory towbar added at a dealer, or a software-enabled feature such as Pilot Assist or a performance upgrade enabled after delivery.
+- **Anchor VIN cross-check**: Compares the VIN stored inside the factory build record against the VIN reported by the rest of the car's modules to confirm the central gateway belongs to the vehicle.
 
-The app does not attribute fields by position alone. It looks for an anchor record that is a
-17-character VIN with a known prefix, `YS` or `YV1`, and it trusts the layout only when the chassis
-record repeats the VIN's last six digits. When that corroboration fails, the record is labelled
-unverified and the raw lines remain the only truth. No colour, trim or plant is guessed from a layout
-that did not hold together.
+## 4. Printable Configuration Report
 
-When corroboration holds, the app projects the VIN, order number, chassis number, paint code, build
-week, trace number and interior code. Paint and interior names come only from sourced tables, so a
-code those tables do not list stays a code. Records with no sourced meaning surface as unattributed
-codes rather than being forced into a field.
-
-## Identity recheck on the factory record
-
-The build sheet is decoded with the VIN captured at connect time. If the record carries a different
-VIN, the sheet becomes a typed failure and is not projected as a fact about this car. A missing known
-VIN is silence, never a mismatch.
-
-## Factory equipment from cross-module evidence
-
-The Vehicle page infers commercial packages from several sources at once: which controllers answered,
-the VIN, and the build sheet. Each package has its own rule.
-
-Pilot Pack is full Pixel LED when the 360 camera, a side obstacle radar and a pixel headlight module
-all answered; Pilot Lite when the camera and side radar answered without pixel headlights; not fitted
-when neither the camera nor the side radar answered; unknown on a mixed answer. Plus Pack is fitted
-when the audio amplifier answered. Performance Pack needs a dual-motor VIN and is reported as
-requiring a visual check, because its dampers, brakes and seatbelts are mechanical; a single-motor VIN
-reports not fitted, and no VIN reports unknown. Power tailgate, wireless charger and phone-as-key are
-fitted exactly when their module answered.
-
-<SafetyNotice level="read-only" title="Packages are inferred, not ordered">
-A package status is a deduction from hardware that answered. It is not a copy of the original order,
-and the Performance Pack result deliberately stops at the mechanical parts a scan cannot see.
-</SafetyNotice>
-
-## The raw configuration structure
-
-DID `0xF106` is read and retained, not decoded. No layout for it has been established, so the app
-records zero known fields, stores the payload with its SHA-256 and shows a bounded hex prefix. It is
-an artifact for later work, not a reading to act on. The app says exactly that rather than dressing
-raw bytes up as a configuration.
-
-## The retrofit check
-
-The retrofit check compares the option map against which controllers answered. The mapping from option
-index to the controller it requires is supplied to the engine; the app falls back to three CMA
-expectations (IHFA requires indexes 10 and 11, POT requires 5, AUD requires 20).
-
-Each finding gets one verdict: match, expected variation, factory-observed mismatch, unknown or
-retrofit candidate. A module fitted with no mapped build-list support is a retrofit candidate, never
-a fault. A module absent while its mapped options are present is a factory-observed mismatch. A
-module fitted while some mapped option is only supported absent is an expected variation. Incomplete
-option evidence yields unknown, and so does a missing mapping: the engine never invents which option
-requires which controller.
-
-## Comparing two visits
-
-The configuration diff aligns the two maps by option index, never by name. The three change words
-mean specific transitions:
-
-<SpecList rows={[
-  ["retrofitted", "the index was not present before and is present now"],
-  ["deactivated", "the index was present before and is not present now"],
-  ["changed", "any other difference, such as absent becoming supported absent"],
-]} />
-
-Matching entries that are absent are not listed; the two sessions simply agree that the option is not
-fitted. A short read is handled index by index, so an index past the end of one payload reads as
-absent for that session. The full diff framework, including its alignment rules, lives in
-[sessions and evidence](/docs/sessions-and-evidence).
-
-## What the app cannot say
-
-- Only dictionary indexes get a human name. The rest are numbers on purpose.
-- The map records what the build carried, not why an option is missing.
-- The `0xF106` layout is unknown, so that payload is evidence, not a decoded configuration.
-- The retrofit mapping is a short fixed expectation list today, not a per-car model.
-- Factory, plant and market codes in the build record have no sourced slot meaning, so they are not
-  shown as named fields.
-
-## Next
-
-- [Supported vehicles](/docs/supported-vehicles): which platforms the configuration readers cover.
-- [ECU reference](/docs/ecu-reference): the modules behind the option indexes.
-- [Sessions and evidence](/docs/sessions-and-evidence): how a configuration diff is produced.
+Click **Print Configuration Report** on the **Vehicle** screen to generate a clean, print-ready build sheet containing your car's identity, factory paint and trim codes, and decoded equipment list. Just like in the [Inspection report](/docs/inspection-reports), you can mask the car's 17-character VIN with one click before printing or saving to PDF.

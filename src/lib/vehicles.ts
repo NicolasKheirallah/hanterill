@@ -61,7 +61,7 @@ export const platformMeta: Record<
     status: "partial",
     testedAgainst: ["2018 V90 T6 (combustion)"],
   },
-  SEA: { label: "SEA1", status: "testing", testedAgainst: [] },
+  SEA: { label: "SEA1", status: "testing", testedAgainst: ["2024 Zeekr 001 (direct gateway connection)"] },
   SPA2: { label: "SPA2", status: "research", testedAgainst: [] },
 };
 
@@ -133,18 +133,18 @@ const CMA_FULL: Record<Capability, CapStatus> = {
 };
 
 const SPA_TESTING: Partial<Record<Capability, CapStatus>> = {
-  connection: "in-progress",
-  "ecu-discovery": "not-verified",
-  "dtc-scan": "none",
-  "battery-soh": "not-verified",
-  "cell-potentials": "not-verified",
+  connection: "partial",
+  "ecu-discovery": "partial",
+  "dtc-scan": "partial",
+  "battery-soh": "in-progress",
+  "cell-potentials": "in-progress",
   "live-data": "none",
   "service-routines": "none",
 };
 
 const SEA_TESTING: Partial<Record<Capability, CapStatus>> = {
-  connection: "in-progress",
-  "ecu-discovery": "not-verified",
+  connection: "partial",
+  "ecu-discovery": "in-progress",
   "battery-soh": "not-verified",
   "cell-potentials": "not-verified",
 };
@@ -157,7 +157,7 @@ export const vehicles: VehicleSupport[] = [
     powertrain: "BEV",
     status: "supported",
     years: "2021 to present",
-    note: "Single- and dual-motor. 108-potential battery layout, 27 modules by 4 groups.",
+    note: "Single- and dual-motor. 108-group under-floor battery layout (27 modules of 4 cell groups), plus the 96-group standard-range LFP layout on 2024 and newer single-motor cars.",
     capabilities: CMA_FULL,
   },
   {
@@ -167,7 +167,7 @@ export const vehicles: VehicleSupport[] = [
     powertrain: "BEV",
     status: "supported",
     years: "2021 to present",
-    note: "Shares the CMA high-voltage architecture with Polestar 2.",
+    note: "Shares the CMA high-voltage architecture and battery layouts with Polestar 2.",
     capabilities: CMA_FULL,
   },
   {
@@ -186,7 +186,7 @@ export const vehicles: VehicleSupport[] = [
     powertrain: "PHEV",
     status: "research",
     years: "2020 to present",
-    note: "CMA family, plug-in hybrid and electric variants. The hybrid pack layout differs from the CMA BEV reference vehicle and still needs testing on more cars.",
+    note: "CMA family, plug-in hybrid and electric variants. The center-tunnel hybrid pack layouts (96 or 102 cell groups) are catalogued and still need live verification on more cars.",
     capabilities: { connection: "in-progress" },
     research: ["Pack layout", "ECU map", "Live sessions"],
   },
@@ -198,9 +198,9 @@ export const vehicles: VehicleSupport[] = [
     powertrain: "PHEV",
     status: "testing",
     years: "2018 to present",
-    note: "T8 plug-in hybrid. The 102-cell hybrid pack topology, CAN-era BECM map and decoders are in the catalogue; no live-vehicle verification yet.",
+    note: "T8 plug-in hybrid. Provisional DoIP connection, module inventory, fault-code scans and center-tunnel battery pack layouts (96 or 102 cell groups) are wired; deeper high-voltage battery reads still need live verification.",
     capabilities: SPA_TESTING,
-    research: ["Live battery sessions", "ECU mapping"],
+    research: ["Live battery sessions", "Extended-range pack verification"],
   },
   {
     manufacturer: "Volvo",
@@ -240,9 +240,9 @@ export const vehicles: VehicleSupport[] = [
     powertrain: "BEV",
     status: "testing",
     years: "2024 to present",
-    note: "SEA1 catalogue defined (ECU registry, DoIP routing addresses, BECM DID maps, cell mapping). The definitions still need testing on more cars; treat any reading as provisional.",
+    note: "SEA1 module list, direct gateway connection and both battery pack layouts (107-group LFP and 108-group NMC) are defined. Treat readings as provisional while testing continues on more cars.",
     capabilities: SEA_TESTING,
-    research: ["Testing the DID maps on more cars", "Software and battery variant matrix"],
+    research: ["Testing battery reads on more cars", "Software and battery variant matrix"],
   },
   {
     manufacturer: "Polestar",
@@ -251,7 +251,7 @@ export const vehicles: VehicleSupport[] = [
     powertrain: "BEV",
     status: "testing",
     years: "2024 to present",
-    note: "Covered by the SEA1 platform definitions. No live-vehicle verification yet.",
+    note: "Covered by the SEA1 platform definitions and 100 kWh under-floor battery layout (110 cell groups). Live-vehicle verification is in progress.",
     capabilities: SEA_TESTING,
     research: ["Live sessions", "Variant matrix"],
   },
@@ -262,8 +262,8 @@ export const vehicles: VehicleSupport[] = [
     powertrain: "BEV",
     status: "research",
     years: "2021 to present",
-    note: "SEA family. The EX30 catalogue is deliberately not applied to Zeekr on family resemblance; sub-platform mapping must be confirmed first.",
-    capabilities: { connection: "not-verified" },
+    note: "SEA family. Direct gateway connection has been verified on a 2024 Zeekr 001, and the 100 kWh battery layout is mapped, while sub-platform module maps are still being confirmed.",
+    capabilities: { connection: "partial" },
     research: ["Sub-platform mapping", "Gateway and security model"],
   },
 

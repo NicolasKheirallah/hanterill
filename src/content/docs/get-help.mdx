@@ -1,32 +1,39 @@
-Keep the result from a failed operation before trying again. A partial scan can show which modules
-answered and where the connection stopped.
+If the car will not connect or a reading looks wrong, start with [Troubleshooting](/docs/troubleshooting). If the problem remains, you can save a support bundle for someone to inspect. Review the file yourself before sharing it.
 
-## Try the matching fix first
+## Before you report an issue
 
-Use [Troubleshooting](/docs/troubleshooting) for cable, discovery, timeout and permission failures.
-If a value looks implausible, [Reading results](/docs/reading-results) explains how to check its
-source and coverage. Do not run a service routine to correct an unexplained reading.
+1. Check the [Troubleshooting](/docs/troubleshooting) checklist first, especially if the car does not appear when you plug in.
+2. Check [Supported vehicles](/docs/supported-vehicles) to see whether your vehicle platform is **Supported**, **Partial**, **Testing**, or **Research**. On **Testing** and **Research** vehicles, new module responses and battery layouts are actively being mapped.
 
-## Export a support bundle
+## Exporting a privacy-scrubbed Support Bundle
 
-1. Open **Activity & Logs** in the desktop app.
-2. Choose **Export support bundle**.
-3. Review the export dialog, then save the bundle.
-4. Open a [GitHub issue](https://github.com/NicolasKheirallah/hanterill/issues) and attach the bundle.
+Instead of taking phone photos of your screen or copying logs by hand, you can export a **Support Bundle** directly from the app:
 
-The Activity export combines recent command events and native troubleshooting records when they
-are available. The app scrubs VINs, addresses, coordinates, credentials and other sensitive fields
-from the support output. The separate **Settings → Developer → Export debug bundle** control is for
-a different, smaller diagnostic file; use the Activity support bundle for a connection or scan
-failure.
+1. Open **Settings -> Support & Diagnostics** (or open the **Activity Log** screen).
+2. Click **Export support bundle**.
+3. Choose where to save the `.zip` file on your computer.
 
-## Describe what happened
+### What is inside the support bundle
 
-Include the app version, operating system, vehicle model and year, cable and Ethernet adapter,
-the screen or command you used, and the error text. Say whether the problem repeats and whether
-other modules answered. Do not paste a full VIN, precise GPS position or raw unredacted capture
-into a public issue. Review any file yourself before uploading it.
+- **Application version and operating system details** so it is clear which release you are running.
+- **Recent connection and protocol activity logs** showing which network interfaces were tried, which modules answered, and any error or refusal codes returned by the car.
+- **Session metadata and decoder status** for the current session.
 
-If the issue concerns a service function, name the routine and its support level shown in the app.
-State whether the module acknowledged it, refused it or stayed silent. A timeout is not proof that
-an actuation succeeded.
+### What is automatically removed for your privacy
+
+Before Hanterill writes the support bundle to disk, it automatically scrubs personal and identifying information:
+
+- **Your 17-character VIN** is replaced with a masked placeholder (`REDACTED-VIN`).
+- **Module hardware serial numbers** and **Bluetooth / Wi-Fi / Ethernet MAC addresses** are scrubbed.
+- **Exact GPS coordinates** (if you queried the satellite screen during the session) are removed.
+- **Your computer's local username and home folder paths** are stripped from file paths.
+
+Because the bundle is a normal `.zip` archive saved to your computer, you can open it and inspect its contents before sharing it. Hanterill never uploads support bundles automatically.
+
+## Where to open a report
+
+When you report a problem, include:
+
+- Your vehicle model, model year, and powertrain (for example, *2023 Polestar 2 Long Range Dual Motor* or *2024 Volvo EX30 Single Motor Extended Range*).
+- What you were trying to do and what appeared on screen.
+- Your exported support bundle (or a saved session export with **Mask VIN** enabled).

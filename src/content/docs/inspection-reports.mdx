@@ -1,151 +1,37 @@
-import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+**Inspection Report** turns a saved vehicle scan into a document you can print or keep with the car's records. It brings battery, fault and other available readings together and shows when missing data limits the result.
 
-Most of Hanterill shows you raw readings and lets you decide. The inspection report is different:
-it answers one question, "what condition is this car in?", with a score and a verdict.
+## 1. The four scored areas
 
-Because that is a judgement rather than a measurement, the rules behind it are written down,
-versioned, and shipped with the report itself. This page explains how they work.
+Hanterill evaluates **four areas** and gives an overall result: **Pass**, **Watch**, **Attention** or **Inconclusive**. You can read the findings behind that result:
 
-<SafetyNotice level="read-only" title="Reads in, rules out">
-Every input to the score comes from the read-only services described in [DTC scanning](/docs/dtc-scanning)
-and [Battery diagnostics](/docs/battery-diagnostics). Scoring adds arithmetic, never traffic.
-</SafetyNotice>
+1. **High-voltage battery health (SoH)**: Grades the battery management computer's reported **State of Health** percentage against expected aging bands.
+2. **Cell-group voltage balance**: Measures the millivolt spread (`Max - Min`) across all series cell groups in the battery pack to spot weak or drifting cell groups that a dashboard percentage hides.
+3. **Fault-code severity (DTCs)**: Weighs fault codes by their **live status** (an **Active** fault on a safety, brake, or high-voltage module carries much more weight than a single **Historical** comfort code) rather than simply counting how many codes exist.
+4. **Odometer and identity consistency**: Cross-checks the car's **VIN** and **odometer mileage** across up to 29 modules (instrument cluster, brakes, gateway, battery, and body controllers). Any disagreement between modules is flagged immediately as a tamper or module-replacement finding.
 
-## The four verdicts
+### Advisory checks that inform without penalizing
+Alongside the four scored areas, the report includes **advisory checks** (such as 12 V battery charge level, remaining days/kilometers to the next scheduled service, and thermal loop spread). Advisory items appear clearly on the report so you know about an upcoming service or a tired 12 V battery, without unfairly dragging down the high-voltage battery or drivetrain score.
 
-The report ends in one of four plain answers. The rule names and the words on screen differ
-slightly; both are shown here so a stored report and the app agree.
+## 2. Honest handling of missing data
 
-| Verdict | On screen | What it means |
-| --- | --- | --- |
-| Sound | "Sound" | No rule raised a concern and the score is high. |
-| Advisories | "Sound: minor advisories" | Something worth knowing about, but nothing safety-critical. |
-| Attention | "Needs attention" | A hard override fired, or the score is low. Read the findings before you decide anything. |
-| Inconclusive | "Not evaluated" | Not enough answered to earn a verdict. |
+If a scan was interrupted before the battery or fault-code read finished, Hanterill **never treats missing data as a pass**. Instead:
 
-Inconclusive is a real outcome, not a failure. If the battery health could not be read, the report
-refuses to guess rather than scoring the car on partial evidence.
+- Any domain that could not be read is marked **Missing / Not read**.
+- The overall report verdict steps down to **Inconclusive** and lists exactly which check needs to be run to complete the grade.
+- Similarly, if you connect to a vehicle platform whose decoders are still marked as **Testing** (such as early SEA or SPA battery paths), the report automatically caps its verdict confidence and notes that the platform mapping is provisional.
 
-## The score itself
+## 3. Three printable report styles
 
-One captured pass produces one score, not a score per system. The arithmetic is simple:
+At the top of the **Inspection Report** screen, you can switch between **three print-ready layouts** depending on who will read the document:
 
-```
-score = clamp(100 − (sum of every rule's points), 0, 100)
-```
+| Report style | What it includes | Best used for |
+| :--- | :--- | :--- |
+| **Executive inspection** | A clean one-page summary of vehicle identity, overall score, battery health, active faults, and odometer cross-check. | Handing to a buyer, seller, or dealer during a used-car inspection. |
+| **Battery certificate** | Focused specifically on the high-voltage traction battery: State of Health, usable capacity, cell-group voltage spread, 27-module breakdown, and 8-band lifetime temperature history. | Proving EV battery condition when buying, selling, or checking warranty health. |
+| **Technical dossier** | The complete multi-page record: all four scored rules, every module's hardware and software part numbers, full fault list with freeze frames, and consistency cross-checks. | Keeping a complete workshop or long-term ownership record. |
 
-Start at 100, subtract each rule that fired, and never fall below 0. The verdict then follows the
-score unless a rule forced something stronger. In order, first match wins:
+## 4. Printing, PDF export, privacy, and offline re-scoring
 
-1. Any hard override fired → **attention**.
-2. A rule forced attention → **attention**; a rule forced advisories → **advisories**.
-3. Score 85 or above → **sound**.
-4. Score 60 or above → **advisories**.
-5. Below 60 → **attention**.
-6. No score at all → **inconclusive**.
-
-## What actually carries score weight (v1.0.0)
-
-Four inputs move the number. This is the complete list as shipped:
-
-| Input | Band | Points |
-| --- | --- | --- |
-| Battery State of Health | below 70% | −30 |
-| | 70% up to 80% | −14 |
-| | 80% up to 90% | −4 |
-| | 90% and above | 0 (note only) |
-| 12 V rested rail | below 12.2 V | −16 |
-| | 12.2 V up to 12.5 V | −6 |
-| | 12.5 V and above | 0 (note only) |
-| Fault codes | confirmed, failing and lamp on, class P or U | −12 each, capped at −30 total |
-| | confirmed but not currently failing | −5 each, capped at −20 total |
-| | pending only | −2 each, capped at −8 total |
-| | confirmed and failing on a safety module | −8 each, plus the hard override |
-| Odometer | stored copies disagree beyond 20 km | −25, plus the hard override |
-
-A few rules about those rules:
-
-- Below 70% SoH is the published warranty floor. The report describes where the reading sits
-  against the 8-year / 160,000 km terms; it makes no coverage determination.
-- A reading at or above about 13 V on the 12 V rail is converter-supported, not rested. No
-  state-of-charge assessment is made at all in that case, and nothing is deducted.
-- Fault codes are weighted, not counted flat. Hanterill reads the status bits to tell whether a
-  code is active, pending or stored, and reads the code class to tell whether it is a
-  powertrain/network code.
-- Cell balance and quiescent draw do not carry score weight in this version. Cell balance is a
-  review band in the battery screens; the score engine never reads the sleep-current history. If you
-  have seen them described as scored rule groups, that description is ahead of the shipped engine.
-
-## What stays a note
-
-Everything else in the report describes what was seen and never moves the score: the coolant-loop
-thermal spread, an overdue service interval, uptime spread, a charge limitation, key count, and the
-"clean scan" note. A note can still be worth reading; it just cannot change the verdict.
-
-## Every rule names its evidence
-
-Each rule cites one evidence class, and the class sets a ceiling on how strong a verdict that rule
-can push:
-
-| Class | Example | Strongest verdict it can force |
-| --- | --- | --- |
-| Published standard | ISO status-bit meanings and code classes | Attention |
-| Manufacturer spec | The 8-year / 160,000 km warranty floor | Attention |
-| Vehicle capture | An odometer read across several modules | Advisories |
-| Reference data | The rested-voltage bands for the 12 V battery | Advisories |
-| Heuristic | A charger-ceiling guess | Note only, never affects the score |
-
-A rule resting on a decoder that is still provisional is downgraded one class automatically. The
-State of Health rules are provisional, which is why even a badly degraded pack lands as
-**advisories** rather than **attention**. Battery data alone cannot produce "Needs attention" in
-this version. Only a hard override, or a low score driven by other findings, gets there.
-
-## The two hard overrides
-
-Two findings skip the arithmetic and force an Attention verdict on their own:
-
-- A confirmed, currently failing fault in a safety system (airbags, ABS/ESP, steering angle, ADAS).
-- Stored odometer copies that disagree beyond normal drift (more than 20 km). That disagreement is
-  the strongest mileage-fraud signal a used-car inspection can find, and the report states the
-  magnitude of the disagreement, never an accusation.
-
-An override outranks everything, including a missing score. A live safety fault still forces
-attention even when the battery health was never read.
-
-## When inputs are missing
-
-Missing inputs degrade the report toward inconclusive rather than toward a false all-clear:
-
-- A channel that never answered is listed as a coverage gap. It cannot pass a check and cannot fail
-  one.
-- State of Health is the one input that removes the score entirely. Without it the score is
-  empty, not zero, and the verdict is inconclusive unless an override fired.
-- A DTC scan that did not reach every module is recorded as a coverage gap and marks the code
-  evidence partial. Non-safety code rules ask for advisories at most in any case, so a partial scan
-  cannot quietly become an all-clear.
-- The report prints its own rule version, its coverage, and a SHA-256 checksum, so a later reading
-  can be traced to the rules that produced it.
-- Re-scoring a stored session under a newer rule set is a local calculation. No car needed.
-
-## Thermal findings stay notes
-
-The pack temperature sensors have no established mapping to individual modules yet, so thermal
-spread is reported as an observation with zero effect on the score. It graduates to a real rule
-only when the placement is corroborated by evidence.
-
-## Location privacy
-
-Pre-purchase inspection reports carry no GPS sections at all. Where other exports do include
-coordinates, they are rounded to three decimals, roughly 110 metres. See [Privacy](/docs/privacy).
-
-## In the app
-
-- **Report page**: identity, battery, fault, ECU, service and thermal findings with the score.
-- **Print**: the browser's own print pipeline with styled print CSS, so the paper copy matches the
-  screen.
-- **Sessions**: stored sessions re-score under current rules without reconnecting to a car.
-
-The full design document, including the rationale for every band, lives in the app repository at
-`docs/product/ppi-intelligence-and-scoring.md`. Where that document and the shipped engine differ,
-the engine is what runs: it is the single implementation behind the app, the CLI and every stored
-session.
+- **Print or save as PDF**: Click **Print / Save PDF** to format the chosen layout cleanly for A4 or Letter paper.
+- **VIN and GPS privacy**: You can mask the car's 17-character VIN with a single toggle before printing or sharing. **GPS location is off by default** and never appears in an inspection report unless you explicitly enable it.
+- **Re-score saved sessions offline**: Because every session saves the underlying readings in your local archive, you can open any past session from months or years ago and view or print its inspection report without reconnecting to the car.

@@ -1,166 +1,112 @@
-A fault code says something went wrong. A data identifier says what a value is right now: battery
-voltage, cell potentials, software versions, temperatures. Hanterill reads those by number, one at a
-time or in large sweeps. This page covers what an identifier is, how the catalogue gives the bytes
-meaning, and how a read, an all-module scan and a watch differ.
+A car's control units hold individual readings such as battery voltage, temperature and software version. Each reading has a reference number, which the app calls a **data identifier**. Hanterill can read one value or collect many values during a scan. This page explains how those readings become the numbers you see on screen and why some cannot yet be interpreted.
 
-## What a data identifier is
+## What a Data Identifier is
 
-A data identifier, or DID, is a 16-bit number that a module answers with data. The request is
-ReadDataByIdentifier (UDS `0x22`), which carries the service and the identifier; the answer echoes the
-identifier and then adds the payload. A read of `0x496D` is `22 49 6D`, and the reply
-`62 49 6D 00 00 23 9A` carries four payload bytes after the echo.
+Every control unit in your car holds hundreds of internal data points. Each data point has a unique
+reference number called a **Data Identifier (DID)**. When Hanterill wants to know the battery pack's
+state of charge or the cabin temperature sensor reading, it sends a "Read Data by Identifier" request
+to that module asking for that reference number, and the module replies with a short sequence of raw
+data bytes.
 
-The same identifier does not mean the same thing on every module, so a definition is keyed on the
-module address and the identifier together. `0x4028` is a 2-byte percentage on one module and a
-4-byte value on another; `0xEE40` is a 2-byte temperature on one and a 96-byte block on another.
-Feeding the second payload to the first decoder would produce a confident wrong answer. Some
-identifiers are platform-wide instead, such as `0xF190` for the VIN.
+Importantly, the same reference number does not always mean the same thing on two different modules.
+One reference number might represent a percentage on the battery module and a completely different
+temperature or counter on the climate module. Because of this, Hanterill's catalogue pairs every
+Data Identifier with the specific control unit it belongs to, except for standard vehicle-wide
+records such as the VIN or software part numbers.
 
-## The catalogue and its categories
+## How the catalogue turns raw bytes into real-world units
 
-A catalogue definition carries more than a name: a payload length contract, the decoder, the physical
-range and unit for the decoded value, a privacy class for exports, and a maturity grade. Every
-definition sits in one category: identity, configuration, battery, thermal, motor, charging, body,
-chassis, adas, infotainment, diagnostic, or unknown.
+When a control unit answers a read request, it sends back raw numbers (bytes) without any labels. To
+make those bytes useful to a person, Hanterill's built-in catalogue stores the translation recipe for
+each known identifier:
 
-Maturity runs from `unknown` and `experimental`, where the meaning is a hypothesis, through
-`provisional`, `medium` and `high`, to `verified`, which means the scaling and range were confirmed
-across vehicles. A value can be read correctly and still be marked provisional; that mark is about the
-interpretation, not the wire. The catalogue does not cover every identifier a module answers, and a
-positive response with no definition is kept as a real answer with unconfirmed meaning.
+- **Expected data length**: How many bytes the module should return so the app never misreads a truncated or mismatched reply.
+- **Scaling formula and unit**: How to convert the raw number into physical units such as volts (`V`), amperes (`A`), degrees Celsius (`°C`), percentages (`%`), or kilometres (`km`).
+- **Plausibility range**: The minimum and maximum realistic physical values (for example, checking that a cell voltage is within a realistic lithium-ion range rather than showing a nonsensical number if a sensor is disconnected).
+- **Category**: Whether the reading belongs to Identity, Configuration, Battery, Thermal, Motor, Charging, Body, Chassis, Driver Assistance (ADAS), Infotainment, or Diagnostics.
+- **Confidence and maturity grade**: How thoroughly the formula has been verified across real vehicles.
 
-## Scaling, and why a raw value needs it
+### Maturity grades
 
-A `0x22` read returns bytes. Bytes need a unit, a scale factor and sometimes an offset before they are
-a physical value. The catalogue holds that recipe where a validated decoder exists, and checks the
-decoded value against the definition's physical range. A value outside the range is reported as
-implausible rather than shown as a clean reading.
-
-For identifiers the catalogue cannot decode, the app can ask the module itself.
-ReadScalingDataByIdentifier (UDS `0x24`) requests the module's own scaling descriptor for one
-identifier. Hanterill validates the positive response, checks that the echoed identifier matches, and
-surfaces the descriptor bytes and their length. It does not turn the descriptor into a formula and
-does not claim the arithmetic it may imply. The DID Explorer's byte interpreter offers generic
-representations instead (raw, 8- and 16-bit, ASCII, voltage divided by 1000, temperature divided by
-10); those are viewing aids, not a per-identifier scaling recipe.
-
-DynamicallyDefineDataIdentifier (UDS `0x2C`) is the other side of this. It groups byte ranges of
-existing identifiers into one synthetic identifier in the `0xF200` to `0xF3FF` range, through the
-define-by-identifier subfunction that names source identifier, position and size; address-based
-definitions are deliberately not exposed. A definition allocates state on the module, so the stripped
-read-only build compiles the feature out and its read gate refuses `0x2C`. The write-capable build
-arms every definition with a teardown that clears it on stop or on drop, so an aborted session never
-leaves a definition allocated on the car.
-
-## Outcomes, and why a value comes back blank
-
-Every probed identifier is classified, and nothing is dropped silently:
+Every catalogued reading carries a maturity label so you always know how much weight to give a number:
 
 <SpecList rows={[
-  ["positive_validated", "Contract matched, decoder produced an in-range value"],
-  ["positive_unvalidated", "No validated decoder agreed on the meaning"],
-  ["positive_unexpected_length", "Payload length broke the contract, so the decoder was not run"],
-  ["positive_decoder_failed, positive_implausible", "The decoder errored, or the value was physically impossible"],
-  ["negative_response, unsupported", "The module refused, or reported the read as not implemented"],
-  ["timeout, transport_error, malformed_response, cancelled, budget_exceeded", "Not read, or no usable reply, and the reason is kept"],
-  ["not_attempted, profile_skipped", "Never tried, or known not to apply to this software profile"],
+  ["verified", "Confirmed across live vehicles with verified units, scaling, and physical bounds."],
+  ["high / medium", "Well-understood reading whose behaviour matches expected physical changes on the car."],
+  ["provisional", "Read from the car and decoded with a working formula that is still being cross-checked across more vehicle trims."],
+  ["experimental / unknown", "The module answers with data at this identifier, but the exact physical unit or scaling formula is still unconfirmed."],
 ]} />
 
-That list is also the answer to why a value can come back blank. A module did not answer, or answered
-that it does not implement the identifier. The payload broke the length contract, so the decoder was
-deliberately not run. The decoder failed, or the decoded value was impossible. There is no catalogue
-definition, so the app shows raw bytes and no name. The module has no address on the connected
-platform, so the read was never transmitted. On export, a privacy class can withhold the payload bytes
-while keeping the digest. In every case the raw response is retained before any decode runs, with its
-length, digest, latency and attempt count.
+If a module returns data for an identifier that does not yet have a confirmed formula, Hanterill keeps
+the raw response and labels its meaning as unconfirmed rather than hiding it or guessing.
 
-## Applicability and support
+## Asking a module how it scales a value
 
-A definition carries an applicability scope: platform, model, model years, a software scope (unknown,
-an exact version, or a range), and the profile hashes where it has been observed. Assessing a scope
-returns one of four answers: observed on this profile, applicable because every declared constraint
-matches, not applicable because a constraint excludes it, or unknown because no constraint excludes it
-but required scope is missing. Missing scope is never treated as universal.
+For identifiers that are not yet decoded in the built-in catalogue, Hanterill can also ask the control
+unit whether it provides its own scaling description. If the module supports this read-only request,
+Hanterill records the scaling information alongside the reading.
 
-The app also learns transport support per platform, module, software profile and identifier. The
-states run from `unknown`, through `observed_positive_unknown_semantics` and `likely_supported`, to
-`confirmed_supported`, with `profile_specific`, `likely_unsupported` and `confirmed_unsupported` for
-identifiers that answer on some profiles and are refused on others. An identifier the profile already
-reported as unsupported is recorded without wire traffic, and a later positive response clears the
-mark. Identifiers with no profile hash use a stable fallback.
+Inside the **DID Explorer** screen, you can also inspect any raw response using built-in viewing helpers
+(such as plain text, whole numbers, millivolts-to-volts, or tenths-of-a-degree) to see how raw data
+behaves in real time.
 
-## One read, a scan-all, or a watch
+## Why a reading can come back blank or skipped
 
-| Mode | Scope | What it answers |
+Every time Hanterill requests a Data Identifier, it records the exact outcome so nothing fails silently:
+
+<SpecList rows={[
+  ["Validated reading", "The module answered with the expected data length, and the formula produced a realistic physical value."],
+  ["Unvalidated reply", "The module answered with data, but there is no confirmed formula in the catalogue yet, so raw bytes are shown."],
+  ["Unexpected length", "The module returned a different number of bytes than expected for this software version, so Hanterill safely skipped decoding rather than showing a wrong number."],
+  ["Out-of-range value", "The decoded value fell outside realistic physical bounds (for example, an unplugged sensor reporting an extreme number)."],
+  ["Unsupported by module", "The module politely replied that this specific car or trim level does not support that data point."],
+  ["No response / timeout", "The module did not answer in time, usually because the module is not fitted on this car or is asleep."],
+]} />
+
+## Four ways to read Data Identifiers
+
+Depending on what you are investigating, Hanterill offers four read modes in the **DID Explorer**:
+
+| Mode | Scope | Best used when you want to... |
 | --- | --- | --- |
-| Read | One module, one identifier | What this value is now |
-| Bounded sweep | One module, an inclusive range of identifiers, under a read budget | Which identifiers answer, and what they return |
-| Scan-all | Every selected module, in phases, under one shared budget | What the whole car exposes, including identifiers the catalogue does not know |
-| Watch | One module, a small identifier set, re-read on a cadence | How those bytes behave over time |
+| **Single read** | One module, one identifier | Check a single live value or identity record right now |
+| **Bounded sweep** | One module, a selected range of identifiers | Discover which data points a specific control unit supports |
+| **All-module scan** | Every selected module across the car | Capture a complete snapshot of every readable value on the vehicle |
+| **Live watch** | One module, a small group of identifiers over time | Watch how several values change as you operate a switch, pedal, or charger |
 
-A read is one request. A bounded sweep sends one request per identifier, retries only classified
-transient failures with a growing pause, and classifies every identifier even when the budget runs
-out. Consecutive identifiers that each have an exact length contract can share one batch request, up
-to eight per request; if the module refuses, the app falls back to single reads rather than guess.
+### 1. Single read and bounded sweep
 
-A watch re-reads its set on one module and transmits only `0x22` reads and `0x3E` keepalives. Defaults
-are 30 samples ten seconds apart, clamped to between 1 and 120 samples and between 250 milliseconds and
-60 seconds. It classifies each byte across the rounds: a byte that never moves looks like calibration
-or identity, one that steps monotonically looks like a counter, and bytes that move together with the
-vehicle state look like correlated telemetry. A watch you stop early still yields valid partial
-evidence, and it ends as completed, cancelled, or transport lost after three dead rounds.
+A **Single read** asks one module for one value immediately. A **Bounded sweep** steps through a range
+of identifiers on one module within a request limit you choose, automatically pausing briefly if the
+bus is busy and recording which identifiers answered with data and which were unsupported.
 
-## The all-module scan, phase by phase
+### 2. All-module scan (three-phase vehicle snapshot)
 
-The all-module scan runs a fixed sequence and shares one request budget across every phase, so a later
-phase cannot reset a cap an earlier one consumed:
+When you run a full all-module scan, Hanterill works through three organized stages so the car's network
+is never overwhelmed:
 
-- **Presence.** Three probe identifiers (`0xEDA0`, `0xF190`, `0xF186`) per requested module. Silence is
-  not proof of absence, and the identity block seeds the profile hash. When the session knows the VIN
-  it is re-read before the catalogue stage, and a mismatch ends the run instead of reading a different
-  car.
-- **Catalogue and discovery.** Every catalogued identifier for the present modules, in normal or
-  extended mode, plus bounded range sweeps for identifiers the catalogue does not list.
-- **Verification and scaling probes.** Bounded re-samples of positives whose decode quality was
-  unknown, and a `0x24` request for uncatalogued positives.
+1. **Presence check**: Confirms which control units are awake on the car and verifies the vehicle's VIN so a scan never mixes data from two cars.
+2. **Catalogue and discovery reads**: Reads all known catalogued values for every responding module, plus optional discovery ranges if you choose an extended sweep.
+3. **Verification and scaling checks**: Re-samples changing values to see whether they are static settings or live sensors, and checks whether modules report scaling hints for newly discovered values.
 
-A skipped phase transmits nothing, and planned reads that never go out keep a row, so the artifact
-never hides a gap behind a smaller total. The run stops on the budget, on cancellation, on transport
-loss after twelve consecutive transport or malformed failures with nothing retained, or on an identity
-mismatch; a timeout does not count toward that streak.
+When exporting scan results, you can choose a privacy level: keep full details for your own records,
+mask your VIN and serial numbers for a support bundle, or strip all vehicle-identifying fields before
+sharing publicly.
 
-The result is the `did-scan-all/2` document: one row per identifier with its module, phase, outcome,
-NRC and NRC name, payload, digest, latency and attempts, plus per-phase counters, presence rows,
-scaling probes and a summary. Export honors a privacy tier. A research export keeps everything; a
-support export masks a vehicle identifier to head and tail, hashes a hardware identifier, and drops
-location and personal data; a public export drops every sensitive class. Outside the research tier, a
-sensitive payload loses its bytes but keeps its digest.
+### 3. Live watch (tracking changes over time)
 
-## Watching a value over time
+A **Live watch** repeatedly reads a small group of identifiers on one module at a steady interval (by
+default 30 samples spaced 10 seconds apart, or adjustable down to four times per second). Across the
+samples, Hanterill automatically highlights how each value behaves:
 
-A watch reads a small set of identifiers on one module on a fixed cadence. It sends only `0x22`
-reads and `0x3E` keepalives. The default is 30 samples ten seconds apart; the app bounds the count to
-between 1 and 120 and the interval to between 250 milliseconds and 60 seconds. The watch classifies
-each byte across the rounds: a byte that never moves looks like calibration or identity, a byte that
-rises monotonically looks like a counter, and bytes that move together as the car's state changes
-look like correlated telemetry. The summary is computed from the completed rounds, so a watch you
-stop early still yields valid partial evidence. It ends as completed, cancelled, or with a lost link
-after three consecutive rounds where every identifier failed at the transport layer.
+- **Static values**: Numbers that never change across the run (usually part numbers, configuration settings, or calibration constants).
+- **Counters**: Values that step upward steadily over time (such as operating-hour timers or cycle counters).
+- **Dynamic sensor telemetry**: Values that move up and down as the car's state changes (such as voltages, temperatures, pressures, or pedal positions).
 
-## Offline DID tooling in the CLI
-
-The DID tooling in the command line never contacts a car. `did-plan` previews a bounded scan plan and
-`did-presets` lists the discovery ranges. `did-analyze` mines saved captures for unknown positives and
-contract mismatches, and `did-kb` reads or folds the learned identifier knowledge base. `did-scan`,
-`did-scan-all` and `did-watch` mirror the app's sweeps, and `did-scan` can run against a saved capture
-with `--capture` instead of a vehicle. `vendor-ref` and `vendor-dids` expose the sanitized vendor
-reference vocabulary, including the 113-module, 20,966-row identifier registry of module, identifier,
-size and description, which says what exists and never carries a decoded value. See [CLI](/docs/cli)
-and [ECU reference](/docs/ecu-reference).
+If you stop a watch early, Hanterill still saves and summarizes all the rounds completed so far.
 
 ## Next
 
-- [ECU reference](/docs/ecu-reference): the module registry these identifiers are read from.
-- [CLI](/docs/cli): the offline DID commands and their output documents.
-- [Firmware and inventory](/docs/firmware-and-inventory): the identity reads in context.
-- [Capabilities and gating](/docs/capabilities-and-gating): what the app decides a car supports.
+- [ECU reference](/docs/ecu-reference): the control units these readings come from.
+- [Firmware and inventory](/docs/firmware-and-inventory): how identity reads build a full software map of your car.
+- [Capabilities and gating](/docs/capabilities-and-gating): how Hanterill determines which features your car supports.

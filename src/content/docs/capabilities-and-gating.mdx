@@ -1,145 +1,91 @@
-Two different questions decide what a screen offers. The first is about the build: does this binary
-contain the feature at all? The second is about the car in front of you: does this vehicle have the
-module a feature needs? Hanterill answers them separately and never lets a guess stand in for either.
-This page explains the capability manifest, the capability matrix, software gating and the read-only
-build distinction.
+The screens and actions you see depend on the version of Hanterill you installed and the equipment in your car. The app checks which control units respond before showing vehicle-specific options. This page explains why an option may appear for one car and be absent for another.
+## How availability is reported
 
-## What the app claims, and what it refuses to claim
-
-A capability in Hanterill is either measured on the wire, derived from something measured by a named
-rule, or openly unobservable. Every row states which of the three it is, and an unobservable row names
-the input that is missing. An unknown is never folded into an absent. That is the whole shape: the
-app would rather say "I cannot see this" than publish a boolean it did not earn.
-
-## The capability manifest a running binary publishes
-
-The running binary publishes a manifest under the `getCapabilities` command. It is session-independent
-and it describes the build, not the car. It carries a schema version, the runtime name, the app
-version, and a `commands` object.
+Every vehicle capability in Hanterill falls into one of three clear categories:
 
 <SpecList rows={[
-  ["read", "Always true"],
-  ["write", "True only when the binary was compiled with the write feature"],
-  ["clearDtcs", "Its own flag so fault-code clearing can gate independently of the blanket write bit"],
-  ["didScan", "Single-module identifier scanning, always wired"],
-  ["didScanAll", "The all-module scanner, true only with the scanner feature"],
-  ["didWatch", "Identifier watching, follows the same scanner feature"],
-  ["iceRead", "Combustion and hybrid reference reads"],
-  ["live", "Live sampling"],
-  ["exportReport", "Report export"],
+  ["Directly measured", "Confirmed on the cable because the specific control unit or sensor answered a diagnostic read."],
+  ["Derived from measured modules", "Inferred by a transparent rule from a module that answered (for example, when a diesel aftertreatment module answers, diesel exhaust service panels apply)."],
+  ["Not observable in read-only mode", "Requires factory server data or an undecoded internal configuration table that cannot be confirmed from a standard read."],
 ]} />
 
-The interface reads this manifest instead of assuming. A command reported false is not offered, and
-the all-module scanner route is hidden when its feature is absent while single-module scanning is
-unaffected. Every flag is backed by a wired command handler, so a true value always has an
-implementation behind it.
+Whenever a capability cannot be confirmed from a read-only check, Hanterill marks it as **unknown** and
+explains what information is missing, rather than falsely claiming that your car does not have that
+equipment.
 
-## Capability rows and how they are established
+## How Hanterill detects what is installed on your car
 
-The capability matrix answers "does this car have X" from evidence. Each row names its method:
+Rather than trusting a static lookup table, Hanterill checks which control units actually answer on
+your vehicle's network. From those responses, the capability check determines whether your car has:
+
+- Electric drive controllers and high-voltage battery management
+- A combustion engine or hybrid transmission controller
+- A 48-volt mild-hybrid battery system
+- Four-corner air suspension
+- All-wheel-drive rear axle or differential electronics
+- Forward driver-assistance cameras and blind-spot corner radars
+- A Vehicle Gateway Module
+
+Any valid response from a module proves that the hardware is physically installed on the car, even if
+a module reports a serial number in a slightly different format than expected. Only a complete lack of
+response (a timeout) or a platform where that module does not exist counts as absent.
+
+### Why a few features show as "unknown" until decoded
+
+A handful of vehicle options (such as whether a car has a panoramic glass roof or which type of
+tyre-pressure monitoring it uses) are stored inside a compact binary configuration block inside the
+central body computer rather than having their own separate control unit. When a specific setting is
+not yet decoded for your platform, Hanterill shows its capability status as **unknown** rather than
+guessing.
+
+## Checking module software levels
+
+Some diagnostic procedures and features depend on which software version a control unit is running.
+Hanterill reads software versions directly from the relevant modules in read-only mode, including:
 
 <SpecList rows={[
-  ["ecu-presence", "Measured: the named module or modules answered a presence read"],
-  ["derived-from-presence", "Derived by a named rule over measured presence"],
-  ["unobservable", "Needs evidence a read-only client cannot gather, and the missing input is named"],
+  ["Infotainment software level", "Read directly from the Infotainment Head Unit (IHU)."],
+  ["Climate controller software level", "Read directly from the Climate Control Module (CCM)."],
+  ["Brake controller software level", "Read directly from the Brake Control Module (BCM2)."],
+  ["Aftertreatment software level", "Read directly from the aftertreatment module when fitted on combustion models."],
 ]} />
 
-The measured rows cover the engine or drive control module, transmission, the urea aftertreatment
-module, the 48 V mild-hybrid battery, air suspension, the blind-spot radars, forward camera 2, the
-AWD differential electronics module and the vehicle gateway. One row is derived: a present urea
-aftertreatment module implies diesel aftertreatment support, and the rule travels with the row so the
-inference is visible.
+Hanterill displays the exact software version reported by the car. It does not make automated claims
+about whether a software version is "outdated" or "buggy," because official manufacturer service
+bulletins are stored on dealership servers rather than inside the vehicle.
 
-Four rows are unobservable, and each names why. Petrol versus diesel needs a powertrain variant signal
-that neither module presence nor the VIN grammar separates. Panoramic roof and tyre-pressure
-monitoring need a decoded car-configuration parameter, and the byte layout for DID `0xF120` is not
-recovered. A corner-position module needs a registry mapping for a vendor address the app's module
-registry does not carry. None of those is answered `absent`; they are answered `unknown` with the gap.
+## How service and maintenance families are gated
 
-The interface shows a row's state, its derivation, the modules it names, and either its method or its
-missing input.
-
-## Presence is a wire answer, not a guess
-
-Presence is established by reading `0xF190` on the named module. Any wire answer proves the module is
-there, including a reply that a stricter check would reject. A gateway or driver-assistance module
-that answers with its own 13 to 14 byte serial instead of a 17 byte VIN is a contract rejection, but
-the module answered, so the row reads present. Only a transport failure, a timeout or a disconnect,
-counts as no answer. A module the connected platform has no address for is absent without a read,
-because the app will not transmit to a guessed address.
-
-## Software gating
-
-Software gating keeps the vendor's "which software level is this" vocabulary but fills each row from
-the best read-only evidence, or leaves it unknown:
+Before showing a maintenance routine or subsystem status panel, Hanterill checks both whether the
+procedure is supported by the app and whether the required hardware is present on your car:
 
 <SpecList rows={[
-  ["Infotainment software version", "Measured from the IHU at 0xD904"],
-  ["Climate module boot software version", "Measured from the CCM at 0xF124"],
-  ["Body control module build level", "Measured from BCM2 at 0xDD0C"],
-  ["Urea aftertreatment module reference level", "Measured from the NRCM at 0xD97C"],
-  ["Head-up display level", "Unobservable: no registry mapping for the vendor address"],
-  ["CEM generation counter", "Unobservable: no recovered DID for the vendor counter"],
-  ["Known-buggy software predicate", "Unobservable: the vendor's bug-list table is server-held and was not recovered"],
+  ["Read-only status available", "Hanterill can read the subsystem's live status and health indicators without changing anything on the vehicle."],
+  ["Confirmed service routine available", "The maintenance routine is built in and available behind confirmation dialogs and safety checks."],
+  ["Read-only today (routine not yet mapped)", "Hanterill can read sensors and fault codes for this subsystem, while the active workshop routine is not yet available."],
+  ["Blocked by design", "Arbitrary raw memory writes and unverified commands are permanently blocked so the app cannot corrupt module memory."],
 ]} />
 
-A measured row may still surface as a gap. A row publishes text only when the answer is printable
-text with padding stripped. An answer that is a control byte is reported as unreadable, with the
-reason named, instead of being printed as a version. There is deliberately no "this version is buggy"
-verdict, because the table behind that verdict is not in any recovered layer.
+Equipment gating prevents you from running a routine that does not match your car. For example, camera
+and radar calibration checks require the forward camera or blind-spot radars to be present on the
+vehicle, and active grille shutter tests require the corresponding front controller.
 
-## Service families and their honest states
+## Inspecting subsystem status in read-only mode
 
-The service-family index says how far each service surface reaches in this build. Every family names
-the capability rows that gate it and the shipped routines or read use case, or states its exact
-unrecovered boundary. A family is never called supported unless the client can transmit every request
-it needs.
+Many workshop procedures have companion status readings that report whether a calibration is valid,
+whether a service counter is due, or whether a subsystem is ready. Hanterill can read all of those
+status indicators in a single read-only pass, opening a diagnostic session once per module and grouping
+the results by system family so you can inspect the car's maintenance state without triggering any
+actuators.
 
-<SpecList rows={[
-  ["read-only", "Data reads only, no actuation"],
-  ["unsafe-write-ops", "Actuation routines exist and are compiled under the write feature"],
-  ["unrecovered", "The identifiers are not in any recovered layer, so no build can transmit them"],
-  ["refused-by-design", "Refused at the read gate in every build, and no use case exists"],
-]} />
+## What capability checks do not do
 
-The shipped table uses three of those states. Actuating families such as camera and ADAS calibration,
-climate, steering, service reset, usage mode, parking brake and grille shutter are write-capable.
-Families such as DPF regeneration, urea aftertreatment service, transmission adaptation and 48 V
-mild-hybrid service are unrecovered: the read side ships, and the boundary names the capture that
-would close them. Generic UDS writes are refused by design. Capability gating is real: camera and ADAS
-calibration is gated on the forward camera or blind-spot radars, grille shutter on the engine or drive
-control module, and so on. A family with no capability keys is always applicable.
-
-## Per-family status, read raw
-
-Service dialogs in the vendor tooling key off per-module status DIDs. Hanterill reads those rows raw
-and attaches the reference description, the module and the reference payload size. It never fabricates
-a decoded number for a row the recovered layer cannot decode, so the value column is the payload as
-uppercase hex or a named gap. The read enters the extended session once per module rather than once
-per row, and a module the platform cannot map is not transmitted to. The report counts planned,
-measured and unattempted rows, and says plainly when a requested family has no status rows at all.
-The document is versioned as `service-status/1`.
-
-## Read-only versus write-capable builds
-
-The write surface is a compile-time feature. The released build includes it. A build compiled without
-it answers every state-changing command with a typed `read_only_build` refusal instead of failing
-mysteriously, and its manifest reports `write: false`, so the interface keeps the control disabled.
-That stripped configuration exists for continuous integration and development. It is not what ships.
-The read surface is identical in both builds. See [Safety](/docs/safety) for the full boundary and
-[Service functions](/docs/service-functions) for what the write surface does.
-
-## What gating does not decide
-
-The capability matrix does not answer entitlement or permission questions, because those are held on
-a server and are not observable from the car. It has no row for a vehicle-line predicate outside the
-supported scope. Software gating reports a measured version but makes no judgement about whether that
-version is good. And there is no separate hidden gate that removes service functions from platforms
-marked Testing or Research. Do not assume one exists.
+- **No hidden server locks**: Capability checks run 100% locally between your laptop and the car; they never check an online account or subscription.
+- **No silent hiding**: When a feature is unavailable on your platform or trim level, Hanterill tells you which module or capability was absent rather than hiding the explanation.
 
 ## Next
 
-- [Service functions](/docs/service-functions): the routines these gates protect.
-- [Safety](/docs/safety): the read-only versus vehicle-changing boundary.
-- [Supported vehicles](/docs/supported-vehicles): platform status labels.
-- [Data identifiers](/docs/did-catalogue): the reads the capability probes use.
+- [Service functions](/docs/service-functions): the maintenance routines protected by capability and safety checks.
+- [Safety](/docs/safety): how read-only mode and confirmation gates protect your vehicle.
+- [Supported vehicles](/docs/supported-vehicles): what is verified on CMA, SPA, and SEA1 vehicles.
+- [Data identifiers](/docs/did-catalogue): how Hanterill reads individual values from each module.

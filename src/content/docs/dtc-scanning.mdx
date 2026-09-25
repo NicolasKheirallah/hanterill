@@ -1,182 +1,58 @@
-import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
+The car's control units check their sensors and connections as you drive. When one detects a problem, it may save a fault code. **Fault Codes** shows the codes reported by each responding control unit and, when available, the conditions the car saved with them.
 
-A car reports its own problems. Each report is a DTC: a Diagnostic Trouble Code naming one fault in
-one system. Hanterill reads them and decodes the status byte that arrives with each code.
+## 1. Why the screen opens on "Needs Attention"
 
-## Which modules get asked
+If you ask a modern Volvo or Polestar for every status record across all 40+ fault-capable modules without filtering, the car will return **hundreds of internal records**. That is because the diagnostic standard uses the same table both for real faults and for tracking whether hundreds of routine self-tests have finished running since the last time codes were cleared.
 
-A scan does not broadcast to every module that will answer. Targets are a fixed catalogue roster for
-the detected platform, filtered to the modules catalogued as DTC-capable. On CMA that roster lists 49
-rows: 40 advertise fault-code support and 9 are flagged as no-DTC, so 40 are targets. The same filter
-applies on the other platforms, and a module outside it is not asked at all.
+To keep you from scrolling through hundreds of normal self-test entries, Hanterill decodes each code's status flags into four clear categories and opens the **Fault Codes** screen filtered to **Needs Attention** by default:
 
-Planned coverage is the size of that filtered roster, not the number of modules that happen to reply.
+| Status badge | What it means in plain language | Shown in "Needs Attention"? |
+| :--- | :--- | :--- |
+| **Active** | The fault is happening **right now** at the moment of the scan. | **Yes** |
+| **Pending** | The module saw the problem during the current or previous drive cycle and is watching to see if it happens again before lighting a warning lamp. | **Yes** |
+| **Stored** | The fault happened enough times in the past to be confirmed and saved in memory, even if it is not happening at this exact second. | Shown under **Stored / All** |
+| **Historical** | An old or cleared event kept only in the module's long-term log. | Shown under **All** |
 
-## What a scan actually sends
+You can switch the filter bar between **Needs Attention**, **Active**, **Pending**, **Stored**, and **All** at any time, or filter by module domain (Powertrain, Chassis, Body, Network).
 
-Hanterill uses five ReadDTCInformation subfunctions across its fault-code surfaces: count the codes
-for a status mask (`19 01`), list them by status mask (`19 02`), list which (code, record) snapshot
-pairs a module holds (`19 03`), read one snapshot record (`19 04`), and read an extended data record
-(`19 06`). A normal scan sends only the second.
+## 2. How to read a fault code
 
-The `19 01` preflight is optional and off by default. When enabled it learns each module's
-status-availability mask and its own count before the code read; the read still happens, and a failed
-preflight never fails the module by itself. With the preflight off, every target gets exactly one
-request:
+Automotive fault codes follow a standard 7-character format such as `P0A80-00` or `B1B25-13`:
 
-<DiagnosticExample
-  service="ReadDTCInformation, report DTCs by status mask"
-  request="19 02 FF"
-  response="59 02 FF <dtc><status> <dtc><status> ..."
-  note="The FF mask asks for every status bit. Each three-byte code is followed by one status byte, and all eight bits of that byte are decoded separately."
-/>
+- **First letter (the system)**:
+  - **P** (*Powertrain*): motors, inverters, high-voltage battery, charger, transmission, or engine.
+  - **C** (*Chassis*): brakes, stability control, steering, or suspension.
+  - **B** (*Body*): climate control, airbags, lighting, doors, seats, or instrument cluster.
+  - **U** (*Network / Communication*): a missing message or low-voltage dip between two modules on the car's network.
+- **Middle characters**: identify the specific sensor, circuit, or component.
+- **Last two characters (the failure symptom)**: describe *how* the circuit failed, such as an open wire, a short to ground, a signal out of range, or a missing calibration.
 
-Exactly one retry exists, and only for the two negative responses that mean "ask again": `0x21`
-busyRepeatRequest and an unresolved `0x78` responsePending. A timeout is not retried; a dropped link
-is handled by the reconnect pass described under coverage.
+## 3. Freeze-frame snapshots: what the car was doing when the fault happened
 
-## Reading the status byte
+A fault code by itself tells you *what* complained, but the **Freeze-frame snapshot** tells you *when and under what conditions* it happened.
 
-The status byte carries eight independent ISO 14229-1 Annex D bits: testFailed, failed-this-cycle,
-pending, confirmed, not-completed-since-clear, failed-since-clear, not-completed-this-cycle, and the
-warning-lamp/MIL request. Hanterill keeps all eight and classifies the byte into eight states, not
-four:
+When you click any fault code in Hanterill, the detail drawer fetches the module's stored snapshot and extended counters:
+- **Odometer mileage** when the fault was first and last recorded.
+- **12 V system voltage** at the moment the fault tripped. (If five modules logged communication codes at the exact same mileage and the freeze frame shows `10.8 V`, the real culprit was a weak 12 V battery during startup, not five broken modules.)
+- **Vehicle speed, battery State of Charge, pack voltage, current, and temperatures** at the second the fault set.
+- **Occurrence and healing counters**: how many times the fault has happened and how many clean drive cycles have passed since.
 
-| State | The bits behind it | What it means |
-| --- | --- | --- |
-| Clean | No bit set | Nothing to report for this record. |
-| ActiveConfirmed | testFailed + confirmed | Failing on the latest test and matured. |
-| ActivePending | testFailed + pending, not confirmed | Failing now, working toward confirmation. |
-| ActiveUnconfirmed | testFailed, neither pending nor confirmed | Failing now, not yet matured. |
-| HistoricalConfirmed | Not failing, confirmed and failed-since-clear | Verified in the past, passing the latest test, still recorded. |
-| HistoricalIntermittent | Not failing, unconfirmed, failed-since-clear | Failed since the last clear, not failing now, never matured. |
-| PendingCycle | Not failing, failed earlier this cycle | Failed during this drive cycle, passing now. |
-| PassedSinceClear | Not failing, not failed-since-clear, monitor completed | The monitor ran and passed after the last clear. |
+## 4. Comparing with your previous scan
 
-"Historical" does not mean "set, then cleared and kept". It means the fault failed since the last
-clear and is not failing now; a record that was actually cleared normally disappears. The status byte
-is also why one warning lamp can sit on top of a single active code and several historical ones.
+At the top of the **Fault Codes** screen, clicking **Compare with previous scan** immediately compares your current scan against the most recent saved scan for the same car. It highlights:
+- **New faults** that appeared since your last check.
+- **Cleared faults** that disappeared after a repair.
+- **Status changes** (for example, an **Active** fault that stepped down to **Stored**).
 
-The fault list opens on All statuses. Status is shown on every row and can be filtered, but the
-default view does not hide the quiet records.
+## 5. Offline fault-code lookup
 
-## Coverage accounting
+**Code Lookup** works without a car connected. Enter a fault code to see its description, system and reported failure type when the app has a matching entry.
 
-Every target is counted once, as succeeded, failed, unsupported or skipped. A module that times out
-becomes Failed(Timeout) and stays visible; it is never rendered as clean. Any non-success makes the
-scan partial, and a partial scan marks the code evidence in the inspection report as partial too.
+## 6. Clearing fault codes safely
 
-Two scan-wide budgets bound the pass: 5,000 retained records and 512 requests. A target the budget
-cannot cover is recorded as skipped with its reason. Per module the app keeps up to 512 raw response
-bytes plus a SHA-256 digest of the complete response, so a decode can be re-proved later without the
-car.
+Clearing fault codes is a vehicle-changing action, so it always asks for your explicit confirmation first. When you click **Clear fault codes**, Hanterill gives you clear, practical options:
 
-If the link dies mid-sweep, the rows the transport actually died on keep an honest transport-death
-error. Hanterill may reconnect once and resume exactly those rows, merging them into one artifact. A
-fresh link crosses an identity recheck first, and a VIN mismatch refuses the resume.
-
-## Freeze frames
-
-When a module sets a fault it often stores a snapshot of the conditions at that moment. Hanterill
-reads it on demand for the selected code, not for the whole scan. The read is `19 04` for one (code,
-record) pair; `19 03` lists which pairs the module holds, and the app tries record `0x00`, then
-`0x01`, then `0xFF` before giving up.
-
-The decoded fields are supply voltage, HV pack voltage, motor rpm, coolant or inverter temperature,
-ambient temperature, and an occurrence counter. Many codes have no freeze frame at all, and the
-absence is reported as an absence.
-
-Vehicle speed is always shown as not reported: no verified wire layout exists on these modules, so the
-decoder refuses to fabricate a value, and there is no driver-request field either. Before erasing, the
-clear flow captures each code's snapshot values (voltage and occurrence counter among them) because
-the clear wipes them.
-
-## How codes are named
-
-A code's identity is its module plus its three raw bytes. The app prints that identity as seven
-characters: a letter, two digits, then the two remaining bytes in hex, as in `B171D57` or `U2C7292`.
-The five-character form some tools print, such as `P0A80`, is only the base code; it drops the
-failure-type byte and does not identify a record on its own.
-
-The leading letter is P, C, B or U, from the top bits of the first byte: powertrain, chassis, body or
-network. The last byte is the failure-type byte, decoded to a subtype such as "Circuit open" or
-"Signal erratic".
-
-There is a local dictionary: an 18,499-code reference database baked into the binary. Resolution is
-module-scoped first, then global, then base code plus failure subtype, and the interface shows which
-source produced the text.
-
-## How faults affect the score
-
-The inspection report reads the status bits and the module, not just the number of codes:
-
-- A confirmed, currently failing fault on a safety module (restraints, steering angle, driver
-  assistance, brakes and stability) is a hard override to Attention.
-- A confirmed, currently failing powertrain or network code with the warning lamp requested deducts
-  12 points each, capped at 30, and can force advisories.
-- A confirmed code that is not currently failing deducts 5 each, capped at 20.
-- A pending-only code deducts 2 each, capped at 8.
-
-Any coverage shortfall from a scan marks the code evidence partial, and partial evidence cannot push
-the verdict above advisories on its own. The full arithmetic and the two hard overrides are in
-[Inspection reports](/docs/inspection-reports).
-
-## Before and after: the diff
-
-The diff compares two scans by (module, code) presence only. Each row falls into one of four labels:
-
-| Label | Meaning |
-| --- | --- |
-| Newly Tripped | Present in the target scan, absent from the baseline. |
-| Resolved | Present in the baseline, absent from the target, and that module had coverage in the target. |
-| Persistent | Present in both scans. |
-| Unverified | Present in the baseline, absent from the target, but that module had no or failed coverage in the target. |
-
-Unverified is never folded into Resolved: a module not reached in the second scan did not report a
-clean memory, and the app will not turn that gap into a repair. The headline net figure is new minus
-resolved.
-
-Status bytes are shown on the rows but are not compared, so a status change alone is not a diff
-category. A cross-vehicle or contract-version mismatch blocks the comparison entirely. Freeze frames
-are embedded in a baseline capture, but the diff page does not render them, so before-and-after
-snapshots do not sit side by side there.
-
-## Clearing codes
-
-Clearing is a write, and it is gated twice: by the running build's capability manifest and by a
-danger-button confirmation that names the target. A read-only build turns that button into "Compare
-before/after" and transmits nothing.
-
-When the operation runs, it follows one sequence per module:
-
-1. Enter an extended diagnostic session.
-2. Clear the whole fault-memory group (`14 FF FF FF`).
-3. Best-effort restore the default session.
-
-The bulk pass is followed by a 3-second pending window, but only for a module that answered `0x78`
-responsePending. A per-module fallback re-clear covers the modules the bulk pass did not land on, and
-is on by default. A verify re-read then looks for stubborn modules: any target whose count is still
-above zero. The optional force-reset step hard-resets those modules (`11 01`), waits about 5.5 seconds
-for the link to recover, then clears once more; it is off by default and suppressed in driving mode.
-
-A per-module clear ("clear this module") is the same flow with one target and no force reset. When
-the run finishes, the interface forces a fresh rescan and opens the diff against the pre-clear
-baseline, and the whole run is saved as a session artifact.
-
-<Callout kind="caution" title="Clearing is not fixing">
-Erasing a code removes the record, not the fault. If the underlying problem is still there, the code
-comes back. Use the diff to prove a repair, not to make a light go away.
-</Callout>
-
-## Exports
-
-The on-screen export for a fault list is CSV only, and the exporter neutralises spreadsheet formula
-injection, so a cell starting with `=`, `+`, `-` or `@` cannot execute in Excel. The DTC CSV has no VIN
-column at all. JSON is not an on-screen option here: it is the saved session artifact's format, keeping
-per-module outcomes, status-bit tallies, raw evidence and provenance for later comparison.
-
-## Next
-
-- [Battery diagnostics](/docs/battery-diagnostics): the other half of a typical session.
-- [Inspection reports](/docs/inspection-reports): how faults feed into the score.
-- [Sessions and evidence](/docs/sessions-and-evidence): where a scan and a clear are stored.
+- **Clear faulted modules only (Default) or Clear all modules**: By default, Hanterill only sends the clear command to the modules that actually reported fault codes, which finishes much faster and avoids resetting clean modules unnecessarily. You can switch to **All modules** whenever you want a full-car clear.
+- **Save freeze-frame snapshots before clearing (On by default)**: Because clearing a module's fault memory erases its stored freeze frames, Hanterill automatically saves those snapshots into your local session archive before erasing them.
+- **Re-read and verify after clearing (On by default)**: After clearing, Hanterill pauses briefly and re-scans the modules to verify which codes stayed gone and which codes came right back because the underlying physical fault is still present.
+- **Optional module restart for stubborn latched codes**: A few modules latch certain historical codes until the module restarts. When needed, and only while the car is safely parked, an optional reset-and-recheck step can restart stubborn modules and re-establish the diagnostic connection automatically.

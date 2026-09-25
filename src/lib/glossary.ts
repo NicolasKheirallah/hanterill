@@ -183,7 +183,7 @@ export const glossary: GlossaryEntry[] = [
   {
     term: "VIN",
     full: "Vehicle Identification Number",
-    meaning: "The car's 17-character identity, masked in exports by default.",
+    meaning: "The car's 17-character identity, shown on the Vehicle screen and in reports, with one-click masking when sharing exports.",
     group: "Protocols",
     doc: "/docs/privacy",
   },
@@ -364,7 +364,7 @@ export const glossary: GlossaryEntry[] = [
   {
     term: "SPA",
     full: "Scalable Product Architecture",
-    meaning: "The larger Volvo platform, mostly plug-in hybrids. Catalogued, not yet verified live.",
+    meaning: "The larger Volvo platform, mostly plug-in hybrids and combustion cars. Provisional DoIP connection, fault scans and early battery reads are wired, while deeper battery verification continues.",
     group: "Platforms and bodies",
     doc: "/docs/supported-vehicles",
   },

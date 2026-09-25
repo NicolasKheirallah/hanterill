@@ -1,140 +1,34 @@
-import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
-import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+Even on an electric car with a huge high-voltage battery in the floor, **every computer, door lock, relay, and safety system runs on the small 12 V lead-acid battery** under the hood. When you park and lock the car, the high-voltage battery disconnects for safety until you next drive or charge. If something keeps the car's electronics awake overnight, that small 12 V battery can run flat, leaving the car unable to unlock or close its high-voltage contactors in the morning.
 
-A parked car is never fully off. Its computers keep a small current flowing out of the 12 V
-battery, and when one of them fails to sleep that current stays high. Hanterill reads the CEM's own
-record of that current and shows how it is distributed over time, not just one number.
+The **12 V Sleep Drain** screen reads the **Battery Monitoring Sensor (BMS)** on the 12 V battery terminal and the **Central Electronic Module (CEM)** so you can see how healthy your 12 V battery is and whether the car is actually sleeping when parked.
 
-<SafetyNotice level="read-only">
-Everything on this page is a read. Hanterill asks the CEM for two data identifiers and decodes the
-answers. It does not write to the module, and it does not change how the car sleeps.
-</SafetyNotice>
+## 1. Why reading live current while plugged in is not enough
 
-## What quiescent current is
+As soon as you open the driver's door, sit in the seat, and plug in a diagnostic cable, the car wakes up its displays, gateway, and control units. Live 12 V current draw while the car is awake is typically **10 to 25 Amps**, which tells you nothing about what the car was doing at 3:00 AM while parked and locked.
 
-Quiescent current is the current a car draws from its 12 V battery once it has gone to sleep, in
-milliamps. A healthy car settles to a low figure and holds it. A module that keeps waking, or that
-never sleeps at all, holds the figure up and flattens the battery over days of parking.
+Fortunately, the car's **Battery Monitoring Sensor** stays awake 24 hours a day and keeps a continuous internal log of how much current the car drew while parked and locked. Hanterill reads that stored history after you wake the car up.
 
-Hanterill does not clamp an ammeter to the battery. The CEM (Central Electronic Module) already
-records the measurement, and Hanterill reads that record over `0x22 ReadDataByIdentifier`.
+## 2. What the 12 V Sleep Drain screen shows
 
-## The two records the CEM holds
+### Current 12 V battery health and charge
+- **12 V State of Charge (%) and State of Health (%)**: How full the 12 V AGM battery is right now and how much of its original capacity remains.
+- **12 V voltage, current, and temperature**: Measured directly at the battery post by the monitoring sensor, plus cross-checks against the 12 V supply voltage seen by other modules in the car.
+- **Days in service and lifetime energy counters**: How long the current 12 V battery adaptation has been running and how much total charge has flowed in and out of it.
 
-| DID | What it holds | Wire format |
-| --- | --- | --- |
-| `0x4025` | The average quiescent current in mA | 2 bytes, big-endian signed, in tenths of a milliamp |
-| `0x40D7` | How past sleep samples fell into current bands | 7 counts, 2 bytes each, at least 14 bytes |
+### Parked standby current histogram (time in band)
+A healthy, sleeping car draws a tiny trickle of current (typically **under 20 to 50 milliamps**, or `0.02` to `0.05 A`) to keep the keyless entry receiver and alarm listening.
 
-The average is signed: a negative value means current leaving the battery, which is the usual
-sense. A raw value of `0x012C` is 300 tenths, displayed as **30.0 mA**.
+Hanterill reads the car's **standby current histogram**, which records how many hours and minutes the parked car spent in each current-draw band:
+- **Deep sleep band (0 to 50 mA)**: Normal parked sleep.
+- **Light wake / background check bands (50 mA to 1 A)**: Brief wake-ups (for example, checking cellular connection or battery status).
+- **Elevated drain bands (1 A and above)**: A module or accessory (such as a stuck telematics modem, an aftermarket dashcam wired to permanent power, or a door latch that never signaled locked) is preventing the car from going to sleep.
 
-<DiagnosticExample
-  service="ReadDataByIdentifier, quiescent average on the CEM"
-  request="22 40 25"
-  response="62 40 25 01 2C"
-  note="The payload 0x012C is 300. Divided by 10 that is 30.0 mA."
-/>
+### Accumulated sleep energy draw and wake reasons
+Alongside the time-in-band histogram, Hanterill shows the **total amp-hours (Ah) drawn while parked** and the **gateway wake-state log**, helping you see whether the **Telematics module (TCAM)**, a charger handshake, or a body module repeatedly woke the vehicle overnight.
 
-The histogram read is required. If the CEM does not answer it, the whole read fails with a typed
-error and the screen stays empty. The average is optional: if that read fails, the average is left
-empty and the status says the standby current was not reported. Hanterill never fills it with zero.
+## 3. How to investigate a flat or weak 12 V battery
 
-<Callout kind="note" title="No CEM mapping, no read">
-On a platform where Hanterill has no address for the CEM, the drain read is not attempted at all.
-It reports that the feature does not apply rather than reading a guessed address. A CEM that
-rejects the histogram identifier is reported as unsupported.
-</Callout>
-
-## The sleep-current histogram
-
-The histogram is a record of past sleep samples, grouped into seven current bands. The bands are
-fixed by the decoder:
-
-| Band | Samples counted |
-| --- | --- |
-| `0–9 mA` | sleep current below 10 mA |
-| `10–19 mA` | |
-| `20–29 mA` | |
-| `30–39 mA` | |
-| `40–79 mA` | one wide band |
-| `80–119 mA` | one wide band |
-| `120+ mA` | open-ended, with 255 mA as the conventional ceiling |
-
-The screen draws the seven counts as bars on a square-root scale, prints the sample count above
-each bar, and draws a band with no samples as an honest zero. Under the bars sits a table with the
-same numbers: samples and share of the total. The histogram is a count of samples, not a current
-reading, so a tall bar means "often", not "much".
-
-## What the bands mean
-
-Hanterill colours the bands and labels them for a reader:
-
-- **0–39 mA** is normal. The screen states that normal OEM sleep stays below 50 mA.
-- **40–119 mA** is elevated: a module is likely waking periodically.
-- **120 mA and above** is critical: at that level the car never slept.
-
-The screen names the highest band that recorded at least one sample and says what its class means.
-It also offers a next step that follows the reading: the service schedule for a normal result,
-fault codes and the TCAM module for an elevated one, fault codes for a critical one.
-
-<Callout kind="caution" title="The backend classifies nothing">
-The drain report carries a descriptive status only. It reads either "Measured standby current, no
-diagnostic policy applied" or "Standby current not reported". The band colours, the class words and
-the next-step line are the screen's reading aids, not a versioned diagnostic policy. Treat the
-histogram as measurement evidence and the class as interpretation.
-</Callout>
-
-## The average against the histogram
-
-The average (`0x4025`) and the histogram (`0x40D7`) are independent reads, so they can disagree. To
-catch a gross disagreement, Hanterill works out an implied mean from the histogram by weighting
-each band count with that band's midpoint, then compares it with the reported average.
-
-- The tolerance is the larger of **15 mA** and **0.75 times the larger of the two means**.
-- Inside the tolerance, the two agree.
-- Outside it, the screen raises an "Inconsistent readings" banner with both figures and the sample
-  count. One of the two reads is wrong, and showing them as a quiet pair would hide that.
-
-The midpoints stand in for a distribution the histogram does not carry, so the check is a tripwire,
-never a verdict. The open-ended `120+ mA` band uses 255 mA as its midpoint, the same conventional
-ceiling the bands use.
-
-## What keeps a car awake
-
-A drain that never falls can come from a module that never sleeps. Module uptime counters are the
-clue: Hanterill reads DID `0xDD00` from the master modules, where each counter is four bytes in
-tenths of a second since that module last started.
-
-The counters are compared with each other. When at least two modules answered and their uptimes
-agree within **one hour**, the app treats the counters as having started together, so none of those
-modules has been reset or suspended since. A large agreed uptime therefore means the master modules
-have been continuously powered for that whole span. That is a useful clue when hunting a drain, and
-it is not proof on its own: one module can still hold the bus awake while the others sleep normally.
-
-## Finding modules that stay quiet
-
-The other direction matters too, and a normal scan can miss it. Some fitted modules do not answer a
-plain sweep, so they either need the quiet-module cascade or they need a closer look. That sweep is
-described in [Captures and sweeps](/docs/captures-and-sweeps). On the drain side, the question it
-helps with is simple: if a module answers when the car should be asleep, it is a candidate for the
-current the histogram shows.
-
-## The battery page and the inspection score
-
-The drain screen and the battery screen read different computers and answer different questions.
-The battery page reads the BECM and covers state of health, state of charge and cell balance. The
-drain screen reads the CEM and covers the 12 V sleep current. The battery page links across to the
-drain screen, and the drain histogram travels into the health capture and is embedded in the
-inspection report as its own section.
-
-No drain number is scored. The inspection score uses two battery inputs only: state of health and
-the rested 12 V rail from the BECM. A rail below 12.2 V deducts 16 points, and 12.2 to 12.5 V
-deducts 6. The quiescent average and the histogram are carried as observations and are not part of
-the arithmetic. The full policy is in [Inspection reports](/docs/inspection-reports).
-
-## Next
-
-- [Captures and sweeps](/docs/captures-and-sweeps): the full capture and the shared sweep.
-- [Battery diagnostics](/docs/battery-diagnostics): the pack side of the same 12 V question.
-- [Sessions and evidence](/docs/sessions-and-evidence): where the drain artifact is stored.
+1. Leave the car locked overnight without plugging in a charger.
+2. The next morning, connect Hanterill and open **12 V Sleep Drain** right away.
+3. Check whether the parked hours accumulated in the **0 to 50 mA** deep-sleep band or in the higher current bands.
+4. If the car slept normally all night (under 50 mA) but the 12 V State of Charge still dropped sharply, the 12 V battery itself is worn out and losing charge internally. If you replace the 12 V battery, remember to run the **12 V battery adaptation reset** in [Service functions](/docs/service-functions) so the car knows a fresh battery is installed.

@@ -1,142 +1,134 @@
 import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 
-Hanterill är en stapel av lager, var och en tillräckligt liten att förstå på egen hand. Längst ned
-ligger Ethernet, och längst upp en vy som visar en batteriprocent. Den här sidan går igenom hela
-vägen.
+När Hanterill läser av bilen går meddelandena genom kabeln till bilens gateway och vidare till rätt styrenhet. Tre kommunikationssätt ingår: Ethernet-anslutningen, diagnosfrågorna och bilens interna nätverk. Här förklaras vad varje del gör. Anslutningen behöver ingen molntjänst.
 
-Inget i den är ett proprietärt moln-API. Varje lager är en öppen standard eller en tabell Hanterill
-levererar med.
+## Hur de tre protokollen hänger ihop
 
-## Lagren
+Du kan likna kommunikationskedjan vid att skicka ett adresserat brev till en specifik avdelning i en
+stor byggnad:
 
-```text
-Hanterill            app och CLI, Rust och Tauri v2
-Applikationslager    use cases, sessioner, svep, policy
-ISO 14229 UDS        unified diagnostic services (frågorna)
-ISO 13400 DoIP       diagnostics over IP (kuvertet)
-ISO 15765 ISO-TP     diagnostics over CAN (den andra länken)
-TCP / UDP            sockets, upptäckt, routningsaktivering
-Ethernet             passiv ENET-kabel, RJ45
-CAN                  OBD-II-stift, hårdvaruadapter krävs
-Fordonsgateway       CEM / VGM på CMA
-```
+<SpecList rows={[
+  ["DoIP (Diagnostics over IP)", "Själva kuvertet och postutdelningen. Det bär meddelanden över Ethernet-kabeln till fordonets centrala gateway, som skickar dem vidare till rätt styrenhet."],
+  ["UDS (Unified Diagnostic Services)", "Språket som står skrivet på brevet inuti kuvertet. Det definierar standardfrågor ('Vilken mjukvaruversion kör du?', 'Finns några lagrade felkoder?') och underhållskommandon."],
+  ["CAN (Controller Area Network)", "Det interna ledningsnätet inne i fordonet som kopplar samman styrenheterna med gatewayen och bär kontinuerliga realtidssignaler mellan moduler."],
+]} />
 
-Den fullständiga modul-till-modul-kopplingen bakom den gateway:n är en egen levande karta: varje
-enhet, busssegment och dokumenterad pin-rad finns i [CMA Network Explorer](/network).
-
-### CAN-länken
-
-De flesta fordon nås över DoIP, men transporten talar också ISO-TP över CAN. Det är den äldre
-OBD-II-vägen: CAN-ramar som bär samma UDS-frågor. Den är implementerad och kräver en
-hårdvaruadapter; Hanterill levererar ingen. Sidan [Anslutning](/docs/connection) går igenom vad
-varje länk kräver.
-
-### Det levande registret med 44 rader och förteckningen med 49
-
-Sidan [Styrenhetsreferensen](/docs/ecu-reference) listar 49 rader: hela CMA/ICE-förteckningen som
-Hanterill kan tala med. En levande audit går igenom det mindre register som fordonet faktiskt
-annonserar: 44 rader på en BEV. Förteckningen är kartan; registret är vad det fordonet
-presenterade.
+Du kan se den fysiska dragningen mellan alla styrenheter och bussar i den interaktiva
+[CMA-nätverksutforskaren](/network).
 
 <ProtocolStack />
 
 <EcuTopology />
 
-## Vad som händer när du trycker Anslut
+## 1. DoIP: Hur Ethernet kopplar datorn till fordonets gateway
 
-1. Hitta bilen. Hanterill skickar en förfrågan om fordonsidentifiering över UDP på port 13400 och
-   lyssnar efter annonseringar.
-2. Öppna en kanal. Den öppnar en TCP-anslutning till bilen på samma port, 13400.
-3. Få tillstånd. Den skickar en begäran om routningsaktivering. Bilen accepterar eller avvisar, och
-   tills den accepterar besvaras inget diagnostikmeddelande.
-4. Hälsa på varje modul. En `TesterPresent` håller sessionen vid liv; en funktionell broadcast kan
-   fråga alla moduler på en gång, med individuella avsökningar endast för de tysta.
-5. Ställ en fråga. En UDS-begäran går ut i ett DoIP-kuvert. Bilen paketerar svaret på samma sätt.
-6. Avkoda svaret. Byten matchas mot en plattformsspecifik definition. Ett svar som inte matchar
-   kontraktet avvisas som ett typat utfall, aldrig tvingat till en siffra.
-7. Spara det. Observationen skrivs till det lokala sessionsarkivet med sin källa, tidsstämpel och
-   avkodarversion.
+På CMA-, SPA- och SEA1-fordon är den primära diagnostiklänken **DoIP (ISO 13400)**. I stället för
+att kräva en dyr specialbox har fordonet ett vanligt Ethernet-nätverkskort inbyggt i sin
+**gatewaymodul (VGM)** eller **centraldator (CEM)**, kopplat direkt till stiften i OBD-II-uttaget.
 
-En enskild begäran färdas samma väg varje gång, och svaret kommer tillbaka längs den:
+När du sätter i en ENET-kabel och klickar på **Anslut** sker fem steg på mindre än en sekund:
+
+1. **Hitta fordonet (Identifieringsanrop)**: Hanterill skickar ett lokalt identifieringsanrop över kabeln och lyssnar efter att fordonets gateway presenterar sitt chassinummer (VIN) och sin nätverksadress.
+2. **Öppna kanalen**: Hanterill upprättar en direkt anslutning till fordonets gateway.
+3. **Aktivera diagnostisk anslutning**: Hanterill ber gatewayen om tillstånd att skicka diagnostikmeddelanden vidare in i fordonets interna bussar. Innan gatewayen har godkänt detta svarar ingen styrenhet.
+4. **Adressera målstyrenheten**: Varje styrenhet i fordonet har en egen logisk adress (som ett anknytningsnummer i en telefonväxel). Hanterill skriver målstyrenhetens adress på DoIP-kuvertet och lämnar det till gatewayen.
+5. **Ta emot svaret**: Gatewayen skickar frågan vidare till rätt styrenhet (även om den sitter på en intern CAN- eller FlexRay-buss), tar emot svaret, lägger det i ett DoIP-kuvert och skickar tillbaka det till din dator.
 
 <ProtocolFlow
   steps={[
-    { node: "Hanterill", detail: "diagnostikmotor" },
+    { node: "Hanterill", detail: "diagnostikprogram på datorn" },
     { node: "Ethernet", detail: "passiv ENET-kabel" },
-    { node: "Fordonsgateway", detail: "CEM / VGM, DoIP" },
-    { node: "Målstyrenhet", detail: "BECM, utökad session" },
+    { node: "Fordonsgateway", detail: "CEM / VGM, DoIP-router" },
+    { node: "Målstyrenhet", detail: "BECM, batteristyrenhet" },
   ]}
-  request="läs batteriets hälsotillstånd"
-  response="91,14 %, avkodat från det råa värdet"
+  request="läs batteriets hälsotillstånd (SoH)"
+  response="91,14 %, avkodat ur styrenhetens svar"
 />
 
-## Vad DoIP faktiskt lägger till
+Eftersom en fordonsgateway vid snabb trafik ibland kan skicka styrenhetens svar före själva
+mottagningskvittot håller Hanterill reda på varje pågående fråga så att svar aldrig blandas ihop
+eller tappas bort.
 
-DoIP är ett tunt omslag. Dess uppgift är att bära diagnostikmeddelanden över ett IP-nätverk och hålla
-reda på vem som pratar med vem. Varje ram har ett litet huvud med en nyttolasttyp, vilket är fältet
-som säger vilken sorts meddelande detta är:
+## 2. UDS: Hur frågor, sessioner och håll-vaket-pulser fungerar
 
-| Nyttolasttyp | Betydelse |
-| --- | --- |
-| `0x0001` | Begäran om fordonsidentifiering (UDP) |
-| `0x0004` | Fordonsannonsering, fordonets svar |
-| `0x0005` / `0x0006` | Begäran och svar om routningsaktivering |
-| `0x0007` / `0x0008` | Livskontroll, så en död anslutning upptäcks |
-| `0x8001` | Ett diagnostikmeddelande, som bär en UDS-begäran eller ett svar |
-| `0x8002` / `0x8003` | Positiv och negativ bekräftelse av det meddelandet |
+Inuti varje DoIP-kuvert ligger ett **UDS-meddelande (ISO 14229)**. UDS är det gemensamma språk som
+moderna styrenheter förstår. Nästan allt Hanterill gör bygger på sex tydliga typer av meddelanden:
 
-Ett fordon är inte skyldigt att skicka bekräftelsen före svaret, så Hanterill buffrar ett tidigt
-svar i stället för att missta det för bekräftelsen. Sådana små detaljer är anledningen till att
-transporten är ett eget lager snarare än några socket-anrop.
+<SpecList rows={[
+  ["Öppna diagnostiksession", "Växlar en styrenhet mellan dess vanliga grundsession och dess utökade diagnostiksession så att alla givare och statusposter kan läsas."],
+  ["Håll-vaket-puls (Tester Present)", "En tyst periodisk puls som berättar för vakna styrenheter att en skanning pågår så att de inte somnar mitt under en mätning."],
+  ["Läs mätvärde (datapunkt)", "Frågar en styrenhet efter ett specifikt numrerat mätvärde eller en identitetspost, exempelvis batterispänning, celltemperatur, mätarställning eller mjukvaruversion."],
+  ["Läs felkoder", "Ber en styrenhet att lista alla lagrade, väntande eller permanenta felkoder (DTC) tillsammans med deras ögonblicksbilder."],
+  ["Rensa felkoder", "Ber en styrenhet att radera sina lagrade felkoder efter en reparation (alltid bakom en bekräftelsedialog)."],
+  ["Kör underhållsrutin", "Startar eller kontrollerar en inbyggd verkstadsrutin i en styrenhet, exempelvis serviceläge för parkeringsbroms eller sensorkalibrering (alltid bakom en bekräftelsedialog)."],
+]} />
 
-## Vad UDS lägger till
+### Gemensamma anrop kontra enskilda frågor
 
-UDS definierar frågorna. Varje begäran börjar med en tjänsteidentifierare. Tjänsterna som används
-här är en kort lista: `0x10` för att öppna en session, `0x19` för felkoder, `0x22` för att läsa ett
-värde, `0x2A` för periodiska läsningar, `0x31` för rutiner, `0x3E` för `TesterPresent`, och `0x14`
-för att radera, som bara finns i skrivbara byggen. [Styrenhetsreferensen](/docs/ecu-reference) och
-[Säkerhet](/docs/safety) går igenom dem en och en.
+DoIP och UDS stöder två sätt att adressera styrenheter i fordonet:
 
-## Komponenter
+- **Riktade (fysiska) anrop**: Skickas till en enda specifik styrenhet i taget.
+- **Gemensamma (funktionella) anrop**: Skickas en gång till en gemensam anropsadress så att alla vakna styrenheter i fordonet kan svara på samma fråga samtidigt.
 
-- **Transport**: asynkrona Rust-sockets, en anslutning delad över varje modul. Begäranden och svar
-  matchas i ett enda utbyte, svar från en gammal anslutning avvisas som föråldrade, och rutten
-  återaktiveras automatiskt efter en återhämtning.
-- **Upptäckt**: en funktionell broadcast kan avsöka varje modul på en gång, med fallback till
-  individuella avsökningar endast för de tysta. Moduler som förblir tysta över flera svep går ned
-  till en kortare timeout-nivå, och en cache per bil nycklad på en VIN-hash kommer ihåg vad som var
-  frånvarande förra gången.
-- **Avkodare**: definitioner per plattform och modul med uttryckliga nyttolastkontrakt: förväntad
-  längd, skalning, sekretessklass och mognad. CMA-avkodare är verifierade mot ett riktigt fordon; SPA- och
-  SEA1-definitionerna behöver testas på fler fordon.
-- **Paketuppbyggnader**: cellmatrisen är data, inte kod. CMA 108-cellers, CMA 96-cellers, CMA
-  82 kWh, SPA 96 och 108 och hybrid 102, SPA tidig-hybrid 96, samt SEA1-layouterna bär var sin
-  räkning och ordning.
-- **Policy**: [motorn för besiktningspoäng](/docs/inspection-reports) och korskontrollerna ligger
-  ovanpå observationerna. De lägger aldrig till trafik.
-- **Sessioner**: ett atomiskt, hållbart lokalt arkiv med operatörsanteckningar och återhämtning från
-  skadade filer. Jämförelsevyer läser från det.
-- **Säkerhetsgrind**: den körande binärens verkliga gränser exponeras som ett kapacitetsmanifest, och
-  gränssnittet erbjuder bara kommandon binären kan utföra.
-- **IPC**: en deklarativ kommandotabell mappar varje begäran från appen till exakt ett use case, med
-  ett test som säkerställer att inga föräldralösa poster finns.
+Hanterill använder **gemensamma anrop** för att snabbt ta reda på vilka styrenheter som är vakna och
+läsa ut fordonsgemensamma identitetsposter på bråkdelen av en sekund.
 
-## Ett bygge
+Att **öppna en utökad diagnostiksession måste däremot alltid göras mot en styrenhet i taget**.
+Fordonets gateway är avsiktligt konstruerad för att ignorera gemensamma anrop som försöker byta
+diagnostiksession, så att ett verktyg inte av misstag kan försätta samtliga 40+ datorer i fordonet i
+utökat läge samtidigt.
 
-Hanterill kompileras som ett enda bygge med varje funktion på som standard: diagnostikavläsningarna,
-DID-skannern för alla moduler, och skrivytan som begär bekräftelse. Det finns ingen editionsflagga
-att förklara och inget dolt läge. Ett strippat `--no-default-features`-bygge finns så att den
-skrivskyddade grinden behåller en kompileringstidskant som CI kan öva, och det är en
-utvecklingskonfiguration snarare än en release.
+### Väcka sovande styrenheter och låta fordonet somna efteråt
 
-## Varför Rust och Tauri
+När ett fordon står parkerat med avslagen tändning går många sekundära styrenheter (till exempel
+klimat-, sätes- och dörrmoduler på lugnare internbussar) ned i viloläge för att spara på
+12-voltsbatteriet.
 
-Protokollarbetet passar Rust: många små samtidiga operationer med felhantering som måste vara
-uttrycklig. Tauri håller binären liten och använder operativsystemets egen webview i stället för
-att leverera en webbläsarmotor. Appen känns nativ snarare än som en webbsida i ett fönster.
-Gränssnittet är React och TypeScript, typat mot kontrakt som genereras från motorn.
+Om du behöver skanna ett parkerat fordon utan att slå på tändningen kan Hanterills
+**Väckningssekvens** väcka modulerna i fem steg:
+
+1. Skickar en väckningspuls över gatewayen.
+2. Väcker centraldatorn (CEM) och gatewaymodulen (VGM) först.
+3. Går igenom de centrala drivline- och chassimodulerna en i taget så att gatewayen aktiverar sina interna underbussar.
+4. Skickar en kort håll-vaket-puls så att nyväckta moduler hinner starta klart.
+5. Pausar ett ögonblick så att alla styrenheter är redo innan avläsningen börjar.
+
+Lika viktigt är vad som händer när du är klar: så snart skanningen avslutas eller du kopplar från
+slutar Hanterill att skicka håll-vaket-pulser så att fordonets datorer kan återgå till djupvila
+normalt utan att dränera 12 V-batteriet.
+
+## 3. CAN: Fordonets interna bussar och kontinuerliga realtidssignaler
+
+Medan Ethernet (DoIP) förbinder din dator med fordonets gateway är **CAN (Controller Area Network)**
+det interna nätverk som kopplar samman styrenheterna med varandra inne i fordonet. På exempelvis
+CMA-plattformen finns elva separata CAN-segment (de flesta i 500 kbps) som binder ihop drivlina,
+bromsar, styrning, kaross och klimat.
+
+CAN används på två skilda sätt vid diagnostik:
+
+### Diagnostikfrågor över CAN (ISO-TP)
+
+När du ansluter till fordonets CAN-stift med en kompatibel USB-till-CAN-adapter (exempelvis en
+SocketCAN- eller Lawicel-adapter) färdas samma UDS-frågor över CAN i stället för över Ethernet.
+Eftersom en vanlig CAN-ram bara rymmer 8 bytes åt gången delar transportstandarden **ISO-TP
+(ISO 15765)** automatiskt upp längre meddelanden (som ett 17-ställigt chassinummer eller en lista
+med felkoder) i små numrerade paket och sätter ihop dem igen hos mottagaren.
+
+### Passiv CAN-lyssning (kontinuerliga bussmeddelanden)
+
+Det är en viktig skillnad mellan **UDS-diagnostikfrågor** och **ordinarie CAN-trafik**:
+
+- **UDS över DoIP är fråga-och-svar**: En styrenhet rapporterar bara ett värde när Hanterill uttryckligen frågar efter det.
+- **Ordinarie CAN-trafik är en kontinuerlig utsändning**: Så länge fordonet är vaket sänder styrenheterna hela tiden ut sina driftvärden på de interna CAN-bussarna många gånger i sekunden (exempelvis hjulhastigheter, bromstryck, rattvinkel, pedallägen och temperaturer) så att andra moduler kan reagera direkt.
+
+Eftersom fordonets gateway bara vidarebefordrar fråga-och-svar-trafik (UDS) över Ethernet-kabeln är
+vissa snabba realtidssignaler som rullar kontinuerligt på de interna CAN-bussarna inte tillgängliga
+som enskilda UDS-frågor. När du ansluter ett stödd CAN-gränssnitt kan Hanterill lyssna passivt på
+dessa kontinuerliga CAN-ramar i realtid utan att lägga till en enda egen fråga på fordonets nätverk.
 
 ## Nästa steg
 
-- [Anslutning](/docs/connection): det fysiska lagret, och vad du gör när det krånglar.
-- [Integritetsskydd](/docs/privacy): vad appen skriver till disk, och vad den aldrig skickar någonstans.
+- [Anslut till fordonet](/docs/connection): hur du ansluter med Ethernet-kabel eller CAN-adapter.
+- [Styrmodulregister](/docs/ecu-reference): styrenheterna på fordonets olika nätverk.
+- [CMA-nätverksutforskaren](/network): följ Ethernet-, CAN-, LIN- och FlexRay-bussarna visuellt.
+- [Säkerhet](/docs/safety): hur Hanterill håller diagnostiktrafiken säker för ditt fordon.

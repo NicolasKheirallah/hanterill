@@ -1,15 +1,10 @@
 # Hanterill
 
-> **Source-available, dealer-grade vehicle diagnostics & high-voltage telemetry for Polestar and Volvo electric vehicles over DoIP/UDS.**
+> **A desktop app for reading vehicle health, fault codes and battery information.**
 
-This repository is the **public website** (`hanterill.com`): a static Next.js export describing the app, its verified vehicle support and its safety boundaries. Tagged releases are published at [NicolasKheirallah/hanterill](https://github.com/NicolasKheirallah/hanterill); the application's source tree is private. Everything below documents what the app supports today, kept in sync with its changelog.
+This repository contains Hanterill's public website and user guides. The app's source tree is private. This README gives a short overview; the guides explain each task in more detail.
 
-[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC_BY--NC--ND_4.0-lightgrey.svg)](LICENSE.md)
-[![Platform: macOS · Windows · Linux](https://img.shields.io/badge/Platform-macOS_%7C_Windows_%7C_Linux-lightgrey.svg)](https://hanterill.com/en/download)
-[![Rust: 1.88+](https://img.shields.io/badge/Rust-1.88%2B-orange.svg)](https://www.rust-lang.org)
-[![Tauri: v2](https://img.shields.io/badge/Tauri-v2-24C8D8.svg)](https://tauri.app)
-[![Accessibility: WCAG 2.1 AA](https://img.shields.io/badge/Accessibility-WCAG_2.1_AA-success.svg)](https://www.w3.org/WAI/standards-guidelines/wcag/)
-[![Zero Telemetry](https://img.shields.io/badge/Privacy-100%25_Local-brightgreen.svg)](https://hanterill.com/en/privacy)
+The app is available for macOS, Windows and Linux. Its private-use terms are in [LICENSE.md](LICENSE.md).
 
 ---
 
@@ -25,9 +20,8 @@ This repository is the **public website** (`hanterill.com`): a static Next.js ex
 8. [Step-by-Step Connection Guide](#step-by-step-connection-guide)
 9. [Installation & Getting Started](#installation--getting-started)
 10. [User Interface & Theming](#user-interface--theming)
-11. [Workspace Architecture](#workspace-architecture)
-12. [Safety, Privacy & Data Ownership](#safety-privacy--data-ownership)
-13. [Disclaimer & Legal Notice](#disclaimer--legal-notice)
+11. [Safety, Privacy & Data Ownership](#safety-privacy--data-ownership)
+12. [Disclaimer & Legal Notice](#disclaimer--legal-notice)
 
 ---
 
@@ -35,9 +29,7 @@ This repository is the **public website** (`hanterill.com`): a static Next.js ex
 
 **Author:** Nicolas Kheirallah
 
-Modern electric vehicles built on Geely/Volvo's **Compact Modular Architecture (CMA)**, **SPA** and **SEA (Sustainable Experience Architecture)** communicate over high-speed Ethernet using standard automotive **Diagnostics over Internet Protocol (DoIP, ISO 13400)** protocols. However, accessing high-voltage battery health, live cell potentials, thermal sensors, or module fault codes has traditionally required expensive proprietary dealer subscriptions (such as VIDA), closed commercial scan tools, or cloud logins.
-
-**Hanterill** solves this. It is a free, fully local, source-available desktop diagnostic application that talks directly to your car over a standard Ethernet cable, decoding raw vehicle network traffic into readable diagnostic telemetry. It is licensed for personal, non-commercial use only.
+**Hanterill** is a desktop app for checking supported Volvo, Polestar and related vehicles through a cable. It shows battery condition, fault codes and other readings reported by the car. The app works locally on your computer and is licensed for private, non-commercial use.
 
 ---
 
@@ -47,23 +39,23 @@ Hanterill is built around the Geely/Volvo architecture families, with a per-vehi
 
 | Vehicle | Platform | Model Years | Supported Powertrains | Verification status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Polestar 2** | CMA | 2021 – Present | Standard Range Single Motor, Long Range Single Motor (FWD & RWD), Long Range Dual Motor (AWD), Performance Pack | Verified (reference vehicle) |
-| **Volvo EX40 / XC40 Recharge** | CMA | 2021 – Present | Single Motor (FWD & RWD), Twin Motor (AWD) | Verified |
-| **Volvo EC40 / C40 Recharge** | CMA | 2022 – Present | Single Motor, Twin Motor (AWD) | Verified |
-| **Volvo EX30** | SEA1 | 2024 – Present | Single Motor, Twin Motor Performance | Catalogued (107S/110S topologies), hardware confirmation pending |
-| **Polestar 4** | SEA1 | 2024 – Present | Single Motor, Dual Motor | Catalogued, hardware confirmation pending |
-| **Zeekr 001 / X / 009** | SEA | 2021 – Present | Single Motor RWD, Dual Motor AWD | Research; does not inherit the EX30 map |
-| **Lynk & Co 01 / 02 / 05** | CMA | 2020 – Present | Primarily PHEV (EM-P) | Research; hybrid pack layout unverified |
-| **Volvo XC60 / S60 / V60 / S90 / V90 / XC90 Recharge** | SPA | 2016 – Present | T8 plug-in hybrid (102-cell pack) | Catalogued (CAN-era BECM map and decoders), live verification pending |
-| **Volvo EX90 / Polestar 3** | SPA2 | 2024 – Present | Single & Dual Motor | Research; different gateway and security model |
+| **Polestar 2** | CMA | 2021 to Present | Standard Range Single Motor, Long Range Single Motor (FWD & RWD), Long Range Dual Motor (AWD), Performance Pack | Verified (reference vehicle) |
+| **Volvo EX40 / XC40 Recharge** | CMA | 2021 to Present | Single Motor (FWD & RWD), Twin Motor (AWD) | Verified |
+| **Volvo EC40 / C40 Recharge** | CMA | 2022 to Present | Single Motor, Twin Motor (AWD) | Verified |
+| **Volvo EX30** | SEA1 | 2024 to Present | Single Motor, Twin Motor Performance | Catalogued (107-group LFP and 108-group NMC layouts), hardware confirmation pending |
+| **Polestar 4** | SEA1 | 2024 to Present | Single Motor, Dual Motor | Catalogued (110-group layout), hardware confirmation pending |
+| **Zeekr 001 / X / 009** | SEA | 2021 to Present | Single Motor RWD, Dual Motor AWD | Direct gateway connection verified on Zeekr 001; sub-platform module mapping in progress |
+| **Lynk & Co 01 / 02 / 05** | CMA | 2020 to Present | Primarily PHEV (EM-P) | Research; center-tunnel hybrid pack layouts catalogued |
+| **Volvo XC60 / S60 / V60 / S90 / V90 / XC90 Recharge** | SPA | 2016 to Present | T8 plug-in hybrid (96-group and 102-group packs) and combustion variants | Provisional DoIP connection, module inventory and fault scans verified on V90 T6; live hybrid battery verification pending |
+| **Volvo EX90 / Polestar 3** | SPA2 | 2024 to Present | Single & Dual Motor | Research; different gateway and security model |
 
-Multi-architecture support is a first-class design (ADR 0008): platform auto-detection, per-architecture ECU registries, and pack topologies as data, not code.
+Multi-architecture support is built into the app from the ground up: platform auto-detection, per-architecture ECU registries, and 11 battery pack layouts stored as data rather than hardcoded assumptions.
 
 ---
 
 ## Supported ECUs & Subsystems
 
-Hanterill maps and probes up to **43 Electronic Control Units (ECUs)** communicating across high-speed Ethernet and gateway bridges:
+Hanterill maps and probes up to **49 Electronic Control Units (ECUs)** on the CMA catalogue communicating across high-speed Ethernet and gateway bridges:
 
 ```
                       [ Physical Ethernet Port (ENET) ]
@@ -82,8 +74,8 @@ High-Voltage / Energy          Chassis & Drive                Safety, Body & Cab
 └─ IEM (ERAD Inv)             └─ WAM (Wide-Angle Cam)      └─ POT (Power Tailgate)
 ```
 
-- **CEM (Central Electronic Module)**: Master security gateway, 12V low-voltage power distribution, sleep manager.
-- **BECM (Battery Energy Control Module)**: Traction battery BMS, 27 modules × 4 series cell groups (108 potentials), pack temperature channels, State of Health (SoH), State of Charge (SoC), contactor status.
+- **CEM (Central Electronic Module)**: Master security gateway, 12V low-voltage power distribution, sleep manager, and 256-option car configuration store.
+- **BECM (Battery Energy Control Module)**: Traction battery management, 108 series cell-group voltages (27 modules of 4 groups on the reference pack), pack temperature channels, State of Health (SoH), State of Charge (SoC), and contactor status.
 - **BCM2 (Brake Control Module 2)**: Integrated Power Brake (IPB), ABS, Stability Control, Electric Parking Brake (EPB) calipers.
 - **VCU1 (Vehicle Control Unit)**: Drive coordination and torque delivery for the front and rear permanent magnet synchronous motors. The inverters themselves are addressed separately as IHFA (front axle) and IEM (rear/ERAD).
 - **TCAM (Telematics & Connectivity Antenna Module)**: LTE modem, GNSS positioning, emergency backup battery, Bluetooth key transceiver.
@@ -95,79 +87,80 @@ High-Voltage / Energy          Chassis & Drive                Safety, Body & Cab
 
 ## Supported Diagnostic Protocols & Services
 
-Hanterill implements the full automotive open networking stack:
+Hanterill implements the automotive diagnostic networking stack across Ethernet and internal vehicle buses:
 
 | Protocol / Standard | Specification | Function in Hanterill |
 | :--- | :--- | :--- |
-| **ISO 13400-2 (DoIP)** | Diagnostics over Internet Protocol | Auto-discovers vehicles over UDP/TCP Port 13400, negotiates vehicle announcements, handles routing activation, functional broadcast addressing, keepalive pinging. |
-| **ISO 14229-1 (UDS)** | Unified Diagnostic Services | Standardized diagnostic messaging layer running inside DoIP frames. |
-| **UDS 0x10** | `DiagnosticSessionControl` | Switches target ECUs between Default, Extended Diagnostic, and Safety sessions. |
-| **UDS 0x14** | `ClearDiagnosticInformation` | Erases trouble codes per module or car-wide, with freeze-frame backup and verify re-read. Shipped in every release, behind its own confirmation. |
-| **UDS 0x19** | `ReadDTCInformation` | Sub-functions for DTC counts by status mask, the DTC list, snapshot records and extended data records drive freeze-frame triage. |
-| **UDS 0x22** | `ReadDataByIdentifier` | Reads high-resolution telemetry, BMS cell arrays, thermal matrices, VIN, and part numbers. |
-| **UDS 0x2A** | `ReadDataByPeriodicIdentifier` | On-demand periodic sampling for live views (send-once registration and teardown only in read-only builds). |
-| **UDS 0x31** | `RoutineControl` | Reads stored routine results and starts service routines (EPB retract, damper calibration). Starting a routine is a separately confirmed action. |
-| **UDS 0x3E** | `TesterPresent` | Keeps modules awake through long sweeps; transparent to the user. |
-| **SAE J2012 / ISO 14229-1** | DTC definition and status bytes | Decodes codes such as `P0A80-00` with the full byte-level status mask, classified into the four states the interface shows: active, pending, stored, historical. |
+| **ISO 13400-2 (DoIP)** | Diagnostics over Internet Protocol | Auto-discovers vehicles over UDP/TCP Port 13400 (with direct gateway fallback for silent vehicles), negotiates routing activation, handles functional broadcast queries, and manages keepalive messages. |
+| **ISO 14229-1 (UDS)** | Unified Diagnostic Services | Standardized diagnostic request and response language running inside DoIP frames. |
+| **Diagnostic Session Control** | UDS Session Management | Switches target modules between Default and Extended Diagnostic sessions when a read or service routine requires it. |
+| **Clear Diagnostic Information** | UDS Fault Clearing | Erases trouble codes per module or across the car, with optional freeze-frame backup before clearing and a verification re-read afterward. |
+| **Read DTC Information** | UDS Fault & Snapshot Reads | Reads fault counts, fault lists, freeze-frame snapshots, and extended status counters to separate active warning-light faults from routine self-test history. |
+| **Read Data By Identifier** | UDS Parameter Reads | Reads high-resolution telemetry, battery cell-group voltages, thermal measurements, VIN, software versions, and factory build records. |
+| **Periodic Data Sampling** | UDS Live Streaming | Streams live channels at a steady cadence for charts and recordings. |
+| **Routine Control** | UDS Service Routines | Reads stored routine results and starts confirmed maintenance procedures (such as parking brake retraction or climate damper calibration). |
+| **Security Access Check** | UDS Lock Inspection | Checks in read-only mode whether a module's security level is currently locked or unlocked, without attempting to unlock it. |
+| **CAN Bus Listening** | Passive Internal Bus Traffic | Explains which continuous signals (such as steering wheel angle or individual brake pressures) travel on internal CAN buses rather than Ethernet, with passive listening on supported interfaces. |
 
 ---
 
 ## What You Can Do With Hanterill
 
 ### 1. Traction Battery Health & Degradation Check
-- **True State of Health (SoH)**: Read the exact BMS battery degradation percentage directly from the BECM, without guesswork.
-- **Full Cell-Group Breakdown**: Visualize every series cell-group voltage (27 modules × 4 groups = 108 potentials on CMA), read from the governed BMS identifier range, with imbalance highlighting to catch weak or degraded groups before they cause battery failure. The matrix adapts to the pack topology in force: SPA EV 96S/108S, SPA hybrid 102S and SEA 107S/110S are catalogued, and a 102-cell pack reports complete at 102.
-- **Thermal Grid & Cross-Checks**: Pack temperature channels rendered as a thermal grid, plus ten cross-signal consistency checks (reported pack voltage against the cell sum, parked current plausibility, coolant loop deltas). Sensor-to-module placement is not yet established, and the per-module temperature blocks read as unsupported on the reference vehicle.
+- **True State of Health (SoH)**: Read the battery health percentage directly from the battery management module, alongside State of Charge cross-checked across multiple modules.
+- **Full Cell-Group Breakdown & History**: Visualize every series cell-group voltage (108 cell groups across 27 modules on the reference CMA pack) with imbalance highlighting, multi-session health trend tracking per car, and cell-by-cell comparison between visits. The cell map adapts automatically across 11 catalogued battery pack layouts for CMA, SPA, and SEA vehicles.
+- **Thermal Grid & Residence History**: View pack temperature sensors, an 8-band lifetime temperature residence histogram (from below -10 °C to above 50 °C), and cross-signal consistency checks (comparing reported pack voltage against the sum of individual cell groups).
 
 ### 2. Full-Vehicle Fault Code (DTC) Triage
-- Scan the full 49-ECU catalogue in one pass over high-speed DoIP, accelerated by functional broadcast collection and per-vehicle presence caching. 40 of those ECUs advertise DTC support.
-- Distinguish between **Active** faults (currently causing warning lights) and **Stored** historical faults (transient events). The inspector opens on a "Needs Attention" view.
-- Inspect **Freeze-Frame Telemetry** (vehicle speed, low-voltage rail, pack temperature, inverter torque) captured at the exact second the fault was tripped.
-- Compare **DTC Snapshots** before and after repairs with the built-in diff viewer.
+- Scan the 49-module CMA catalogue in one pass over Ethernet, accelerated by broadcast collection and per-vehicle module caching.
+- Distinguish between **Active** faults (currently causing warning lights), **Pending** faults, and **Stored** historical faults. Because modern cars store hundreds of routine self-test records, the Fault Codes screen opens filtered to **Needs Attention** by default.
+- Inspect **Freeze-Frame Snapshots** (vehicle speed, 12V supply voltage, pack temperature, mileage) captured at the moment a fault occurred, or look up any fault code offline.
+- Compare fault scans before and after a repair with one-click comparison against your most recent saved session.
 
 ### 3. DIY Maintenance & Service Procedures
 > [!IMPORTANT]
-> The operations below change the vehicle. They ship in every release, because a workshop tool that cannot clear a code after a repair is only half a tool — but each one is a separate, explicitly confirmed action, and the running binary publishes a capability manifest the interface reads. Nothing here flashes a module or opens security access to write. See [the safety documentation](https://hanterill.com/en/docs/safety).
-- **DTC Clearing (reference parity)**: car-wide or per-module erase with freeze-frame backup before the wipe, a verify re-read that reports the stubborn set, link recovery after module reboots, and an optional force-reset loop (suppressed while the car is in a driving mode).
-- **EPB Service Mode**: Retract the rear electric parking brake calipers into service position to perform rear brake pad/rotor replacements safely. Clamp and re-calibrate pad travel when finished.
-- **12V Battery Adaptation Reset**: Re-learn the 12V battery SoC and capacity aging matrix in the CEM after replacing the AGM low-voltage battery.
-- **Service Reminder Indicator (SRI) Reset**: Clear the "Regular maintenance required" message and reset the service due countdown timer.
-- **HVAC Damper Calibration**: Cycle and re-learn endstop limits for all 8 climate blend door motors.
-- **Panoramic Sunroof Normalization**: Reset anti-pinch travel bounds for panoramic glass roof shades and windows.
+> The operations below change the vehicle. Each one needs a separate confirmation. Some routines are protected by the car's security levels, which the app can inspect without unlocking. Nothing here flashes firmware or unlocks protected modules. See [the safety guide](src/content/docs/safety.mdx).
+- **Fault Code Clearing**: Clear only faulted modules by default (or the whole car), with optional toggles to save freeze-frame snapshots first and re-verify afterward.
+- **EPB Service Mode**: Retract the rear electric parking brake calipers into service position to perform rear brake pad or rotor replacements safely, then return and calibrate them when finished.
+- **12V Battery Adaptation Reset**: Reset the learned 12V battery aging counters after installing a new 12V battery.
+- **Service Reminder Indicator (SRI) Reset**: Clear the maintenance reminder message and reset the service countdown timer.
+- **HVAC Damper Calibration**: Cycle and re-learn end-stop limits for the climate blend door motors.
+- **Panoramic Sunroof Normalization**: Reset anti-pinch travel bounds for panoramic roof shades and windows.
 
 ### 4. 12V Parasitic Sleep Drain Analysis
-- Diagnose mysterious 12V battery drain and TCAM deep sleep failures.
-- View quiescent standby current histograms and module wake-state logs.
+- Diagnose mysterious 12V battery drain and telematics sleep failures.
+- View standby current time-in-band histograms, accumulated energy draw while parked, and module wake-state logs.
 
 ### 5. Live Telemetry Waveforms & CSV Export
-- Stream and chart high-frequency drivetrain, inverter, and battery PIDs, using UDS periodic sampling with gap and rate accounting.
-- Export all reports (Vehicle Summary, Cell-Group Potentials, DTC Records, ECU Inventory) to standard **CSV** and **JSON** files with one click.
+- Stream and chart drivetrain, inverter, thermal, and battery measurements, then replay saved recordings offline.
+- Export reports and measurements (Vehicle Summary, Cell-Group Voltages, Fault Records, Module Inventory, Battery Health Trends) to standard **CSV** and **JSON** files.
 
 ### 6. Pre-Purchase Inspection (PPI) Report
-- A scored vehicle-condition grade (rules v1.0.0) covering pack degradation, cell balance, DTC severity and odometer consistency.
-- Every rule cites its evidence class, and the class caps the verdict it can force. Missing inputs degrade the grade toward inconclusive; they never pass silently.
-- Stored sessions re-score under current rules without reconnecting to the vehicle. Reports print natively; GPS position never appears in them.
+- A scored vehicle-condition grade covering battery degradation, cell balance, fault severity, and odometer consistency across up to 29 modules.
+- Choose from three printable report layouts: **Executive inspection** (a one-page summary for buyers and sellers), **Battery certificate** (focused on high-voltage pack health and cell balance), or **Technical dossier** (full module inventory, faults, and evidence).
+- Stored sessions can be re-evaluated offline without reconnecting to the vehicle. Reports print natively; GPS position is excluded by default.
 
-### 7. Session Archive, Diffs & Offline Intelligence
-- Durable local session store with operator notes, corrupt-file recovery and pick-two comparison across DTC, battery, ECU and firmware domains (cell history and firmware session diffs included).
-- An all-module bounded DID scanner sweeps the catalogue with per-row negative-response codes, digests and latency; the DID Explorer replays saved captures offline against a learned per-ECU applicability cache.
-- Multi-ECU odometer cross-checks, TCAM backup-battery health, steering angle state, service schedule countdowns, on-request GNSS fix, the 256-entry CEM option map and the factory build record (paint, trim and option codes) each have their own read view.
+### 7. Session Archive, Cross-Checks & Offline Intelligence
+- Local session store with operator notes, automatic corrupt-file recovery, and five side-by-side comparison views across fault codes, battery health, cell voltages, module inventory, and software versions.
+- Dedicated **Cross-Check** view that compares how multiple modules report the same real-world figure (VIN, odometer mileage, battery State of Charge, 12V system voltage, and service countdowns).
+- Full-car parameter sweeps that can resume interrupted scans by retrying only missed modules, plus an offline parameter browser that re-decodes saved captures as new definitions are added.
+- Multi-module odometer cross-checks, TCAM backup-battery health (with automatic fallback when the primary read returns a GPS log), live GNSS satellite skyplot, steering angle state, service schedule countdowns, and printable vehicle configuration sheets (256-option car configuration map and factory build codes).
 
 ### 8. Work Without a Car
-- Deterministic simulation vehicles on the connection page (healthy baseline, fault-injected, sleep-drain) exercise every screen offline, always labelled as simulated.
+- Built-in simulated vehicles on the Connection screen (healthy baseline, fault-injected, and sleep-drain scenarios) let you explore every screen offline, always clearly labeled as simulated.
 
 ---
 
 ## Supported Hardware & Adapters
 
-Hanterill connects over standard wired Ethernet. It does not use OBD dongles like OBDLink or ELM327: CAN-based adapters lack the bandwidth DoIP needs.
+Hanterill connects over standard wired Ethernet. It does not use Bluetooth or USB serial OBD dongles like ELM327 for Ethernet diagnostics: standard DoIP diagnostics require an Ethernet link.
 
 ```
 [ Car Diagnostic Port ] ──▶ [ OBD-II to RJ45 (ENET) Cable ] ──▶ [ USB-C / RJ45 Adapter ] ──▶ [ Your Computer ]
 ```
 
 ### Compatible Cables
-- Any passive **OBD-II to Ethernet (ENET) cable** (often labeled as *"BMW ENET Cable"* or *"ISTA / E-Sys ENET Cable"*). These are inexpensive, passive copper cables with no active electronics or drivers required.
+- Any passive **OBD-II to Ethernet (ENET) cable** (often labeled as *"BMW ENET Cable"* or *"DoIP ENET Cable"*). Note that SEA-platform vehicles (such as the Volvo EX30, Polestar 4, and Zeekr models) require the cable to route 12V power from OBD pin 16 to activation pin 8 so the car switches on its Ethernet port.
 
 ### Compatible USB-C / Network Adapters
 - Apple USB-C to Gigabit Ethernet Adapter
@@ -184,7 +177,7 @@ Hanterill is built with Rust and Tauri v2, providing lightweight, native perform
 | :--- | :--- | :--- | :--- |
 | **macOS** | Apple Silicon (M1/M2/M3/M4) & Intel (x86_64) | Fully Supported | `.dmg`, `.app` |
 | **Windows** | Windows 10 & 11 (64-bit x64 & ARM64) | Fully Supported | `.msi`, `.exe` installer |
-| **Linux** | Ubuntu, Debian, Fedora, Arch (x86_64 & aarch64) | Fully Supported | `.deb`, `.AppImage`, `.tar.gz` |
+| **Linux** | Ubuntu, Debian, Fedora, Arch (x86_64 & aarch64) | Fully Supported | `.deb`, `.rpm`, `.AppImage`, `.tar.gz` |
 
 ---
 
@@ -197,28 +190,27 @@ Hanterill is built with Rust and Tauri v2, providing lightweight, native perform
 5. **Launch Hanterill**: Open the desktop app. It will automatically detect your active Ethernet interface, negotiate DoIP routing activation on Port 13400, and show **Connected (DoIP)**.
 
 > [!TIP]
-> **No car available?** Hanterill includes **Deterministic Simulation Targets** built into the connection page. You can launch full simulated vehicle sessions (Baseline Healthy, Fault-Injected DTC Target, or Quiescent Sleep Drain) to explore every screen offline.
+> **No car available?** Open a simulated vehicle from the Connection screen to explore the app. Simulated readings are labeled and kept separate from real scans.
 
 ---
 
 ## Installation & Getting Started
 
 ### Pre-Built Desktop Application
-Download the latest release for your operating system from the [Releases](https://github.com/NicolasKheirallah/hanterill/releases) page.
+Choose the current installer for your operating system on the website's Download page. The [installation guide](src/content/docs/installation.mdx) explains which file to choose and how to open the app.
 
 > [!NOTE]
-> Building from source is not a supported installation path yet. The source is published so it can be read, audited and verified against what the shipped app claims; packaged releases are the supported way to run Hanterill.
+> Packaged releases are the supported way to install and run Hanterill on macOS, Windows, and Linux.
 
 ---
 
 ## User Interface & Theming
 
-Hanterill's interface is deliberately plain: a Scandinavian-adjacent technical style, precise and low on visual clutter.
+You can adjust the interface to suit the task and the lighting around you.
 
-- **Neutral Reference**: Clean monochrome slate. Hairline rules, square corners, a single restrained accent, Archivo-class system typography.
-- **Anti-AI Design**: No consumer emojis. 16 custom stroke-based SVG icons and a compact 48px titlebar.
-- **Themes & Density**: Dark, light and high-contrast schemes with verified contrast ratios, plus a comfortable/compact density choice.
-- **Languages**: Interface localized to English, Swedish, Norwegian (Bokmål), Danish, Finnish and Icelandic.
+- **Audience Modes**: Switch between **Owner**, **Technician**, and **Engineer** views depending on how much protocol detail you want on screen.
+- **Eight Built-In Themes**: Choose from Neutral Light, Neutral Dark, **Protokoll Light** (warm paper high-contrast workshop theme), **Protokoll Dark** (carbon and amber night workshop theme), Polestar Light, Polestar Dark, Nord, and High Contrast, plus a comfortable or compact density toggle.
+- **Languages**: Interface localized to English, Swedish, Norwegian (Bokmål), Danish, Finnish, Icelandic, German and Simplified Chinese.
 - **Accessibility**: WCAG 2.1 AA held by automated regression tests on every state primitive.
 - **Keyboard Shortcuts**:
   - `⌘K` / `Ctrl+K`: Global Command Palette.
@@ -227,36 +219,13 @@ Hanterill's interface is deliberately plain: a Scandinavian-adjacent technical s
 
 ---
 
-## Workspace Architecture
-
-The Hanterill codebase is organized as a modular Rust & TypeScript monorepo:
-
-```
-hanterill/
-├── apps/
-│   └── desktop/
-│       ├── src-tauri/         # Tauri v2 native application runtime & IPC commands
-│       └── ui/                # React 19, Vite 8, Vitest diagnostic frontend suite
-├── crates/
-│   ├── application/           # High-level diagnostic use cases, contracts, & session engine
-│   ├── cma/                   # CMA, SPA & SEA1 platform definitions (ECU catalogues, DIDs, decoders, topologies)
-│   ├── transport/             # ISO 13400 (DoIP) and ISO 14229 (UDS) protocol implementations
-│   ├── uds_dtc/               # SAE J2012 / ISO 14229 DTC status-byte decoding
-│   ├── storage/               # Diagnostic session evidence store
-│   ├── cli/                   # Command-line tool (hanterill)
-│   └── ffi/                   # UniFFI cross-platform bindings
-└── docs/                      # Technical specifications, platform guides, & safety rules
-```
-
----
-
 ## Safety, Privacy & Data Ownership
 
-- **Read by default, writes ask first**: Reads are the default path and never prompt. Clearing (`0x14`), routine starts (`0x31`) and ECU reset (`0x11`) are shipped but gated — each is a separate confirmed action, the interface offers only what the binary's capability manifest advertises, and a `--no-default-features` build refuses them with a typed `read_only_build` response (`SAFE-001`, `DTC-002`).
-- **100% Local & Private**: Hanterill contains zero analytics, zero crash telemetry, and zero cloud dependencies. Diagnostic sessions and activity logs are stored locally with automated 17-character VIN redaction, support bundles scrubbed of serials, private addresses and GPS coordinates, per-vehicle caches keyed by a hash of the VIN, and no position data in inspection reports (`EXPORT-001`).
-- **Shipped Capabilities Manifest**: the running binary publishes a capability and safety-boundaries matrix, and the interface reads it rather than assuming what the build can do. The published version for the current release is at [hanterill.com/en/docs/architecture](https://hanterill.com/en/docs/architecture) (`DOCS-001`).
-- **Privacy Policy**: [hanterill.com/en/privacy](https://hanterill.com/en/privacy) documents the zero-telemetry data-ownership policy, storage locations, VIN redaction rules, and retention controls.
-- **Safety Guidelines**: [hanterill.com/en/safety](https://hanterill.com/en/safety) covers the read/write boundary, the service-routine confirmation model, and high-voltage safety notices.
+- **Reading and changing are separate**: Ordinary scans ask the car for information. Clearing fault codes, running a service routine and resetting a control unit need separate confirmation.
+- **Sessions stay on your computer**: The desktop app has no account or cloud service for diagnostic sessions. You can mask the vehicle identification number when sharing a report and review a support bundle before sending it.
+- **Communication guide**: [How the app talks to the car](src/content/docs/architecture.mdx) explains the cable connection and the car's internal networks.
+- **Privacy guide**: [Privacy](src/content/docs/privacy.mdx) explains local storage and sharing controls.
+- **Safety guide**: [Safety](src/content/docs/safety.mdx) explains which actions can change the car.
 
 ---
 
@@ -265,10 +234,10 @@ hanterill/
 Hanterill is an independent, source-available diagnostic project developed by the community. It is **not** affiliated with, authorized by, maintained by, or in any way officially connected with **Polestar Performance AB**, **Volvo Car Corporation**, **Geely Automobile Holdings**, or any of their subsidiaries or affiliates.
 
 > [!WARNING]
-> Electric vehicles contain high-voltage systems (400V/800V) capable of causing serious injury or death. Service routines physically actuate vehicle mechanical systems. Always follow the safety precautions at [hanterill.com/en/safety](https://hanterill.com/en/safety) before connecting to or servicing any vehicle.
+> Electric vehicles contain high-voltage systems capable of causing serious injury or death. Service routines can move vehicle parts. Read the [safety guide](src/content/docs/safety.mdx) before servicing a vehicle.
 
 All product names, logos, brands, and vehicle models are trademarks or registered trademarks of their respective holders.
 
-For the full legal disclaimer, warranty limitations, and automotive safety notices, see the licence documentation at [hanterill.com/en/docs/license](https://hanterill.com/en/docs/license).
+For the legal terms, see [LICENSE.md](LICENSE.md). For a plain-language summary, see the [license guide](src/content/docs/license.mdx).
 
 **Private use only.** Hanterill is licensed **CC BY-NC-ND 4.0**: read, run and share it for personal, non-commercial use, with no commercial use and no distributing modified versions. The source is available to read; it is not OSI open source. See [LICENSE.md](LICENSE.md) for the full terms.

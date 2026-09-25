@@ -1,203 +1,97 @@
-import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
+Bilens styrenheter lagrar enskilda uppgifter som batterispänning, temperatur och mjukvaruversion. Varje uppgift har ett referensnummer som appen kallar en **dataidentifierare**. Hanterill kan läsa ett värde i taget eller samla många under en skanning. Här förklaras hur svaren blir begripliga mätvärden och varför vissa ännu inte kan tolkas.
 
-En felkod säger att något gick fel. En dataidentifierare säger vad ett värde är just nu:
-batterispänning, cellpotentialer, mjukvaruversioner, temperaturer, räknare, konfigurationsbyten.
-Hanterill läser de värdena via ett nummer, en identifierare i taget eller i stora svep. Den här sidan
-förklarar vad en identifierare är, hur katalogen ger byten mening, och hur en läsning, ett svep över
-alla moduler och en bevakning skiljer sig.
+## Vad en datapunkt (DID) är
 
-## Vad en dataidentifierare är
+Varje styrenhet i ditt fordon håller reda på hundratals interna mätvärden och inställningar. Varje
+sådan uppgift har ett unikt referensnummer som kallas **Data Identifier (DID)**. När Hanterill vill
+veta högspänningsbatteriets laddningsnivå eller kupétemperaturen skickar programmet en läsförfrågan
+till rätt styrenhet med det referensnumret, och styrenheten svarar med en kort sekvens av råbytes.
 
-En dataidentifierare, eller DID, är ett 16-bitars tal som en modul svarar med data på. Begäran är
-ReadDataByIdentifier (UDS `0x22`): två byte, tjänsten och identifieraren. Modulen svarar med ett
-positivt svar som ekar tillbaka identifieraren, följt av nyttolasten.
+Samma referensnummer betyder inte alltid samma sak i två olika styrenheter: ett nummer som betyder
+en procentsats i batteristyrenheten kan betyda en temperatur eller en räknare i klimatstyrenheten.
+Därför kopplar Hanterills katalog alltid ihop varje datapunkt med den specifika styrenhet den tillhör,
+med undantag för standardiserade identitetsposter som chassinummer (VIN) och mjukvarunummer.
 
-<DiagnosticExample
-  service="ReadDataByIdentifier"
-  request="22 49 6D"
-  response="62 49 6D 00 00 23 9A"
-  note="Byten efter ekot är nyttolasten. Inget i dem beskriver sig själv: 00 00 23 9A blir ett tal först när något anger längden och skalan."
-/>
+## Hur katalogen omvandlar råbytes till verkliga enheter
 
-Samma identifierare betyder inte samma sak på varje modul. Katalogen nycklar därför en definition på
-moduladressen och identifieraren tillsammans, inte på identifieraren ensam. Koden anger skälet med två
-exempel från verkligheten: `0x4028` är en 2-byte-procent på en modul och ett 4-byte-värde på en annan,
-och `0xEE40` är en 2-byte-temperatur på en och ett 96-byte-block på en annan. Att mata den andra
-nyttolasten till den första avkodaren skulle ge ett självsäkert fel svar.
+När en styrenhet svarar på en fråga skickar den bara tillbaka råa tal utan enhetsangivelse. För att
+göra svaret begripligt innehåller Hanterills inbyggda katalog ett avkodningsrecept för varje känd
+datapunkt:
 
-Vissa identifierare gäller hela plattformen i stället för en modul. Identitetsuppsättningen är den
-vanliga: `0xF190` för VIN, `0xF18C` för ett modulserienummer och `0xEDA0` för ett sammansatt
-identitetsblock.
+- **Förväntad datalängd**: Hur många bytes styrenheten ska svara med, så att appen aldrig feltolkar ett avhugget eller avvikande svar.
+- **Skalningsformel och enhet**: Hur råtalet ska räknas om till fysiska enheter som volt (`V`), ampere (`A`), grader Celsius (`°C`), procent (`%`) eller kilometer (`km`).
+- **Rimlighetsintervall**: Lägsta och högsta fysiskt rimliga värde (så att exempelvis en urkopplad givare markeras som orimlig i stället för att visas som en vanlig mätning).
+- **Kategori**: Om mätvärdet tillhör Identitet, Konfiguration, Batteri, Termiskt system, Motor, Laddning, Kaross, Chassi, Förarstöd (ADAS), Infotainment eller Diagnostik.
+- **Mognadsgrad**: Hur noggrant formeln har verifierats på riktiga fordon.
 
-## Katalogen och dess kategorier
+### Mognadsgrader i katalogen
 
-En katalogdefinition bär mer än ett namn. Den anger nyttolastens längdkontrakt (en exakt längd, en
-uppsättning tillåtna längder, eller ett minimum och ett maximum), vilken avkodare som ska köras, det
-fysiska intervallet och enheten för det avkodade värdet, en integritetsklass för export och en
-mognadsgrad för hur väl meningen är fastställd.
-
-Varje definition grupperas i en kategori:
+Varje katalogiserad datapunkt har en tydlig mognadsmarkering:
 
 <SpecList rows={[
-  ["Identity", "Modul- och fordonsidentitet, artikelnummer, mjukvaruversioner"],
-  ["Configuration", "Bygglistor, alternativbitmappar, fordonskonfiguration"],
-  ["Battery", "Högvoltsbatteriet"],
-  ["Thermal", "Kyl- och köldmediekretsar"],
-  ["Motor", "Drivmotorer och växelriktare"],
-  ["Charging", "Ombordladdare och DC/DC-omvandling"],
-  ["Body", "Belysning, dörrar, 12 V-system"],
-  ["Chassis", "Styrning, bromsar, fjädring"],
-  ["Adas", "Kameror och radarer för förarstöd"],
-  ["Infotainment", "Skärmar, uppkoppling, telematik"],
-  ["Diagnostic", "Serviceräknare och diagnostisk hushållning"],
-  ["Unknown", "Ännu inte kategoriserad"],
+  ["Verifierad (verified)", "Bekräftad på riktiga fordon med verifierad enhet, skalning och fysiska gränsvärden."],
+  ["Hög / Medel (high / medium)", "Välförstått mätvärde vars beteende följer fysiska förändringar i fordonet."],
+  ["Provisorisk (provisional)", "Läses från fordonet med en fungerande formel som fortfarande dubbelkontrolleras över fler årsmodeller och varianter."],
+  ["Experimentell / Okänd", "Styrenheten svarar med data på den här punkten, men den exakta fysiska enheten eller skalningen är ännu inte fastställd."],
 ]} />
 
-Mognaden går från `unknown` och `experimental`, där meningen är en hypotes, via `provisional`, `medium`
-och `high`, till `verified`, som betyder att skalning och intervall har bekräftats över flera fordon.
-Ett värde kan läsas korrekt och ändå märkas som preliminärt. Märkningen gäller tolkningen, inte
-bussen.
+Om en styrenhet svarar med data på en punkt som ännu saknar bekräftad formel behåller Hanterill det
+råa svaret och markerar betydelsen som obekräftad i stället för att dölja det eller gissa.
 
-Katalogen täcker inte varje identifierare som en modul svarar på. Ett positivt svar utan definition är
-ett riktigt svar med obekräftad mening, och appen behåller det som just det.
+## Fråga styrenheten om dess egen skalning
 
-## Skalning, och varför ett råvärde behöver den
+För datapunkter som inte finns färdigavkodade i katalogen kan Hanterill även fråga styrenheten om
+den själv rapporterar en skalningsbeskrivning. Om modulen stöder den skrivskyddade frågan sparas
+skalningsinformationen tillsammans med svaret.
 
-En `0x22`-läsning returnerar byten. Byten behöver en enhet, en skalfaktor och ibland en förskjutning
-innan de är ett fysiskt värde. Katalogen håller det receptet för de definitioner som har en validerad
-avkodare, och den kontrollerar det avkodade värdet mot definitionens fysiska intervall. Ett värde
-utanför intervallet rapporteras som orimligt i stället för att visas som en ren läsning.
+Inne i **DID-utforskaren** kan du dessutom granska varje råsvar med inbyggda tolkningshjälpmedel
+(exempelvis ren text, heltal, millivolt till volt eller tiondels grader) för att se hur värdet
+uppträder.
 
-För identifierare som katalogen inte kan avkoda kan appen fråga modulen själv.
-ReadScalingDataByIdentifier (UDS `0x24`) begär modulens egen skalningsbeskrivning för en
-identifierare. Hanterill validerar det positiva svaret, kontrollerar att den ekade identifieraren
-stämmer med den efterfrågade, och visar beskrivningsbyten och deras längd. Appen avkodar inte
-beskrivningen till en formel och gör inte anspråk på den aritmetik den kan antyda. Behandla
-beskrivningen som bevis för hur modulen skalar värdet, inte som ett svar.
+## Varför ett värde kan visas som tomt eller överhoppat
 
-<Callout kind="note" title="Byttolkaren är generisk">
-DID-utforskaren visar en vald nyttolastbyte som rå, unsigned 8-bitars, unsigned 16-bitars
-big-endian, ASCII, eller som ett ingenjörsvärde enligt två fasta generiska regler (spänning delad med
-1000, temperatur delad med 10). Det är hjälpmedel i vyn för att inspektera byten. De är inte ett
-skalningsrecept per identifierare och de har ingen kontroll mot fysiskt intervall.
-</Callout>
-
-## Utfall, och varför ett värde kan komma tillbaka tomt
-
-Varje undersökt identifierare klassas. Inget tappas bort tyst. De viktigaste utfallen är:
+Varje gång Hanterill frågar efter en datapunkt bokförs det exakta utfallet:
 
 <SpecList rows={[
-  ["positive_validated", "Positivt svar, kontraktet stämde, avkodaren gav ett värde inom intervallet"],
-  ["positive_unvalidated", "Positivt svar, men ingen validerad avkodare bekräftade meningen"],
-  ["positive_unexpected_length", "Nyttolastens längd bröt kontraktet, så avkodaren kördes inte"],
-  ["positive_decoder_failed", "Längden var rätt, men avkodaren returnerade ett fel"],
-  ["positive_implausible", "Avkodaren kördes, men värdet är fysiskt omöjligt för signalen"],
-  ["negative_response", "Modulen nekade med ett negativt svar, och NRC-koden behålls"],
-  ["unsupported", "Modulen rapporterade identifieraren eller tjänsten som inte implementerad"],
-  ["timeout", "Inget svar inom tidsgränsen"],
-  ["transport_error", "Länken föll under UDS-lagret"],
-  ["malformed_response", "Ett svar kom in men var inte ett giltigt positivt eller negativt svar"],
-  ["cancelled", "Svepet stoppades innan den här identifieraren lästes"],
-  ["budget_exceeded", "Begärans eller bytens budget tog slut innan den här identifieraren lästes"],
-  ["not_attempted", "Försöktes aldrig, till exempel för att modulen inte kunde lösas upp"],
-  ["profile_skipped", "Hoppades över eftersom identifieraren inte gäller den här mjukvaruprofilen"],
+  ["Validerat värde", "Styrenheten svarade med förväntad längd och formeln gav ett rimligt fysiskt mätvärde."],
+  ["Ovaliderat svar", "Styrenheten svarade med data, men katalogen har ännu ingen bekräftad formel, så råbytes visas."],
+  ["Oväntad längd", "Styrenheten returnerade ett annat antal bytes än väntat för denna mjukvaruversion, så avkodningen hoppades över av säkerhetsskäl."],
+  ["Utanför rimligt intervall", "Det uträknade värdet hamnade utanför fysiskt möjliga gränser."],
+  ["Stöds ej av styrenheten", "Styrenheten svarade att just det här fordonet eller utförandet inte har den datapunkten."],
+  ["Inget svar / Timeout", "Styrenheten svarade inte i tid, oftast för att modulen inte är monterad eller för att den sover."],
 ]} />
 
-Listan är också svaret på varför ett värde kan komma tillbaka tomt. En modul svarade inte, eller
-svarade att den inte implementerar identifieraren. Nyttolasten bröt längdkontraktet, så avkodaren
-kördes medvetet inte. Avkodaren misslyckades, eller det avkodade värdet var omöjligt. Det finns ingen
-katalogdefinition, så appen visar råbyten och inget namn. Modulen har ingen adress på den anslutna
-plattformen, så läsningen sändes aldrig. Vid export kan en integritetsklass hålla tillbaka
-nyttolastens byten medan sammanställningen behålls. I varje fall sparas råsvaret innan någon avkodning
-körs, med sin längd, SHA-256-sammanställning, latens och antal försök.
+## Fyra läslägen i DID-utforskaren
 
-## Tillämplighet och stöd
+Beroende på vad du undersöker kan du välja mellan fyra läslägen i **DID-utforskaren**:
 
-En definition bär också en tillämplighetsram: plattform, modell, årsmodeller, en mjukvaruram (okänd,
-en exakt version eller ett intervall) och profilhashar där identifieraren har observerats. Att bedöma
-ramen ger ett av fyra svar: observerad på den här profilen, tillämplig för att varje angivet villkor
-stämmer, inte tillämplig för att ett villkor utesluter den, eller okänd för att inget villkor utesluter
-den men nödvändig information saknas. Saknad information behandlas aldrig som allmängiltig.
-
-Separat från katalogen lär sig appen transportstöd per plattform, modul, mjukvaruprofil och
-identifierare. Tillstånden går från `unknown` via `observed_positive_unknown_semantics` och
-`likely_supported` till `confirmed_supported`, med `profile_specific`, `likely_unsupported` och
-`confirmed_unsupported` för identifierare som svarar på vissa profiler och nekas på andra. Ett positivt
-svar bevisar att paret finns; upprepade avslag flyttar det mot ostött. En identifierare som profilen
-redan har rapporterat som ostödd registreras utan busstrafik, och ett senare positivt svar rensar
-märket. Profilhashen kommer från den sammansatta identitetsläsningen; identifierare utan hash använder
-en stabil reserv.
-
-## En läsning, ett svep över alla moduler eller en bevakning
-
-| Läge | Omfattning | Vad det svarar på |
+| Läge | Omfattning | Passar bäst när du vill... |
 | --- | --- | --- |
-| Läsning | En modul, en identifierare | Vad det här ena värdet är nu |
-| Bundet svep | En modul, ett inklusivt identifierarintervall, med en läsbudget | Vilka identifierare i intervallet som svarar, och vad de returnerar |
-| Svep över alla | Varje vald modul, i faser, under en gemensam budget | Vad hela fordonet exponerar, även identifierare katalogen inte känner |
-| Bevakning | En modul, en liten uppsättning identifierare, omläst i fast takt | Hur de byten beter sig över tid |
+| **Enskild läsning** | En styrenhet, en datapunkt | Kontrollera ett specifikt värde eller serienummer direkt |
+| **Intervallsvep** | En styrenhet, ett valt nummerintervall | Upptäcka vilka datapunkter en viss styrenhet svarar på |
+| **Helfordonsskanning** | Alla valda styrenheter i fordonet | Ta en komplett ögonblicksbild av alla läsbara värden i hela fordonet |
+| **Övervakning (Watch)** | En styrenhet, ett fåtal punkter över tid | Se exakt vilka värden som rör sig när du trycker på en knapp, pedal eller startar laddning |
 
-En läsning är en begäran. Ett bundet svep skickar en begäran per identifierare i intervallet, gör om
-endast klassade tillfälliga fel med en växande paus, och klassar varje identifierare även när budgeten
-tar slut. På varandra följande identifierare som var och en har ett exakt längdkontrakt kan gå ut i en
-sambegäran, upp till åtta per begäran. Om modulen nekar sambegäran faller appen tillbaka på enskilda
-läsningar i stället för att gissa.
+### Helfordonsskanning i tre faser
 
-## Svepet över alla moduler, fas för fas
+En helfordonsskanning arbetar i tre ordnade faser inom en gemensam anropsbudget så att fordonets
+gateway aldrig överbelastas:
 
-Svepet över alla moduler kör en fast sekvens och delar en begäransbudget över varje fas, så en senare
-fas kan inte nollställa ett tak en tidigare fas förbrukade:
+1. **Närvarokontroll**: Bekräftar vilka styrenheter som är vakna och kontrollerar fordonets chassinummer (VIN) så att en skanning aldrig blandar data från två fordon.
+2. **Katalog- och upptäcktsläsning**: Läser alla katalogiserade datapunkter för de svarande styrenheterna, plus valfria upptäcktsintervall.
+3. **Verifiering och skalningskontroll**: Läser om föränderliga värden för att se om de är fasta inställningar eller levande givare, och frågar efter skalningsinformation för nyupptäckta punkter.
 
-- **Närvaro.** Tre sondidentifierare (`0xEDA0`, `0xF190`, `0xF186`) per begärd modul. Tystnad är inte
-  bevis för frånvaro, och identitetsblocket såddar profilhashen.
-- **Identitetskontroll.** När sessionen känner till VIN läses det om före katalogfasen. En avvikelse
-  avslutar körningen i stället för att läsa ett annat fordon.
-- **Katalog.** Varje katalogförd identifierare för de närvarande modulerna, i normalt eller utökat
-  läge.
-- **Upptäckt.** Bundna svep över identifierarintervall för identifierare som katalogen inte listar.
-- **Verifiering.** Bundna omläsningar av positiva svar vars avkodningskvalitet var okänd.
-- **Skalningsprober.** En `0x24`-begäran för okatalogförda positiva svar, bundet.
+### Övervakning över tid (Watch)
 
-En fas som hoppas över sänder ingenting. Planerade läsningar som aldrig går ut behåller en rad, så
-artefakten aldrig döljer en lucka bakom en mindre summa. Körningen stoppar på budgeten, på avbrott, på
-förlorad länk efter tolv på varandra följande transport- eller formfel utan något sparat, eller på en
-identitetsavvikelse. En timeout räknas inte in i den sviten.
+När du övervakar en grupp datapunkter över tid (standard är 30 prov med 10 sekunders mellanrum,
+justerbart ned till fyra gånger per sekund) analyserar Hanterill automatiskt hur varje byte beter sig:
 
-Resultatet är dokumentet `did-scan-all/2`: en rad per identifierare med modul, fas, utfall, NRC och
-NRC-namn, nyttolast, nyttolastens sammanställning, latens och antal försök, plus räknare per fas,
-närvarorader, skalningsprober och en sammanfattning. Exporten följer en integritetsnivå. En
-forskningssexport behåller allt. En supportexport maskerar en fordonsidentifierare till dess första tre
-och sista två tecken, ersätter en hårdvaruidentifierare med en stabil hash och tar bort plats och
-personuppgifter. En publik export tar bort varje känslig klass. I varje nivå utom forskningsnivån
-förlorar en nyttolast med en känslig klass sina byten medan sammanställningen står kvar.
-
-## Att bevaka ett värde över tid
-
-En bevakning läser om en liten uppsättning identifierare på en modul i fast takt. Den sänder bara
-`0x22`-läsningar och `0x3E`-livstecken. Standard är 30 prover med tio sekunders mellanrum; appen
-begränsar antalet till mellan 1 och 120 och intervallet till mellan 250 millisekunder och 60 sekunder.
-Bevakningen klassar varje byte över omgångarna: en byte som aldrig rör sig ser ut som kalibrering eller
-identitet, en byte som stiger monotont ser ut som en räknare, och byten som rör sig tillsammans när
-fordonets tillstånd ändras ser ut som korrelerad telemetri. Sammanfattningen beräknas från de
-avslutade omgångarna, så en bevakning du stoppar tidigt ger ändå giltiga delbevis. Den slutar som
-avslutad, avbruten, eller med förlorad länk efter tre på varandra följande omgångar där varje
-identifierare misslyckades på transportnivå.
-
-## DID-verktygen i CLI:t utan fordon
-
-DID-verktygen i kommandoraden kontaktar aldrig ett fordon, vilket gör dem användbara borta från
-fordonet. `did-plan` förhandsgranskar en bunden svepplan och `did-presets` listar upptäcktsintervallen.
-`did-analyze` bearbetar sparade insamlingar för okända positiva svar och kontraktsavvikelser, och
-`did-kb` läser eller fogar in den inlärda kunskapsbasen för identifierare. `did-scan`, `did-scan-all`
-och `did-watch` speglar appens svep, och `did-scan` kan köras mot en sparad insamling med `--capture`
-i stället för ett fordon. `vendor-ref` och `vendor-dids` exponerar den sanerade
-leverantörsreferensens vokabulär, inklusive registret med 113 moduler och 20 966 identifierarader med
-modul, identifierare, storlek och beskrivning. Den vokabulären säger vad som finns. Den bär aldrig ett
-avkodat värde. Se [CLI](/docs/cli).
+- **Fasta värden**: Bytes som aldrig ändras under körningen (oftast artikelnummer, konfiguration eller kalibreringskonstanter).
+- **Räknare**: Värden som räknar uppåt steg för steg (exempelvis drifttidsräknare).
+- **Rörliga givarvärden**: Värden som varierar med fordonets tillstånd (spänningar, temperaturer, tryck eller lägesgivare).
 
 ## Nästa steg
 
-- [ECU-referens](/docs/ecu-reference): modulregistret som dessa identifierare läses från.
-- [CLI](/docs/cli): de offline DID-kommandona och deras utdatadokument.
-- [Firmware och inventering](/docs/firmware-and-inventory): identitetsläsningarna i sitt sammanhang.
-- [Kapabiliteter och styrning](/docs/capabilities-and-gating): vad appen avgör att ett fordon stöder.
+- [Styrmodulregister](/docs/ecu-reference): styrenheterna som svarar på dessa datapunkter.
+- [Mjukvara och inventering](/docs/firmware-and-inventory): hur identitetsposterna bygger upp en komplett mjukvarukarta.
+- [Funktioner och stöd](/docs/capabilities-and-gating): varför vissa funktioner visas för din bil.

@@ -1,122 +1,53 @@
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 
-Varje fordon lämnar fabriken med en lista över vad det byggdes med. Hanterill läser listan från den
-centrala elektronikmodulen (CEM), visar vilka poster som finns och jämför listan mellan besök. Den här
-sidan förklarar varje källa som konfigurationssidorna använder och vad appen gör med den.
+Varje fordon lämnar fabriken med en digital specifikation som lagras i centraldatorn (**CEM**). Den
+berättar exakt vilka tillval, utrustningspaket och hårdvaruvarianter som fordonet byggdes med.
+Skärmen **Konfiguration** läser ut denna konfiguration i skrivskyddat läge och låter dig även
+jämföra konfigurationen mellan två sparade sessioner.
 
-## Tillvalskartan
-
-Hanterill läser DID `0xC010` från CEM på `0x1A01`. Svaret är en karta på 256 byte med en byte per
-fabrikstillval, och bytets position är tillvalets index. Värdet säger vad utförandet bar:
-
-<SpecList rows={[
-  ["0", "saknas: tillvalet stöds inte på detta utförande och erbjöds aldrig"],
-  ["1", "stöds, saknas: plattformen kan bära det, detta fordon har det inte"],
-  ["2", "finns: tillvalet är monterat och aktivt"],
-  ["annat", "reserverad: ett värde som avkodaren inte klassar, bevarat som det kom"],
-]} />
-
-Sidan räknar varje tillstånd och ritar sedan hela kartan i minneslayout: 32 byte per rad. Namngivna
-poster går att klicka på, och index utan ordbokspost förblir numeriska på kartan.
-
-## Namngivna tillval och liggaren
-
-Appen har en ordbok nycklad på tillvalsindex för CMA. Varje namngiven post bär en kod, ett funktionellt
-namn, en domän, de styrenheter den hänger på, ett fabriksstandardvärde och en eftermonteringsnot.
-
-Liggaren under kartan listar enbart namngivna tillval. Tillståndsfilter (finns, stöds saknas, saknas),
-ett kategorifilter och ett sökfält smalnar av listan, och en vald post öppnar ett provkort som ställer
-ordbokens fakta bredvid det tillstånd som observerades på detta fordon. Ett index utanför ordboken får
-aldrig ett påhittat namn; appen säger det och visar numret i stället.
-
-## Fabriksbyggposten
-
-Separat från tillvalskartan svarar CEM på DID `0xF114` med fabriksbyggposten. Lasten är ett kort huvud
-följt av CRLF-avslutade ASCII-poster: ett ordernummer, VIN, ett chassinummer, lack- och interiörkoder,
-en byggvecka, ett spårnummer och andra koder.
-
-Appen tillskriver inte fält enbart efter position. Den letar efter en ankarpost som är ett VIN med 17
-tecken och en känd prefix, `YS` eller `YV1`, och litar på layouten först när chassiposten upprepar
-VIN:ets sex sista tecken. När den bekräftelsen fallerar märks posten som overifierad och de råa raderna
-förblir den enda sanningen. Ingen kulör, inredning eller fabrik gissas ur en layout som inte höll.
-
-När bekräftelsen håller projicerar appen VIN, ordernummer, chassinummer, lackkod, byggvecka,
-spårnummer och interiörkod. Lack- och interiörnamn kommer enbart från källbelagda tabeller, så en kod
-som tabellerna inte listar förblir en kod. Poster utan källbelagd betydelse visas som otillskrivna
-koder i stället för att tvingas in i ett fält.
-
-## Identitetskontroll av fabriksbyggposten
-
-Byggposten avkodas mot det VIN som fångades vid anslutningen. Om posten bär ett annat VIN blir posten
-ett typat fel och projiceras inte som ett faktum om detta fordon. Ett okänt VIN är tystnad, aldrig en
-avvikelse.
-
-## Fabriksutrustning från bevis över moduler
-
-Fordonssidan härleder kommersiella paket från flera källor samtidigt: vilka styrenheter som svarade,
-VIN och byggposten. Varje paket har sin egen regel.
-
-Pilot Pack är full Pixel LED när 360-kameran, en sidohinderradar och en pixelljusmodul alla svarade;
-Pilot Lite när kameran och sidoradarn svarade utan pixelljus; inte monterat när varken kameran eller
-sidoradarn svarade; okänt vid ett blandat svar. Plus Pack är monterat när ljudförstärkaren svarade.
-Performance Pack kräver ett VIN för två motorer och rapporteras kräva en visuell kontroll, eftersom
-dess stötdämpare, bromsar och bälten är mekaniska; ett VIN för en motor rapporterar inte monterat, och
-utan VIN rapporteras okänt. Elektrisk baklucka, trådlös laddare och telefon-som-nyckel är monterade
-exakt när deras modul svarade.
-
-<SafetyNotice level="read-only" title="Paket härleds, de är inte beställda">
-En paketstatus är en slutsats från hårdvara som svarade. Den är inte en kopia av den ursprungliga
-beställningen, och Performance Pack-resultatet stannar medvetet vid de mekaniska delar en skanning inte
-kan se.
+<SafetyNotice level="read-only" title="Skrivskyddad konfigurationsavläsning">
+Hanterill läser bara ut fordonets lagrade konfiguration och fabriksbyggblad. Appen ändrar aldrig
+fordonets utrustningskoder eller bilkonfiguration.
 </SafetyNotice>
 
-## Den råa konfigurationsstrukturen
+## 1. Tillvalskartan (vad fordonet är utrustat med)
 
-DID `0xF106` läses och bevaras, men avkodas inte. Ingen layout för den har fastställts, så appen
-registrerar noll kända fält, sparar lasten med sin SHA-256 och visar ett avgränsat hex-prefix. Det är
-en artefakt för senare arbete, inte en avläsning att agera på. Appen säger exakt det i stället för att
-klä råa byte som en konfiguration.
-
-## Eftermonteringskontrollen
-
-Eftermonteringskontrollen jämför tillvalskartan mot vilka styrenheter som svarade. Mappningen från
-tillvalsindex till den styrenhet det kräver matas in i motorn; appen faller tillbaka på tre CMA-
-förväntningar (IHFA kräver index 10 och 11, POT kräver 5, AUD kräver 20).
-
-Varje fynd får en dom: matchning, förväntad variation, fabrik-mot-observation-avvikelse, okänt eller
-eftermonteringskandidat. En modul som är monterad utan stöd i bygglistan är en eftermonteringskandidat,
-aldrig en felkod. En modul som saknas medan dess mappade tillval finns är en avvikelse mellan fabrik
-och observation. En modul som är monterad medan ett mappat tillval enbart stöds saknas är en förväntad
-variation. Ofullständiga tillvalsbevis ger okänt, och det gör en saknad mappning också: motorn hittar
-aldrig på vilket tillval som kräver vilken styrenhet.
-
-## Att jämföra två besök
-
-Konfigurationsdiffen matchar de två kartorna efter tillvalsindex, aldrig efter namn. De tre
-ändringsorden betyder bestämda övergångar:
+Centraldatorn (**CEM**) lagrar en kompakt tabell över plattformens fabrikstillval. För varje
+tillvalsplats anger värdet ett av tre tydliga lägen:
 
 <SpecList rows={[
-  ["eftermonterad", "indexet fanns inte förut och finns nu"],
-  ["avaktiverad", "indexet fanns förut och finns inte nu"],
-  ["ändrad", "varje annan skillnad, till exempel saknas som blir stöds saknas"],
+  ["Monterat / Aktivt", "Utrustningen eller funktionen sitter i just det här fordonet och är aktiverad."],
+  ["Stöds av plattformen, men ej monterat", "Tillvalet finns till modellen men beställdes inte på detta exemplar."],
+  ["Ej tillämpbart", "Tillvalet erbjuds inte på den här modellen eller marknaden."],
 ]} />
 
-Matchande poster som saknas listas inte; de två sessionerna är helt enkelt ense om att tillvalet inte
-är monterat. En kort läsning hanteras index för index, så ett index bortom slutet av en last läses som
-saknas för den sessionen. Hela difframverket med sina matchningsregler beskrivs i
-[sessioner och bevis](/docs/sessions-and-evidence).
+I Hanterill visas både de namngivna utrustningsposterna i klarspråk (grupperade efter område som
+chassi, klimat, belysning, ljudsystem och förarstöd) och den underliggande tabellen. För varje känt
+tillval visas även vilka styrenheter som hör ihop med utrustningen.
 
-## Vad appen inte kan säga
+## 2. Fabriksbyggblad och fordonsprofil
 
-- Bara index i ordboken får ett mänskligt namn. Resten är nummer med avsikt.
-- Kartan registrerar vad utförandet bar, inte varför ett tillval saknas.
-- Layouten för `0xF106` är okänd, så den lasten är bevis, inte en avkodad konfiguration.
-- Eftermonteringsmappningen är en kort fast förväntanslista i dag, inte en modell per fordon.
-- Fabriks-, anläggnings- och marknadskoder i byggposten har ingen källbelagd fältbetydelse och visas
-  därför inte som namngivna fält.
+Utöver tillvalskartan läser Hanterill av fordonets **fabriksbyggblad** där styrenheten stöder det.
+Byggbladet innehåller bland annat:
+
+- Modellkod, årsmodell och karosstyp
+- Drivline- och batterivariant
+- Exteriör färgkod och interiörklädsel
+- Marknads- och regionspecifikation
+
+Innan byggbladet presenteras kontrollerar Hanterill att det lagrade chassinumret i posten stämmer
+överens med fordonets aktuella chassinummer (VIN) så att data från en utbytt modul aldrig visas som
+fordonets eget byggblad.
+
+## 3. Jämför konfiguration mellan två tillfällen
+
+Om ett fordon har fått utrustning eftermonterad (till exempel en originaldragkrok eller en
+mjukvaruuppgradering på verkstad) kan du jämföra två sparade sessioner i **Konfiguration**.
+Hanterill markerar då exakt vilka tillvalsplatser som har ändrats mellan det tidigare och det nyare
+tillfället.
 
 ## Nästa steg
 
-- [Stödda fordon](/docs/supported-vehicles): vilka plattformar konfigurationsläsarna täcker.
-- [Styrenhetsreferens](/docs/ecu-reference): modulerna bakom tillvalsindexen.
-- [Sessioner och bevis](/docs/sessions-and-evidence): hur en konfigurationsdiff tas fram.
+- [Fordonsidentitet](/docs/vehicle-identity): hur chassinummer (VIN), plattform och mätarställning verifieras.
+- [Funktioner och stöd](/docs/capabilities-and-gating): varför appen visar olika funktioner för olika bilar.
+- [Sessioner och bevis](/docs/sessions-and-evidence): spara och jämför sessioner över tid.

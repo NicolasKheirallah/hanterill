@@ -1,153 +1,37 @@
-Some problems only show up while the car is doing something: a weak cell sags under load, a pump
-stays quiet until it is hot. Live telemetry shows how a signal moves, rather than a single number.
+A scan shows what the car reported at one point in time. **Live Telemetry** follows selected readings as they change. You can watch them during a test and save the recording for later review.
 
-## How sampling works
+## 1. Choosing what to watch (Channel presets and custom channels)
 
-The live view is a polling loop. Each tick reads every selected channel once, over
-`0x22 ReadDataByIdentifier`, then the loop starts again on the next tick. The channel catalogue
-holds 51 channels across the battery, drivetrain, thermal, climate and 12 V groups. A run samples
-the ones you selected and nothing else.
+At the top of the **Live Telemetry** screen, you can start quickly with built-in channel groups or pick individual measurements from any module:
 
-A tick is one batch: every channel is asked in turn, and the answers arrive together. That is why a
-wide selection at a fast interval is harder on the car than a narrow one. See
-[Cadence and budgets](#cadence-and-budgets).
+- **Battery & High Voltage preset**: Pack voltage, pack current, real-time power (kW), State of Charge, and minimum/maximum pack temperatures.
+- **Drivetrain & Inverters preset**: Front and rear motor speed, torque delivery, and inverter coolant and stator temperatures.
+- **Thermal & Heat Pump preset**: Cabin heater, chiller, radiator, and compressor temperatures and pressures.
+- **12 V Low-Voltage preset**: DC-DC converter output voltage, 12 V battery current, and 12 V State of Charge.
+- **Custom selection**: Toggle any readable parameter from the catalogue to build your own chart view.
 
-<Callout kind="note" title="A separate push mode exists">
-UDS `0x2A ReadDataByPeriodicIdentifier` is a different mechanism: the module registers an identifier
-and pushes samples itself, at slow (about 5 s), medium (about 1 s) or fast (about 100 ms) rate, with
-1–600 samples, a 30 s read deadline, and a mandatory teardown (`0x2A 0x00`) so the bus is never left
-flooding. The live view does not use this path; do not mistake the registration feature for the loop
-above.
-</Callout>
+## 2. How live sampling works
 
-## Presets
+When you click **Start live stream**, Hanterill asks the selected control units to sample your chosen channels on a steady schedule:
 
-Choosing from 51 channels one at a time is slow, so both front ends ship named selections. Those
-lists are not the same.
+- **Periodic streaming where supported**: When a module supports periodic streaming, Hanterill registers your chosen channels once and the module streams updates automatically until you pause or leave the screen.
+- **Polled sampling fallback**: For channels that do not support periodic streaming, Hanterill polls the module at a steady interval.
+- **Why fewer channels update faster**: The car's diagnostic gateway shares its bandwidth across every module you query. Watching 3 to 5 channels gives you a crisp, fast waveform (several updates per second), whereas watching 15 channels spreads the updates across more modules.
 
-The desktop app has six groups plus a custom selection:
+## 3. Reading the chart and honest gap accounting
 
-| Group | Channels | The question it answers |
-| --- | --- | --- |
-| Battery & HV Health | 6 | Is the pack behaving under this load? |
-| Fast Charge & Thermal | 6 | Is heat being moved away during a fast charge? |
-| Powertrain & Inverters | 5 | What are the motors and inverters doing? |
-| 12V & Sleep Current | 4 | Is the auxiliary rail holding up? |
-| Climate & HVAC | 5 | Is the cabin and pack loop doing what it should? |
-| Full Pack Diagnostics | 6 | A broad battery capture with the cross-signals together |
+Hanterill plots live data like lab instrumentation rather than a decorative dashboard gauge:
 
-The CLI has four: battery (16 channels), drivetrain (11), thermal (21) and all (all 51). "All" and
-"Thermal" exist only on the CLI; the desktop groups are smaller and aimed at one screen of traces.
+- **Synchronized crosshair**: Move your mouse (or use the Left and Right arrow keys on your keyboard) across the chart to inspect the exact values of every active channel at the same millisecond.
+- **Pause and inspect**: Click **Pause** at any moment to freeze the screen and examine a voltage dip or torque spike without stopping the background recording.
+- **Honest gap accounting**: If a module is briefly busy and misses a sample interval, Hanterill counts the missed interval and shows a real gap in the line rather than drawing a fake smooth curve across missing data.
+- **One stream at a time**: To keep the car's gateway responsive, Hanterill runs only one live stream at a time and automatically stops streaming as soon as you switch to another task.
 
-If a preset names a channel the car does not support, the gap is reported rather than dropped.
+## 4. Recording a run and replaying it offline
 
-## Cadence and budgets
+When chasing an intermittent issue (such as a power sag under acceleration or a climate loop that stops cooling after 20 minutes), you can record the entire live session:
 
-| | CLI | Desktop |
-| --- | --- | --- |
-| Rate | `--hz` 1–5, default 1 | 200, 500, 1000 or 2000 ms (0.5–5 Hz), default 500 ms |
-| Count | `--samples` 1–10000, default 1 for `live`, 5 for `record` | none: it runs until you stop it |
-| Stop condition | the sample count is reached, or the capture budget ends | Stop, or the one-hour operation deadline |
-| Accepted interval | not applicable | 20–5000 ms |
-
-The CLI capture budget is samples × 30 s, clamped to 30–300 s. The desktop has no user-set duration
-or count: it samples until you stop it, or until the one-hour deadline ends the run.
-
-Only one stream runs at a time: a second start is refused as busy rather than quietly stopping the
-first. Pause, resume and stop are available throughout.
-
-Higher rates are not automatically better. The car's gateway serves every module on one connection,
-so a fast capture of many channels competes with itself. A 1 Hz capture of six channels will be far
-more trustworthy than 5 Hz of forty.
-
-## Recording to a file
-
-The desktop records as it samples, with no separate save step. Each run becomes a `live-recording`
-artifact in the session archive, plus a `live-recording-chunk` every 128 samples, under the id
-`recording-{operationId}`. Sessions live in `sessions.json` under the OS data directory; the UI also
-keeps the last 10 runs in browser local storage, so the drawer survives a reload.
-
-Each stored sample carries `channelKey`, `value`, `error`, `sequence`, `scheduledMs`, `capturedMs`
-and `gap`. The manifest carries `schemaVersion` 1, `id`, `sessionId`, the start and stop times,
-`channels`, `intervalMs`, `sampleCount`, `chunkCount`, `terminalState` and `error`.
-
-<Callout kind="caution" title="The desktop timer does not measure lateness">
-On the desktop, `scheduledMs` equals `capturedMs` and missed intervals are recorded as 0: a run
-that fell behind looks exactly like one that did not. Only the CLI scheduler emits gap markers for
-missed intervals, so if you need evidence that a tick was late, record from the CLI.
-</Callout>
-
-The CLI writes a file only when you pass `--output`. JSON is `schema_version` 1, kind
-`live-recording`, with the start and stop times, preset, `interval_ms`, `sample_iterations`,
-channels, coverage and frames. CSV is long form:
-`sequence,scheduled_ms,captured_ms,channel,ecu_hex,did_hex,state,value,unit,error`.
-
-Neither the desktop chunks nor the manifest store a decoder version or a unit. The recording is the
-samples, not the decode that produced them.
-
-## Replay
-
-Desktop replay runs client-side over stored samples: the recordings drawer, the archive chunks, and
-files you import (`.json` or `.csv`). Controls are a range scrubber, play/pause, and a speed button
-cycling 1x → 2x → 5x. Every channel in the recording is plotted; the only per-channel control is the
-legend toggle.
-
-The CLI `replay` is a different engine: it advances virtual time in one-second steps over a saved
-recording and prints the samples due in each window. It is deterministic and never reads a car.
-
-Replay is clearly labelled as replay. A recording never presents itself as a live reading, and a
-simulated session never presents itself as a recording.
-
-The charts share one behaviour: a single y-axis per unit, a crosshair tooltip, inside zoom plus a
-slider once a channel has more than 40 points, and a scrolling legend. There are no point markers.
-
-## Exporting a trace
-
-Live export and recording export are different shapes, and the headers are the import contract.
-
-- Live JSON is kind `live-telemetry`: `intervalMs`, `channels`, and samples with `sampleIndex`,
-  `offsetMs`, `channelKey`, `label`, `value` and `unit`.
-- Live wide CSV is `Sample, t_ms (nominal), <label> (<unit>) ...`. One row per tick, one column per
-  channel. The timebase is **nominal, not measured**: `t_ms` is the scheduled offset, not an arrival
-  clock.
-- Recording CSV is long form `Sample, Offset (ms), Channel, Value, Error`, the same shape the
-  importer accepts.
-- Recording JSON is kind `live-recording`.
-
-CSV formula injection is sanitised, so a channel label starting with `=` cannot run when the file
-is opened. The CLI `export <session.json>` writes a bundle, including `live_telemetry.csv` and
-`manifest.csv`, so a session can be unpacked without the desktop app.
-
-## Stream health and staleness
-
-There is no host-side system telemetry screen. Nothing charts this computer's CPU, memory or transport timing:
-
-- A per-channel stats table shows current, min, max, mean, sample count, trend, and the age of the
-  last sample.
-- Per-stream ingest counters track received, flushes, coalesced, actual Hz, gaps and errors.
-- A silence watchdog marks a channel as stalled once it stops answering for long enough, instead of
-  reading as if it were merely slow.
-- A retained chart window keeps 600 samples per channel, so a long run shows recent history rather
-  than growing without bound.
-
-Derived metrics are computed from the live channels: pack power (volts × amps), thermal delta across
-the pack, combined powertrain current, rear mechanical power, and 12 V power. The car did not send
-them.
-
-Vehicle subsystem screens cover the slower questions; live telemetry is for the ones that only exist
-while something is moving.
-
-## When to use it
-
-- For battery health, watch pack current and voltage together under acceleration, then compare the
-  cell spread at rest against the spread under load.
-- For thermal problems, watch coolant in and out, and see whether the delta grows under sustained
-  load or stays flat.
-- For intermittent faults, record while the fault is happening, then replay it next to the freeze
-  frame the module stored.
-- Before and after a repair, record the same channels under the same conditions, then compare.
-
-## Next
-
-- [Sessions and evidence](/docs/sessions-and-evidence): where recordings live and how they compare.
-- [CLI](/docs/cli): `live`, `record` and `replay` with explicit bounds.
+1. Select your channels and click **Record**.
+2. Drive or run the test (always have a passenger operate the laptop if the car is moving).
+3. Click **Stop** when finished.
+4. You can **replay the recording offline** inside the app at any time, scrub back and forth along the timeline, or click **Export CSV** to open the time-stamped measurements in Excel, Numbers, or Python.

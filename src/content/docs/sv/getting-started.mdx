@@ -1,52 +1,49 @@
-Hanterill är en app för datorn. Den kopplas till fordonet med en enda kabel och läser vad fordonets
-datorer redan vet. Det finns inget konto att skapa och ingen server att nå.
+Den här guiden visar hur du ansluter datorn till en bil som Hanterill stöder, läser av bilens hälsa och felkoder och sparar resultatet på din dator.
 
-Du behöver inte kunna protokollet för att komma igång. Den här sidan hjälper dig att ansluta.
-Resten av dokumentationen förklarar vad varje vy visar och var siffrorna kommer ifrån.
+## Det här behöver du
 
-## Innan du börjar
+- **Ett fordon som stöds**: Kontrollera [fordonslistan](/docs/supported-vehicles) för att se vad som har testats på din modell. Vissa modeller har bara delvis stöd.
+- **En ENET-kabel**: Den ansluter bilens diagnosuttag till en Ethernet-port. Nyare SEA-bilar kan behöva en kabel som också aktiverar bilens diagnosanslutning. Läs [Hårdvara och adaptrar](/docs/hardware-and-adapters) innan du väljer kabel.
+- **En Ethernet-port på datorn**: Använd datorns port eller en USB-till-Ethernet-adapter.
+- **Hanterill installerat**: Hämta appen via [nedladdningssidan](/download). [Installationsguiden](/docs/installation) hjälper dig om datorn visar en fråga vid första starten.
 
-Du behöver:
+<Callout kind="note" title="Utforska appen utan bil">
+Öppna vyn **Anslutning** och välj ett inbyggt simulerat fordon om du vill se hur appen fungerar innan du kopplar in en bil. Simulerade värden är tydligt märkta och blandas inte med avläsningar från riktiga fordon.
+</Callout>
 
-- Ett fordon som stöds. Polestar 2 och CMA-Volvorna (XC40/EX40, C40/EC40) är de testade
-  plattformarna. Se [Fordon som stöds](/docs/supported-vehicles).
-- En passiv ENET-kabel: OBD-II i ena änden, RJ45 i den andra. Det är en vanlig kopparkabel utan
-  elektronik, så det finns ingen drivrutin att installera.
-- Ett Ethernet-gränssnitt på datorn. En USB-C till Ethernet-adapter fungerar.
-- Hanterill installerat. Se [Installera på datorn](/docs/installation).
+## Steg 1: Anslut kabeln
 
-## Första sessionen
+1. Leta upp bilens diagnosuttag under instrumentpanelen på förarsidan.
+2. Sätt kabelns breda kontakt ordentligt i bilens uttag.
+3. Anslut kabelns Ethernet-ände till datorn eller USB-adaptern.
 
-1. Sätt fordonet på tändning. Du behöver inte starta det.
-2. Koppla ENET-kabeln till fordonets OBD-II-uttag och RJ45-änden till datorns Ethernet-gränssnitt.
-3. Öppna Hanterill. Appen söker efter ett fordon på länken och visar anslutningsläget i titelfältet.
-4. När läget visar **Ansluten**, öppna **Översikt**. Hanterill läser fordonets identitet och en
-   batterisammanfattning i ett svep.
-5. Gå vidare dit du behöver: **Felkoder** för en skanning, **Batterihälsa** för högspänningsvyn,
-   **Inspektionsrapport** för den poängsatta sammanfattningen.
-6. Sessionerna arkiveras lokalt medan du arbetar. Vyn **Sessioner & rapporter** öppnar dem igen
-   senare och jämför vilka två som helst.
+## Steg 2: Väck bilen
 
-Allt ovan är läsningar. Hanterill ställer frågor och skriver inget tillbaka till fordonet.
+Bilen stänger av delar av sitt nätverk när den står parkerad för att spara batteri. Den behöver vara vaken för att svara.
 
-## Inget fordon till hands?
+- **Eldriven Volvo eller Polestar**: Sätt dig i förarsätet med nyckeln i bilen, eller tryck kort på bromsen så att förardisplayen tänds. Låt bilen stå i parkeringsläge.
+- **Hybrid eller bensindriven Volvo**: Slå på tändningen utan att starta motorn.
 
-Den skarpa versionen ansluter bara till riktiga fordon. Utvecklingsbyggen kan simulera ett fordon
-för testning, och den här webbplatsen har en [simulerad skanning](/features/vehicle-diagnostics) du
-kan titta på, men appen du laddar ner förväntar sig ett fordon i andra änden av kabeln.
+Vänta en kort stund efter att du satt i kabeln. Datorn och bilen skapar en lokal anslutning automatiskt. Om datorn skriver att Ethernet-anslutningen saknar internet är det normalt. Du behöver varken Wi-Fi, router eller internet för att läsa bilen.
 
-För steg utifrån uppgiften, se [Vanliga uppgifter](/docs/common-tasks).
+## Steg 3: Anslut i Hanterill
 
-## Vart uppgifterna tar vägen
+1. Öppna Hanterill och gå till **Anslutning**.
+2. Välj din kabelanslutna Ethernet-adapter och starta sökningen efter fordon.
+3. När bilen visas i listan, välj **Anslut**. Hanterill identifierar bilen och läser in de styrenheter och batterivyer som passar modellen.
 
-Sessioner, avläsningar och exporter skrivs till din disk. Inget laddas upp. Se
-[Integritetsskydd](/docs/privacy).
+## Steg 4: Gör den första avläsningen
 
-## Om något inte fungerar
+1. Öppna **Översikt** och starta en fullständig kontroll.
+2. Hanterill frågar bilens styrenheter vilka de är, läser felkoder och kontrollerar batterierna.
+3. När kontrollen är klar sparas resultatet på datorn. Du kan lägga till en egen anteckning och gå vidare till **Batterihälsa**, **Felkoder** eller **Inspektionsrapport**.
 
-Om fordonet aldrig dyker upp är det oftast kabeln, adaptern eller en brandvägg. Sidan
-[Anslutning](/docs/connection) går igenom dem i tur och ordning. Om en avläsning ser fel ut, läs
-[Säkerhet](/docs/safety) innan du agerar på den.
+<Callout kind="note" title="Vanliga avläsningar ändrar inte bilen">
+Att ansluta, läsa batterivärden och kontrollera felkoder är avläsningar. Åtgärder som kan ändra bilen, till exempel att radera felkoder, finns i separata vyer och kräver din bekräftelse.
+</Callout>
 
-[Få hjälp](/docs/get-help) visar hur du exporterar ett maskerat supportpaket och rapporterar
-ett problem.
+## Läs vidare
+
+- [Rundtur i appen](/docs/workspace-tour): vad de olika vyerna är till för.
+- [Vanliga uppgifter](/docs/common-tasks): vägen genom appen för en kontroll eller felsökning.
+- [Felsökning](/docs/troubleshooting): vad du kan prova om bilen inte hittas.

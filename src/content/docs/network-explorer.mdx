@@ -1,149 +1,106 @@
-The network explorer is the wiring view of the CMA electrical architecture. It
-draws every control unit, the typed links between them and the pin rows the
-diagnostics run over, as one interactive map. Use it to see where a module sits,
-which network it hangs on, and which connector pins carry the link. It is
-reference documentation, not a reading from the car.
+**Network Explorer** is a map of the CMA car's control units and connections. Use it to see which systems share a network and where a control unit sits. The map is a reference for understanding the car; it does not show a live wiring test.
 
-## What the map is
+## What the map contains
 
-The map is built from one independent CMA wiring study, not from a live
-session. It holds 170 units, 295 typed links across nine networks, and 622
-documented pin rows, with 170 bus messages captured alongside them. The
-study's own site disclaimer is literal: this is enthusiast documentation and it
-is not affiliated with or endorsed by a vehicle manufacturer.
+The interactive map is a built-in reference diagram of the CMA platform rather than a live
+reading from your car. It includes:
 
-Hanterill's own read path is narrower. The app addresses a module by its DoIP
-logical address and sends a request. The map names a module by its connector
-reference and shows every wire that reaches it. A reader can move between the
-two, but they are separate descriptions of the same car.
+- **170 electrical units**: Control modules, sensors, switches, actuators, and fuse/power boxes.
+- **295 connections across nine networks**: Showing how data and power travel between units.
+- **622 documented connector pin rows**: Listing pin numbers, signal names, and wire colours.
+- **170 reference bus message routes**: Illustrating how common signals travel between modules.
 
-## Reading the canvas
+While Hanterill's live diagnostic screens talk to modules by their logical network addresses,
+the Network Explorer organizes the car by physical hardware positions, wiring harnesses, and
+connector numbers. You can use both views side by side when troubleshooting a communication
+or wiring fault.
 
-The canvas groups units into domain clusters: drivetrain and high voltage,
-chassis and braking, ADAS and safety, body and comfort, driver controls,
-displays and infotainment, connectivity and diagnostics, core computers, power
-distribution, and a peripheral band for sensors, switches and actuators. Links
-run along corridors between the clusters, so a long run is readable and a
-crossing is a real route, not a drawing shortcut.
+## Navigating the canvas
 
-Three controls do most of the work:
+The map groups components into functional clusters across the vehicle:
 
-<SpecList rows={[
-  ["Bus filter", "Toggle each of the nine networks on or off. Power and discrete I/O are off by default because they would bury the signal links"],
-  ["Search", "Match a unit name, a connector reference, a net name or a pin. Open it with Ctrl+K or Cmd+K"],
-  ["Path trace", "Pick two modules and highlight the shortest route between them along links that are currently visible"],
-]} />
+- Drivetrain and high-voltage energy
+- Chassis, steering, and braking
+- Driver assistance (ADAS) and active safety
+- Body, doors, seats, and cabin comfort
+- Driver controls and steering column switches
+- Displays, sound, and infotainment
+- Connectivity and diagnostic gateway
+- Core central computers
+- Power distribution and ground points
+- Peripheral sensors, switches, and actuators
 
-A click opens a detail drawer for the unit: its part number, its location in the
-car, and the pin-out table where the study documents one. A unit without a
-documented pin-out still shows the connections other pin-outs imply.
-
-## The nine networks
-
-Each network has its own colour and line weight, and the explorer lets you drop
-the ones you do not need.
+Three tools at the top of the explorer help you find what you need quickly:
 
 <SpecList rows={[
-  ["CAN", "The body, chassis and diagnostics buses. Eleven named segments, several at 500 kHz"],
-  ["LIN", "Thirteen short local segments for switches, actuators and small modules"],
-  ["FlexRay", "One backbone segment that carries the core computers"],
-  ["MOST", "The media ring"],
-  ["Video / LVDS", "Camera and display video links"],
-  ["Ethernet", "One segment, the OBD Ethernet link"],
-  ["400 V HV", "The high-voltage traction path"],
-  ["12 V / GND", "Power distribution, off by default"],
-  ["Discrete I/O", "Plain signal wires, off by default"],
+  ["Bus filter", "Toggle each of the nine networks on or off. Power (12 V / ground) and discrete signal wires are turned off by default so they do not clutter the data buses."],
+  ["Search", "Find any unit name, module abbreviation, connector code, signal name, or pin number. Open search anytime with Ctrl+K or Cmd+K."],
+  ["Path trace", "Pick any two units on the map to highlight the shortest wiring and gateway path connecting them."],
 ]} />
 
-The segments carry the physical detail the summary hides: bus speed, wire
-colours for the high and low pair, the modules named in the study's segment
-list, and a message count where the study recorded one.
+Clicking any unit opens its detail drawer with its hardware location in the vehicle, its
+connected buses, and its connector pin-out table.
 
-## DoIP and the CAN segments
+## The nine vehicle networks
 
-Hanterill reaches a CMA car over DoIP, which is diagnostics over IP. On this
-architecture that traffic rides the OBD Ethernet segment between the vehicle
-gateway module and the OBD connector. The map shows it as one Ethernet link,
-and it is the link the app uses.
-
-The CAN segments are the older path. A CAN bus carries the same UDS questions
-inside ISO-TP frames, and the diagnostics and connectivity CAN segment is the
-one wired to the OBD connector. Hanterill implements an ISO-TP transport, but
-it ships no CAN adapter, so that path only works with hardware you supply.
-[Connection](/docs/connection) covers what each link needs, and
-[Architecture](/docs/architecture) describes the DoIP envelope and the ISO-TP
-fallback in more detail.
-
-## The two gateways
-
-Two modules sit between the OBD connector and the rest of the car, and the map
-marks both in the core cluster.
+Each network type is drawn with its own colour and line style so you can isolate one system
+at a time:
 
 <SpecList rows={[
-  ["CEM at 4/56", "Central electronic module, the car's central body computer. It sits on the FlexRay backbone and appears on several CAN and LIN segments"],
-  ["VGM at 4/314", "Vehicle gateway module. It carries the OBD Ethernet link and the infotainment CAN segment"],
+  ["CAN", "The main control buses for body, chassis, drivetrain, and diagnostics across eleven named segments (most running at 500 kbps)."],
+  ["LIN", "Thirteen low-speed local single-wire buses connecting door switches, seat motors, climate flaps, and rain/light sensors to their parent modules."],
+  ["FlexRay", "A high-speed, time-synchronized backbone linking the central computers, gateway, driver assistance, and chassis controllers."],
+  ["MOST", "The high-bandwidth digital audio and media ring connecting infotainment and amplifier modules."],
+  ["Video / LVDS", "Dedicated high-speed coaxial video links for the 360-degree parking cameras, forward camera, and dashboard displays."],
+  ["Ethernet", "The high-speed diagnostic link between the OBD-II port and the Vehicle Gateway Module."],
+  ["400 V HV", "High-voltage orange traction cables linking the battery pack, onboard charger, DC fast-charge port, air-conditioning compressor, heaters, and drive inverters."],
+  ["12 V / GND", "Low-voltage power supply and chassis ground distribution (hidden by default)."],
+  ["Discrete I/O", "Direct point-to-point sensor and switch wires (hidden by default)."],
 ]} />
 
-The FlexRay backbone is the shortest way to read the core of the car: the CEM,
-the VGM, the driver information module, the infotainment head unit and the
-vehicle control unit all appear on that one segment. When you trace a path from
-a cabin module to a drivetrain module, it usually crosses a gateway rather than
-running point to point.
+## How diagnostic traffic enters the network
 
-## Catalogue rows and live registry
+When you plug an Ethernet diagnostic cable into the OBD-II port, your laptop talks directly to
+the **Vehicle Gateway Module (VGM)** over the OBD Ethernet link. From there, the gateway and
+the **Central Electronic Module (CEM)** route your diagnostic requests onto the internal
+FlexRay, CAN, and LIN buses to reach the rest of the vehicle.
 
-The map and Hanterill's ECU registry answer different questions, and the counts
-make the difference clear. The map is the physical view: 170 units, including
-sensors, switches, actuators and power distribution. The
-[ECU reference](/docs/ecu-reference) is the addressing view: 49 CMA rows that
-Hanterill can talk to over DoIP, each with a logical address.
+<SpecList rows={[
+  ["CEM (4/56)", "Central Electronic Module. Manages body functions, security, and power states while bridging the FlexRay backbone to multiple CAN and LIN segments."],
+  ["VGM (4/314)", "Vehicle Gateway Module. Terminates the OBD-II Ethernet connection and routes diagnostic and infotainment traffic across the car's internal buses."],
+]} />
 
-Of those 49 rows, 44 were observed on a live battery-electric car and five are
-reference entries that have never answered. Those five, TCM, NRCM, SUM, DEM and
-MVBM, are positions a hybrid or air-suspension car would populate. On the
-electric reference car they stay silent, and Hanterill records the silence as
-expected.
+When you use **Path trace** to follow a signal from a door or climate sensor to a drivetrain
+or dashboard module, you will almost always see the route pass through either the VGM or the
+CEM.
 
-Two consequences for reading the map. First, the map is wider than the
-registry, so a unit on the canvas is not automatically a module the app can
-address, and vice versa. Second, the five hybrid-only reference rows do not
-appear as named units on the map at all. The map is not derived from Hanterill's
-registry, and the registry is not derived from the map.
+## Why the wiring map and the ECU Registry have different counts
 
-<Callout kind="note" title="The same label can mean two things">
-The map names a unit ENGINE CONTROL MODULE ECM. On the battery-electric
-reference car the module at address `0x1630` answered as a drive-unit
-controller, so the app's ECM row describes that behaviour, not an engine
-controller. A label on a diagram and a live answer are two different claims.
+The Network Explorer and the [ECU reference](/docs/ecu-reference) look at the vehicle from two
+different angles:
+
+- **Network Explorer (170 physical units)**: Includes every physical box on the wiring diagram, including fuse boxes, simple switches, cameras, and LIN sub-sensors that do not have their own independent diagnostic address.
+- **CMA ECU Registry (49 diagnostic modules)**: Lists the primary control units that answer diagnostic requests directly through the gateway (44 active modules on a battery-electric car, plus 5 reference entries reserved for hybrid, combustion, or air-suspension variants).
+
+<Callout kind="note" title="Why the ECM label appears on electric models">
+On the reference wiring diagram, the propulsion controller position carries the traditional
+label "Engine Control Module (ECM)". On a battery-electric CMA car, that position acts as a
+drive-unit and inverter controller rather than a combustion engine computer.
 </Callout>
 
-## Pins, notes and inferred links
+## Confirmed pin-outs versus block-diagram links
 
-Solid lines on the canvas are documented pin-outs: the study traced the wire
-and recorded the pin, the net and the wire colour. Dashed lines are inferred
-from the block diagram, where the connection is clear but no pin row was
-captured. The distinction is there so you never read a hypothesis as a
-continuity check.
+On the map canvas:
 
-Open a unit to get its pin table. Each row names a target, a net, a pin number,
-the wire colour and any note the study attached. From a pin you can jump to the
-net and to the module at the other end.
+- **Solid lines** represent connections with documented connector pin numbers, signal names, and wire colours.
+- **Dashed lines** represent connections where two modules are known to communicate on a shared bus, even when the individual connector pin number is not listed in the table.
 
-## What the map does not say
-
-The map does not carry DoIP logical addresses, so it cannot tell you which
-module answers a request. It does not carry software versions, fault codes or
-live values, because it is wiring documentation rather than a diagnostic
-reading. It also does not describe a specific car's build. Options and markets
-differ, and a link on the map may not be populated on the car in front of you.
-
-[Architecture](/docs/architecture) covers how Hanterill uses the gateway, and
-the [ECU reference](/docs/ecu-reference) lists the addresses the app actually
-talks to.
+Clicking any pin row in the detail drawer lets you jump directly to the module at the other
+end of that wire.
 
 ## Next
 
-- [ECU reference](/docs/ecu-reference): the DoIP registry the app addresses.
-- [Architecture](/docs/architecture): the layers a request travels through.
-- [Connection](/docs/connection): the cable and adapter each link needs.
-- [Supported vehicles](/docs/supported-vehicles): what has been verified per platform.
+- [ECU reference](/docs/ecu-reference): the diagnostic control units Hanterill talks to directly.
+- [Protocols (DoIP, UDS and CAN)](/docs/architecture): how diagnostic messages travel across Ethernet and CAN.
+- [Connection](/docs/connection): what cables and adapters you need to connect to the car.
+- [Supported vehicles](/docs/supported-vehicles): platform support across CMA, SPA, and SEA1.

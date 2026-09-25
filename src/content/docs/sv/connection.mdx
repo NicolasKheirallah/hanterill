@@ -1,99 +1,95 @@
-Hanterill kommunicerar med fordonet över Ethernet. En modern bil är ett litet nätverk, och ett av
-dess uttag talar vanligt internetprotokoll. Den här sidan går igenom kabeln, nätverket och vad du gör
-när fordonet inte dyker upp.
+På skärmen **Anslutning** väljer du bil och nätverksadapter. Börja med den automatiska sökningen när du använder en ENET-kabel. Det finns också ett direktanslutningsläge, alternativ för särskild CAN-utrustning och ett demoläge som fungerar utan bil.
 
-## Kabeln
+## Innan du klickar på Anslut: fordonets tändningsläge
 
-En ENET-kabel kopplar bestämda stift i OBD-II-uttaget till en vanlig RJ45-kontakt. Den innehåller
-ingen elektronik. Det är ingen ELM327, inget J2534-gränssnitt och ingen Bluetooth-adapter. Kabeln
-kräver ingen drivrutin.
+Ett parkerat fordon stänger av merparten av sina styrenheter för att spara på 12-voltsbatteriet. För
+att alla styrenheter ska svara vid en skanning bör fordonet vara i aktivt tändningsläge:
 
-Kedjan ser ut så här:
+- **På eldrivna CMA- och SEA1-fordon**: Sitt i förarsätet med nyckeln i kupén och tryck ned bromspedalen en gång så att förardisplayen tänds, men behåll växelväljaren i **P (Park)**.
+- **På SPA- och bensin-/hybridfordon**: Tryck eller vrid på startreglaget utan att röra bromspedalen för att slå på tändningsläge II.
 
-```text
-OBD-II-uttaget i fordonet
-  -> ENET-kabel
-  -> RJ45
-  -> USB-C Ethernet-adapter
-  -> datorn
-```
+## De fyra anslutningslägena
 
-Vilken passiv OBD-II till Ethernet-kabel som helst fungerar, även de som säljs som "BMW ENET" eller
-"E-Sys". Det är samma kabel.
+### 1. Automatisk identifiering (Rekommenderas för Ethernet / DoIP)
 
-## Hur fordonet hittas på nätet
+Det här är standardläget för alla CMA-, SPA- och SEA1-fordon över en vanlig OBD-II-till-Ethernet-kabel
+(ENET):
 
-Fordon som stöder detta använder länklokal IPv4-adressering, intervallet `169.254.x.x`. Det är samma
-princip som när du kopplar en nätverkskabel direkt mellan två datorer: varje sida väljer en adress
-utan att någon router behövs.
+1. Koppla in ENET-kabeln mellan fordonets OBD-II-uttag och datorns Ethernet-port.
+2. Vänta cirka 5 till 10 sekunder tills datorns nätverkskort har fått en automatisk länk-lokal adress (`169.254.x.x`).
+3. Välj **Automatisk identifiering** under **Hitta ditt fordon** och klicka på **Skanna nätverk**.
+4. Hanterill skickar ett lokalt identifieringsanrop över kabeln. Om du har flera nätverkskort (till exempel både Wi-Fi och en USB-Ethernet-adapter) väljer Hanterill automatiskt det nätverkskort som har en länk-lokal `169.254.x.x`-adress så att anropet inte hamnar på ditt hemmanätverk.
+5. När fordonet svarar visas dess IP-adress, plattform och chassinummer (VIN). Klicka på **Anslut**.
 
-Oftast löser fordonet och adaptern detta själva. Om operativsystemet väntar på en DHCP-server som
-aldrig svarar, ställ in adaptern på länklokal adressering manuellt.
+### 2. Direkt-IP (Manuell DoIP-anslutning)
 
-<Callout kind="note" title="Vad Hanterill gör">
-Appen skickar en förfrågan om fordonsidentifiering över UDP på port 13400 och lyssnar efter att ett
-fordon annonserar sig. Sedan öppnas en TCP-anslutning till samma port, och routningen aktiveras
-innan något annat skickas. Sidan [Arkitektur](/docs/architecture) går igenom varje steg.
-</Callout>
+Om datorns brandvägg blockerar UDP-identifieringsanrop, men du redan vet vilken IP-adress fordonets
+gateway använder från en tidigare session:
 
-Hanterill väljer nätverksgränssnitt åt dig. Det rangordnar varje adapter det hittar, bortser från
-virtuella gränssnitt som VPN och loopback och föredrar en trådbunden länklokal adress. Kopplar du in
-eller ur kabeln mitt i en session upptäcks det utan omstart.
+1. Växla till **Direkt-IP** på skärmen **Anslutning**.
+2. Fyll i fordonets IP-adress (ett `169.254.x.x`-nummer) och standardporten `13400`.
+3. Klicka på **Anslut**. Hanterill öppnar då en direkt TCP-anslutning till fordonets gateway utan att behöva använda UDP.
 
-## Om fordonet inte dyker upp
+### 3. CAN-adapter (ISO-TP och passiv CAN-lyssning)
 
-Arbeta dig nedåt i listan. De två första punkterna löser de flesta fall:
+Om du använder ett dedikerat USB-till-CAN-gränssnitt i stället för en Ethernet-kabel kan Hanterill
+kommunicera direkt över fordonets CAN-bussar:
 
-- Är tändningen påslagen? Ett fordon som sover svarar inte.
-- Sitter RJ45-kontakten i ett Ethernet-uttag, inte i ett uttag som bara har USB?
-- Blockerar en VPN eller brandvägg UDP 13400? Stäng av dem tillfälligt och försök igen.
-- Prova en annan Ethernet-adapter. En del billiga USB-adaptrar tappar länklokal trafik.
-- Håller något annat diagnosverktyg anslutningen? Bara ett verktyg i taget kan tala med fordonet.
+- **Linux SocketCAN**: Ansluter till ett inbyggt nätverksgränssnitt som `can0` eller `vcan0`.
+- **Lawicel SLCAN (macOS, Windows och Linux)**: Ansluter till en USB-serie-CAN-adapter (exempelvis CANable eller USBtin) vid `500 kbps` eller `250 kbps`.
 
-<Callout kind="caution" title="En kabel, ett fordon">
-Kabeln går från datorn till fordonets diagnosuttag, aldrig till hemmaroutern. Koppla inte ihop
-fordonets nätverk med ditt vanliga nätverk.
-</Callout>
+Utöver att ställa diagnostiska frågor över ISO-TP kan en CAN-anslutning även **lyssna passivt på
+kontinuerliga CAN-meddelanden** på bussen utan att sända några egna förfrågningar.
 
-## När länken tappas
+### 4. Demoläge (Utforska programmet utan fordon)
 
-Transporten har inbyggd återhämtning, så ett kort avbrott kostar dig inte sessionen.
+Om du vill testa Hanterill vid skrivbordet innan du går ut till fordonet:
 
-### Återhämtningsstegen
+1. Öppna fliken **Demoläge** på skärmen **Anslutning**.
+2. Välj en av de inbyggda fordonsprofilerna (**CMA**, **SPA** eller **SEA1**) och ett scenario (till exempel ett friskt fordon, ett batteri med cellobalans eller ett fordon med aktiva felkoder).
+3. Klicka på **Starta demosession**.
 
-Återhämtningen klättrar en stege, och bara det steg som behövs körs:
+Alla skärmar i programmet fungerar då precis som vid en riktig anslutning, med en tydlig
+**Demo**-markering i sidofältet så att demodata aldrig blandas ihop med dina riktiga
+fordonssessioner.
 
-1. Aktivera routningen igen. Om länken finns kvar skickar Hanterill routningsaktiveringen på nytt
-   över den.
-2. Återanslut TCP-kanalen. Om socketen är borta öppnas en ny TCP-anslutning på port 13400, och
-   routningen aktiveras på den kanalen.
-3. Upptäck på nytt. Om kanalen inte går att bygga upp börjar den om från upptäckten: en
-   UDP-broadcast på 13400, sedan en ny kanal.
+## Vad som händer när du ansluter
 
-Vid sidan av stegen:
+När du klickar på **Anslut** utför Hanterill fyra snabba steg i ordning:
 
-- Svar från den gamla anslutningen avvisas som föråldrade, så ett sent svar inte kan misstas för ett
-  aktuellt.
-- En keepalive (`TesterPresent` varannan sekund) hindrar fordonet från att försätta moduler i vila
-  mitt i en längre skanning. En TCP-keepalive körs vid sidan av, så en länk som tystnat upptäcks i
-  stället för att väntas på.
-- Rapporterar fordonet en annan identitet efter en återanslutning avslutas sessionen, i stället för
-  att avläsningar från två fordon blandas i samma fil.
+<SpecList rows={[
+  ["1. Öppnar länken", "Upprättar en direkt anslutning till fordonets gatewaymodul (VGM eller CEM)."],
+  ["2. Aktiverar diagnostisk anslutning", "Begär tillstånd från gatewayen att skicka diagnostikförfrågningar vidare till fordonets interna nätverk."],
+  ["3. Läser fordonsidentitet", "Läser av det 17-ställiga chassinumret (VIN) och identifierar vilken plattform (CMA, SPA eller SEA1) fordonet bygger på."],
+  ["4. Kontrollerar aktiva styrenheter", "Frågar vilka styrenheter som är vakna och redo att svara."],
+]} />
 
-## Trådlöst och trådbundet
+## Väcka sovande styrenheter (Väckningssekvens)
 
-Den trådbundna vägen över Ethernet och ENET-kabeln är den testade. Två andra länktyper finns:
+Om fordonet står parkerat med avslagen tändning svarar ofta bara gatewayen och ett fåtal
+huvudmoduler, medan klimat-, sätes-, dörr- och kameramoduler sover på sina underliggande bussar.
 
-- **CAN / ISO-TP** är en andra länktyp, implementerad i transporten. Den talar över fordonets
-  OBD-II-stift och kräver en hårdvaruadapter som stöds; Hanterill levererar ingen, så
-  Ethernet-kabeln är vägen in.
-- **Wi-Fi** är trådlöst. En del fordon exponerar diagnostik över sin egen accesspunkt, och om den
-  finns och Hanterill stöder den, fungerar upptäckt och routning på samma sätt över det trådlösa
-  gränssnittet.
+På skärmen **Anslutning** kan du starta **Väckningssekvensen**, som väcker fordonet i fem steg:
+
+1. Skickar en generell väckningspuls över gatewayen.
+2. Väcker centraldatorn (CEM) och gatewaymodulen (VGM) först.
+3. Kontakterar drivline- och chassimoduler en i taget så att gatewayen aktiverar sina interna underbussar.
+4. Skickar en kort håll-vaket-signal så att nyväckta styrenheter hinner starta upp.
+5. Väntar ett ögonblick så att alla bussar stabiliseras innan avläsningen börjar.
+
+Så snart din skanning är klar eller du kopplar från slutar Hanterill att skicka håll-vaket-signaler
+så att fordonets styrenheter kan återgå till viloläge och spara på 12-voltsbatteriet.
+
+## Automatisk återanslutning om kabeln glappar
+
+Om Ethernet-kabeln råkar ryckas till eller om en styrenhet tillfälligt tappar kontakten under en
+längre skanning avbryter inte Hanterill hela arbetet direkt:
+
+- Appen försöker automatiskt återupprätta den diagnostiska anslutningen upp till tre gånger med en kort paus mellan försöken.
+- Under återanslutningen kontrollerar identitetsspärren att samma chassinummer (VIN) fortfarande sitter i andra änden av kabeln innan en avbruten skanning får fortsätta.
 
 ## Nästa steg
 
-- [Arkitektur](/docs/architecture): vad som händer på länken, steg för steg.
-- [Fordon som stöds](/docs/supported-vehicles): vilka fordon detta fungerar på idag.
-- [Gränssnitt och språk](/docs/interface-and-language): behörigheter per operativsystem och
-  inställningarna för gränssnittet.
+- [Hårdvara och adaptrar](/docs/hardware-and-adapters): vilka kablar och adaptrar som fungerar bäst.
+- [Protokoll (DoIP, UDS och CAN)](/docs/architecture): hur meddelanden färdas mellan datorn och fordonet.
+- [Felsökning](/docs/troubleshooting): vad du gör om fordonet inte svarar.

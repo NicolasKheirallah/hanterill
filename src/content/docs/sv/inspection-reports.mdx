@@ -1,156 +1,46 @@
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 
-Det mesta i Hanterill visar dig råa avläsningar och låter dig avgöra. Inspektionsrapporten är
-något annat: den svarar på en fråga, "vilket skick är fordonet i?", med en poäng och ett utlåtande.
+**Inspektionsrapport** samlar uppgifter från en sparad fordonskontroll i ett dokument som du kan skriva ut. Den visar batteri, felkoder och andra tillgängliga avläsningar. Om underlag saknas framgår det i rapporten.
 
-Eftersom det är en bedömning och inte en mätning är reglerna bakom nedskrivna, versionssatta och
-levereras med rapporten. Den här sidan förklarar hur de fungerar.
-
-<SafetyNotice level="read-only" title="Läsningar in, regler ut">
-Varje indata till poängen kommer från de skrivskyddade tjänster som beskrivs i
-[Felkodsskanning](/docs/dtc-scanning) och [Batteridiagnostik](/docs/battery-diagnostics).
-Poängsättningen lägger till aritmetik, aldrig trafik.
+<SafetyNotice level="read-only" title="Rapporten ändrar inte bilen">
+Rapporten bygger på avläsningar av bilen. Att öppna, skriva ut eller spara den ändrar inga inställningar i fordonet.
 </SafetyNotice>
 
-## De fyra utlåtandena
+## Vad rapporten bedömer
 
-Rapporten slutar i ett av fyra tydliga svar. Reglernas namn och orden på skärmen skiljer sig
-något; båda visas här så att en sparad rapport och appen stämmer överens.
+Hanterill granskar fyra områden. Rapporten visar både resultatet och de avläsningar som ligger bakom det:
 
-| Utlåtande | På skärmen | Betydelse |
+1. **Batteriets hälsa**: Bilens uppskattning av hur mycket användbar kapacitet högspänningsbatteriet har kvar.
+2. **Skillnader mellan cellgrupper**: Om någon del av batteriet har tydligt annan spänning än de andra vid avläsningen.
+3. **Felkoder**: Vilka system som rapporterar fel och om felen är aktiva eller äldre händelser.
+4. **Identitet och mätarställning**: Om uppgifter från flera styrenheter stämmer överens.
+
+Kontroller av till exempel 12 V-batteri och kommande service kan också visas som noteringar. De ger sammanhang utan att räknas som ett fel i högspänningsbatteriet.
+
+Rapportens sammanfattning kan vara **Utan anmärkning**, **Bevaka**, **Kräver uppmärksamhet** eller **Otillräckligt underlag**. Läs alltid fynden bakom sammanfattningen. Ett enskilt betyg ersätter inte en fysisk kontroll av bilen.
+
+## När bilen inte lämnar tillräckligt med data
+
+Ett uteblivet svar räknas inte som ett godkänt resultat. Om batteriet eller felkoderna inte kunde läsas klart markeras den delen som saknad. Rapporten anger då att underlaget är otillräckligt och visar vilken kontroll som behöver göras om.
+
+På modeller där vissa avläsningar fortfarande provas ut anger rapporten också att tolkningen är preliminär. Använd inte ett preliminärt eller ofullständigt resultat som enda grund för köp eller reparation.
+
+## Välj rapport efter mottagare
+
+| Rapport | Innehåll | När den passar |
 | --- | --- | --- |
-| Gott skick | "Utan anmärkning" | Ingen regel reste en invändning och poängen är hög. |
-| Anmärkningar | "Utan anmärkning – mindre noteringar" | Något värt att känna till, men inget säkerhetskritiskt. |
-| Uppmärksamhet | "Kräver åtgärd" | En hård överstyrning utlöstes, eller poängen är låg. Läs fynden innan du beslutar något. |
-| Ofullständigt | "Ofullständig – täckningen räcker inte" | Inte tillräckligt många svarade för att förtjäna ett utlåtande. |
+| **Översiktlig inspektion** | Fordonsidentitet, sammanfattning, batterihälsa, aktuella fel och kontroll av mätarställning. | När någon behöver en kort överblick. |
+| **Batteriintyg** | Batteriets hälsa, tillgängliga kapacitetsuppgifter, cellgrupper och temperaturhistorik. | När batteriets skick är huvudfrågan. |
+| **Teknisk rapport** | Utförligare uppgifter om styrenheter, felkoder och kontrollerna bakom bedömningen. | För egna fordonsanteckningar eller verkstadsarbete. |
 
-Ofullständigt är ett riktigt utfall, inte ett misslyckande. Om batterihälsan inte kunde läsas vägrar
-rapporten gissa i stället för att poängsätta fordonet på ofullständiga bevis.
+## Skriv ut och dela
 
-## Poängen själv
+Välj rapporttyp och använd **Skriv ut / Spara PDF** för att skapa en utskrift eller PDF. Du kan dölja chassinumret innan du delar rapporten. GPS-position tas inte med om du inte själv väljer att inkludera den.
 
-En inspelad körning ger en poäng, inte en poäng per system. Aritmetiken är enkel:
+Du kan också öppna en sparad session och skapa rapporten senare, utan att koppla in bilen igen.
 
-```
-poäng = kläm(100 − (summan av varje utlöst regels poäng), 0, 100)
-```
+## Läs vidare
 
-Börja på 100, dra av varje regel som utlöstes, och gå aldrig under 0. Utlåtandet följer sedan
-poängen, om inte en regel tvingade fram ett starkare. I ordning, första träffen vinner:
-
-1. En hård överstyrning utlöstes → **uppmärksamhet**.
-2. En regel tvingade fram uppmärksamhet → **uppmärksamhet**; en regel tvingade fram anmärkningar →
-   **anmärkningar**.
-3. Poäng 85 eller högre → **gott skick**.
-4. Poäng 60 eller högre → **anmärkningar**.
-5. Under 60 → **uppmärksamhet**.
-6. Ingen poäng alls → **ofullständigt**.
-
-## Vad som faktiskt bär poängvikt (v1.0.0)
-
-Fyra indata flyttar siffran. Det här är hela listan som den levereras:
-
-| Indata | Band | Poäng |
-| --- | --- | --- |
-| Batteriets hälsotillstånd | under 70 % | −30 |
-| | 70 % upp till 80 % | −14 |
-| | 80 % upp till 90 % | −4 |
-| | 90 % och över | 0 (endast notering) |
-| 12 V-vilospänning | under 12,2 V | −16 |
-| | 12,2 V upp till 12,5 V | −6 |
-| | 12,5 V och över | 0 (endast notering) |
-| Felkoder | bekräftad, pågående och varningslampa, klass P eller U | −12 styck, högst −30 totalt |
-| | bekräftad men inte pågående | −5 styck, högst −20 totalt |
-| | endast väntande | −2 styck, högst −8 totalt |
-| | bekräftad och pågående på en säkerhetsmodul | −8 styck, plus den hårda överstyrningen |
-| Mätarställning | lagrade kopior skiljer sig mer än 20 km | −25, plus den hårda överstyrningen |
-
-Några regler om reglerna:
-
-- Under 70 % SoH är den publicerade garantigränsen. Rapporten beskriver var läsningen ligger mot
-  villkoren 8 år / 160 000 km; den gör ingen bedömning av garantitäckning.
-- En läsning på eller över cirka 13 V på 12 V-skenan stöds av omvandlaren och är inte i vila.
-  Ingen bedömning av laddningsnivån görs i det fallet, och inget dras av.
-- Felkoder viktas, räknas inte platt. Hanterill läser statusbitarna för att se om en kod är aktiv,
-  väntande eller lagrad, och kodklassen för att se om det är en drivlina-/nätverkskod.
-- Cellbalans och viloförbrukning bär ingen poängvikt i den här versionen. Cellbalans är ett
-  granskningsband i batterivyerna; poängmotorn läser aldrig historiken över viloström. Om du har sett
-  dem beskrivna som poängsatta regelgrupper ligger den beskrivningen före den levererade motorn.
-
-## Vad som förblir en notering
-
-Allt annat i rapporten beskriver vad som sågs och flyttar aldrig poängen: termisk spridning i
-kylvätskeslingan, ett försenat serviceintervall, spridning i drifttid, en laddbegränsning, antal
-nycklar, och noteringen om en ren skanning. En notering kan ändå vara värd att läsa; den kan bara
-inte ändra utlåtandet.
-
-## Varje regel anger sina bevis
-
-Varje regel citerar en bevisklass, och klassen sätter ett tak för hur starkt utlåtande den regeln kan
-tvinga fram:
-
-| Klass | Exempel | Starkaste utlåtande den kan tvinga fram |
-| --- | --- | --- |
-| Publicerad standard | ISO-statusbitars betydelse och kodklasser | Uppmärksamhet |
-| Tillverkarspecifikation | Garantigolvet 8 år / 160 000 km | Uppmärksamhet |
-| Fordonsfångst | En mätarställning läst över flera moduler | Anmärkningar |
-| Referensdata | Vilospänningsbanden för 12 V-batteriet | Anmärkningar |
-| Heuristik | En gissning om laddarens tak | Endast notering, påverkar aldrig poängen |
-
-En regel som vilar på en avkodare som fortfarande är preliminär nedgraderas en klass automatiskt.
-Hälsotillståndsreglerna är preliminära, och det är därför även ett kraftigt nedsatt paket landar som
-**anmärkningar** i stället för **uppmärksamhet**. Batteridata ensamt kan inte ge "Kräver åtgärd" i
-den här versionen. Bara en hård överstyrning, eller en låg poäng driven av andra fynd, kommer dit.
-
-## De två hårda överstyrningarna
-
-Två fynd hoppar över aritmetiken och tvingar fram ett uppmärksamhetsutlåtande på egen hand:
-
-- Ett bekräftat, just nu pågående fel i ett säkerhetssystem (krockkuddar, ABS/ESP, styrvinkel,
-  ADAS).
-- Lagrade mätarställningskopior som skiljer sig mer än normal drift (mer än 20 km). Den oenigheten är
-  den starkaste signalen om mätarställningsfusk en begagnatkontroll kan hitta, och rapporten anger
-  storleken på avvikelsen, aldrig en anklagelse.
-
-En överstyrning går före allt, även en saknad poäng. Ett pågående säkerhetsfel tvingar fortfarande
-fram uppmärksamhet även när batterihälsan aldrig lästes.
-
-## När indata saknas
-
-Saknade indata degraderar rapporten mot ofullständigt snarare än mot ett falskt allt-är-bra:
-
-- En kanal som aldrig svarade listas som en täckningslucka. Den kan inte godkänna en kontroll och
-  inte underkänna en.
-- Hälsotillståndet är den enda indata som tar bort poängen helt. Utan den är poängen tom, inte
-  noll, och utlåtandet blir ofullständigt om inte en överstyrning utlöstes.
-- En felkodsskanning som inte nådde varje modul registreras som en täckningslucka och märker
-  kodbevisen som ofullständiga. Regler för felkoder utanför säkerhetssystemen begär i vilket fall som
-  helst högst anmärkningar, så en delvis skanning kan inte tyst bli ett allt-är-bra.
-- Rapporten skriver ut sin egen regelversion, sin täckning och en SHA-256-kontrollsumma, så en senare
-  läsning kan spåras till de regler som producerade den.
-- Att poängsätta en sparad session under ett nyare regelset är en lokal beräkning. Inget fordon
-  behövs.
-
-## Termiska fynd förblir noteringar
-
-Paketets temperatursensorer har ingen fastställd mappning till enskilda moduler än, så termisk
-spridning rapporteras som en observation utan effekt på poängen. Den blir en riktig regel först när
-placeringen styrks av bevis.
-
-## Platsintegritet
-
-Inspektionsrapporter för begagnatköp innehåller inga GPS-sektioner alls. Där andra exporter
-innehåller koordinater avrundas de till tre decimaler, ungefär 110 meter. Se
-[Integritetsskydd](/docs/privacy).
-
-## I appen
-
-- **Rapportvyn**: identitet, batteri, fel, styrenheter, service och termiska fynd med poängen.
-- **Utskrift**: webbläsarens egen utskriftsväg med anpassad print-CSS, så papperskopian matchar
-  skärmen.
-- **Sessioner**: sparade sessioner poängsätts om under aktuella regler utan att återansluta till
-  fordonet.
-
-Det fullständiga designdokumentet, inklusive motivet bakom varje band, finns i appens repository på
-`docs/product/ppi-intelligence-and-scoring.md`. Där dokumentet och den levererade motorn skiljer sig
-är motorn det som körs: den är den enda implementationen bakom appen, CLI:t och varje sparad session.
+- [Batteridiagnostik](/docs/battery-diagnostics): förstå batteriets värden.
+- [Felkoder](/docs/dtc-scanning): läs fel och sparade ögonblicksbilder.
+- [Tolka resultat](/docs/reading-results): kontrollera täckning och tillförlitlighet.

@@ -1,163 +1,47 @@
-Några problem syns bara medan fordonet gör något. En svag cell ser bra ut i vila och sjunker under
-last. En pump är tyst tills den är varm. Livedata visar hur en signal rör sig i stället för en enda
-siffra.
+En skanning visar vad bilen rapporterade vid ett tillfälle. I **Livedata** kan du följa valda värden när de förändras och spara en inspelning för att granska den senare.
 
-## Hur sampling fungerar
+## Vad du kan följa i Livedata
 
-Livevyn är en pollningsslinga. Varje tick läser varje vald kanal en gång, över
-`0x22 ReadDataByIdentifier`, och slingan fortsätter till nästa tick. Kanalkatalogen innehåller
-51 kanaler fördelade på batteri, drivlina, termik, klimat och 12 V; en körning samplar de kanaler du
-valde och inga andra.
+Du kan kombinera mätvärden från olika styrenheter på samma skärm eller välja en färdig
+signalsamling:
 
-Ett tick är en batch: varje kanal tillfrågas i tur och ordning och svaren kommer tillbaka
-tillsammans. Det är därför ett brett urval i snabb takt är hårdare mot fordonet än ett smalt. Se
-[Takt och budgetar](#takt-och-budgetar).
+- **Batteri och eldrift**: Paketspänning (V), ström (A), effekt (kW), laddningsnivå (SoC %), högsta/lägsta cellspänning, växelriktartemperaturer och motorvarvtal.
+- **Termiskt system och klimat**: Kylvätsketemperaturer före och efter batteri och motorer, kylpumpars hastighet, värmepumpstryck, kupétemperatur och fläkthastighet.
+- **Chassi och bromsar**: 12-voltsbatteriets spänning, hjulhastigheter, bromstryck och styrvinkel.
+- **Förbränningsmotor och hybrid (CMA/SPA)**: Motorvarvtal, kylvätsketemperatur, oljetemperatur, laddtryck, bränsletryck, gasspjäll och avgastemperaturer.
 
-Hela livevyn är skrivskyddad: den läser bara och skriver ingenting till fordonet.
+## Två sätt att hämta livedata under ytan
 
-<Callout kind="note" title="Ett separat push-läge finns">
-UDS `0x2A ReadDataByPeriodicIdentifier` är en annan mekanism: styrenheten registrerar en
-identifierare och skickar själv prover, i långsam (cirka 5 s), medel (cirka 1 s) eller snabb (cirka
-100 ms) takt, med 1–600 prover, en tidsgräns på 30 s för läsningen och en obligatorisk avslutning
-(`0x2A 0x00`) så att bussen aldrig lämnas översvämmad. Livevyn använder inte denna väg; förväxla
-inte registreringsfunktionen med pollningsslingan ovan.
-</Callout>
+När du trycker på **Starta** väljer Hanterill automatiskt den effektivaste metoden för varje
+styrenhet:
 
-## Förval
+<SpecList rows={[
+  ["Periodisk strömning", "Om styrenheten stöder periodisk sändning ber Hanterill modulen att själv skicka det valda mätvärdet med jämna mellanrum. När du trycker på Stopp avregistreras strömningen direkt så att ingen trafik fortsätter i bakgrunden."],
+  ["Taktad avfrågning", "För styrenheter som inte använder periodisk strömning frågar Hanterill efter de valda värdena i en jämn takt utan att överbelasta fordonets gateway."],
+]} />
 
-Att välja bland 51 kanaler en i taget är långsamt, så båda gränssnitten har namngivna urval. De är
-inte samma listor.
+Om du har en stödd USB-till-CAN-adapter ansluten kan Hanterill dessutom lyssna passivt på
+kontinuerliga CAN-meddelanden som sänds på bussen.
 
-Appen har sex grupper plus ett eget urval:
+## Verktyg under en pågående mätning
 
-| Grupp | Kanaler | Frågan den svarar på |
-| --- | --- | --- |
-| Batteri & HV-hälsa | 6 | Uppför sig paketet under denna last? |
-| Snabbladdning & termik | 6 | Flyttas värme bort under en snabbladdning? |
-| Drivlina & växelriktare | 5 | Vad gör motorerna och växelriktarna? |
-| 12V & vilström | 4 | Håller stödrailsen? |
-| Klimat & HVAC | 5 | Gör kupé- och paketslingan det den ska? |
-| Fullständig paketdiagnos | 6 | En bred batterifångst med korssignalerna samlade |
+Medan graferna rullar på skärmen **Livedata** kan du:
 
-CLI:et har fyra: batteri (16 kanaler), drivlina (11), termik (21) och alla (alla 51). "Alla" och
-"Termik" finns bara i CLI:et; appens grupper är mindre och riktade mot en skärms kurvor.
+- **Se min-, max- och nuvarande värde**: Varje mätkort visar lägsta och högsta noterade värde sedan start tillsammans med det aktuella värdet och dess enhet.
+- **Pausa och granska kurvan**: Frys grafen tillfälligt för att inspektera en spik eller dipp medan mätningen fortsätter i bakgrunden.
+- **Ändra uppdateringsintervall**: Välj snabb uppdatering när du följer ett gaspådrag eller bromstryck, eller ett lugnare intervall när du loggar temperaturer under en timslång laddning.
+- **Automatiskt skydd mot överbelastning**: Om en styrenhet tillfälligt är upptagen sänker Hanterill automatiskt frågetakten ett steg i stället för att avbryta hela inspelningen.
 
-Om ett förval namnger en kanal som det anslutna fordonet inte stöder rapporteras luckan i stället
-för att tas bort utan kommentar.
+## Spara och exportera till CSV eller JSON
 
-## Takt och budgetar
+Varje livedatakörning sparas i din aktiva session med tidsstämplar på millisekundnivå. När du har
+stoppat mätningen kan du exportera hela tidsserien till:
 
-| | CLI | Appen |
-| --- | --- | --- |
-| Takt | `--hz` 1–5, standard 1 | 200, 500, 1000 eller 2000 ms (0,5–5 Hz), standard 500 ms |
-| Antal | `--samples` 1–10000, standard 1 för `live`, 5 för `record` | inget: den kör tills du stoppar |
-| Stoppvillkor | provantalet nås, eller capture-budgeten tar slut | Stopp, eller operationens tidsgräns på en timme |
-| Tillåtet intervall | inte tillämpligt | 20–5000 ms |
-
-CLI:ets capture-budget är prover × 30 s, klämd till mellan 30 s och 300 s. Appen har ingen
-varaktighet eller provantal som du ställer in; den samplar tills du stoppar den, eller tills
-operationens tidsgräns på en timme avslutar körningen.
-
-Bara en ström körs åt gången: ett andra startförsök avvisas som upptagen i stället för att tyst
-stoppa den första. Pausa, återuppta och stoppa finns under hela körningen.
-
-Högre takt är inte automatiskt bättre. Fordonets gateway betjänar varje modul på en anslutning, så
-en snabb fångst av många kanaler konkurrerar med sig själv. En fångst på 1 Hz av sex kanaler blir
-långt mer tillförlitlig än 5 Hz av fyrtio.
-
-## Inspelning till fil
-
-Appen spelar in medan den samplar, utan ett separat "spara"-steg. Varje körning blir en
-`live-recording`-artefakt i sessionsarkivet, plus en `live-recording-chunk` var 128:e prov, under
-id:t `recording-{operationId}`. Sessioner ligger i `sessions.json` under operativsystemets
-datakatalog. Appen behåller också de tio senaste körningarna i webbläsarens local storage, så att
-inspelningslådan överlever en omladdning.
-
-Varje sparat prov bär `channelKey`, `value`, `error`, `sequence`, `scheduledMs`, `capturedMs` och
-`gap`. Manifestet bär `schemaVersion` 1, `id`, `sessionId`, start- och stopptider, `channels`,
-`intervalMs`, `sampleCount`, `chunkCount`, `terminalState` och `error`.
-
-<Callout kind="caution" title="Appens timer mäter inte försening">
-I appen är `scheduledMs` lika med `capturedMs` och missade intervall registreras som 0: en körning
-som hamnade efter ser exakt likadan ut som en som inte gjorde det. Bara CLI:ets schemaläggare
-skickar gap-markörer för missade intervall, så om du behöver bevis för att ett tick var sent bör du
-spela in från CLI:et.
-</Callout>
-
-CLI:et skriver bara en fil när du anger `--output`. JSON är `schema_version` 1, kind
-`live-recording`, med start- och stopptider, förval, `interval_ms`, `sample_iterations`, kanaler,
-täckning och frames. CSV är långformat:
-`sequence,scheduled_ms,captured_ms,channel,ecu_hex,did_hex,state,value,unit,error`.
-
-Varken appens chunkar eller manifestet lagrar en avkodarversion eller en enhet. Inspelningen är
-proverna, inte avkodningen som gav dem.
-
-## Uppspelning
-
-Appens uppspelning körs på klientsidan över lagrade prover. Den spelar upp inspelningslådan,
-chunkarna i sessionsarkivet och filer du importerar (`.json` eller `.csv`). Kontrollerna är ett
-intervallreglage, play/paus och en hastighetsknapp som växlar 1x → 2x → 5x. Varje kanal i
-inspelningen ritas upp; den enda kanalkontrollen är att slå av och på i teckenförklaringen.
-
-CLI:ets `replay` är en annan motor: den stegar virtuell tid i steg om en sekund genom en sparad
-inspelning och skriver ut de prover som förfaller i varje fönster. Den är deterministisk och läser
-aldrig ett fordon.
-
-Uppspelning är tydligt märkt som uppspelning. En inspelning presenterar sig aldrig som en
-liveavläsning, och en simulerad session presenterar sig aldrig som en inspelning.
-
-Diagrammen delar ett beteende: en y-axel per enhet, en crosshair-verktygstips, zoom inuti plus ett
-reglage när en kanal har fler än 40 punkter, och en rullbar teckenförklaring. Det finns inga
-punktmarkörer.
-
-## Att exportera en kurva
-
-Liveexport och inspelningsexport är olika former, och rubrikerna är importkontraktet.
-
-- Live-JSON har kind `live-telemetry`: `intervalMs`, `channels` och prover med `sampleIndex`,
-  `offsetMs`, `channelKey`, `label`, `value` och `unit`.
-- Live-bred-CSV är `Sample, t_ms (nominal), <label> (<unit>) ...`. En rad per tick, en kolumn per
-  kanal. Tidsbasen är **nominell, inte uppmätt**: `t_ms` är den schemalagda offseten, inte en
-  ankomstklocka.
-- Inspelnings-CSV är långformat `Sample, Offset (ms), Channel, Value, Error`, samma form som
-  importören tar emot.
-- Inspelnings-JSON har kind `live-recording`.
-
-CSV-formelinjektion saneras, så en kanaletkett som börjar med `=` kan inte köras när filen öppnas.
-CLI:ets `export <session.json>` skriver ett paket, inklusive `live_telemetry.csv` och
-`manifest.csv`, så en session kan packas upp utan appen.
-
-## Strömhälsa och inaktuella värden
-
-Det finns ingen skärm för systemtelemetri på värdsidan. Inget ritar datorns CPU, minne eller transporttid. Det appen
-visar är smalare och knutet till strömmen:
-
-- En statistiktabell per kanal visar nuvarande, min, max, medel, antal prover, trend och åldern på
-  det senaste provet.
-- Räknare per ström följer received, flushes, coalesced, faktisk Hz, gaps och errors.
-- En tystnadsvakt markerar en kanal som avstannad när den slutar svara tillräckligt länge, i stället
-  för att läsas som om den bara var långsam.
-- Ett sparat diagramfönster behåller 600 prover per kanal, så en lång körning visar färsk historik i
-  stället för att växa utan gräns.
-
-Härledda mått räknas fram från livekanalerna: paketets effekt (volt × ampere), termisk delta över
-paketet, kombinerad drivlineström, mekanisk effekt bak och 12 V-effekt. De visas bredvid de råa
-kanalerna, och de är härledda. Fordonet skickade dem inte.
-
-Fordonets delsystemsvyer ligger bredvid livevyn för de långsammare frågorna; livedata är för dem som
-bara finns medan något rör sig.
-
-## När du ska använda det
-
-- För batterihälsa, se paketström och spänning tillsammans under acceleration, jämför sedan
-  cellspridningen i vila mot spridningen under last.
-- För termiska problem, se kylvätska in och ut, och om deltat växer under ihållande last eller
-  ligger platt.
-- För intermittenta fel, spela in medan felkoden sätts, spela sedan upp förloppet bredvid
-  de frysta ramdata modulen sparade.
-- Före och efter en reparation, spela in samma kanaler under samma förhållanden, jämför sedan.
+- **CSV**: Öppnas direkt i Excel, Numbers, Google Kalkylark eller Python/MATLAB med en kolumn per givare och en rad per tidsstämpel.
+- **JSON**: Innehåller både mätvärdena, enheterna, källstyrenheterna och sessionens metadata.
 
 ## Nästa steg
 
-- [Sessioner och bevis](/docs/sessions-and-evidence): var inspelningar bor och hur de jämförs.
-- [CLI](/docs/cli): `live`, `record` och `replay` med uttryckliga gränser.
+- [Delsystemsvyer](/docs/subsystem-telemetry): färdiga översiktsskärmar för klimat, bromsar, styrning, ADAS och kaross.
+- [Motorvy](/docs/engine-lane): livedata och diagnostik för bensin-, diesel- och hybridmodeller.
+- [Laddning](/docs/charging): följ AC- och DC-laddning i realtid.

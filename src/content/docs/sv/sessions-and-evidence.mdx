@@ -1,147 +1,51 @@
-Varje läsning Hanterill gör sparas som bevis, inte som en skärmbild eller en PDF: vad som frågades,
-vad som kom tillbaka, när, och av vilken avkodare det tolkades. Den här sidan förklarar vad en session
-är, hur jämförelser fungerar, och vad varje exportformat är till för.
+Hanterill sparar skanningar som sessioner på din dator. I **Sessioner** kan du granska tidigare avläsningar, lägga till anteckningar, jämföra två besök och exportera ett underlag. Historiken finns kvar när bilen är frånkopplad.
 
-## Vad en session innehåller
+## Vad som sparas i en session
 
-Arkivet är ett enda JSON-dokument, schema v4. Det håller sessioner, råa blobbar, observationer,
-felkoder, artefakter, DID-tillämplighet och diagnostiska svar. Själva sessionsposten är mindre än det
-låter: ett id, fordonets referens (ägarens fulla VIN), en kontraktsversion, en skapad tid och en
-anteckning. Det finns ingen sluttid och ingen appversion på posten.
+En session samlar uppgifter från ett besök vid bilen:
 
-Det appen faktiskt sparar är en JSON-artefakt per delsystem:
+- **Fordonsidentitet och tidsstämpel**: Datum, klockslag, plattform, modell och chassinummer (VIN).
+- **Alla avlästa värden och råsvar**: Batterihälsa, cellspänningar, felkoder med ögonblicksbilder, mjukvaruversioner och delsystemsvärden, tillsammans med de exakta råbytes som styrenheterna skickade.
+- **Egna anteckningar**: Du kan namnge sessionen och skriva fria anteckningar (till exempel *"Före 6 000-milaservice"*, *"Efter byte av 12 V-batteri"* eller *"Provkörning av begagnat objekt"*).
+- **Kraschsäker lagring**: Varje fil skrivs atomärt till disken så att en sparad session aldrig blir trasig om datorn skulle få slut på batteri eller om kabeln rycks ur.
 
-- diagnostikrapporten
-- battericeller och batteritermik
-- styrmodulregistret
-- firmwarerevisionen
-- viloförbrukningen
-- valfritt: en liveinspelning, en DID-skanning, en DID-skanning över allt och en felkodsrensning
+## Jämför två sessioner sida vid sida (Diff)
 
-Varje artefakt bär ett id, en `kind`, en schemaversion, en JSON-kropp och en SHA-256. Ett
-fångstmanifest ligger bredvid dem med start- och stopptider, räknare för fångade och misslyckade
-poster, och den härledda semantiken. Rapportartefakten är den rikaste. Den bär appversionen, policyns
-id och version, poängen, utlåtandet, fynden, täckningsluckorna och en kontrollsumma.
+En enskild avläsning visar hur fordonet mår idag, men en **jämförelse mellan två sessioner** visar
+hur fordonet har förändrats över tid:
 
-Råa bevis är inbyggda i designen, men skrivs inte i dag. Tabellerna för råa blobbar, observationer,
-felkoder och diagnostiska svar finns, med ordagrant utbytta meddelanden och hashvärden, men ingen
-produktionskod skriver dem för närvarande, och att läsa in en session returnerar aldrig råa bevis.
-"De råa byten stannar bredvid det avkodade värdet" är en designad kapacitet, inte aktuellt beteende.
+1. Öppna **Sessioner** i sidofältet.
+2. Välj en baslinjesession (till exempel från förra året eller före ett verkstadsbesök) och en nyare session.
+3. Klicka på **Jämför**.
 
-<Callout kind="note" title="Var sessioner bor">
-Arkivet är `sessions.json` under din OS-datakatalog, med en minnesintern reserv. Att radera en session
-tar bort dess artefakter och dess bevis. Lagringstiden är 90 dagar som standard, med 30, 90, 365 eller
-behåll för alltid som val; den verkställs vid start och när inställningen ändras. Det finns ingen
-gräns för arkivets totala storlek. Se [Integritetsskydd](/docs/privacy) för lagringstid och radering.
-</Callout>
+Hanterill visar direkt:
 
-## Att jämföra två sessioner
+<SpecList rows={[
+  ["Skillnader i felkoder", "Vilka felkoder som är helt nya, vilka som har försvunnit och vilka som ligger kvar sedan förra gången."],
+  ["Skillnader i mjukvara", "Exakt vilka styrenheter som har fått ny mjukvaruversion efter ett verkstadsbesök eller en OTA-uppdatering."],
+  ["Utveckling i batterihälsa", "Hur hälsotillstånd (SoH %), cellbalans (delta i mV) och mätarställning har förändrats mellan de två datumen."],
+]} />
 
-Fem diffdomäner är inbyggda, och var och en svarar på sin egen fråga:
+För att du aldrig ska råka jämföra två olika fordon av misstag kontrollerar identitetsspärren att
+båda sessionerna har samma chassinummer (VIN) innan jämförelsen visas.
 
-| Domän | Frågan den svarar på |
-| --- | --- |
-| Felkoder | Vad ändrades mellan skanningen före reparationen och skanningen efter? |
-| Batteri och celler | Har någon cellgrupp driftat sedan förra besöket? |
-| Styrenhetskarta | Dök en modul upp, eller slutade en svara? |
-| Firmware-SBOM | Ändrades mjukvaran på någon modul faktiskt? |
-| Fordonsgenom | Ändrades fordonets byggkonfiguration (`0xC010`)? |
+## Förseglade bevispaket och integritetsnivåer vid export
 
-Det finns ingen "full rapportjämförelse". Felkodsdomänen rapporterar fyra kategorier: Nya utlösta,
-Åtgärdade, Kvarstående och Overifierade.
+När du exporterar en session eller en rapport kan du välja mellan tre integritetsnivåer beroende på
+vem som ska ta del av filen:
 
-Varje domän matchar de två sessionerna efter en stabil identifierare snarare än position:
+<SpecList rows={[
+  ["Fullständig (Research / Eget arkiv)", "Behåller alla rådata, serienummer och hela det 17-ställiga chassinumret för din egen dokumentation."],
+  ["Support (Maskerad)", "Maskerar chassinumret till början och slut, hashar serienummer och rensar bort eventuella platsuppgifter medan alla diagnostiska mätvärden och felkoder finns kvar."],
+  ["Publik (Anonymiserad)", "Tar bort alla fordonsidentifierande fält så att du tryggt kan dela en intressant mätning i ett forum."],
+]} />
 
-| Domän | Matchas efter |
-| --- | --- |
-| Celler | fysiskt index |
-| Firmware och styrenhetskartor | moduladress |
-| Felkoder | enbart modul plus kod: status visas, men ingår inte i identiteten |
-| Fordonskonfiguration | optionindex, det vill säga position |
-
-Saknad täckning bevaras och räknas aldrig som en åtgärd. En felkod som finns i baslinjen men saknas i
-målet är Overifierad, inte Åtgärdad, när målet inte täckte den modulen. En cell som inte mättes
-behåller `null` som delta. Jämförelser mellan olika fordon och mellan olika kontrakt avvisas.
-
-Batteriavläsningar kommer tillbaka som förbättrad, försämrad, oförändrad eller inte uppmätt. Firmware
-kommer tillbaka som matchande, uppdaterad, ligger efter eller saknad. Fordonskonfiguration kommer
-tillbaka som matchande, eftermonterad, avaktiverad eller ändrad.
-
-Separat från diffdomänerna håller batterisidan en driftliggare för baslinje mot aktuell avläsning:
-SoH, spridning, svagaste cell och tak för urladdningseffekt. Dess variationsband är 0,5 % SoH och 2 mV
-spridning, så en variation inom banden läses som normal snarare än som rörelse.
-
-CLI:et exponerar felkods-, cell- och firmwarediffarna som egna kommandon; de övriga domänerna finns i
-appen.
-
-## Att exportera
-
-Sessionsdialogen erbjuder fem val, och ZIP är bara paketering, aldrig ett innehållsformat:
-
-<Callout kind="caution" title="Kontrollera integritet och import innan du väljer format">
-För en person som ska läsa, använd rapportbyggarens PDF eller utskriftsvy. Välj CSV för kalkylark
-och modulära JSON-filer för ett maskinläsbart arkiv. **Enkel JSON skriver för närvarande ut hela
-fordonsreferensen även om VIN-maskering är vald.** Appens exportfiler matchar inte heller
-importschemat, så räkna inte med Import som metod för att återställa en säkerhetskopia. Granska
-filen innan du delar den.
-</Callout>
-
-| Val | Vad det ger |
-| --- | --- |
-| CSV-ZIP (standard) | den modulära CSV-uppsättningen, paketerad som ett arkiv |
-| JSON-ZIP | den modulära JSON-uppsättningen, paketerad som ett arkiv |
-| Separata CSV-filer | samma CSV:er, skrivna som enskilda filer |
-| Separata JSON-filer | samma JSON:er, skrivna som enskilda filer |
-| Enkel JSON | ett konsoliderat dokument för hela sessionen |
-
-Den modulära uppsättningen täcker manifest, batteri, celler, termik, felkoder, styrenheter, firmware,
-livedata, viloförbrukning, serviceschema, fordonssammanfattning och diagnostikrapport.
-Rapportbyggaren erbjuder dessutom PDF, HTML, JSON, CSV och Markdown, och innehållet är valbart:
-frysta ramdata, cellspänningskartan och styrenheternas mjukvaru-BOM kan var för sig tas med eller
-lämnas utanför.
-
-CLI:et är smalare: `export` skriver enbart JSON- eller CSV-kataloger. Det ger ingen ZIP, inget enskilt
-filsdokument och ingen PDF.
-
-<Callout kind="caution" title="Kalkylarkssäkerhet">
-En CSV-cell som börjar med `=`, `+`, `-` eller `@` kan köras som en formel när filen öppnas. Både
-appens exportörer och CLI:et neutraliserar dessa prefix före skrivning, så en felbeskrivning kan
-aldrig bli en levande formel i Excel.
-</Callout>
-
-## VIN-maskering vid export
-
-Varje exportdialog för sessioner visar VIN-maskeringsvalet, och maskering är på som standard.
-Gränssnittsexporten skriver själv en form med sex tecken först, asterisker och fyra tecken sist. Appens
-rapporter, CLI:et och supportpaketet använder i stället en stil med trebokstavsprefix som `ABC...1234`.
-
-En väg följer inte valet: exporten till enkel JSON ignorerar maskeringsrutan och skriver hela
-fordonsreferensen. Behandla den filen som omaskerad, oavsett vad dialogen sade.
-
-Supportpaketet är striktare oavsett inställningen: det rensar serienummer, GPS-koordinater, IP-adresser,
-e-postadresser och inloggningsuppgifter innan en fil lämnar maskinen.
-
-## Att importera
-
-Import tar emot ett enda camelCase-dokument och avvisar okända fält. Den kräver en exakt
-kontraktsversion av `1.0`, mellan 1 och 100 artefakter, och en 64-teckens hex-SHA-256 per artefakt som
-matchar dess innehåll. Rapportartefakter måste dessutom passera en rapportkontrollsumma. Gränssnittet
-begränsar filen till 5 MB och backend till 10 MiB. Ett nytt id härleds enbart från det maskerade
-fordonet.
-
-Ärlig varning: ingen av appens egna exporter matchar detta importschema, så export följt av import är
-inte garanterat. Import poängsätter inte det den läser in.
-
-## Att poängsätta en gammal session igen
-
-Inspektionsrapporten bär versionen av det regelset som producerade dess poäng, så en sparad session kan
-poängsättas om under aktuell policy (v1.0.0) utan att återansluta till fordonet. En ompöängsättning
-verifierar rapporten, utvärderar den på nytt och returnerar både föregående och aktuell dom, fynd och
-täckningsluckor. Den är skrivskyddad: den lagrade artefakten skrivs aldrig om, och rapportens
-SHA-256-kontrollsumma säger fortfarande om en fil har ändrats sedan den skrevs.
+Varje exporterat bevispaket innehåller dessutom kryptografiska kontrollsummor (digests) över de
+uppmätta svaren så att du i efterhand kan verifiera att en sparad rapport inte har ändrats i ett
+textredigeringsprogram.
 
 ## Nästa steg
 
-- [Livedata](/docs/live-telemetry): att fånga en ström över tid.
-- [Inspektionsrapporter](/docs/inspection-reports): vad den poängsatta rapporten gör med en session.
-- [CLI](/docs/cli): `export`, `replay`, `dtc-diff`, `cells-diff` och `firmware-diff` för skriptat arbete.
+- [Mjukvara och inventering](/docs/firmware-and-inventory): se hur mjukvaruversioner jämförs mellan besök.
+- [Vilodränering](/docs/parasitic-drain): använd två sparade sessioner för att beräkna viloförbrukning.
+- [Integritet](/docs/privacy): var dina sessionsfiler lagras på datorn och hur du rensar dem.

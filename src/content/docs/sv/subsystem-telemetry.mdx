@@ -1,148 +1,60 @@
-import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+Hanterill har separata vyer för bland annat klimat, drivning, laddning och bilens 12 V-system. Varje vy samlar uppgifter som hör till samma system. Vissa jämför också närliggande mätvärden och markerar när de inte stämmer överens.
 
-Delsystemskärmarna svarar på en fråga var: vad gör den här delen av fordonet just nu. De läser en
-fast uppsättning signaler, visar det aktuella värdet för var och en och namnger modulen och
-identifieraren som svarade.
+## 1. Klimat och värmehantering (CCM)
 
-<SafetyNotice level="read-only">
-Varje skärm på den här sidan är en läsning. Varje signal hämtas med `0x22 ReadDataByIdentifier` och
-avkodas lokalt. Ingenting här skriver till en modul, startar en rutin eller ändrar fordonets
-beteende.
-</SafetyNotice>
+Klimatstyrenheten (**CCM**) sköter inte bara kupévärmen utan arbetar på eldrivna fordon även ihop med
+värmepumpen, högspänningsvärmaren och batterikylningen:
 
-## Bortom livedata
+- **Kupétemperaturer**: Inställd temperatur för vänster och höger zon jämfört med uppmätt temperatur i kupén och utanför bilen.
+- **Värmepump och AC-krets**: Köldmedietryck, kompressorns varvtal och effektförbrukning samt förångarens temperatur.
+- **Kylvätskekretsar och spjäll**: Temperaturer i kylvätskekretsen, cirkulationspumpar, kupéfläktens hastighet och luftspjällens lägen.
 
-Livedata är en pollningsslinga över ett kanalurval du väljer, och poängen är hur en signal rör sig
-över tid. Delsystemstelemetri är motsatt form: en enda genomgång av en fast frågelista, ett aktuellt
-svar per signal. Använd delsystemskärmarna för att kontrollera om ett värde är rimligt nu. Använd
-[Livedata](/docs/live-telemetry) för att se det ändras under last. Båda läser samma fordon över samma
-transport och behåller källan för varje läsning.
+## 2. Bromsar och chassi (BCM / BCM2)
 
-## Hur en delsystemsläsning går till
+Bromsstyrenheten hanterar både den hydrauliska färdbromsen, regenerativ bromsning och den
+elektroniska parkeringsbromsen (EPB):
 
-Varje signal bär sitt eget tillstånd: `measured` när modulen svarade och nyttolasten avkodades,
-`unsupported` när modulen avvisar identifieraren, `failed` när läsningen tog slut på tid eller
-nyttolasten var felformad, och `not_attempted` när plattformen inte kan mappa modulen alls.
+- **Hjulhastigheter per hjul**: Visar hastigheten från alla fyra ABS-givare sida vid sida så att du direkt ser om en krans eller givare avviker.
+- **Bromstryck och pedalrörelse**: Huvudcylinderns hydraultryck och bromspedalens läge.
+- **Elektronisk parkeringsbroms (EPB)**: Visar om ställdonen på bakaxeln är åtdragna, släppta, i rörelse eller i serviceläge, samt strömförbrukning i respektive parkeringsbromsmotor.
+- **12-voltsmatning till bromssystemet**: Spänningsnivå vid bromsstyrenheten.
 
-Två regler följer:
+## 3. Styrning och hjulupphängning (PSCM / SASM / SUM)
 
-- En saknad eller misslyckad läsning visas som saknad, aldrig som noll. En nolla på dessa skärmar är
-  en uppmätt nolla.
-- Ett avkodat värde som är fysiskt omöjligt för sin givare stängs av. Det blir ett typat fel i
-  stället för en siffra.
+Samlar data från servostyrningsmodulen (**PSCM**), rattvinkelsensorn (**SASM**) och, på fordon med
+aktiv fjädring, fjädringsstyrenheten (**SUM**):
 
-Skärmen visar källan som en adress och en DID, så en tom rad säger fortfarande vad som efterfrågades.
+- **Rattvinkel och vinkelhastighet**: Visar aktuell rattvinkel i grader och om nollpunktskalibreringen är giltig.
+- **Vridmoment i rattstång och servomotor**: Visar hur mycket kraft föraren lägger på ratten och hur mycket elservot hjälper till.
+- **Nivågivare och dämpare**: Visar fjädringsväg per hörn på fordon utrustade med elektroniskt styrd fjädring.
 
-## Termik och värmepump
+## 4. Förarstöd och kameror/radarer (ADAS)
 
-Termikskärmen läser tretton signaler från tre moduler: VCU1:s kylmedie- och värmekrets, CCM:s
-förångare samt ECM:s värmepumpstemperaturer och kylfläkt. De täcker kylmedietryck och temperatur vid
-inlopp och utlopp, värmekretsens inlopp och utlopp, elkompressorns varvtal, förångarens kärna,
-kompressorns inlopp, kondensorn, batteriets kylkrets, värmeväxlaren och kylfläktens arbetscykel.
+Följer status och kalibreringstillstånd för framåtriktad kamera (**ASDM / FLR**), hörnsensorer för
+döda vinkeln (**SODL / SODR**) och parkeringskameror (**PAC / PAS**):
 
-Varje värde grindas mot ett intervall innan det visas:
+- **Kalibreringsstatus och sikt**: Visar om kamera eller radar rapporterar godkänd kalibrering eller om sikten är skymd av smuts, imma eller en ny vindruta.
+- **Ultraljudssensorer (parkeringshjälp)**: Visar uppmätt avstånd för de främre och bakre parkeringssensorerna.
+- **Styrspänning och modulernas temperatur**: Kontrollerar att kameror och värmeelement i vindrutans kamerahus får rätt matning.
 
-- kylmedietryck 0–40 bar
-- krets- och kärntemperaturer −40–150 °C, förångare −40–80 °C
-- kompressorvarvtal 0–15000 rpm
-- kylfläktens arbetscykel 0–100 %
+## 5. Kaross, dörrar och säten (CEM / DDM / PDM / PSM)
 
-En normal läsning är en kompressor som snurrar när kyla efterfrågas, en förångare kallare än kupén
-och en tryckskillnad mellan inlopp och utlopp över den arbetande kretsen. En misstänkt läsning är en
-kompressor på noll varv när kyla efterfrågas, inlopps- och utloppstryck ovanpå varandra med
-kompressorn igång, eller en temperatur som faller på rimlighetsgrinden medan grannarna på samma modul
-svarar.
+Läser av centraldatorn (**CEM**), dörrstyrenheterna (**DDM, PDM, RDDM, RPDM**), elbakluckan
+(**POT**) och sätesmodulerna:
 
-Skärmen ritar kretsen som ett schema och listar samma tretton värden i en tabell. Batteriets
-kylkretstemperatur är en rad där. Den fullständiga modultemperaturkartan är en batteriläsning, och
-givarnas placering är fortfarande preliminär; se [Batteridiagnostik](/docs/battery-diagnostics).
+- **Dörr-, huv- och bakluckekontakter**: Visar exakt vilken dörr eller lucka som rapporterar öppen eller låst (praktiskt om larmet löser ut eller om fordonet vägrar låsa).
+- **Fönsterhissarnas läge och klämskydd**: Visar om fönsterhissarna är kalibrerade för automatisk upp-/nedkörning.
+- **Sätesvärme, rattvärme och sätesmotorer**: Visar aktiv effekt och temperaturgivare i säten och ratt.
 
-## Drivenheter
+## 6. Yttre och inre belysning (HCM / HCML / HCMR)
 
-Motorskärmen läser den främre drivenheten (IHFA) och den bakre drivenheten (IEM), nio signaler per
-axel: statorlindning 1 och 2, rotorns varvtal, axelvridmoment, växelriktarens HV-busspänning,
-kylvattnets inlopp och utlopp, växelriktarens HV-ström och säkringssidans terminalspänning från
-BECM.
+Läser av strålkastarstyrenheterna för vänster och höger sida samt kupébelysningen:
 
-Ett normalt parkerat fordon visar rotorns varvtal nära noll, vridmoment nära noll, båda lindningarna
-nära kylvattnet och en HV-busspänning nära paketspänningen. Under last stiger vridmoment och ström
-tillsammans och lindningarna blir varmare än kylvattnet.
+- **Status för halvljus, helljus, varselljus (DRL) och blinkers**: Bekräftar om respektive LED-grupp är aktiv och drar normal ström.
+- **Automatisk höjdreglering och kurvljus (Pixel / Matrix LED)**: Visar strålkastarnas höjdvinkel och styrvinkelföljning.
 
-Skärmen klassar rotorns rörelse med ett dödband nära noll och behåller råvärdet bredvid. En liten
-läsning i parkerat läge, som −7,3 rpm, klassas som stillastående utan att siffran ändras. Råvärdet är
-det växelriktaren skickade.
+## Nästa steg
 
-Under de två axlarna finns en jämförelse fram/bak: statorlindningens temperaturdelta, framaxelns
-andel av det absoluta vridmomentet, HV-bussens delta, kylvattnets inloppsdelta och varje axels
-elektriska effekt (volt × ampere). Om någon sida inte mätte lämnas jämförelsen tom i stället för
-ifylld med en nolla. En vridmomentsfördelning lämnas också tom när båda axlarna läser noll
-vridmoment, eftersom en fördelning av ingenting är odefinierad, inte 50/50. En nollnyttolast för
-HV-ström (`62 98 61 00 00`) är växelriktarens standardvärde för ingen data i parkerat läge, inte en
-ström, så appen lämnar strömmen och all effekt som härleds ur den tom.
-
-## Laddning och effekt
-
-Laddningsfliken läser AC-intaget på ombordladdaren: uttagslåsets läge (olåst, låst eller en okänd
-råkod), den anslutna pilotkabelns strömkapacitet och batterispänningen vid laddarens poler. Låsläget
-är den tillförlitliga raden. Kabelkapaciteten och spänningsskalningen är overifierade heuristiker,
-eftersom ingen av kodningarna är fastställd mot en mätning, och båda märks som det. Appen läser ingen
-laddsession, ingen laddkurva och ingen DC-snabbladdning här, och den lagrar ingen laddhistorik.
-Laddgränsdiagnosen som faktiskt finns beskrivs i [Laddning](/docs/charging).
-
-Effektfliken läser ombordladdarens AC-ingång (AC-effekt, AC-spänning, AC-ström och om laddaren
-rapporterar aktiv laddning), DC-DC-omvandlaren (HV-ingång, 12 V-utspänning och -ström samt
-uteffekt) och tre signaler för stödbatteriet: 12 V laddningsnivå, 12 V polspänning och
-medelvilströmmen. OBC- och DC-DC-läsningarna går via en utökad diagnostisk session. Båda var
-otillgängliga i mjukvaruprofilen 2026-09-02, och appen rapporterar dem så i stället för att visa noll
-volt eller noll watt.
-
-## TCAM: reservbatteri och GPS
-
-TCAM-skärmen läser telematikens reservbatteri. Identifieraren skiljs åt av svarslängden: en kort
-post på 4 eller 7 byte avkodas som polspänning, laddningsnivå och, när posten bär dem, inre resistans
-och temperatur. Samma identifierare returnerade en ögonblicksbild på 2048 byte i fordonet från
-2026-09-02. Den layouten avkodas inte, och skärmen visar dess längd, en SHA-256 av hela svaret och ett
-begränsat hexprefix, märkt som utforskande. En okänd ögonblicksbild blir aldrig ett batteriomdöme.
-
-GPS-skärmen läser TCAM:s positionsfix endast när du begär det, bakom en samtyckesgrind. Den visar
-latitud, longitud, höjd, fixtyp och tidsstämpeln som modulen bifogade. En andra läsning hämtar
-GNSS-bufferten för flera konstellationer och listar satelliterna och den rapporterade fixkvaliteten.
-Detta är fordonets telematikposition, inte den här datorns plats, och det är inte ett spår: appen
-lagrar ingen rutt från den här skärmen.
-
-## Styrning
-
-Styrskärmen kan inte mäta rattvinkeln på den här plattformen. Rattvinkeln serveras inte som en
-diagnostisk identifierare av någon modul över DoIP/UDS; den sänds periodiskt på Mid 1 CAN-bussen
-(ram `0x16`). En tidigare version gissade en identifierare på rattvinkelsmodulen och den svarade
-aldrig. Den gissningen är borta. Läsningen rapporterar nu `not_attempted` med orsaken och skickar
-ingen begäran. Ingen vinkel, vinkelhastighet eller kalibrering fabriceras. Nollställning av
-rattvinkelsensorn är en separat servicefunktion med egen bekräftelse; se
-[Servicefunktioner](/docs/service-functions).
-
-## Serviceplan
-
-Serviceskärmen läser tre intervall från DIM: avstånd i kilometer, tid i dagar och motortimmar. Den
-läser också räknarna sedan förra servicen och räknarna som använts mot nästa. Nedräkningen tar den
-dimension som ligger närmast sin gräns och rapporterar det som kommer först: avstånd, tid eller
-motortimmar. Skärmen skriver ut räkneoperationen och identifieraren bakom varje räknare, så en
-nedräkning kan kontrolleras mot råvärdena. En räknare som DIM inte svarar på behåller sitt
-feltillstånd i stället för att läsas som noll. Leverantörens statusrader för servicedialoger är en
-separat råläsning på kapacitetssidan, visad som hex utan avkodat värde.
-
-## Plattformar och ärliga gränser
-
-Moduladresser följer plattformsregistret. En plattform som inte kan mappa en modul svarar
-`not_attempted` med en namngiven orsak, och ingen begäran skickas till en gissad adress. Därför kan en
-skärm vara tom i ett fordon och fylld i ett annat utan att något av dem är ett fel.
-
-CMA är den verifierade plattformen, och observationerna bakom dessa skärmar är tagna på den. SPA och
-SEA bär egna definitioner och behöver testas på fler fordon; behandla läsningar från dem som
-preliminära. Styrskärmen gäller ingen plattform, eftersom signalen inte finns
-på den diagnostiska bussen alls.
-
-## Nästa
-
-- [Livedata](/docs/live-telemetry): pollningsslingan för signaler som bara rör sig under last.
-- [Laddning](/docs/charging): laddgränsdiagnosen som bygger på laddnings- och batteriläsningarna.
-- [Batteridiagnostik](/docs/battery-diagnostics): paketnivåns läsningar och deras korssignaler.
+- [Livedata](/docs/live-telemetry): kombinera valfria givare från flera delsystem i samma graf.
+- [Servicefunktioner](/docs/service-functions): kalibrerings- och servicelägesrutiner för bromsar, klimat, fönster och kameror.
+- [Styrmodulregister](/docs/ecu-reference): se vilka styrenheter som ingår i varje delsystem.

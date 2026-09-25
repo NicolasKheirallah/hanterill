@@ -1,59 +1,30 @@
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 
-Most of Hanterill asks the car questions. A service function tells the car to do something: retract
-the parking brake, zero a steering-angle sensor, reset a service interval, run a coolant bleed. This
-page explains what ships, how each action is confirmed, and what cannot be undone.
+Service functions can change the car. They include parking-brake service mode, calibration and resetting a service reminder. This guide lists the actions in Hanterill, the checks shown before each one and the limits of what the app can confirm.
 
 <SafetyNotice level="adaptation" title="These actions change the vehicle">
-Everything on this page transmits a state-changing request. None of it runs without an explicit,
-per-action confirmation, and a build compiled without the write feature refuses it outright.
+Each action on this page needs its own confirmation. If the installed app does not support an action, it refuses to run it.
 </SafetyNotice>
 
-## Two kinds of request
+## Reading and changing the car
 
-- **Reads** ask for a value: identification, fault codes, measured channels, the stored result of a
-  routine that already ran. Reads are the default everywhere in the app and never change the car.
-- **Service functions** start a routine or send a command that actuates hardware.
+Ordinary scans ask the car for information. Service functions send a command that may move a part or change a stored setting. Hanterill does not use service functions to change configuration values, bypass a protected control unit or install vehicle software.
 
-Three families are refused by design in every build: writing a value by identifier, input/output
-control, and unlocking security access to write. Security access is used only to inspect the seed and
-key state, never to unlock anything. Programming and flashing are not implemented at all.
+## How confirmation works
 
-## The confirmation contract
+Before a service action runs, Hanterill shows the car, the affected control unit and the action. You must acknowledge the safety checks before you can continue. Only one service action runs at a time. The session record keeps the response from the car, because sending a command does not prove that it succeeded.
 
-A workshop tool that cannot clear a code after a repair is only half a tool, so the write surface
-exists. What makes it safe is consent rather than absence:
+You are responsible for checking the conditions around the car. Park on level ground, apply the parking brake and follow any instruction about wheel chocks or support for the 12 V battery. The app cannot verify all physical conditions. Read the prerequisite shown for the specific action before confirming it.
 
-- The running binary publishes a capability manifest, and the interface only offers what this
-  build can actually execute.
-- Each action opens a confirmation dialog naming the vehicle, the target module and the exact
-  request. The execute button stays disabled until every prerequisite checkbox is ticked. A
-  high-hazard routine gets a danger-styled confirmation.
-- Only one actuation runs at a time.
-- The audit log records the responses that actually came back, not the intent.
-- A build compiled without the write feature answers a typed `read_only_build` refusal instead of
-  failing mysteriously. That stripped configuration is for CI and development; it is not what ships.
+## Service and maintenance actions
 
-## Before you start
+The actions below remain grouped by system. The risk level is Hanterill's guide, not a substitute for the car's service instructions.
 
-The preconditions are **attested by you, not enforced by the tool**. Every routine expects a parked,
-level vehicle with the parking brake on and chocks where the procedure calls for them. It also
-expects ignition in Position II with 12 V support and a positive acknowledgment from the module.
-Each routine carries its own one-line prerequisite as well. Treat those as a checklist to have
-completed, not a warning to click past.
-
-## The routine catalogue
-
-Sixteen routines ship, all using the same routine-control service. Hazard is the app's own rating.
-
-<Callout kind="caution" title="Placeholder routines that can damage your car">
-The sixteen routines are placeholders. None of them is fully implemented or verified on a real car,
-and running one against your car can damage it. Do not use them to fix a reading. If you test one
-anyway, you do that at your own risk, whatever its support level on the **Service & Routines**
-screen says. A silent or refused request must never be read as success.
+<Callout kind="caution" title="Check support before running a routine">
+Some routines have limited verification on real cars. They can move parts or change settings. Check the support label beside the action, follow the car's service procedure and stop if the car does not confirm the result. A listed routine may still be refused by your car.
 </Callout>
 
-| System | What it does | Hazard |
+| System | What it does | Risk |
 | --- | --- | --- |
 | Electric parking brake | Retract to service position for pad replacement | High |
 | Electric parking brake | Restore from service position | Medium |
@@ -72,55 +43,36 @@ screen says. A silent or refused request must never be read as success.
 | Usage mode | Put the car into an active usage mode | Medium |
 | Usage mode | Put the car into an inactive usage mode | Medium |
 
-## The guided coolant bleed
+## Guided coolant bleed
 
-The auxiliary coolant pump is the one routine with a guided flow rather than a single action. It
-walks through a five-step sequence, letting you choose pump 1, pump 2 or both, and it distinguishes
-between "stopped because you asked" and "stopped because it could not be confirmed". An unconfirmed
-stop is reported as unconfirmed, never quietly presented as safe.
+The coolant bleed guides you through the pump steps. You can select pump 1, pump 2 or both. If the app cannot confirm that a pump stopped, it says so. Check the car before continuing.
 
 ## Clearing fault codes
 
-Clearing is its own flow, with its own page. The steps are entering extended sessions, capturing
-freeze frames before they are destroyed, bulk clear, retry, and a verify re-read that names the
-modules still holding codes. The optional force-reset step reboots stubborn modules and repairs the route
-afterwards; it is opt-in and refuses to run while the car reports a driving usage mode. See
-[DTC scanning](/docs/dtc-scanning) for the full sequence.
+Fault-code clearing has its own confirmation and options. You can save the details attached to a code before clearing it and ask Hanterill to scan again afterward. An optional control-unit restart is available for codes that remain latched, but it does not run while the car reports a driving mode. See [Fault codes](/docs/dtc-scanning) for the steps.
 
-## ECU reset
+## Restarting a control unit
 
-A module reset is available as a separate action, and it is also what the clear flow's force-reset
-step uses. It reboots the target module rather than changing a stored value. Like every other write,
-it is behind the same confirmation contract.
+You can restart one control unit as a separate action. The fault-code clearing flow can also offer a restart for a unit that keeps a code latched. Both require confirmation.
 
-## What can and cannot be undone
+## What can be reversed
 
-Three things have a reverse step: the parking-brake restore, the inverse usage mode, and switching
-the coolant pump off. Everything else is **one-way**: steering-angle zero, ADAS and camera resets,
-calibration routines, adaptation resets. There is no rollback. The interface says so before you
-confirm.
+The parking brake has a restore action. You can reverse a usage-mode change and switch off the coolant pump. The other actions do not have a rollback button. A calibration or reset may need a separate service procedure if it does not produce the expected result.
 
-## Honest limits
+## Security-level protected routines
 
-- The routine identifiers are reverse-engineered, so they carry no per-operation safety design
-  from the manufacturer. Hanterill exposes the capability, not a licence to use it; steering-angle
-  and ADAS targets should not be actuated without the manufacturer's procedure.
-- Availability depends on the vehicle mapping. Hanterill refuses a routine whose target module is
-  not resolved for that platform instead of attempting it against a guessed address.
-- Routines transmit directly without escalating the diagnostic session. Only the clear flow enters
-  an extended session first.
-- There is no separate gate that hides service functions on Testing or Research platforms. Do not
-  assume one exists.
+Some routines are protected by a security level in the car's control unit. A routine appearing in Hanterill does not mean every car will allow it. You can confirm an action and still receive a refusal from the car.
 
-## Errors and negative responses
+Hanterill can check whether a control unit reports its security level as locked or unlocked. This check does not unlock it, and Hanterill does not send an unlock key. If the car refuses a protected routine, the app shows the refusal instead of marking the action complete. Do not keep retrying a refused routine.
 
-A routine succeeds only on a positive routine-control response. The app surfaces a negative response
-with the module and the routine that produced it instead of retrying it blindly. It reports anything
-else as malformed. A timeout is never treated as success, and the app does not reset a module just to
-clear a timeout.
+## Limits and unexpected responses
 
-## Next
+Hanterill's support labels tell you what has been observed. Follow the manufacturer's service procedure, especially for brakes, steering and driver-assistance systems. A vehicle marked **Testing** or **Research** may still show service actions, so check each action's support label. If Hanterill cannot identify the required control unit, it refuses the request.
 
-- [Safety](/docs/safety): the read-only versus vehicle-changing boundary in full.
-- [DTC scanning](/docs/dtc-scanning): the clear flow and the before/after diff.
-- [Sessions and evidence](/docs/sessions-and-evidence): how a write is recorded.
+Hanterill marks an action complete only when the control unit confirms it. A refusal, missing response or reply the app cannot interpret is not shown as success. Review the result before moving on.
+
+## Related guides
+
+- [Safety](/docs/safety): precautions for actions that change the car.
+- [Fault codes](/docs/dtc-scanning): clearing and checking codes afterward.
+- [Sessions](/docs/sessions-and-evidence): how action results are saved.

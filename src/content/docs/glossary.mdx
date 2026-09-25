@@ -1,53 +1,38 @@
 import { GlossaryList } from "@/components/docs/mdx/GlossaryList";
 
-Diagnostics has its own vocabulary, and most of it is acronyms. This page is the lookup: every term
-the rest of these docs use, expanded once and explained in plain language.
+This glossary explains the labels and abbreviations used in Hanterill and its guides.
 
-If you read only one section, read the Diagnostics group. Its terms are the ones you meet on the
-first screen.
+If you are new to vehicle diagnostics, start with the **Diagnostics** group below: those are the terms
+you will see on your very first scan.
 
 <GlossaryList />
 
-## Why some terms sound similar
+## Pairs of terms that are easy to mix up
 
-A few pairs trip people up, so they are worth stating directly:
+A few terms sound similar but measure very different things:
 
-- **SoH and SoC.** State of Health is how much capacity the pack has left compared with new. State
-  of Charge is how full it is right now. A pack can be 90% healthy and 20% charged at the same time.
-- **Battery health, SoH and the report score.** Three different numbers. Hanterill reads the SoH
-  percentage from the battery controller. It calculates the per-cell summary from three per-cell
-  blocks, and the report score out of 100 from the whole car, with SoH as one input. See
-  [Battery diagnostics](/docs/battery-diagnostics).
-- **ECU and DID.** An ECU is a computer. A DID is a question you ask it. One module answers many
-  identifiers.
-- **DTC and freeze frame.** A DTC is the code that says a fault happened. A freeze frame is the
-  snapshot of conditions at the moment it happened. Not every code has one.
-- **Compatible and supported.** Compatible means Hanterill can reach the car. Supported means the
-  readings are verified. See [Supported vehicles](/docs/supported-vehicles).
-- **Provisional and verified.** A decoder marked provisional has not been confirmed against a
-  reference. A verified one has. The difference changes how much a reading should influence a
-  decision.
+- **SoH versus SoC**: **State of Health (SoH)** is how much usable storage capacity the battery pack still holds compared with when it left the factory. **State of Charge (SoC)** is how full the battery is right now, like a fuel gauge. A battery pack can be at 93% State of Health while sitting at 20% State of Charge.
+- **Battery SoH, cell delta, and the Inspection Report score**: Three separate numbers. SoH is reported by the battery management module as an overall capacity percentage. Cell delta is the voltage gap (in millivolts) between the highest and lowest individual cells at that moment. The Inspection Report score is an overall 0-to-100 vehicle evaluation that combines battery health, cell balance, fault codes, and module responses. See [Battery diagnostics](/docs/battery-diagnostics).
+- **ECU versus DID**: An **ECU (Electronic Control Unit)** is a physical computer box inside the car (such as the brake controller or climate controller). A **DID (Data Identifier)** is a single numbered measurement or setting inside that computer (such as cabin temperature or software version). One ECU answers hundreds of different DIDs.
+- **DTC versus freeze frame**: A **DTC (Diagnostic Trouble Code)** is the fault code itself, telling you what went wrong. A **freeze frame** is the snapshot of vehicle conditions (speed, voltage, temperature, mileage) recorded at the exact moment that fault occurred.
+- **Compatible versus supported**: **Compatible** means Hanterill can connect to the vehicle and read core identification and fault codes. **Supported** means the full set of subsystem readings and formulas has been verified on live cars of that platform. See [Supported vehicles](/docs/supported-vehicles).
+- **Provisional versus verified**: A reading marked **verified** has had its unit, scaling formula, and physical range confirmed on live vehicles. A reading marked **provisional** is decoded using a working formula that is still being cross-checked across additional models and trim levels.
 
-## Identifiers you will see
+## Common diagnostic actions explained
 
-The docs quote identifier numbers in hex, and they come up often enough to list here:
+When Hanterill communicates with your car over the diagnostic cable, almost everything it does comes
+down to six standard types of messages:
 
 <SpecList rows={[
-  ["0x10", "Open a diagnostic session so a module will answer"],
-  ["0x14", "Clear stored fault codes (a write, after explicit confirmation)"],
-  ["0x19", "Read fault codes and their snapshots"],
-  ["0x22", "Read a value by identifier"],
-  ["0x2A", "Periodic read: one on-demand sample, plus teardown"],
-  ["0x31", "Start a service routine, or read the result of one that ran"],
-  ["0x3E", "Tester present, so the car does not sleep mid-scan"],
+  ["Open a diagnostic session", "Tells a module to wake up its diagnostic interface so it can answer detailed identification and sensor reads."],
+  ["Keep-alive heartbeat (Tester Present)", "A quiet periodic signal sent while a scan is running so the car does not put its modules back to sleep mid-read."],
+  ["Read a data value", "Asks a module for one specific measurement or identity record (such as battery voltage, coolant temperature, or VIN)."],
+  ["Read fault codes", "Asks a module to list any stored, pending, or permanent Diagnostic Trouble Codes and their freeze-frame snapshots."],
+  ["Clear stored fault codes", "Instructs a module to erase its stored fault history. Because this changes the car's state, Hanterill always asks for your confirmation first."],
+  ["Run a service routine", "Starts a built-in maintenance procedure inside a module (such as retracting the parking brake for pad replacement or resetting the service reminder) after you confirm the safety prompt."],
 ]} />
-
-<Callout kind="note" title="Hex notation">
-An identifier like `0x1635` is a hexadecimal number. The `0x` prefix means "this is hex": `1635`
-in hex is 5685 in decimal. It is the BECM's address in the module registry.
-</Callout>
 
 ## Next
 
-- [Screen tour](/docs/workspace-tour): the screens these terms appear on.
-- [ECU reference](/docs/ecu-reference): every module code, with its address and DTC support.
+- [Screen tour](/docs/workspace-tour): see where these terms appear inside the app.
+- [ECU reference](/docs/ecu-reference): every control unit code and what it manages in the car.

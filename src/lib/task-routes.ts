@@ -21,8 +21,7 @@ export const taskRoutes: TaskRoute[] = [
   { key: "powerLoss", href: "/docs/live-telemetry" },
   { key: "intermittent", href: "/docs/live-telemetry" },
   { key: "modulesFitted", href: "/docs/ecu-reference" },
-  { key: "didMeaning", href: "/docs/cli" },
+  { key: "didMeaning", href: "/docs/did-catalogue" },
   { key: "customerReport", href: "/docs/sessions-and-evidence" },
-  { key: "scriptScan", href: "/docs/cli" },
   { key: "buildLimits", href: "/docs/safety" },
 ];

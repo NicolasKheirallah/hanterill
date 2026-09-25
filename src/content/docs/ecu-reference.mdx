@@ -1,110 +1,117 @@
 import { EcuReference } from "@/components/docs/mdx/EcuReference";
 
-A car is not one computer. It is dozens of small computers, called ECUs (electronic
-control units), wired together. Each one runs something: the brakes, the windows, the
-battery, the radio. Hanterill asks each of them what it is, what software it runs, and
-whether anything is wrong.
+A car has many control units. Some manage the battery or brakes; others handle climate control, lights or doors. Hanterill checks which ones respond when you connect. This guide explains what the units do and why one may be absent from a scan.
+The catalogue below names the control units Hanterill knows about on CMA cars. A listed unit is not necessarily fitted to every car.
 
-This page lists every ECU Hanterill can talk to on the CMA platform, with the address
-each one answers on.
+## How the module registry works
 
-## The registry
+The CMA module registry contains 49 control unit definitions:
 
-The CMA registry holds 49 entries. Forty of them advertise fault-code support. Forty-four
-have been observed on a live car; the remaining five are `ref` rows: reference entries from
-vendor documentation that have never answered. On a battery-electric car those five stay
-quiet, and Hanterill records the silence as expected instead of a fault. In other words, a
-BEV sees a roster of 44, while the 49-row list is the full CMA/ICE mapping.
+- **44 modules** have been observed and verified on live battery-electric vehicles.
+- **40 modules** support fault-code reporting.
+- **5 modules** (`ref` entries) represent combustion, hybrid, all-wheel-drive couplings, or air-suspension controllers that are only fitted on specific powertrains or trim levels. On a pure battery-electric car without air suspension, those five modules stay quiet, and Hanterill records their silence as expected rather than flagging a fault.
 
-Each entry carries a DoIP logical address. Think of it as a desk extension inside the
-car: `0x1635` is always the battery controller, the same way 432 is always the same
-desk. Hanterill sends its request to one extension, and that extension answers.
+Every control unit has a unique network address on the vehicle network. You can think of this
+address like an office phone extension inside the car: one extension always rings the battery
+management unit, another always rings the climate controller, and another always rings the
+driver's door module. Hanterill sends its request to a specific extension, and that module
+answers directly.
 
-## Gateway
+## Gateway modules
 
-Two modules sit between your laptop and everything else. The VGM is the firewall, and
-the CEM is the car's central body computer.
+Two modules sit between your laptop and the rest of the vehicle. The **Vehicle Gateway Module
+(VGM)** acts as the network router and firewall behind the diagnostic port, and the **Central
+Electronic Module (CEM)** acts as the main body computer and security coordinator.
 
 <EcuReference domain="gateway" />
 
-VGM writes need a security key that is unique per car. Reads work without one, so
-every read-only feature in Hanterill runs on a connected vehicle without extra setup.
+Reading identification data, sensor values, and fault codes through the gateway works in
+read-only mode without unlocking any security levels.
 
-## Energy
+## Energy and propulsion modules
 
-This is the high-voltage side. The BECM manages the traction battery, the VCU decides
-how much power the motors get, and the two inverters turn battery current into motor
-current (and back, when you lift off).
+This group covers the high-voltage battery and electric drive system. The **Battery Energy
+Control Module (BECM)** monitors the high-voltage pack and individual cell voltages, the
+**Vehicle Computational Unit (VCU)** coordinates driver torque requests and driving modes, and
+the front and rear **inverters (yarns/drive control modules)** convert DC battery power into
+AC power for the electric motors and capture regenerative braking energy.
 
 <EcuReference
   domain="energy"
-  caption="TCM, NRCM, SUM, DEM and MVBM are the five reference rows. They are registered so a hybrid or air-suspension car can be mapped later; on a battery-electric car they stay silent."
+  caption="TCM, NRCM, SUM, DEM, and MVBM are reference rows for hybrid, combustion, or air-suspension variants. On a standard battery-electric car they are not fitted and remain silent."
 />
 
-<Callout kind="note" title="Why ECM is not an engine controller here">
-On this platform the module called ECM is live-verified and is the drive-unit/inverter
-controller, not an engine controller. The air-suspension module, SUM, is the reference row
-people usually expect to find in its place. The name on the box is a label, not a
-description; the registry says which modules actually answered.
+<Callout kind="note" title="Why ECM is listed under electric propulsion on CMA BEVs">
+On battery-electric CMA cars, the module labeled ECM answers on the live vehicle as part of
+the electric drive and inverter control group rather than a combustion engine controller.
+Hanterill labels each module according to what actually answers on the car.
 </Callout>
 
-## Chassis
+## Chassis and driver assistance
 
-Steering, brakes, the angle sensor, and the cameras and radars that watch the road.
+Steering, braking, stability control, wheel angle sensors, and the cameras and radars that
+watch the road ahead and around the vehicle.
 
 <EcuReference domain="chassis" />
 
-## Cabin
+## Cabin, body, and infotainment
 
-Displays, doors, climate, lights, airbags, the phone-as-key radio. The long tail of
-modules most people never think about.
+Displays, doors, seats, climate control, exterior lighting, airbags, telematics, and the
+keyless entry radio modules.
 
 <EcuReference
   domain="cabin"
-  caption="Blank part numbers are positions the public documentation does not list. Hanterill still reads identification from the ECU directly with ReadDataByIdentifier."
+  caption="Even when public catalogue tables leave a part number blank, Hanterill reads the actual installed hardware and software numbers directly from the control unit during a scan."
 />
 
-## How Hanterill talks to them
+## How Hanterill communicates with each module
 
-Four UDS services do most of the work:
-
-<SpecList rows={[
-  ["0x22", "ReadDataByIdentifier: ask a module for a numbered value, such as its VIN (0xF190) or its software version (0xF195)"],
-  ["0x19", "ReadDTCInformation: ask a module for its stored fault codes"],
-  ["0x10", "DiagnosticSessionControl: ask a module to open a diagnostic session so it will answer the first two"],
-  ["0x3E", "TesterPresent: a quiet \"still here\" so the car does not put modules to sleep mid-scan"],
-]} />
-
-The common identity identifiers, read from every module that answers:
+During a normal scan, Hanterill uses four standard diagnostic requests:
 
 <SpecList rows={[
-  ["0xF190", "VIN"],
-  ["0xF18C", "ECU serial number"],
-  ["0xF193", "Supplier hardware version"],
-  ["0xF194", "Supplier software number"],
-  ["0xF195", "Supplier software version"],
+  ["Read data values", "Asks a module for a specific piece of information, such as its VIN, software version, or a live sensor reading."],
+  ["Read fault codes", "Asks a module for its stored, pending, or permanent Diagnostic Trouble Codes (DTCs) and their status."],
+  ["Open diagnostic session", "Places a module into its standard or extended diagnostic mode so its full set of sensors and identification records can be read."],
+  ["Keep-alive heartbeat", "Sends a quiet periodic pulse while a scan is actively running so modules do not go back to sleep mid-read."],
 ]} />
 
-Because Hanterill reads these from every ECU rather than only the battery, one scan
-produces a full hardware and software inventory of the car. That is what the
-[firmware view](/docs/firmware-and-inventory) diffs between visits.
+From every module that answers, Hanterill reads a standard set of identity records:
 
-## Other platforms keep their own registries
+<SpecList rows={[
+  ["Vehicle Identification Number (VIN)", "Confirms the module belongs to the connected car and checks for mismatched replacement parts."],
+  ["ECU serial number", "Identifies the physical circuit board installed in the vehicle."],
+  ["Hardware part and version", "Shows the physical hardware revision reported by the supplier."],
+  ["Software number and version", "Shows the exact firmware currently running on the module."],
+]} />
 
-The list above is the CMA registry, the one Hanterill was built and checked against. SPA and
-SEA1 carry their own, smaller registries. SPA has a separate CAN-era set and DoIP set, and
-SEA1 has its own. A definition is never shared between platforms. A module that is present
-on the reference car can be absent elsewhere, or answer at a different address, so each
-platform is resolved on its own terms rather than by family resemblance.
+Because Hanterill collects these identity records from every responding module across the car,
+a single scan produces a complete hardware and software inventory that the
+[Firmware & Inventory](/docs/firmware-and-inventory) screen can compare between service visits.
 
-## Not every module answers everything
+## Tools inside the ECU Registry screen
 
-Some modules answer identification reads but have no fault codes to report. Nine of the CMA
-entries are in that state. Those are marked `DTCs: no` above, and Hanterill skips them during
-a fault scan instead of recording a failure. A module that stays completely silent is a third
-case: it is recorded as not observed, never as broken.
+When you select an individual module in the **ECUs** screen inside the app, you can:
 
-<Callout kind="note" title="A timeout is not a diagnosis">
-When a module does not answer, it may not be fitted, may be asleep, or may not be on this
-car's build list. Hanterill says "did not answer" and leaves the judgement to you.
+- **Inspect identity and fault counts**: See the module's full name, network domain, answered software/hardware versions, and current fault count.
+- **Check security lock status (read-only)**: Query whether the module's protected maintenance levels are currently locked or unlocked without attempting to unlock them or changing anything on the car.
+- **Reset a single module**: Send a targeted module restart command when you need to reboot one specific control unit after troubleshooting, behind an explicit confirmation dialog.
+
+## Separate registries for SPA and SEA1
+
+The table above shows the 49-module **CMA** registry. **SPA** (41 catalogued modules) and
+**SEA1** (25 catalogued modules) each maintain their own independent module registries.
+Hanterill never assumes a module address from one platform applies to another: each platform
+uses its own verified address map.
+
+## Why some modules stay silent
+
+Not every module in the catalogue is fitted to every car:
+
+- **No fault-code storage**: Nine entries in the CMA catalogue answer identification reads normally but do not store fault codes of their own (`DTCs: no`). Hanterill skips them during fault scans rather than reporting an error.
+- **Optional equipment**: Modules for air suspension, rear seat heating, a towbar, or a head-up display only answer on cars built with those options.
+
+<Callout kind="note" title="A silent module is not necessarily broken">
+When a module does not answer, it may simply not be fitted to your car's trim level, or it may
+be asleep because the car is not in active ignition mode. Hanterill reports "did not answer"
+so you can distinguish an absent option from an actual communication fault.
 </Callout>

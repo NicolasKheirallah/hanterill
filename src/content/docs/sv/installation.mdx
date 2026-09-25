@@ -1,56 +1,35 @@
-Ladda ner Hanterill för din dator, kontrollera filen och öppna appen innan du ansluter ett fordon.
-På [nedladdningssidan](/download) finns den senaste publicerade versionen. Funktioner som står
-under ”Unreleased” i ändringsloggen kanske inte finns i nedladdningen ännu.
+Hanterill är en datorapp för Windows, macOS och Linux. Den körs på din dator. Du behöver inget konto eller internet för att använda den med ett fordon.
 
-## Välj rätt fil
+## Välj rätt nedladdning
 
-| Dator | Välj | Före första starten |
+Öppna [nedladdningssidan](/download) och välj filen som passar din dator:
+
+| Dator | Fil att välja | Så gör du |
 | --- | --- | --- |
-| Mac med Apple Silicon | macOS arm64 `.dmg` | Dra appen till Program. |
-| Mac med Intel | Ingen x86_64-version för macOS har publicerats ännu; se filerna i den version du installerar | |
-| Windows 10 eller 11, x64 | Windows x64 setup `.exe` | Installeraren kan hämta WebView2 om det saknas. |
-| Windows ARM64 | Välj en ARM64-fil bara om den finns i aktuell version | Alla versioner har inte nödvändigtvis en sådan fil. |
-| Ubuntu eller Debian | `.deb` | Installera med pakethanteraren så att beroenden hanteras. |
-| Fedora, openSUSE och andra RPM-distributioner | `.rpm` | Installera med pakethanteraren. |
-| Andra Linux-system | Det portabla `.tar.gz`-arkivet, eller ett paket byggt för din distribution | WebKitGTK 4.1 krävs. Kontrollera filerna för aktuell version. |
+| Windows | Installationsprogram eller MSI | Öppna filen och följ anvisningarna. |
+| macOS | DMG för Apple Silicon eller Intel | Öppna filen och dra Hanterill till Program. |
+| Linux | DEB, RPM, AppImage eller arkiv | Välj det format du brukar använda för appar i din distribution. |
 
-En fristående Windows-fil kräver att Microsoft Edge WebView2 Evergreen Runtime redan är
-installerad. Tillgängliga paket kan skilja sig mellan versioner.
+Om du inte vet vilken processor din Mac har, öppna **Om den här datorn** från Apple-menyn. Välj nedladdningen som motsvarar informationen om chip eller processor.
 
-## Kontrollera nedladdningen
+## Öppna appen första gången
 
-Om versionen innehåller `SHA256SUMS.txt`, jämför filens kontrollsumma med raden för exakt samma
-filnamn. På macOS eller Linux använder du `shasum -a 256 <nedladdad-fil>`. I Windows PowerShell
-använder du `Get-FileHash <nedladdad-fil> -Algorithm SHA256`. Om värdena inte stämmer, ta bort
-filen och ladda ner den igen.
+Datorn kan be dig godkänna en app som laddats ned från internet. Kontrollera att det är den Hanterill-fil du tänkte installera innan du fortsätter.
 
-## Öppna på macOS
+### macOS
 
-Öppna appen från Program. Om Gatekeeper säger att utvecklaren inte kan verifieras,
-Control-klicka på `Hanterill.app`, välj **Öppna** och bekräfta. macOS-bygget är ad-hoc-signerat
-och inte notariserat med ett Apple Developer ID. Tillåt åtkomst till det lokala nätverket vid
-första fordonsanslutningen. Du kan ändra behörigheten under **Systeminställningar → Integritet
-och säkerhet → Lokalt nätverk**.
+Öppna **Program** och starta Hanterill. Om macOS stoppar appen, öppna **Systeminställningar**, gå till **Integritet och säkerhet** och använd alternativet för att öppna Hanterill vid varningen. När Hanterill ber om tillåtelse att hitta enheter på det lokala nätverket, godkänn det så att appen kan nå fordonet via Ethernet-kabeln.
 
-## Öppna på Windows
+### Windows
 
-Kör installationsfilen. SmartScreen kan visa **Windows skyddade datorn** för ett osignerat bygge.
-När du har kontrollerat källan och kontrollsumman kan du välja **Mer information → Kör ändå**.
-Om appfönstret inte öppnas, kontrollera att WebView2 finns. Tillåt Hanterill i Windows-brandväggen
-när du ansluter fordonet.
+Öppna Hanterill från Start-menyn efter installationen. Windows kan visa en säkerhetsfråga första gången. Kontrollera appens namn och välj att fortsätta om det stämmer med din nedladdning. När du söker efter ett fordon kan Windows-brandväggen fråga om Hanterill får använda det lokala nätverket. Tillåt åtkomst för nätverket som din kabelanslutna adapter använder.
 
-## Öppna på Linux
+### Linux
 
-På Ubuntu eller Debian kan du installera ett nedladdat paket med
-`sudo apt install ./<paket>.deb`. Själva appens fordonsanslutning kräver inte root-behörighet.
-Om ett portabelt bygge inte öppnas, kontrollera WebKitGTK 4.1 och de beroenden som anges för
-versionen. [Anslutning](/docs/connection) tar upp en adapter som syns i Linux men inte når bilen.
+Installera paketet som passar din distribution och öppna sedan Hanterill från programmenyn. En AppImage är en portabel fil. Filhanteraren kan be dig göra den körbar innan den öppnas.
 
-## Efter installationen
+## Kontrollera installationen
 
-Den publicerade appen behöver ett riktigt fordon för en diagnostiksession. Webbplatsens
-[simulerade skanning](/features/vehicle-diagnostics) visar flödet utan ett fordon;
-utvecklingsbyggen har en separat fordonssimulator. Kontrollera
-[Fordon som stöds](/docs/supported-vehicles) och
-[Hårdvara och adaptrar](/docs/hardware-and-adapters) innan du köper en kabel.
-Fortsätt sedan med [Kom igång](/docs/getting-started).
+Öppna vyn **Anslutning**. Du kan välja ett inbyggt simulerat fordon och utforska appen innan du kopplar in en riktig bil. Simulerade värden är märkta så att de inte förväxlas med fordonsavläsningar.
+
+När du vill ansluta en bil, följ [Kom igång](/docs/getting-started). Om bilen inte visas, läs [Felsökning](/docs/troubleshooting).

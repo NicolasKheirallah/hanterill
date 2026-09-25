@@ -1,145 +1,36 @@
-Every read Hanterill makes is kept as evidence, not as a screenshot or a PDF: what was asked, what
-came back, when, and by which decoder it was interpreted. This page explains what a session is, how
-comparisons work, and what each export format is for.
+Hanterill saves each scan as a **session** on your computer. In **Sessions & Reports**, you can review past readings, add notes, compare two visits and export a record. The history remains available when the car is disconnected.
 
-## What a session contains
+## 1. What is saved inside a session
 
-The archive is one JSON document, schema v4. It holds sessions, raw blobs, observations, fault codes,
-artifacts, DID applicability and diagnostic responses. A session record itself is smaller than that
-sounds: an id, the vehicle reference (the owner's full VIN), a contract version, a created time and a
-note. There is no end time and no app version on the record.
+A saved session is a complete, time-stamped record of what your car reported during that visit:
 
-What the desktop actually saves is one JSON artifact per subsystem:
+- **Vehicle identity and mileage**: Platform, model year, powertrain, odometer readings across modules, and VIN (which you can mask with one click whenever sharing or exporting).
+- **High-voltage battery and 12 V health**: State of Health, State of Charge, pack voltage and current, all individual cell-group voltages, and thermal readings.
+- **Fault codes and freeze-frame snapshots**: Every fault code reported across the car, its live status (*Active*, *Pending*, *Stored*, *Historical*), and the freeze-frame conditions saved when the fault tripped.
+- **Module inventory and software versions**: Every control unit that answered, along with its hardware and software part numbers.
+- **Subsystem readings and raw module responses**: All decoded subsystem measurements plus the underlying raw module responses, so you can filter, inspect, or re-evaluate a saved session offline at any time without plugging back into the car.
+- **Your operator notes**: Free-text notes you attach to the session (for example, *"After replacing 12 V battery"* or *"Pre-purchase check on silver 2022 Dual Motor"*).
 
-- the diagnostic report
-- battery cells and battery thermal
-- the ECU inventory
-- the firmware audit
-- the parasitic drain
-- optionally, a live recording, a DID scan, a DID scan-all and a DTC clear
+### Safe local storage
+Sessions are written atomically to your computer's local application data folder so a power loss or sudden unplugging never corrupts your archive. If a file on disk is ever damaged, Hanterill quarantined and recovers it automatically on startup.
 
-Each artifact carries an id, a kind, a schema version, a JSON body and a SHA-256. A capture manifest
-sits alongside them with the start and stop times, the captured and failed counts, and the derived
-semantics. The report artifact is the richest. It carries the app version, the policy id and version,
-the score, the verdict, the findings, the coverage gaps and a checksum.
+## 2. The five built-in comparisons
 
-Raw evidence is designed in, but not written today. The raw-blob, observation, DTC and
-diagnostic-response tables exist, with verbatim exchanges and hashes, yet no production code path
-currently writes them, and loading a session never returns raw evidence. "The raw bytes stay alongside
-the decoded number" is a designed capability, not current behaviour.
+Having two saved sessions lets you prove what changed over time or after a workshop visit:
 
-<Callout kind="note" title="Where sessions live">
-The archive is `sessions.json` under your OS data directory, with an in-memory fallback. Deleting a
-session removes its artifacts and its evidence. Retention defaults to 90 days, with 30, 90, 365 or
-keep-forever as the options; it is enforced at startup and when the setting changes. There is no total
-archive size cap. See [Privacy](/docs/privacy) for retention and deletion.
-</Callout>
+1. **Fault Code Diff (DTC Diff)**: Pick a "before repair" and "after repair" session to see which fault codes were **cleared**, which **remained**, which **newly appeared**, and which changed status (for example, from *Active* to *Stored*).
+2. **Battery Health History & Trend**: Tracks a single car's **State of Health (SoH)**, **State of Charge (SoC)**, and **cell spread (mV)** across every saved visit over months and years, with one-click CSV export.
+3. **Cell-by-Cell History Diff**: Compares every individual cell group (all 108 positions on a CMA pack, or the matching count on SPA and SEA packs) between two sessions to see whether a weak cell group recovered after balancing or drifted further.
+4. **Module Inventory Diff**: Shows if a control unit went missing on the network or started answering again after a wiring or fuse repair.
+5. **Firmware & Software Diff**: Compares every module's software and hardware part numbers between two sessions to show the exact list of modules updated by an over-the-air (OTA) update or a dealer service visit.
 
-## Comparing two sessions
+## 3. Exporting and sharing your data
 
-Five diff domains are built in, and each one answers a different question:
+You own everything Hanterill reads from your car. From **Sessions & Reports**, you can export any session in standard formats:
 
-| Domain | The question it answers |
-| --- | --- |
-| DTC faults | What changed between the scan before the repair and the scan after? |
-| Battery and cells | Has any cell group drifted since the last visit? |
-| ECU network map | Did a module appear, or stop answering? |
-| Firmware SBOM | Did the software on any module actually change? |
-| Vehicle genome | Did the car's build configuration (`0xC010`) change? |
-
-There is no "full report comparison". The DTC domain reports four triage buckets: Newly Tripped,
-Resolved, Persistent and Unverified.
-
-Each domain aligns the two sessions by a stable identifier rather than by position:
-
-| Domain | Aligned by |
-| --- | --- |
-| Cells | physical index |
-| Firmware and ECU maps | module address |
-| DTCs | module plus code only: status is displayed, but it is not part of identity |
-| Car configuration | option index, that is, position |
-
-Missing coverage is preserved, and never counted as a fix. A fault present in the baseline but absent
-in the target is Unverified, not Resolved, when the target did not cover that module. A cell that was
-not measured keeps a null delta. Cross-vehicle and cross-contract comparisons are refused outright.
-
-Battery readings come back improved, degraded, unchanged or not measured. Firmware comes back
-matching, updated, behind or missing. Car configuration comes back matching, retrofitted, deactivated
-or changed.
-
-Separately from the diff domains, the battery page keeps a baseline-versus-current drift ledger for
-SoH, spread, weakest cell and discharge ceiling. Its noise bands are 0.5 % SoH and 2 mV spread, so a
-variation inside those bands reads as normal rather than as movement.
-
-The CLI exposes the DTC, cell and firmware diffs as commands of their own; the other domains live in
-the app.
-
-## Exporting
-
-The session dialog offers five choices, and ZIP is only packaging, never a content format:
-
-<Callout kind="caution" title="Check privacy and import before choosing a format">
-For a person to read, use the report builder's PDF or print view. For a spreadsheet, choose CSV.
-For a machine-readable archive, choose the modular JSON files. **Single JSON currently writes the
-full vehicle reference even when VIN masking is selected.** The app's exported files also do not
-match its Import schema, so do not use Import as a backup restore plan. Review the file before
-sharing it.
-</Callout>
-
-| Choice | What it produces |
-| --- | --- |
-| CSV ZIP (default) | the modular CSV set, packaged as one archive |
-| JSON ZIP | the modular JSON set, packaged as one archive |
-| Separate CSVs | the same CSVs, written as individual files |
-| Separate JSONs | the same JSONs, written as individual files |
-| Single JSON | one consolidated document for the whole session |
-
-The modular set covers the manifest, battery, cells, thermals, DTCs, ECUs, firmware, live telemetry,
-parasitic drain, service schedule, vehicle summary and diagnostic report. The report builder
-additionally offers PDF, HTML, JSON, CSV and Markdown, and its contents are selectable:
-DTC freeze frames, the cell voltage map and the ECU software BOM can each be included or left out.
-
-The CLI is narrower: `export` writes JSON or CSV directories only. It produces no ZIP, no single-file
-document and no PDF.
-
-<Callout kind="caution" title="Spreadsheet safety">
-A CSV cell starting with `=`, `+`, `-` or `@` can execute as a formula when the file is opened. Both
-the app's exporters and the CLI neutralise those prefixes before writing, so a fault description can
-never become a live formula in Excel.
-</Callout>
-
-## VIN masking at export time
-
-Every session export dialog shows the VIN-masking choice, and masking is on by default. The interface
-export keeps the first six characters and the last four, with asterisks between them. The app's
-reports, the CLI and the support bundle use a three-letter-prefix style such as `ABC...1234` instead.
-
-One path does not honour the choice: the single-JSON export ignores the masking checkbox and writes
-the full vehicle reference. Treat that file as unmasked, whatever the dialog said.
-
-The support bundle is stricter regardless of the setting: it scrubs serial numbers, GPS coordinates,
-IP addresses, email addresses and credentials before a file leaves the machine.
-
-## Importing
-
-Import accepts one camelCase document and rejects unknown fields. It requires an exact contract
-version of `1.0`, between 1 and 100 artifacts, and a 64-hex SHA-256 on each artifact that matches its
-content. Report artifacts must also pass a report checksum. The UI caps the file at 5 MB and the
-backend at 10 MiB. A new id is derived from the masked vehicle only.
-
-Honest caveat: none of the app's own exports match this import schema, so an export-then-import
-round-trip is not guaranteed. Import does not re-score what it loads.
-
-## Re-scoring an old session
-
-The inspection report carries the version of the rule set that produced its score, so a stored session
-can be re-scored under the current policy (v1.0.0) without reconnecting to the car. Re-scoring verifies
-the report, re-evaluates it and returns both the previous and the current verdict, findings and
-coverage gaps. It is read-only: the stored artifact is never rewritten, and the report's SHA-256
-checksum still tells you whether a file has been altered since it was written.
-
-## Next
-
-- [Live telemetry](/docs/live-telemetry): capturing a stream over time.
-- [Inspection reports](/docs/inspection-reports): what the scored report does with a session.
-- [CLI](/docs/cli): `export`, `replay`, `dtc-diff`, `cells-diff` and `firmware-diff` for scripted work.
+| Export format | What it contains | Best used for |
+| :--- | :--- | :--- |
+| **Printable PDF / Print view** | Formatted **Executive inspection**, **Battery certificate**, or **Technical dossier** report. | Handing to a buyer, seller, or workshop, or keeping in your car's service folder. |
+| **JSON session export** | The complete structured session record, including decoded measurements and raw module responses (with optional VIN masking). | Archiving, backing up, or importing into another computer running Hanterill. |
+| **CSV spreadsheets** | Tables for cell-group voltages, fault codes, module software versions, live telemetry recordings, and battery health trends. | Opening in Excel, Numbers, Google Sheets, or data-analysis scripts. |
+| **Support bundle (`.zip`)** | Privacy-scrubbed diagnostic logs and session summary with VIN, serial numbers, and GPS automatically removed. | Attaching to a bug report or support question (see [Get help](/docs/get-help)). |

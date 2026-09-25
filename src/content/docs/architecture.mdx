@@ -1,140 +1,137 @@
 import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 
-Hanterill is a stack of layers, each one small enough to understand on its own. Ethernet sits at the
-bottom, and a screen that shows a battery percentage sits at the top. This page walks the whole
-path.
+When Hanterill reads the car, messages travel through the cable to the car's gateway and then to the right control unit. The Ethernet connection, diagnostic requests and internal vehicle networks each have a different job. This guide explains how they fit together. The connection does not need a cloud service.
 
-Nothing in it is a proprietary cloud API. Every layer is a public standard or a table Hanterill
-ships with.
+## How the three protocols fit together
 
-## The layers
+You can think of the communication stack like sending a letter to a specific department inside an
+office building:
 
-```text
-Hanterill            desktop app and CLI, Rust and Tauri v2
-Application layer    use cases, sessions, sweeps, policy
-ISO 14229 UDS        unified diagnostic services (the questions)
-ISO 13400 DoIP       diagnostics over IP (the envelope)
-ISO 15765 ISO-TP     diagnostics over CAN (the second link)
-TCP / UDP            sockets, discovery, routing activation
-Ethernet             passive ENET cable, RJ45
-CAN                  OBD-II pins, hardware adapter required
-Vehicle gateway      CEM / VGM on CMA
-```
+<SpecList rows={[
+  ["DoIP (Diagnostics over IP)", "The addressed envelope and mailroom delivery system. It carries messages over the Ethernet cable to the car's central gateway, which routes them to the right control unit."],
+  ["UDS (Unified Diagnostic Services)", "The language written on the letter inside the envelope. It defines standard questions ('What is your software version?', 'Are any fault codes stored?') and maintenance commands."],
+  ["CAN (Controller Area Network)", "The internal wiring network inside the car that connects individual control units to the gateway and carries continuous real-time sensor signals between modules."],
+]} />
 
-The full module-to-module wiring behind that gateway is a live map of its own: every unit, bus
-segment and documented pin row sits in the [CMA Network Explorer](/network).
-
-### The CAN lane
-
-Most cars are reached over DoIP, but the transport also speaks ISO-TP over CAN. That is the older
-OBD-II path: CAN frames carrying the same UDS questions. It is implemented and needs a hardware
-adapter; Hanterill ships none. The [Connection](/docs/connection) page covers what each link needs.
-
-### The 44-row live registry and the 49-row roster
-
-The [ECU reference](/docs/ecu-reference) page lists 49 rows: the full CMA/ICE roster Hanterill knows
-how to talk to. A live audit walks the smaller registry the car actually announces: 44 rows on a
-BEV. The catalogue is the map; the registry is what that car presented.
+You can explore the physical wiring between every control unit and bus segment on the interactive
+[CMA Network Explorer](/network).
 
 <ProtocolStack />
 
 <EcuTopology />
 
-## What happens when you press Connect
+## 1. DoIP: How Ethernet connects to the car's gateway
 
-1. Find the car. Hanterill sends a vehicle identification request over UDP on port 13400 and listens
-   for announcements.
-2. Open a channel. It opens a TCP connection to the car on the same port, 13400.
-3. Get permission. It sends a routing activation request. The car accepts or refuses, and until it
-   accepts, no diagnostic message will be answered.
-4. Say hello to each module. A `TesterPresent` keeps the session alive; a functional broadcast can
-   ask every module at once, with individual probes only for the quiet ones.
-5. Ask a question. A UDS request goes out inside a DoIP envelope. The car wraps the reply the same
-   way.
-6. Decode the answer. The bytes are matched against a platform-specific definition. A response that
-   does not match the contract is refused as a typed outcome, never coerced into a number.
-7. Store it. The observation is written to the local session archive with its source, timestamp and
-   decoder version.
+On CMA, SPA, and SEA1 vehicles, the primary diagnostic link is **DoIP (ISO 13400)**. Instead of
+requiring an expensive proprietary translator box, the car has a standard Ethernet network card
+built into its **Vehicle Gateway Module (VGM)** or **Central Electronic Module (CEM)**, wired
+directly to pins on the OBD-II port.
 
-A single request travels the same path every time, and the answer comes back along it:
+When you plug in an ENET cable and press **Connect**, five steps happen in less than a second:
+
+1. **Finding the car (Vehicle Discovery)**: Hanterill sends a discovery message over the local cable and listens for the car's gateway to announce its VIN and network address.
+2. **Opening the link**: Hanterill opens a direct connection to the vehicle gateway.
+3. **Routing activation**: Hanterill asks the gateway for permission to route diagnostic messages into the car's internal networks. Until the gateway accepts this routing request, no control unit will answer.
+4. **Addressing the target module**: Every control unit inside the car has its own logical address (like an office phone extension). Hanterill puts the target module's address on the DoIP envelope and hands it to the gateway.
+5. **Receiving the reply**: The gateway forwards the question to that control unit (even if that module sits on an internal CAN or FlexRay bus), collects the module's answer, wraps it in a DoIP envelope, and sends it back to your laptop.
 
 <ProtocolFlow
   steps={[
-    { node: "Hanterill", detail: "diagnostic engine" },
+    { node: "Hanterill", detail: "desktop diagnostic app" },
     { node: "Ethernet", detail: "passive ENET cable" },
-    { node: "Vehicle gateway", detail: "CEM / VGM, DoIP" },
-    { node: "Target ECU", detail: "BECM, extended session" },
+    { node: "Vehicle gateway", detail: "CEM / VGM, DoIP router" },
+    { node: "Target ECU", detail: "BECM, battery controller" },
   ]}
   request="read battery state of health"
-  response="91.14 %, decoded from the raw value"
+  response="91.14 %, decoded from the module reply"
 />
 
-## What DoIP actually adds
+Because a vehicle gateway can sometimes send a module's answer before its delivery receipt when
+traffic is fast, Hanterill tracks every message conversation carefully so replies are never mixed
+up or dropped.
 
-DoIP is a thin wrapper. Its job is to carry diagnostic messages over an IP network and keep track
-of who is talking to whom. Each frame has a small header with a payload type, which is the field
-that says what kind of message this is:
+## 2. UDS: How questions, sessions, and keep-alives work
 
-| Payload type | Meaning |
-| --- | --- |
-| `0x0001` | Vehicle identification request (UDP) |
-| `0x0004` | Vehicle announcement, the car answering |
-| `0x0005` / `0x0006` | Routing activation request and response |
-| `0x0007` / `0x0008` | Alive check, so a dead connection is noticed |
-| `0x8001` | A diagnostic message, which carries a UDS request or reply |
-| `0x8002` / `0x8003` | Positive and negative acknowledgement of that message |
+Inside each DoIP envelope is a **UDS (ISO 14229)** message. UDS is the universal language that
+modern control units understand. Almost everything Hanterill does uses six plain types of UDS
+messages:
 
-A car is not obliged to send the acknowledgement before the answer, so Hanterill buffers an early
-answer instead of mistaking it for the ack. Small details like that are why the transport is a
-layer of its own rather than a few socket calls.
+<SpecList rows={[
+  ["Open a diagnostic session", "Switches a module between its everyday default session and its extended diagnostic session so it can report its full set of sensors and status records."],
+  ["Keep-alive heartbeat (Tester Present)", "A quiet periodic signal that tells awake modules a scan is still running so they do not go to sleep in the middle of a multi-minute test."],
+  ["Read a data value", "Asks a module for one specific numbered measurement or identity record, such as battery voltage, cell temperature, odometer mileage, or software version."],
+  ["Read fault codes", "Asks a module for all stored, pending, or permanent Diagnostic Trouble Codes (DTCs) along with their freeze-frame snapshots."],
+  ["Clear fault codes", "Asks a module to erase its stored fault codes after a repair (always behind a confirmation prompt)."],
+  ["Run a maintenance routine", "Starts or checks a built-in workshop routine on a module, such as parking brake service mode or sensor calibration (always behind a confirmation prompt)."],
+]} />
 
-## What UDS adds
+### Broadcast reads versus one-by-one requests
 
-UDS defines the questions. Every request starts with a service identifier. The services used here
-are a short list: `0x10` to open a session, `0x19` for fault codes, `0x22` to read a value, `0x2A`
-for periodic reads, `0x31` for routines, `0x3E` for `TesterPresent`, and `0x14` to clear, which is
-present only in write-capable builds. The [ECU reference](/docs/ecu-reference) and
-[Safety](/docs/safety) pages go through them one by one.
+DoIP and UDS support two ways of addressing modules inside the car:
 
-## Components
+- **Targeted (physical) requests**: Addressed to one specific control unit at a time.
+- **Broadcast (functional) requests**: Sent once to a shared broadcast address so every awake module on the car can answer the same question at the same time.
 
-- **Transport**: asynchronous Rust sockets, one connection shared across every module. Requests and
-  replies are matched in a single exchange, replies from an old connection are rejected as stale,
-  and the route is re-activated automatically after a recovery.
-- **Discovery**: a functional broadcast can probe every module at once, falling back to individual
-  probes only for the quiet ones. Modules that stay silent across several sweeps drop to a shorter
-  timeout tier, and a per-car cache keyed by a VIN hash remembers what was absent last time.
-- **Decoders**: per-platform, per-module definitions with explicit payload contracts: expected
-  length, scaling, privacy class and maturity. CMA decoders are verified against a real car; the SPA
-  and SEA1 definitions still need testing on more cars.
-- **Pack topologies**: the cell matrix is data, not code. CMA 108-cell, CMA 96-cell, CMA 82 kWh,
-  SPA 96 and 108 and hybrid 102, the SPA early-hybrid 96, and the SEA1 layouts each carry their own
-  count and arrangement.
-- **Policy**: the [inspection scoring engine](/docs/inspection-reports) and the cross-signal checks
-  sit on top of the observations. They never add traffic.
-- **Sessions**: an atomic, durable local archive with operator notes and corrupt-file recovery.
-  Comparison views read from it.
-- **Safety gate**: the running binary's real boundaries are exposed as a capability manifest, and
-  the interface only offers commands the binary can execute.
-- **IPC**: one declarative command table maps every desktop request to exactly one use case, with a
-  test asserting no orphan entries.
+Hanterill uses **broadcast requests** when checking which modules are awake or reading vehicle-wide
+identity records, because one broadcast can gather answers from dozens of modules in a fraction of
+a second.
 
-## One build
+However, **opening an extended diagnostic session must always be done one module at a time**. By
+design, the vehicle gateway ignores broadcast requests that try to change diagnostic sessions, so a
+tool cannot accidentally place all 40+ computers in the car into an extended mode at once.
 
-Hanterill compiles as a single build with every feature on by default: the diagnostic reads, the
-all-modules DID scanner, and the write surface that asks for confirmation. There is no edition flag
-to explain and no hidden mode. A stripped `--no-default-features` build exists so the read-only gate
-keeps a compile-time edge that CI can exercise, and it is a development configuration rather than a
-release.
+### Waking sleeping modules and letting the car sleep afterward
 
-## Why Rust and Tauri
+When a car is parked with the ignition off, many secondary control units (such as climate, seat, or
+door modules on quieter internal buses) go to sleep to save the 12-volt battery.
 
-The protocol work suits Rust: many small concurrent operations with error handling that has to be
-explicit. Tauri keeps the binary small and uses the operating system's own webview instead of
-shipping a browser engine. The app feels native rather than like a web page in a window. The
-interface is React and TypeScript, typed against contracts generated from the engine.
+If you need to scan a parked car without turning the ignition on, Hanterill's **Wake-up sequence**
+runs a five-step routine:
+
+1. Broadcasts a wake-up pulse across the gateway.
+2. Wakes the Central Electronic Module (CEM) and Vehicle Gateway Module (VGM) first.
+3. Steps through the core drivetrain and chassis modules one by one so the gateway activates its internal sub-buses.
+4. Sends a short keep-alive pulse so freshly woken modules finish booting.
+5. Pauses briefly for all modules to settle before reading their data.
+
+Just as importantly, as soon as your scan finishes or you disconnect, Hanterill stops sending
+keep-alive pulses so the car's computers can return to deep sleep naturally without draining the
+12 V battery.
+
+## 3. CAN: Internal vehicle buses and continuous live signals
+
+While Ethernet (DoIP) connects your laptop to the car's gateway, **CAN (Controller Area Network)**
+is the workhorse wiring network that connects the control units to one another inside the car. For
+example, CMA vehicles use eleven separate CAN segments running at up to 500 kbps to connect
+drivetrain, brake, steering, body, and climate modules.
+
+CAN is used in two distinct ways during diagnostics:
+
+### Diagnostic questions over CAN (ISO-TP)
+
+When you connect to a vehicle's CAN pins using a compatible USB-to-CAN hardware adapter (such as a
+SocketCAN or Lawicel adapter), the same UDS diagnostic questions travel over CAN instead of
+Ethernet. Because a single standard CAN frame holds only 8 bytes of data, a transport rule called
+**ISO-TP (ISO 15765)** automatically splits longer diagnostic messages (like a 17-character VIN or
+a list of fault codes) into a sequence of small numbered packets and reassembles them at the other
+end.
+
+### Passive CAN bus listening (continuous broadcast frames)
+
+There is an important difference between **UDS diagnostic polling** and **native CAN bus traffic**:
+
+- **UDS over DoIP is question-and-answer**: A module only reports a value when Hanterill explicitly asks for it.
+- **Native CAN traffic is a continuous broadcast**: While the car is awake, control units constantly broadcast live operating messages onto the internal CAN buses many times per second (such as wheel speeds, brake pressure, steering wheel angle, pedal positions, and ambient temperatures) so other modules can react instantly.
+
+Because the car's gateway only forwards question-and-answer UDS traffic over the Ethernet cable,
+some fast real-time signals that travel continuously on the internal CAN buses are not exposed as
+individual UDS questions. When you connect a supported CAN hardware interface, Hanterill can listen
+passively to those continuous CAN broadcasts in real time without adding a single extra request to
+the car's network.
 
 ## Next
 
-- [Connection](/docs/connection): the physical layer, and what to do when it misbehaves.
-- [Privacy](/docs/privacy): what the app writes to disk, and what it never sends anywhere.
+- [Connection](/docs/connection): how to connect with an Ethernet cable or a CAN adapter.
+- [ECU reference](/docs/ecu-reference): the control units across the car's networks.
+- [CMA Network Explorer](/network): trace the Ethernet, CAN, LIN, and FlexRay buses visually.
+- [Safety](/docs/safety): how Hanterill keeps diagnostic traffic safe for your vehicle.

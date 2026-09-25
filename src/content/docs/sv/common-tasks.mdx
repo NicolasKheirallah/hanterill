@@ -1,42 +1,69 @@
-Börja med det du behöver göra. Stegen använder appens vynamn. De länkade sidorna förklarar
-avläsningarna och deras begränsningar.
+import { TaskRouter } from "@/components/docs/mdx/TaskRouter";
 
-## Kontrollera en begagnad bil
+Den här sidan samlar korta steg-för-steg-guider för de vanligaste uppgifterna i Hanterill. Varje
+uppgift visar exakt vilken skärm du öppnar och vad du ska titta efter.
 
-1. Kontrollera modell och anslutningsväg under [Fordon som stöds](/docs/supported-vehicles).
-2. Anslut när bilen står parkerad och kontrollera identiteten i **Översikt** och **Fordon**.
-3. Kör **Felkoder** och **Batterihälsa**. Notera moduler och celler som saknas.
-4. Öppna **Inspektionsrapport** och läs fynd och täckningsluckor bredvid poängen.
-5. Spara sessionen och exportera rapporten om du ska dela den. Kontrollera VIN-maskeringen först.
+<TaskRouter />
 
-**Inte utvärderad** betyder att underlaget inte räckte. Använd inte avkodade värden från en
-plattform märkt Testing eller Research som grund för ett köpbeslut. Läs
-[Tolka resultat](/docs/reading-results).
+## 1. Kontrollera ett begagnat fordon inför köp
 
-## Undersök en varningslampa
+När du granskar ett begagnat el- eller hybridfordon tar det ungefär fem minuter att få en komplett
+bild av fordonets skick:
 
-1. Kör **Felkoder** och kontrollera aktiva och lagrade koder samt vilka moduler som svarade.
-2. Öppna koden och läs status och eventuella frysta ramdata.
-3. Spara skanningen före en reparation. Frysta ramdata kan försvinna när koder raderas.
-4. Använd [Felkodsskanning](/docs/dtc-scanning) för att tolka kod och täckning.
+1. **Anslut med aktivt tändningsläge**: Sätt dig i förarsätet, tryck ned bromspedalen en gång (eller slå på tändningsläge II) i läge **P** och anslut på skärmen **Anslutning**.
+2. **Kontrollera identitet, miltal och nycklar på skärmen Fordon**:
+   - Jämför det 17-ställiga chassinumret (VIN) på skärmen med fordonets registreringsbevis och typskylt.
+   - Kontrollera **mätarställningen över upp till 29 styrenheter** för att se att alla moduler är överens om fordonets körsträcka.
+   - Kontrollera **antalet registrerade nycklar** så att du vet om det finns fler inprogrammerade nycklar än de säljaren lämnar över.
+3. **Granska Batterihälsa**:
+   - Titta på **hälsotillståndet (SoH)** och **cellspänningsspridningen (delta i mV)** i cellkartan. Ett friskt, välbalanserat batteri i vila ligger normalt under 15 till 20 mV mellan högsta och lägsta cell.
+4. **Skanna alla felkoder under Felkoder (DTC)**:
+   - Kontrollera om det finns aktiva eller väntande felkoder och se vid vilket miltal de senast registrerades i ögonblicksbilderna.
+5. **Skapa en Inspektionsrapport**:
+   - Öppna **Inspektionsrapport** och klicka på **Generera rapport** för att få ett sammanfattande betyg från 0 till 100 som du kan spara eller skriva ut.
 
-Radering ändrar bilen och tar bort underlag. Läs [Säkerhet](/docs/safety) först.
+## 2. Kontrollera batterihälsa och cellbalans
 
-## Kontrollera en reparation
+1. Öppna **Batterihälsa** i sidofältet.
+2. Läs av **SoH (%)**, **SoC (%)**, totalspänning och temperaturgivarnas spridning.
+3. Rulla ned till **Cellkartan** för att se alla 108 (eller 96) enskilda celler. Den högsta och lägsta cellen markeras automatiskt så att du direkt ser om en enskild cell avviker.
 
-1. Öppna sessionen som sparades före reparationen.
-2. Gör en ny skanning på samma bil och spara den.
-3. Använd **Skillnad sedan förra skanningen** eller **Felkodshistorik** för nya, kvarstående
-   och lösta fel.
-4. Jämför battericeller, styrmodulregister eller firmware i **Sessioner och rapporter** om de
-   områdena hör till reparationen.
+Se [Batteridiagnostik](/docs/battery-diagnostics) för riktlinjer kring hur du tolkar siffrorna.
 
-En kod som saknas från en modul som inte svarade är **obekräftad**, inte löst.
-[Sessioner och bevis](/docs/sessions-and-evidence) förklarar jämförelsen.
+## 3. Läsa, jämföra och rensa felkoder
 
-## Kontrollera om mjukvaran ändrades
+1. Öppna **Felkoder (DTC)** och klicka på **Skanna alla styrenheter**.
+2. Klicka på valfri felkod för att öppna dess **ögonblicksbild** (spänning, hastighet, temperatur och mätarställning när felet uppstod).
+3. Om du har åtgärdat ett fel kan du klicka på **Rensa felkoder** och bekräfta dialogrutan. Hanterill sparar alla ögonblicksbilder i ditt sessionsarkiv innan rensningen utförs och visar sedan en före-/efter-jämförelse.
 
-Kör **Firmware SBOM** före och efter besöket, spara båda sessionerna och öppna
-firmwarejämförelsen. Jämför moduladresser, artikelnummer, mjukvaruversioner och serienummer.
-En utbytt modul och en uppdaterad modul är olika förändringar. Läs
-[Firmware och inventering](/docs/firmware-and-inventory).
+Se [Felkodsskanning](/docs/dtc-scanning) för fler detaljer.
+
+## 4. Se vilka styrenheter som fått ny mjukvara efter service eller OTA
+
+1. Före ett verkstadsbesök eller en mjukvaruuppdatering: anslut och öppna **Mjukvara och inventering** (eller spara en vanlig session).
+2. Efter uppdateringen: anslut igen och öppna **Sessioner**.
+3. Välj de två sessionerna och klicka på **Jämför**. Hanterill listar exakt vilka styrenheter vars mjukvaruversion har ändrats.
+
+Se [Mjukvara och inventering](/docs/firmware-and-inventory) och [Sessioner och bevis](/docs/sessions-and-evidence).
+
+## 5. Mäta vilodränering när fordonet står parkerat
+
+1. Innan du parkerar fordonet över natten eller några dagar: anslut i Hanterill och gör en batteriavläsning så att en startpunkt sparas i **Sessioner**.
+2. Koppla ur kabeln och låt fordonet stå låst och oladdat.
+3. När du kommer tillbaka: anslut igen, gör en ny avläsning och öppna **Vilodränering** för att se hur många procent, wattimmar och watt som förbrukats per dygn.
+
+Se [Vilodränering](/docs/parasitic-drain).
+
+## 6. Sätta elektronisk parkeringsbroms i serviceläge inför beläggbyte
+
+1. Parkera fordonet på plan mark i läge **P**, säkra hjulen med stoppklossar och slå på aktivt tändningsläge utan att hålla foten på bromspedalen.
+2. Öppna **Servicefunktioner** och välj gruppen **Bromsar**.
+3. Välj **Öppna parkeringsbroms (serviceläge)** och bekräfta säkerhetsdialogen för att backa ställdonen.
+4. När bromsarbetet är klart kör du **Stäng parkeringsbroms (avsluta serviceläge)** och därefter **Kalibrera parkeringsbroms**.
+
+Se [Servicefunktioner](/docs/service-functions).
+
+## Nästa steg
+
+- [Rundtur i programmet](/docs/workspace-tour): hitta rätt skärm i sidofältet.
+- [Tolka dina resultat](/docs/reading-results): lär dig tolka färger, betyg och mognadsgrader.

@@ -1,103 +1,103 @@
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 
-A diagnostic tool can do two very different things: ask the car questions, or tell the car to do
-something. Hanterill keeps those worlds apart. This page explains exactly where the line sits and
-how the app enforces it.
+Most Hanterill screens read information from the car. Clearing a fault code, resetting a control unit or starting a service routine can change it. The app separates those actions and asks for confirmation before sending them. This guide explains the limits of that protection.
 
-## Reading is the default
+This page explains what happens during read-only scans, how vehicle-changing actions are gated, and
+what safety precautions to follow when working on a car.
 
-Every read path in Hanterill transmits only services that ask questions:
+## Reading is always the default
 
-| Service | What it asks |
+Every normal scan, battery check, live telemetry chart, and inspection report in Hanterill is
+strictly read-only. During read-only operations, the app only sends messages that ask for
+information:
+
+| Diagnostic action | What it does on the car |
 | --- | --- |
-| `0x10` | Open a diagnostic session so the module will answer |
-| `0x19` | Read fault codes |
-| `0x22` | Read a value by identifier |
-| `0x24` | Read how a value is scaled |
-| `0x3E` | "Still here", so the car does not fall asleep mid-scan |
+| **Open a diagnostic session** | Wakes a module's diagnostic interface so it can answer sensor and identity questions |
+| **Read fault codes** | Lists stored, pending, and permanent fault codes along with their freeze-frame snapshots |
+| **Read data values** | Reads a live sensor value, counter, software version, or identity record |
+| **Read scaling information** | Asks a module how a raw sensor number is scaled |
+| **Keep-alive heartbeat** | Tells the module a scan is still running so it does not fall asleep mid-read |
+| **Read routine status** | Checks the stored result of a routine without starting or stopping any actuator |
 
-There are two narrow carve-outs beyond that list, and both only read:
+None of these messages alter any setting, calibration, adaptation value, or fault memory on your
+vehicle.
 
-- `0x31 0x03` reports the stored result of a routine that already ran. It never starts or stops
-  anything.
-- The `0x2A` periodic read can register one on-demand sample and cancel it again. The unsolicited
-  repeating modes are refused.
+## Vehicle-changing actions always ask first
 
-Nothing in that set changes the car, and it is the same set in every build.
+A diagnostic tool that cannot clear fault codes after a repair or retract the electronic parking
+brake for a pad change leaves the job unfinished. Hanterill includes those maintenance tools, and
+keeps them safe through clear boundaries:
 
-## Writing exists, and it asks first
+- **Explicit confirmation prompts**: Every action that changes the car's state requires you to read a plain-language warning and confirm before a single command is sent.
+- **No firmware flashing or coding writes**: Hanterill never flashes module firmware, never overwrites vehicle configuration or calibration memory, and never sends raw unverified write commands.
+- **Security-level protection**: Vehicle manufacturers protect certain maintenance routines behind a module security lock (seed-and-key access). Hanterill can check in read-only mode whether a module's security levels are locked or unlocked, and clearly marks routines that are security-level protected on your vehicle.
 
-The released build ships the state-changing commands. A workshop tool that cannot clear a code
-after a repair is only half a tool. What keeps that safe is the confirmation step, not the absence
-of the commands:
-
-- Every write is a separate, explicitly confirmed action in the interface.
-- The running binary publishes a capability manifest, and the interface only offers what the
-  binary can actually do.
-- A build compiled without the write feature refuses those commands with a typed `read_only_build`
-  response. That stripped configuration exists for CI and development; it is not what ships.
-- Hanterill never flashes modules, never unlocks security access (`0x27`) to write by identifier,
-  and never performs programming services.
-
-<SafetyNotice level="adaptation" title="What the write surface covers">
-This surface covers clearing fault codes (`0x14`), starting service routines (`0x31`), ECU reset (`0x11`) and
-gated memory reads (`0x23`). ECU reset is used only by the opt-in force-reset step in the clear
-flow, and memory reads have a 256-byte cap and a caller-verified address list. The routine
-identifiers are reverse-engineered. Even on a write-capable build, steering-angle and ADAS targets
-must not be actuated without the manufacturer's procedure: Hanterill exposes the capability, not a
-licence to use it.
+<SafetyNotice level="adaptation" title="What vehicle-changing actions cover">
+Vehicle-changing actions in Hanterill are limited to **clearing stored fault codes**, **starting
+catalogued service and maintenance routines**, and **restarting an individual control unit**. Even
+when a routine is available in the app, procedures such as steering-angle zeroing or camera/radar
+calibration must only be run when the car is set up according to the manufacturer's workshop
+procedure.
 </SafetyNotice>
 
-## The clear flow, step by step
+## How fault-code clearing protects your diagnostic history
 
-Clearing fault codes is the write most people will actually use. This is what happens after you
-confirm:
+Clearing fault codes is the most common write action. When you confirm a fault-code clear,
+Hanterill follows a careful six-step sequence so you never lose diagnostic evidence:
 
-1. Enter an extended session with each module. Manufacturer modules reject a clear in the default
-   session, so this step is required.
-2. Capture the freeze frames before erasing. The erase destroys them.
-3. Send the bulk clear.
-4. Wait through the module's pending-response window.
-5. Retry per module where the bulk pass did not land.
-6. Re-read the codes and report the stubborn set: modules still holding codes after the erase.
+1. **Opens an extended session** on each module, since vehicle modules ignore clear requests in their default state.
+2. **Saves all freeze-frame snapshots first**: Before erasing anything, Hanterill captures the freeze-frame conditions attached to existing fault codes into your local session archive.
+3. **Sends the clear command** across the selected modules.
+4. **Waits for modules to finish internal housekeeping** as they update their fault memory.
+5. **Retries individual modules** if the gateway was briefly busy during the broadcast clear.
+6. **Re-reads every module** and shows you a clear summary of which codes cleared and which stubborn codes remained active.
 
-An optional force-reset loop reboots those stubborn modules, waits roughly five seconds, repairs
-the route and clears once more. It is opt-in, and it refuses to run while the car reports a driving
-usage mode.
+### Optional module reset and driving-mode safety interlock
 
-## Traffic discipline
+If a module holds a latched code after a repair, you can optionally choose the **force-reset**
+follow-up, which restarts the affected module, waits roughly five seconds for it to reboot, and
+runs the clear pass once more.
 
-A diagnostic tool can flood a car just by being eager. Hanterill keeps its request volume bounded:
+For your safety, Hanterill checks the vehicle's operating mode first and **refuses to reset any
+module if the car reports that it is in a driving state**. Always keep the vehicle parked with the
+parking brake engaged during diagnostics.
 
-- Scans run bounded loops with request budgets, so a sweep cannot flood the gateway.
-- Cancellation is cooperative: Hanterill checks between requests, so you can stop immediately
-  instead of waiting for the whole sweep to finish.
-- Sessions are meant for a parked car. Keep the car in Park with the parking brake on.
-- Recovery never resets a module just because a request timed out.
+## Network traffic discipline and 12 V battery care
 
-## High voltage
+An aggressive diagnostic tool can overwhelm a vehicle gateway or keep modules awake long after you
+walk away. Hanterill protects the car's network and 12-volt battery automatically:
+
+- **Paced request budgets**: Multi-module sweeps pace their requests so the vehicle gateway is never flooded.
+- **Instant cancellation**: You can stop any scan, sweep, or live recording immediately; Hanterill halts traffic between requests and cleans up any active periodic streams.
+- **Clean sleep release**: As soon as a scan completes or you disconnect, Hanterill stops sending keep-alive heartbeats so every control unit can return to low-power sleep normally.
+
+## High-voltage safety on electric and hybrid vehicles
 
 <SafetyNotice level="high-voltage" title="High voltage is dangerous">
-Electric cars carry several hundred volts of direct current. Reading battery data over a cable does
-not de-energise anything and does not make physical high-voltage work safe. Servicing the pack, the
-inverters or the orange cabling requires the manufacturer's procedures, equipment and training.
+Battery-electric and plug-in hybrid vehicles carry between 400 V and 800 V of direct current.
+Reading battery health or cell voltages in Hanterill **does not de-energize the high-voltage
+system** and does not make physical work on the battery pack, inverters, compressor, or orange
+high-voltage cables safe. Physical high-voltage service requires manufacturer training, insulated
+equipment, and a verified physical high-voltage disconnect procedure.
 </SafetyNotice>
 
-## Not a replacement for the manufacturer's tooling
+## Independent software notice
 
-Hanterill is independent and is not affiliated with Volvo Cars, Polestar or Geely. Do not make a
-safety-critical repair decision on Hanterill output alone. This matters most on a platform still
-marked Testing or Research, where the decoding still needs testing on more cars.
+Hanterill is an independent diagnostic tool and is not affiliated with or endorsed by Volvo Cars,
+Polestar, Zeekr, Lynk & Co, or Geely. Never rely on a single diagnostic reading to make a
+safety-critical repair decision, especially when inspecting a platform or measurement marked as
+provisional.
 
-## If something looks wrong
+## What to do if a reading looks unusual
 
-Stop. Do not run a routine to "fix" a reading you do not understand. Export the session, compare it
-against a second scan or a known-good car, and ask in the project's discussions before acting. The
-[support bundle](/docs/get-help) export is scrubbed for sharing.
+If you see a fault code or sensor value you do not recognize, **do not run a calibration or reset
+routine to try to clear it**. Save the session, export a privacy-scrubbed
+[support bundle](/docs/get-help), and compare the reading against a second scan before taking
+action.
 
 ## Next
 
-- [Service functions](/docs/service-functions): the routines that change the car, and what cannot be
-  undone.
-- [Connection](/docs/connection): safe hardware setup.
-- [DTC scanning](/docs/dtc-scanning): what clearing actually does.
+- [Service functions](/docs/service-functions): the 16 maintenance routines, their cautions, and security-level protection.
+- [Connection](/docs/connection): safe cable setup and ignition states.
+- [DTC scanning](/docs/dtc-scanning): how fault scanning and freeze-frame preservation work.

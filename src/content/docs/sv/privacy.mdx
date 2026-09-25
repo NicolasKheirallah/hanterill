@@ -1,70 +1,70 @@
-Hanterill är helt lokalt. Det pratar med din bil, och det skriver till din disk. Det finns ingen
-backend, inget konto och inget att logga in på.
+Hanterill kommunicerar med bilen genom diagnoskabeln och sparar sessioner på din dator. Datorappen kräver inget konto och skickar inte diagnossessioner till en molntjänst. Här ser du vad som sparas och vad du bör kontrollera innan du delar en fil.
 
-## Vad som stannar på din maskin
+## Vad som stannar på din dator
 
-- Varje session, felläsning och livefångst, i ett lokalt arkiv med dina anteckningar
-- Exporter du skapar: JSON-, CSV- och ZIP-paket
-- Appinställningar, teman och anslutningspreferenser
-- Aktivitetsloggen: spåret av vad som körts, med VIN maskerade
-- Cachning per bil, lagrad under en hash av VIN så att en fillistning inte avslöjar någon identitet
+Allt som Hanterill spelar in lagras lokalt i din användarmapp:
 
-## Vad som aldrig samlas in
+- **Sparade sessioner, felkodsskanningar och fångster**: Lagras i ditt lokala sessionsarkiv tillsammans med dina egna anteckningar.
+- **Exporterade filer**: JSON-, CSV-, HTML-/utskriftsrapporter och ZIP-paket som sparas där du själv väljer.
+- **Programinställningar**: Ditt valda färgtema, språk, användarläge och anslutningsval.
+- **Aktivitetslogg**: En lokal logg över vilka diagnostiksteg som körts under sessionen, med chassinummer (VIN) automatiskt maskerade.
+- **Fordonsknuten upptäcktscache**: Lagras under en envägshash av chassinumret så att en vanlig fillistning på datorn aldrig avslöjar fordonets identitet.
 
-- Ingen telemetri
-- Ingen analys eller användningsspårning
-- Inget molnkonto eller backend
-- Inga diagnostikdata uppladdade någonstans
-- Ingen kraschrapportering från tredje part
+## Vad som aldrig samlas in eller skickas vidare
 
-Den valfria uppdateringskontrollen är undantaget för internettrafik. Den är avstängd som standard
-och skickar inga fordonsdata. Se [Nätverksaktivitet](#nätverksaktivitet).
+- Ingen telemetri eller bakgrundstrafik
+- Ingen analys eller spårning av hur du använder programmet
+- Inget molnkonto, ingen inloggning och ingen licensserver
+- Inga fordonsdata eller felkoder som laddas upp någonstans
+- Inga tredjepartsbibliotek för kraschrapportering
 
-## VIN- och platsmaskering
+Datorappen gör **noll internetanslutningar**. Den fungerar helt offline i ett underjordiskt garage
+eller längs vägkanten utan Wi-Fi.
 
-VIN läses vid fordonsidentifiering, eftersom en session behöver veta vilken bil den tillhör. Där ett
-fullt VIN inte behövs maskeras det:
+## Visning och maskering av chassinummer (VIN)
 
-- I gränssnittet visas VIN som ett fragment som `YSM...0428` som standard. Du kan slå på full
-  synlighet i Inställningar.
-- I loggar och exporter behålls det fulla VIN bara när du uttryckligen ber om det.
-- Supportpaketet rensar serienummer, privata adresser, inloggningsuppgifter och decimala koordinater
-  innan en fil lämnar maskinen, som `[REDACTED-GPS]`, medan äkta diagnostikavläsningar behålls intakta.
+Hanterill läser av fordonets 17-ställiga chassinummer (VIN) vid anslutning för att identifiera
+plattformen, kontrollera att alla moduler tillhör samma fordon och hålla isär sessioner från olika
+fordon. Du styr själv när chassinumret ska visas:
 
-Plats får samma behandling. Inspektionsrapporter för begagnatköp innehåller inga GPS-sektioner alls,
-och där andra exporter innehåller koordinater avrundas de till ungefär 110 meter.
+- **På skärmen Fordon och i Inspektionsrapport**: Hela det 17-ställiga chassinumret visas tydligt så att du kan jämföra det med registreringsbeviset och typskylten, med en **snabbknapp i verktygsfältet** som maskerar numret (`YSM...0428`) med ett klick när du vill ta en skärmbild eller dela en rapport.
+- **I övriga vyer**: Du kan ställa in standardmaskering under **Inställningar -> Integritet och lagring**.
+- **I supportpaket**: När du exporterar ett supportpaket från **Inställningar -> Om** rensas chassinummer, serienummer, lokala IP-adresser och exakta GPS-koordinater (`[REDACTED-GPS]`) automatiskt bort, medan de diagnostiska mätvärdena behålls.
 
-## Lagringstid och radering
+## Valfria GPS-koordinater
 
-Du väljer hur länge sessioner behålls: 30 dagar, 90 dagar, ett år, eller obegränsat. Sidan för
-integritet och lagring har också en rensningsåtgärd som tömmer cachade poster och sparade sessioner i
-ett steg.
+Platsmärkning är avstängd som standard. Om du slår på den under **Inställningar -> Integritet och
+lagring** kan du knyta ungefärliga koordinater till en session för att minnas vid vilken verkstad
+eller laddstolpe en mätning gjordes.
 
-<Callout kind="note" title="Radering betyder radering">
-Sessioner bor i lokal lagring på din maskin. Det finns ingen kopia någon annanstans, så att radera dem
-tar bort dem för gott.
+- **Inspektionsrapporter** utelämnar GPS som standard. Du kan själv välja att ta med platsen i en rapport.
+- I exporter där plats är aktiverat kan koordinaterna avrundas. Kontrollera platsuppgifterna innan du delar en fil.
+
+## Lagringshantering, bevarandetid och radering
+
+Under **Inställningar -> Integritet och lagring** ser du hur mycket diskutrymme dina sparade
+sessioner, fångster och loggar använder, och du kan välja hur länge sessioner ska sparas automatiskt:
+
+- **30 dagar**, **90 dagar**, **1 år** eller **Obegränsat**
+- **Rensa med ett klick**: Töm cachade modulregister eller radera samtliga sparade sessioner och fångster permanent i ett steg.
+
+<Callout kind="note" title="Radering är permanent">
+Eftersom dina sessioner bara finns på din egen dator och aldrig säkerhetskopieras till någon
+molntjänst försvinner de permanent när du raderar dem, såvida du inte har exporterat en kopia först.
 </Callout>
 
-## Nätverksaktivitet
+## Webbplatsen kontra datorappen
 
-Under en diagnostiksession talar Hanterill med bilen över den lokala länken. Appen behöver inte
-internet för att fungera. Under **Inställningar → Uppdateringar** kan du kontrollera en ny version
-direkt eller välja en kontroll vid start, högst en gång per dygn. Då skickas en förfrågan till
-GitHubs offentliga versions-API. GitHub ser din IP-adress, men förfrågan innehåller inget VIN,
-inga fordons- eller diagnostikdata och ingen byggidentitet. Appen visar bara ett meddelande;
-den laddar aldrig ner eller installerar en uppdatering.
+Medan datorappen Hanterill aldrig ansluter till internet läser den här dokumentationswebbplatsen
+GitHubs offentliga utgåvor så att sidorna [Ladda ned](/download) och [Ändringslogg](/changelog) kan
+visa aktuell version och nedladdningslänkar.
 
-Den här webbplatsen är separat: den läser GitHub-API:et för att visa senaste release och
-repositorystatistik. Det är webbplatsen, inte appen.
+## Fritt för privat bruk
 
-## Ingen prenumeration, och inget pris
-
-Det finns ingen betald nivå och ingen licensserver, och Hanterill är gratis för privat bruk i varje
-version: [licensen](/docs/license) är där det står skrivet. Källkoden går att läsa, och Hanterill är
-licensierad för personligt, icke-kommersiellt bruk. Det finns inget att tjäna pengar på i din bils
-data, så ingen av den samlas in.
+Det finns ingen betalversion, inget abonnemang och inga funktioner bakom en betalvägg. Hanterill är
+fritt för privat, icke-kommersiellt bruk enligt villkoren på sidan [Licens](/docs/license).
 
 ## Nästa steg
 
-- [Säkerhet](/docs/safety): vad appen kan ändra, och hur det är grindat.
-- [Licens](/docs/license): villkoren Hanterill levereras under.
+- [Säkerhet](/docs/safety): hur Hanterill skiljer på skrivskyddad diagnostik och åtgärder som ändrar fordonet.
+- [Licens](/docs/license): villkoren som Hanterill publiceras under.

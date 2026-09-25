@@ -1,105 +1,100 @@
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 
-Ett diagnosverktyg kan göra två väldigt olika saker: ställa frågor till bilen, eller be bilen göra
-något. Hanterill håller de två världarna åtskilda. Den här sidan förklarar exakt var gränsen går
-och hur appen upprätthåller den.
+De flesta vyer i Hanterill läser information från bilen. Att radera felkoder, starta om en styrenhet eller köra en servicerutin kan däremot ändra den. Appen håller isär dessa åtgärder och ber om bekräftelse innan de skickas. Här förklaras hur skyddet fungerar och vad du själv behöver kontrollera.
 
-## Läsning är standard
+## Skrivskyddad läsning är alltid standard
 
-Varje läsväg i Hanterill sänder bara tjänster som ställer frågor:
+Varje vanlig skanning, batterikontroll, livedatagraf och inspektionsrapport i Hanterill är helt
+skrivskyddad. Under skrivskyddade operationer skickar programmet enbart meddelanden som ber om
+information:
 
-| Tjänst | Vad den frågar |
+| Diagnostikåtgärd | Vad den gör i fordonet |
 | --- | --- |
-| `0x10` | Öppna en diagnossession så att modulen svarar |
-| `0x19` | Läs felkoder |
-| `0x22` | Läs ett värde via identifierare |
-| `0x24` | Läs hur ett värde skalas |
-| `0x3E` | "Fortfarande här", så fordonet inte somnar mitt i en skanning |
+| **Öppna diagnostiksession** | Väcker en styrenhets diagnostikgränssnitt så att den kan svara på givar- och identitetsfrågor |
+| **Läs felkoder** | Listar lagrade, väntande och permanenta felkoder tillsammans med deras ögonblicksbilder |
+| **Läs mätvärden** | Läser av ett aktuellt givarvärde, en räknare, en mjukvaruversion eller en identitetspost |
+| **Läs skalningsinformation** | Frågar en styrenhet hur ett råvärde är skalat |
+| **Håll-vaket-puls** | Berättar för styrenheten att en skanning pågår så att den inte somnar mitt under avläsningen |
+| **Läs rutinstatus** | Kontrollerar det lagrade resultatet av en rutin utan att starta eller stoppa något ställdon |
 
-Det finns två smala undantag utöver listan, och båda läser bara:
+Inget av dessa meddelanden ändrar några inställningar, kalibreringar, adaptionsvärden eller
+felminnen i ditt fordon.
 
-- `0x31 0x03` rapporterar det sparade resultatet av en rutin som redan körts. Den startar eller
-  stoppar aldrig något.
-- Den periodiska läsningen `0x2A` kan registrera ett prov på begäran och avregistrera det igen. De
-  oombedda upprepande lägena avvisas.
+## Åtgärder som ändrar fordonet kräver alltid din bekräftelse
 
-Inget i den uppsättningen ändrar bilen, och det är samma uppsättning i varje bygge.
+Ett verkstadsverktyg som inte kan rensa felkoder efter en reparation eller backa den elektroniska
+parkeringsbromsen inför ett beläggbyte lämnar halva jobbet ogjort. Hanterill innehåller dessa
+underhållsverktyg och håller dem säkra genom tydliga spärrar:
 
-## Skrivningar finns, och de frågar först
+- **Uttrycklig bekräftelsedialog**: Varje åtgärd som påverkar fordonet kräver att du läser en varning i klarspråk och bockar i förutsättningarna innan ett enda kommando skickas.
+- **Ingen flashning eller kodningsskrivning**: Hanterill flashar aldrig om mjukvara i styrenheter, skriver aldrig över fordonets konfigurations- eller kalibreringsminne och skickar aldrig godtyckliga råa skrivkommandon.
+- **Skydd genom säkerhetsnivåer**: Fordonstillverkare skyddar vissa känsliga servicerutiner bakom ett säkerhetslås i styrenheten. Hanterill kan i skrivskyddat läge kontrollera om en styrenhets säkerhetsnivå är låst eller upplåst och markerar tydligt vilka rutiner som är skyddade av en säkerhetsnivå.
 
-Den skarpa versionen levereras med de tillståndsändrande kommandona. Ett verkstadsverktyg som inte
-kan radera en kod efter en reparation är bara halva verktyget. Det som gör det säkert är
-bekräftelsesteget, inte att kommandona saknas:
-
-- Varje skrivning är en separat, uttryckligen bekräftad åtgärd i gränssnittet.
-- Den körande binären publicerar ett kapacitetsmanifest, och gränssnittet erbjuder bara det binären
-  faktiskt kan göra.
-- Ett bygge kompilerat utan skrivfunktionen avvisar dessa kommandon med ett typat svar:
-  `read_only_build`. Den strippade konfigurationen finns för CI och utveckling, inte i den skarpa
-  versionen.
-- Hanterill flashar aldrig moduler, låser aldrig upp security access (`0x27`) för att skriva via
-  identifierare och utför aldrig programmeringstjänster.
-
-<SafetyNotice level="adaptation" title="Vad skrivytan omfattar">
-Den här ytan omfattar radering av felkoder (`0x14`), start av servicerutiner (`0x31`), ECU-återställning
-(`0x11`) och grindade minnesläsningar (`0x23`). ECU-återställning används bara av det valfria
-force-reset-steget i raderingsflödet, och minnesläsningarna har ett tak på 256 byte och en
-adresslista som anroparen verifierat. Rutinidentifierarna är reverse-enginerade. Även i ett
-skrivbart bygge får styrvinkel- och ADAS-mål inte doneras utan tillverkarens arbetsordning:
-Hanterill exponerar förmågan, inte en licens att använda den.
+<SafetyNotice level="adaptation" title="Vad skrivåtgärderna omfattar">
+Tillståndsändrande åtgärder i Hanterill är begränsade till att **rensa lagrade felkoder**, **starta
+katalogiserade service- och underhållsrutiner** samt **starta om en enskild styrenhet**. Även när en
+rutin finns tillgänglig i gränssnittet får procedurer som nollställning av styrvinkelsensor eller
+kamera- och radarkalibrering endast utföras enligt tillverkarens verkstadsanvisningar.
 </SafetyNotice>
 
-## Raderingsflödet, steg för steg
+## Hur rensning av felkoder skyddar din diagnostikhistorik
 
-Att radera felkoder är den skrivning de flesta faktiskt använder. Det här är vad som händer efter
-att du bekräftat:
+När du bekräftar en rensning av felkoder arbetar Hanterill i sex kontrollerade steg så att du aldrig
+förlorar viktig felsökningshistorik:
 
-1. Öppna en utökad session med varje modul. Tillverkarmoduler avvisar en radering i
-   standardsessionen, så steget krävs.
-2. Fånga frysta ramdata först, eftersom raderingen förstör dem.
-3. Skicka bulkraderingen.
-4. Vänta ut modulens väntesvarsfönster.
-5. Försök igen per modul där bulkpassningen inte landade.
-6. Läs om koderna och rapportera den envetna mängden: moduler som fortfarande håller koder efter
-   raderingen.
+1. **Öppnar en utökad session** mot varje styrenhet, eftersom fordonets moduler avvisar rensning i grundsessionen.
+2. **Sparar alla ögonblicksbilder först**: Innan något raderas ur fordonet hämtar och sparar Hanterill ögonblicksbilderna för befintliga felkoder i ditt lokala sessionsarkiv.
+3. **Skickar rensningskommandot** till de valda styrenheterna.
+4. **Väntar medan styrenheterna uppdaterar sitt felminne**.
+5. **Gör ett riktat nytt försök per modul** om gatewayen var tillfälligt upptagen.
+6. **Läser av samtliga styrenheter på nytt** och visar exakt vilka koder som försvann och vilka som eventuellt ligger kvar.
 
-En valfri force-reset-loop startar om de envetna modulerna, väntar ungefär fem sekunder, reparerar
-rutten och raderar en gång till. Den är opt-in och vägrar köra medan fordonet rapporterar körläge.
+### Valfri modulomstart och körlägesspärr
 
-## Trafikdisciplin
+Om en styrenhet håller kvar en låst felkod efter en reparation kan du välja det valfria steget
+**Tvinga modulomstart**, som startar om den berörda modulen, väntar cirka fem sekunder och kör
+rensningen en gång till.
 
-Ett diagnosverktyg kan överbelasta ett fordon bara genom att vara ivrigt. Hanterill håller mängden
-förfrågningar begränsad:
+För din säkerhet kontrollerar Hanterill först fordonets driftläge och **vägrar att starta om någon
+styrenhet om fordonet rapporterar att det är i körläge**. Håll alltid fordonet parkerat i läge **P**
+med parkeringsbromsen åtdragen under diagnostik.
 
-- Skanningar kör begränsade loopar med requestbudgetar, så ett svep inte kan översvämma gateway:n.
-- Avbrytning är kooperativ: Hanterill kontrollerar mellan anrop, så du kan stoppa direkt istället
-  för att vänta på att hela svepet blir klart.
-- Sessioner är avsedda för en parkerad bil. Ha bilen i P med parkeringsbromsen åtdragen.
-- Återhämtning återställer aldrig en modul bara för att en förfrågan tog timeout.
+## Trafikdisciplin och omsorg om 12 V-batteriet
 
-## Högspänning
+Ett alltför påstridigt diagnostikverktyg kan överbelasta fordonets gateway eller hålla styrenheter
+vakna långt efter att du är klar. Hanterill skyddar fordonets nätverk och 12-voltsbatteri
+automatiskt:
 
-<SafetyNotice level="high-voltage" title="Högspänning är farligt">
-Elbilar bär flera hundra volt likström. Att läsa batteridata över en kabel avenergerar inget och gör
-inte fysiskt högspänningsarbete säkert. Service på paketet, växelriktarna eller de orangefärgade
-kablarna kräver tillverkarens arbetsordningar, utrustning och utbildning.
+- **Balanserad anropsbudget**: Skanningar över många moduler taktar sina förfrågningar så att gatewayen aldrig dränks i trafik.
+- **Omedelbart avbrott**: Du kan när som helst stoppa en pågående skanning eller livedatamätning; Hanterill avbryter trafiken direkt och städar bort eventuella aktiva strömningar.
+- **Ren nedkoppling för vila**: Så snart en skanning är klar eller du kopplar från slutar Hanterill att skicka håll-vaket-pulser så att alla styrenheter kan återgå till strömsparande viloläge.
+
+## Högspänningssäkerhet på el- och hybridfordon
+
+<SafetyNotice level="high-voltage" title="Högspänning är livsfarligt">
+Batteridrivna elfordon och laddhybrider arbetar med likspänning på mellan 400 V och 800 V. Att läsa
+av batterihälsa eller cellspänningar i Hanterill **gör inte högspänningssystemet spänningslöst** och
+gör det inte säkert att arbeta fysiskt med batteripaketet, växelriktarna, kompressorn eller de
+orange högspänningskablarna. Fysiskt arbete på högspänningskomponenter kräver utbildning, isolerad
+skyddsutrustning och tillverkarens föreskrivna frånkopplingsrutin.
 </SafetyNotice>
 
-## Ingen ersättning för tillverkarens verktyg
+## Fristående programvara
 
-Hanterill är oberoende och inte anslutet till Volvo Cars, Polestar eller Geely. Fatta inte
-säkerhetskritiska reparationsbeslut enbart på Hanterills utdata. Det gäller särskilt en plattform
-som fortfarande är märkt Testas eller Utreds, där avkodningen behöver testas på fler fordon.
+Hanterill är ett fristående diagnostikverktyg och är inte anslutet till eller godkänt av Volvo Cars,
+Polestar, Zeekr, Lynk & Co eller Geely. Fatta aldrig ett säkerhetskritiskt reparationsbeslut enbart
+utifrån en enskild avläsning, särskilt inte på en plattform eller mätpunkt som är markerad som
+provisorisk.
 
-## Om något ser fel ut
+## Om ett mätvärde ser konstigt ut
 
-Stanna. Kör inga rutiner för att "fixa" en avläsning du inte förstår. Exportera sessionen, jämför
-mot en andra skanning eller en känd frisk bil, och fråga i projektets diskussioner innan du agerar.
-Exporten av [supportpaket](/docs/get-help) är rengjord för delning.
+Om du ser en felkod eller ett givarvärde som du inte känner igen: **kör aldrig en kalibrerings-
+eller återställningsrutin på chans för att försöka få bort det**. Spara sessionen, exportera ett
+anonymiserat [supportpaket](/docs/get-help) och jämför med en andra avläsning innan du vidtar någon
+åtgärd.
 
 ## Nästa steg
 
-- [Servicefunktioner](/docs/service-functions): rutinerna som ändrar fordonet, och vad som inte kan
-  ångras.
-- [Anslutning](/docs/connection): säker hårdvaruuppkoppling.
-- [Felkodsskanning](/docs/dtc-scanning): vad en radering faktiskt gör.
+- [Servicefunktioner](/docs/service-functions): de 16 underhållsrutinerna, deras förutsättningar och säkerhetsnivåer.
+- [Anslut till fordonet](/docs/connection): säker kabelanslutning och tändningslägen.
+- [Felkodsskanning](/docs/dtc-scanning): hur felkodsläsning och säkerhetskopiering av ögonblicksbilder fungerar.

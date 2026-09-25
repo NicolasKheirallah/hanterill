@@ -1,70 +1,70 @@
-Hanterill is entirely local. It talks to your car, and it writes to your disk. There is no backend,
-no account, and nothing to sign in to.
+Hanterill talks to the car through the diagnostic cable and saves sessions on your computer. The desktop app does not require an account or send diagnostic sessions to a cloud service. This guide explains what is stored and what to check before sharing a file.
 
-## What stays on your machine
+## What stays on your computer
 
-- Every session, fault read and live capture, kept in a local archive with your notes
-- Exports you create: JSON, CSV and ZIP bundles
-- App settings, themes and connection preferences
-- Activity log: the trail of what was run, with VINs redacted
-- Per-car caching, stored under a hash of the VIN so a file listing reveals no identity
+Everything Hanterill records is stored locally in your user profile folder:
 
-## What is never collected
+- **Saved sessions, fault scans, and live captures**: Stored in your local session archive together with any notes you write.
+- **Exported files**: JSON, CSV, HTML/print reports, and ZIP bundles saved wherever you choose.
+- **Application settings**: Your chosen theme, language, audience mode, and connection preferences.
+- **Activity log**: A local log of diagnostic operations run during your session, with VINs automatically masked.
+- **Per-vehicle discovery cache**: Stored under a one-way hash of the VIN so directory listings on your computer never expose your car's identity.
 
-- No telemetry
-- No analytics or usage tracking
-- No cloud account or backend
-- No diagnostic data uploaded anywhere
-- No third-party crash reporting
+## What is never collected or transmitted
 
-The optional update check is the one internet exception. It is off by default and sends no vehicle
-data. See [Network activity](#network-activity).
+- No telemetry or background heartbeats
+- No analytics or feature usage tracking
+- No cloud account, login, or license check
+- No vehicle data or fault codes uploaded anywhere
+- No third-party crash reporting libraries
 
-## VIN and location redaction
+The desktop app makes **zero internet connections**. It works completely offline in an underground
+garage or on a roadside without Wi-Fi.
 
-The VIN is read during vehicle identification, because a session needs to know which car it belongs
-to. Where a full VIN is not needed, it is masked:
+## VIN visibility and privacy redaction
 
-- In the interface, the VIN shows as a fragment such as `YSM...0428` by default. You can turn full
-  visibility on in Settings.
-- In logs and exports, the full VIN is kept only when you explicitly ask for it.
-- The support bundle scrubs serial numbers, private addresses, credentials and decimal coordinates
-  before a file leaves the machine, as `[REDACTED-GPS]`, while keeping genuine diagnostic readings
-  intact.
+Hanterill reads your car's 17-character VIN when connecting so it can identify the vehicle platform,
+check for mismatched modules, and keep sessions from two different cars separate. You stay in full
+control of when that VIN is shown:
 
-Location gets the same treatment. Pre-purchase inspection reports carry no GPS sections at all, and
-where other exports include coordinates they are rounded to roughly 110 metres.
+- **On the Vehicle screen and Inspection Reports**: The full 17-character VIN is displayed clearly so you can verify the car against its registration documents and physical VIN plate, with a **one-click privacy toggle** in the toolbar to mask it (`YSM...0428`) whenever you want to take a screenshot or share a report.
+- **In other screens**: You can set default VIN masking in **Settings -> Privacy & Storage**.
+- **In support bundles**: Exporting a support bundle from **Settings -> About** automatically scrubs VINs, module serial numbers, private IP addresses, and exact GPS coordinates (`[REDACTED-GPS]`) while preserving the diagnostic readings needed to troubleshoot an issue.
 
-## Retention and deletion
+## Optional GPS coordinates
 
-You choose how long sessions are kept: 30 days, 90 days, a year, or indefinitely. The
-Privacy and Storage settings page also has a wipe action that clears cached records and stored
-sessions in one step.
+Location tagging is disabled by default. If you opt in under **Settings -> Privacy & Storage**, you
+can attach approximate coordinates to a session so you remember which workshop or charger a capture
+was taken at.
 
-<Callout kind="note" title="Deletion means deletion">
-Sessions live in local storage on your machine. There is no copy anywhere else, so deleting them
-removes them for good.
+- **Inspection Reports** leave GPS out by default. You can include it when you explicitly enable that option for a report.
+- In exports where location is enabled, coordinates may be rounded. Check the location section before sharing a file.
+
+## Storage management, retention, and deletion
+
+In **Settings -> Privacy & Storage**, you can see how much disk space your saved sessions, raw
+captures, and logs are using, and choose how long sessions are kept automatically:
+
+- **30 days**, **90 days**, **1 year**, or **Indefinitely**
+- **One-click storage cleanup**: Clear cached module discovery records or permanently delete all stored sessions and captures in one step.
+
+<Callout kind="note" title="Deleting local data is permanent">
+Because your sessions exist only on your own computer and are never backed up to any cloud server,
+deleting sessions from Hanterill removes them permanently unless you exported a copy first.
 </Callout>
 
-## Network activity
+## Website versus desktop app
 
-During a diagnostic session, Hanterill speaks to the car over the local link. It needs no internet
-connection to run. In **Settings → Updates**, you can check for a published release now or opt in
-to a check on launch, at most once a day. This sends a request to GitHub's public release API;
-GitHub sees your IP address, but the request carries no VIN, vehicle data, diagnostic content or
-build identity. The app only displays a notice. It never downloads or installs an update.
+While the Hanterill desktop application never connects to the internet, this documentation website
+reads GitHub's public release page so the [Download](/download) and [Changelog](/changelog) pages
+can show the current version and installer links.
 
-This website is separate: it reads the GitHub API to show the latest release and repository
-statistics. That is the website, not the app.
+## Free for personal use
 
-## No subscription, and no price
-
-There is no paid tier and no license server, and Hanterill is free for private use in every
-version: [the license](/docs/license) is where that is written down. The source is available to
-read, and Hanterill is licensed for personal, non-commercial use. There is nothing to monetise in
-your car's data, so none of it is collected.
+There is no paid tier, no subscription, and no feature locked behind a paywall. Hanterill is free
+for personal, non-commercial use under the terms explained on the [License](/docs/license) page.
 
 ## Next
 
-- [Safety](/docs/safety): what the app can change, and how that is gated.
-- [License](/docs/license): the terms Hanterill ships under.
+- [Safety](/docs/safety): how Hanterill separates read-only diagnostics from vehicle-changing routines.
+- [License](/docs/license): the terms Hanterill is published under.

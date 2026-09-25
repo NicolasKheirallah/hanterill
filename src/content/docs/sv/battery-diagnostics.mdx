@@ -1,12 +1,7 @@
-import { DidReference } from "@/components/docs/mdx/DidReference";
-import { DiagnosticExample } from "@/components/docs/mdx/DiagnosticExample";
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 import { ScreenShot } from "@/components/docs/mdx/ScreenShot";
 
-Högspänningsbatteriet har sin egen dator, BECM (Battery Energy Control Module). Den håller redan
-reda på allt om paketet: hur mycket laddning som är kvar, hur frisk det är, spänningen i varje
-cellgrupp och hur varmt det är. Hanterill ställer frågor till den datorn i stället för att uppskatta
-utifrån andra signaler, och gissar aldrig.
+Instrumentpanelen visar hur laddat batteriet är. **Batterihälsa** visar också batteriets uppskattade skick, temperaturer och skillnader mellan cellgrupperna. Hanterill läser uppgifterna från bilens batteristyrenhet.
 
 <ScreenShot
   root="/assets/battery-health.png"
@@ -15,96 +10,49 @@ utifrån andra signaler, och gissar aldrig.
 />
 
 <SafetyNotice level="read-only">
-Allt på den här sidan är läsningar. Hanterill frågar BECM och avkodar svaren. Den skriver inte till
-modulen och ändrar inte hur paketet hanteras.
+All batteridiagnostik i Hanterill är helt skrivskyddad. Appen ställer frågor till batteristyrenheten
+och visar svaren utan att ändra några inställningar, balanseringsgränser eller kontaktorer i
+fordonet.
 </SafetyNotice>
 
-## Tre saker som kallas "batterihälsa"
+## Tre olika mått som ofta kallas "batterihälsa"
 
-Uttrycket täcker tre olika siffror i den här appen, och bara en av dem lämnas över av fordonet. Du
-måste hålla isär dem för att läsa batterivyerna rätt.
+För att tolka siffrorna rätt är det bra att hålla isär tre mått som visas i programmet:
 
-| Vad man kallar det | Var det kommer ifrån | Vad det svarar på |
+| Mått | Var det kommer ifrån | Vad det berättar |
 | --- | --- | --- |
-| **State of Health**-procenten | Läses från BECM. Fordonet räknar fram den. | Hur mycket kapacitet som är kvar jämfört med nytt. |
-| **Den cellvisa sammanställningen** | Räknas fram av Hanterill ur tre cellvisa block. | Hur jämna cellerna är och vad deras medeltillstånd är. |
-| **Rapportens hälsopoäng** (av 100) | Räknas fram av Hanterills poängregler. | Hur hela fordonet ser ut, med batteriet som en av flera indata. |
+| **Hälsotillstånd (SoH %)** | Läses direkt från batteristyrenheten (BECM) | Hur mycket lagringskapacitet batteriet har kvar jämfört med när fordonet var nytt |
+| **Cellbalans och cellsammanfattning** | Räknas fram ur alla enskilda cellmätningar i paketet | Hur jämna cellerna är i spänning, kapacitet och laddningsnivå |
+| **Inspektionsrapportens poäng (0–100)** | Räknas fram av Hanterills rapportmotor | En helhetsbedömning av hela fordonet där batterihälsan är en av flera delar |
 
-## State of Health: läses, räknas inte fram
+## 1. Hälsotillstånd (State of Health, SoH)
 
-State of Health (SoH) jämför paketets nuvarande kapacitet med vad det hade när det var nytt. Ett
-paket på 91 % SoH har tappat 9 % av sin ursprungliga kapacitet. Det är siffran du vill ha innan du
-köper ett begagnat elfordon.
+**State of Health (SoH)** anger hur stor andel av sin ursprungliga kapacitet batteripaketet har kvar.
+Ett batteri med **91,14 % SoH** har förlorat knappt 9 % av sin ursprungliga kapacitet sedan
+tillverkningen. Det är den enskilt viktigaste siffran när du utvärderar ett begagnat elfordon.
 
-BECM räknar fram den. Hanterill läser svaret och kontrollerar det:
+- På eldrivna CMA-fordon rapporterar BECM SoH med två decimalers noggrannhet (exempelvis `91,14 %`).
+- På SPA- och SEA1-fordon läser Hanterill motsvarande hälsovärde enligt respektive plattforms datastruktur.
+- Varje avläsning kontrolleras så att den ligger inom ett rimligt fysiskt intervall (0 till 100 %) innan den visas på skärmen.
 
-- På CMA-plattformen är svaret ett fyra byte långt heltal i hundradels procent. Råvärdet 9114 visas
-  som **91,14 %**.
-- En andra plattform skickar samma slags siffra enligt ett annat kontrakt: två byte med samma
-  skalning i hundradels procent, men en separat definition. Den kommer från referensdata och behöver
-  testas på fler fordon.
-- Varje SoH-läsning räckviddskontrolleras mot 0–100 %. En nyttolast med fel längd, eller ett
-  värde utanför intervallet, blir aldrig en siffra.
+## 2. Laddningsnivå (State of Charge, SoC)
 
-<DiagnosticExample
-  service="ReadDataByIdentifier, SoH på BECM"
-  request="22 49 6D"
-  response="62 49 6D 00 00 23 9A"
-  note="Nyttolasten 0x0000239A är 9114. Delat med 100 blir det 91,14 % SoH. Exakt denna avkodning är verifierad mot referensfordonet."
-/>
+**State of Charge (SoC)** visar hur fulladdat batteriet är just nu. Ett batteri kan ha **92 % SoH**
+(mycket friskt) och samtidigt ligga på **20 % SoC** (behöver laddas).
 
-SoH är en rapport från batteristyrenheten, inte ett kapacitetstest som Hanterill utför.
-Battericertifikatet säger det rent ut och trycker ingen bokstavsbetyg.
+Batteristyrenheten håller reda på två interna laddningsnivåer: den faktiska tekniska laddningsnivån
+i cellerna och den visade laddningsnivån på förardisplayen. Hanterill visar båda och markerar om de
+skiljer sig åt med mer än 2 procentenheter.
 
-## State of Charge: läses live
+## 3. Cellkartan: alla enskilda celler på en skärm
 
-State of Charge (SoC) är hur fullt paketet är just nu. Den läses live och visas vid
-inspelningstillfället. SoH och SoC svarar på olika frågor: ett paket kan vara 90 % friskt och 20 %
-laddat samtidigt.
+En enda totalsiffra för batteriet kan dölja en enskild svag cell. Ett friskt batteripaket har alla
+sina cellgrupper inom några få millivolt från varandra. Om en enskild cellgrupp däremot ligger
+betydligt lägre än resten begränsar den räckvidden för hela paketet.
 
-BECM rapporterar två oberoende SoC-siffror. Hanterill visar båda och jämför dem:
-
-- Om de stämmer överens händer ingenting.
-- Om de skiljer sig med **2 procentenheter eller mer** lyfter appen en granskningspunkt och visar
-  båda läsningarna. Den slår aldrig ihop dem och väljer aldrig tyst den ena.
-
-Ett separat cellvist SoC-block lägger till ett medelvärde och en spridning över cellerna.
-12 V-stödbatteriet har sin egen bedömning av laddningsnivån, utifrån sin vilospänning; den matar
-rapportpoängen och beskrivs i [Inspektionsrapporter](/docs/inspection-reports).
-
-## Det Hanterill räknar fram: cellvisa sammanställningar
-
-Hanterill läser och sammanställer tre cellvisa block:
-
-| Block | Enhet | Vad som rapporteras |
-| --- | --- | --- |
-| Cellvis SoH | % | medelvärde och spridning |
-| Inlärd kapacitet | Ah | medelvärde |
-| Cellvis SoC | % | medelvärde och spridning |
-
-Varje block är en serie 16-bitars platser, där varje bit är värd 0,01 av enheten. Ett fullt CMA-paket
-har 108 platser, men avkodningen följer topologin och accepterar även 96, 102, 107, 110 och 120. Ett
-hybridpaket avvisas därför inte för att det inte är 108.
-
-Ur varje block räknar appen fram:
-
-- **medelvärde** = summan av råvärdena, delad med antalet platser, delad med 100
-- **spridning** = högsta värdet minus lägsta
-
-Varje block räckviddskontrolleras: cellvis SoH 0–100 %, inlärd kapacitet 0–400 Ah, cellvis SoC
-0–100 %. Om ett blocks medelvärde hamnar utanför sitt intervall lämnas både medelvärdet och
-spridningen tomma i stället för att få ett standardvärde. Om inget block svarar blir hela
-sammanställningen tom. Ett värde som fordonet inte lämnat visas som saknat, aldrig som noll.
-
-## Varför en cellmatris i stället för en siffra
-
-En medelspänning döljer problem. Ett paket där varje cellgrupp ligger inom några millivolt från sina
-grannar är balanserat. Ett paket där en grupp konsekvent ligger lägre än resten har en svag punkt på
-väg att bildas.
-
-Därför läser Hanterill cellgrupperna som ett block i stället för att lita på ett enda
-sammanfattningsvärde. Webbplatsens [batterisektion](/features/battery-health) visar samma matris med
-exempeldata.
+Därför läser Hanterill av spänningen för varje enskild cellgrupp i batteriet och ritar upp dem i en
+interaktiv **Cellkarta** (108 cellgrupper fördelade på 27 moduler i ett standardpaket på CMA, eller
+96, 102, 107, 110 respektive 120 celler beroende på plattform och batteristorlek).
 
 <ScreenShot
   root="/assets/cell-map.png"
@@ -112,107 +60,53 @@ exempeldata.
   caption="Cell- och värmekarta: samma spänningar utplacerade över det fysiska paketet, så en svag punkt får en position"
 />
 
-<Callout kind="note" title="Hur cellgrupperna läses">
-Block per modul ligger på `0x4B10` till `0x4B2A`: 27 identifierare, en per modul, fyra cellgrupper
-vardera. Uppbyggnaden kommer från en katalogpost för fordonets paket, inte från en siffra skriven i
-koden. Ett 102-cellers hybridpaket behandlas som komplett vid 102.
-</Callout>
+### Så tolkar du cellspänningsspridningen (delta i mV)
 
-### Vad balansbanden betyder
+Skillnaden mellan den högsta och den lägsta cellgruppen när fordonet står i vila kallas **cell-delta**
+och mäts i millivolt (`mV`):
 
-"Balans" är spridningen mellan högsta och lägsta cellgruppspotential i vila. Hanterill bandar den
-spridningen för en mänsklig läsare:
-
-| Spridning i vila | Band på skärmen | Så läser du det |
+| Spridning i vila | Bedömning i vyn | Vad det innebär |
 | --- | --- | --- |
-| 20 mV eller mindre | "Tight" | Varje grupp ligger nära sina grannar. |
-| 20–35 mV | "Normal" | Vanlig tolerans för vilospänning i den här kemin. |
-| 35–60 mV | "Watch" | En grupp kan släpa efter, eller så är balanseringen svag. Värd en ny läsning. |
-| Över 60 mV | "Imbalanced" | Ihållande spridning pekar på en svag cell eller ett balanseringsfel. |
+| **20 mV eller lägre** | **Jämn (Tight)** | Alla cellgrupper ligger mycket nära varandra. |
+| **20 till 35 mV** | **Normal** | Normal spridning i vila för den här batterikemin. |
+| **35 till 60 mV** | **Bevaka (Watch)** | Någon cellgrupp släpar efter något; låt gärna fordonet balansera vid en AC-laddning och mät igen. |
+| **Över 60 mV** | **Obalanserad (Imbalanced)** | Tydlig avvikelse i vila som kan tyda på en försvagad cell eller ett balanseringsbehov. |
 
-Två regler hör till banden:
+Utöver cellspänningar sammanställer Hanterill även cellvis SoH (%), inlärd cellkapacitet (Ah) och
+cellvis SoC (%) där styrenheten rapporterar dessa block.
 
-- De gäller bara en komplett celläsning. En delvis genomsökning är en täckningslucka och visas
-  som "Not banded"; den får aldrig ett utlåtande ur ett ofullständigt cellunderlag.
-- De är granskningsband, inte fordonsspecifikationer och inte poäng. De säger var du ska titta.
-  Hanterill drar inga poäng för dem.
+## 4. Temperaturgivare och livstidshistorik
 
-## Temperaturhistoriken
+Hög värme och sträng kyla påverkar hur snabbt ett litiumjonbatteri åldras. På skärmen
+**Batterihälsa** visar Hanterill två typer av temperaturinformation:
 
-BECM lagrar också en livstidsregistrering: hur många timmar paketet har tillbringat i var och en av
-tolv tiogradiga temperaturband, från +75 °C ner till −35 °C. Hanterill visar det som ett histogram
-med total drifttid och hur mycket av den tiden som låg i det bekväma fönstret.
+- **Aktuella temperaturgivare**: Läser av de inbyggda temperatursensorerna i batteripaketet samt kylvätsketemperatur vid in- och utlopp så att du ser medeltemperatur, lägsta/högsta punkt och temperaturspridning.
+- **Livstidshistorik för temperatur**: Batteristyrenheten sparar hur många timmar batteriet har tillbringat i tolv olika tiogradiga temperaturintervall (från −35 °C upp till +75 °C) under hela fordonets livslängd. Hanterill visar detta som ett överskådligt diagram tillsammans med andelen tid i det gynnsamma temperaturfönstret (15 till 35 °C) och ett **termiskt stressindex (0 till 100)**.
 
-- **Andelen i optimalt fönster** är den del av livstidstimmarna som låg i de tre mittersta banden,
-  centrerade kring 35 °C, 25 °C och 15 °C, det 15–35 °C-fönster som avkodaren namnger.
-- **Termiskt stressindex** (0–100) viktar de varma banden (10, 6, 4, 2) och de kalla banden
-  (2, 5, 10), skalar med livstidstimmarna och kapas vid 100. Ett lågt tal betyder att lite tid
-  tillbringades där paketet åldras snabbast.
+## 5. Säkerhets- och rimlighetskontroller
 
-Värme är det som åldrar ett batteri, så tid som tillbringats mycket varmt eller mycket kallt är värt
-att se innan du köper. Levande pakettemperaturer är en annan sak: sensor-till-modul-mappningen är
-inte fastställd än, så de värdena visas som paketkanaler, märkta preliminära, och aldrig som en
-enskild moduls temperatur.
+Utöver cellerna kontrollerar Hanterill även:
 
-## Korskontroller
+- **Högspänningsisolation (isolationsmotstånd)**: Bekräftar att högspänningssystemet är ordentligt isolerat från fordonets chassi.
+- **Högspänningsinterlock (HVIL) och kontaktorer**: Visar att säkerhetsslingan är hel och om huvudkontaktorerna är öppna eller slutna.
+- **Automatiska korskontroller**: Jämför den rapporterade totalspänningen med summan av alla enskilda cellspänningar samt jämför rapporterad effekt med spänning gånger ström så att avvikande givarvärden upptäcks direkt.
 
-Hanterill jämför signaler som borde stämma med varandra och rapporterar var de inte gör det:
-rapporterad paketspänning mot summan av cellgrupperna, beräknad effekt mot rapporterad effekt,
-strömflöde vid parkerat fordon, och mer. Det finns fjorton sådana kontroller, och fyra av dem är
-batterispecifika:
+## Batterilayouter på CMA, SPA och SEA1
 
-- cellvis SoH-spridning över paketet
-- cellvis SoH mot paketets SoH
-- cellvis SoC-spridning
-- rimlighet i cellvis kapacitet
+Varje plattform och batterivariant har sin egen cellkarta i Hanterill:
 
-Vokabulären för utfall betyder mer än antalet. En kontroll kan komma tillbaka som konsekvent, en
-varning, en signalavvikelse, avkodaren osäker, eller otillräckliga data. En indata som aldrig svarade
-registreras som saknad, aldrig behandlad som godkänd. Ingen kontroll påstår ett hårdvarufel, och
-ingen går längre än en varning.
+- **CMA**: 108 celler (78 kWh), 96 celler (69 kWh Standard Range) och 82 kWh-utförandet.
+- **SPA**: Plug-in-hybridpaket med 96 celler, 102 celler och 108 celler (Long Range).
+- **SEA1**: Både LFP-batteriet (49/51 kWh) och NMC-batteriet (66/69 kWh), där appen automatiskt känner av batterikemin och cellantalet.
 
-## Vad batteriet bidrar med till rapportpoängen
-
-Den poängsatta inspektionsrapporten tar bara en del av batteribilden:
-
-- SoH driver poängen. Under 70 % drar 30 poäng, 70–80 % drar 14, 80–90 % drar 4, och 90 % eller
-  mer drar ingenting. Ett paket under 70 % ligger under den publicerade garantigränsen.
-- 12 V-vilospänningen poängsätts också: under 12,2 V drar 16, och 12,2–12,5 V drar 6.
-- Cellbalans och termisk spridning poängsätts inte. De stannar som observationer och
-  granskningsband.
-- Om ingen SoH-läsning kommer in lämnas poängen tom och utlåtandet blir ofullständigt. Hanterill
-  gissar ingen poäng ur ett ofullständigt underlag och behandlar inte en saknad läsning som noll.
-
-Hela aritmetiken, utlåtandebanden och de två hårda överstyrningarna finns i
-[Inspektionsrapporter](/docs/inspection-reports).
-
-## Att läsa det över tråden
-
-Efter routningsaktivering öppnar Hanterill en utökad session med BECM och läser varje identifierare:
-
-<DidReference
-  rows={[
-    ["0x496D", "Batteriets hälsotillstånd"],
-    ["0x4803", "Paketspänning"],
-    ["0x4802", "Paketström"],
-    ["0x4B10-0x4B2A", "Cellgruppspotentialer, ett block per modul"],
-    ["0xF190", "VIN, för sessionskorrelation"],
-  ]}
-/>
-
-Livevyer använder den periodiska identifierarläsningen (`0x2A`) där modulen stöder den: en
-registrering i stället för att ställa samma fråga i en loop.
-
-## Andra plattformar
-
-<Callout kind="warning" title="SPA och SEA1 behöver fler fordon">
-SPA och SEA1 har egna BECM-definitioner: olika cellantal och olika nyttolastkontrakt. Samma
-identifierarnummer kan vara ett 4-bytevärde på CMA och ett 2-bytevärde på SPA, så de är separata
-definitioner, aldrig delade. De behöver testas på fler fordon. Tills dess bör batteridata från dessa
-fordon behandlas som preliminär.
+<Callout kind="warning" title="SPA och SEA1 är markerade som provisoriska">
+Medan CMA-batteriavläsningarna är fullt verifierade på produktionsfordon, kontrolleras skalningen
+för vissa enskilda mätvärden på SPA och SEA1 fortfarande över fler årsmodeller. Dessa värden visas
+med en tydlig provisorisk markering i gränssnittet.
 </Callout>
 
 ## Nästa steg
 
-- [Felkodsskanning](/docs/dtc-scanning): felsidan av samma session.
-- [Inspektionsrapporter](/docs/inspection-reports): hur batteriavkodningar blir ett poängsatt utlåtande.
+- [Laddning](/docs/charging): följ AC- och DC-laddning, effekt och temperaturer i realtid.
+- [Vilodränering](/docs/parasitic-drain): mät hur mycket energi fordonet förbrukar när det står parkerat.
+- [Inspektionsrapporter](/docs/inspection-reports): se hur batterihälsan vägs in i helhetsbetyget från 0 till 100.

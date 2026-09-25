@@ -67,7 +67,7 @@ export default async function SessionsEvidencePage({ params }: { params: Promise
               ))}
             </ul>
             <div className="mt-4">
-              <MoreLink href="/docs/cli">{t("cliLink")}</MoreLink>
+              <MoreLink href="/docs/sessions-and-evidence">{t("cliLink")}</MoreLink>
             </div>
           </div>
         </div>

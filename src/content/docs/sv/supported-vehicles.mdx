@@ -1,128 +1,50 @@
-import { PlatformSupport } from "@/components/docs/mdx/PlatformSupport";
-import { VehicleSupport } from "@/components/docs/mdx/VehicleSupport";
+Stödet i Hanterill varierar mellan bilmodeller. En bil kan gå att ansluta även om vissa batteri- eller felkodsavläsningar fortfarande provas ut. Etiketterna nedan visar vad som har testats på riktiga bilar.
 
-Hanterill byggdes CMA-först. Plattformen Compact Modular Architecture, under Polestar 2 och de
-mindre eldrivna Volvo-modellerna, är där batteri-, styrenhets- och rutintäckningen skrevs och
-kontrollerades mot ett riktigt fordon. Andra plattformar är under arbete, och den här sidan säger exakt
-hur långt var och en har kommit.
+## Vad supportnivåerna betyder
 
-## Nåbar är inte samma sak som stödd
+<SpecList rows={[
+  ["Verifierad (CMA eldrivna fordon)", "Bekräftat på riktiga produktionsfordon. Alla 44 aktiva styrenheter på eldrivna fordon, battericeller, temperaturer, felkoder, livedata och servicefunktioner är verifierade mot faktisk fordonshårdvara."],
+  ["Under utprovning / Provisorisk (SPA och SEA1)", "Styrmodulregister, batterilayouter och givardefinitioner är inbyggda i appen. Grundläggande identifiering, felkoder och mätvärden fungerar, medan vissa enskilda skalningsformler fortfarande dubbelkontrolleras på fler fordonsmodeller."],
+  ["Referens (CMA förbränning / hybrid)", "De fem ytterligare drivline- och avgasreningsmodulerna i det fullständiga CMA-registret på 49 styrenheter finns katalogiserade tillsammans med en dedikerad motorvy för bensin- och hybridmodeller."],
+]} />
 
-Två olika saker, och skillnaden spelar roll:
+## 1. CMA (Compact Modular Architecture)
 
-- **Nåbar** betyder att Hanterill kan få en anslutning till bilen via DoIP.
-- **Stödd** betyder att diagnostikfunktionerna är skrivna och kontrollerade mot kända, korrekta
-  avläsningar.
+**CMA** är referensplattformen som Hanterill först utvecklades och verifierades på.
 
-Ett fordon kan vara nåbart och ändå berätta nästan inget användbart. Avkodaren som omvandlar råa
-byte till en batteriprocent är ännu inte skriven eller verifierad för den plattformen. Etiketterna på
-den här sajten beskriver alltid det andra.
+- **Modeller**: Polestar 2, Volvo XC40 (inklusive XC40 Recharge / EX40), Volvo C40 Recharge / EC40, Lynk & Co 01, 02, 03 och 05 samt Geely Xingyue / Tugella.
+- **Styrmodulregister**: 49 katalogiserade styrenheter (44 aktiva på eldrivna fordon samt 5 referensmoduler för hybrid, förbränningsmotor och luftfjädring).
+- **Batterilayouter**: Stöder 108-cellspaketet (78 kWh nominellt, 27 moduler), 96-cellspaketet (69 kWh Standard Range, 24 moduler) samt det nyare 82 kWh-paketet.
+- **Vad som är verifierat**: Fullständig batteridiagnostik på cellnivå, laddningsvy, beräkning av vilodränering, felkodsläsning och rensning med ögonblicksbilder, livedata, delsystemsvyer, mjukvaruinventering, inspektionsrapport (0 till 100) samt 16 servicefunktioner.
 
-## Vad etiketterna betyder
+## 2. SPA (Scalable Product Architecture)
 
-| Etikett | Betydelse |
-| --- | --- |
-| Stöds | Verifierad mot ett riktigt fordon. Batteri, felkoder, styrenhetsidentifiering och realtidsdata testas regelbundet. |
-| Delvis | Vissa funktioner verifierade, andra täcks inte än på denna modell. |
-| Testas | Koden finns men behöver testas på fler fordon. Behandla varje avläsning som preliminär. |
-| Utreds | Vi kartlägger fortfarande hur plattformen fungerar. Inte användbar för diagnostik. |
+**SPA** omfattar de större 60- och 90-serierna från Volvo och Polestar 1.
 
-## Innan du köper en adapter
+- **Modeller**: Volvo XC90 (2016+), S90, V90, V90 Cross Country, XC60 (2018+), S60 (2019+), V60, V60 Cross Country samt Polestar 1.
+- **Styrmodulregister**: 41 katalogiserade styrenheter i ett eget SPA-register (skilt från CMA).
+- **Batterilayouter**: Stöder plug-in-hybridpaketen (Twin Engine / Recharge T6 och T8) med 96 celler, 102 celler och det nyare långräckviddspaketet med 108 celler.
+- **Vad som fungerar idag**: DoIP-identifiering, chassinummer (VIN) och fordonsprofil, felkodsläsning och rensning över alla 41 styrenheter, mjukvaruinventering, DID-utforskare, motorvy för förbrännings- och hybridmodeller samt provisorisk batterihälsa.
 
-Tabellen beskriver anslutningsvägen, inte ett löfte om verifierade avläsningar. En passiv
-ENET-kabel är den dokumenterade vägen för CMA-referensbilen. Andra bilar kan behöva annan
-kabeldragning. En katalogpost bevisar inte att bilen svarar.
+## 3. SEA1 (Sustainable Experience Architecture)
 
-| Fordonsfamilj | Anslutningsunderlag | Kontrollera före köp |
-| --- | --- | --- |
-| Polestar 2 / CMA-Volvo | Polestar 2 är live-referensen för DoIP; CMA delar katalog, men varianter behöver egna kontroller | Passiv OBD-II till RJ45 ENET-kabel och Ethernet-port eller USB-C-adapter. Kontrollera modell och årsmodell nedan. |
-| SPA1-Volvo (XC60, XC90, V60, S60) | Preliminär DoIP-diagnostik kom i 0.2.2: identitet, felkoder och tidiga batteri-DID, med modulistan och avkodare fortfarande under bekräftelse på fler bilar | Samma passiva ENET-kabel. Behandla varje avläsning som preliminär och kontrollera vyn **Kapabiliteter** för funktionen du behöver. |
-| Äldre SPA-Volvo och T8-hybrider | Batteriet svarar över äldre CAN. Appen har en ISO-TP CAN-transport, men en CAN-adapter levereras inte med den | En ENET-kabel når inte denna batteriväg. Live-skanning av batteriet väntar på CAN-hårdvara som Hanterill inte levererar. |
-| EX30 / Polestar 4 / Zeekr / SEA1 | 0.2.2 når bilar som förblir tysta vid upptäckten genom att öppna DoIP rakt mot gatewayen, verifierat på en Zeekr 001. Diagnostikdefinitionerna behöver fortfarande testas på fler bilar | Samma passiva ENET-kabel, tändning på. Anslutningen är inte längre hindret; avläsningarna är fortfarande preliminära. |
-| EX90 / Polestar 3 / SPA2 | Endast forskning | Ingen köprekommendation för Hanterill-diagnostik ännu. |
+**SEA1** är den moderna elbilsplattformen som används i nyare kompakta och medelstora eldrivna
+fordon.
 
-Läs [Hårdvara och adaptrar](/docs/hardware-and-adapters) för kablar och gränssnitt. Om bilen
-ansluter men en avläsning saknas visar vyn **Kapabiliteter** funktionens bevittnade stödnivå.
-[Tolka resultat](/docs/reading-results) förklarar etiketterna.
+- **Modeller**: Volvo EX30, Polestar 4, Zeekr X, Zeekr 001 och Smart #1 / #3.
+- **Styrmodulregister**: 25 katalogiserade styrenheter i ett eget SEA1-register.
+- **Batterilayouter**: Stöder både LFP-paketet (litiumjärnfosfat, 49/51 kWh) och NMC-paketet (66/69 kWh Extended Range) med automatisk identifiering av batterikemi och cellantal.
+- **Vad som fungerar idag**: DoIP-anslutning, chassinummer (VIN), plattformsidentifiering, felkodsskanning över 25 styrenheter, mjukvaruinventering samt provisorisk batteri- och cellavläsning.
 
-## Plattformar
+## Plattformar som ännu inte är kartlagda (SPA2)
 
-Tabellerna nedan genereras från samma stöddata som resten av sajten använder, så de kan inte avvika
-från [fordonssidan](/vehicles).
-
-### CMA
-
-Den testade plattformen. Polestar 2 och CMA-Volvorna delar en högspänningslayout, så en funktion
-skriven för en fungerar på de andra.
-
-<PlatformSupport platform="CMA" />
-
-Fullständig funktionsgenomgång för referensfordonet:
-
-<VehicleSupport model="Polestar 2" />
-
-### SPA
-
-Delvis stödd. Levereras som katalogdata: pakettopologier, ett CAN-eran BECM-register och avkodare.
-Hybrid- och EV-batterivägen behöver testas på fler fordon. På första generationens SPA svarar
-batteriet över äldre CAN-kablage. En ISO-TP-CAN-transport finns i appen, men ingen hårdvaruadapter
-levereras än, så levande batteriskanning väntar på adaptern, inte på mjukvara som inte finns.
-
-<Callout kind="caution" title="Batterivägen behöver fler fordon">
-SPA-batteridefinitionerna behöver testas på fler fordon innan du litar på siffrorna.
-</Callout>
-
-<PlatformSupport platform="SPA" />
-
-### SEA1
-
-EX30-klassens definitioner finns i katalogen: styrenhetsregister, routningsadresser,
-identifierarkartor och cellmappning. Var och en av dem behöver testas på fler fordon. Plattformen
-heter SEA1 i appen; "SEA" är familjenamnet.
-
-<Callout kind="caution" title="Behöver testas på fler fordon">
-SEA1 levereras som definitioner som behöver testas på fler fordon. Zeekr och andra delplattformar
-ärver med flit inte EX30-kartan, eftersom familjelikhet inte är bevis.
-</Callout>
-
-<PlatformSupport platform="SEA" />
-
-### SPA2
-
-Under utredning. Gateway- och säkerhetsmodellen fungerar annorlunda, och ingen implementation har
-testats på ett fordon ännu.
-
-<Callout kind="note" title="Utreds">
-Endast detektering och registerposter. Inget på denna plattform ger en avläsning du bör agera på.
-</Callout>
-
-<PlatformSupport platform="SPA2" />
-
-## Batteripaketets uppbyggnad
-
-Cellmatrisen tar sin form från katalogen, aldrig från en siffra skriven i koden. Varje
-paketuppbyggnad anger hur många cellgrupper den har och hur de är ordnade:
-
-| Plattform | Uppbyggnad | Status |
-| --- | --- | --- |
-| CMA | 108 grupper: 27 moduler om 4 (78 kWh) | Verifierad på referensfordonet |
-| CMA | 108 grupper: 27 moduler om 4 (82 kWh) | Katalogiserad från katalog- och avkodarbevis |
-| CMA | 96 grupper: 24 moduler om 4 (69 kWh) | Definierad från katalog- och avkodarbevis |
-| SPA | 96 (69 kWh), 108 (78 kWh), hybrid 102 (T8) | Katalogiserad, behöver testas på fler fordon |
-| SPA | hybrid 96 (tidig T8, 11,6 kWh) | Katalogiserad, behöver testas på fler fordon |
-| SEA1 | 107 (69 kWh NMC), 120 (51 kWh LFP) | Katalogiserad, behöver testas på fler fordon |
-| SEA1 | 110 (100 kWh NMC, Zeekr-klass) | Katalogiserad, behöver testas på fler fordon |
-
-Ett paket bedöms komplett vid sin egen cellräkning. En 102-cellers hybrid märks aldrig ofullständig
-för att den inte har 108.
-
-## Oberoende, inte ansluten
-
-Kompatibilitet beskriver vilka fordon Hanterill kan kommunicera med. Det är inget påstående om
-godkännande. Hanterill är ett oberoende projekt och är inte anslutet till Volvo Cars, Polestar
-eller Geely.
+Fordon byggda på **SPA2** (exempelvis Volvo EX90 och Polestar 3) använder en annan centraldator- och
+zonarkitektur vars adresser och mätvärden ännu inte är kartlagda i Hanterill. Om du ansluter ett
+SPA2-fordon kan gatewayen svara vid identifiering, men Hanterill gissar aldrig styrenhetsadresser
+från en annan plattform.
 
 ## Nästa steg
 
-- [Anslutning](/docs/connection): få en länk till en av dessa fordon.
-- [Batteridiagnostik](/docs/battery-diagnostics): vad batteriavkodningarna betyder.
+- [Felsökning](/docs/troubleshooting): tips om en viss styrenhet inte svarar på ditt fordon.
+- [Styrmodulregister](/docs/ecu-reference): se vilka styrenheter som ingår i registret.
+- [Funktioner och stöd](/docs/capabilities-and-gating): varför vissa funktioner visas för din bil.

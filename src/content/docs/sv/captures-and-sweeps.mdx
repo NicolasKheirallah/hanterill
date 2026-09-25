@@ -1,150 +1,42 @@
-import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+De vanliga vyerna läser de värden som behövs för en viss uppgift. I **Fångster** och **DID-utforskare** kan du spara och granska ett bredare underlag från bilen. De här verktygen visas i användarläget **Forskning** och är främst till för den som undersöker ovanliga svar eller nya mätvärden.
 
-Två sätt att samla in data delar en idé: fråga en lista av moduler i en fast ordning och behåll det
-var och en svarar. En fullständig insamling är bred och riktar sig mot register. Ett svep är smalt och
-riktar sig mot en fråga.
+## Vad en diagnostikfångst är
 
-<SafetyNotice level="read-only">
-Båda vägarna är läsningar. Den fullständiga insamlingen skickar `0x22`-läsningar, närvaroprov och,
-för okatalogiserade svar, ett `0x24`-skalningsprov. Svepet för tysta moduler skickar `0x3E`, `0x10`,
-`0x22` och `0x19`. Ingen av vägarna låser upp en modul: ett säkerhetsavvisande `0x33` registreras,
-och görs aldrig om till ett upplåsningsförsök.
-</SafetyNotice>
+Under en vanlig skanning sparar Hanterill både det avkodade värdet (till exempel `91,14 %`) och det
+råa svaret som styrenheten skickade. En **diagnostikfångst** går ett steg längre och sparar hela
+sekvensen av frågor och svar med exakta tidsstämplar, svarstider och utfallskoder.
 
-## Vad en fullständig insamling samlar in
+Det är praktiskt i tre situationer:
 
-Appens DID-skanner för alla moduler är den fullständiga insamlingen. Du väljer omfattning av moduler,
-en valfri sökpreset och vilka faser som ska köras, och bekräftar innan något skickas.
-Förhandsvisningen av planen visar planerat antal begäranden per steg innan körningen startar.
+1. **Granska i efterhand vid skrivbordet**: Du kan göra en femton minuter lång helfordonsskanning ute i fordonet och sedan utforska varje styrenhets svar inomhus.
+2. **Jämföra före och efter en händelse**: Du kan spela in en fångst med avstängd kupévärme och en med påslagen kupévärme för att se exakt vilka datapunkter som ändrade värde.
+3. **Bidra med underlag för nya modeller**: Om du kör ett SPA- eller SEA1-fordon kan du exportera en maskerad fångst så att fler mätvärden kan verifieras.
 
-Omfattningen är som standard varje modul i katalogen, och du kan smalna av den till en grupp. Varje
-modul i omfattningen får tre närvaro-DID: `0xEDA0`, `0xF190` och `0xF186`. Därifrån går insamlingen
-genom katalogen efter de identifierare modulen förväntas bära.
+## Fyra typer av svep i DID-utforskaren
 
-## De fem faserna
+På skärmen **DID-utforskare** kan du välja mellan fyra lägen:
 
-| Fas | Vad den gör |
-| --- | --- |
-| P0 närvaro | Provar tre DID per modul och klassar den som närvarande, närvarande med ostött prov, eller okänd |
-| P1/P2 katalog | Läser de katalogiserade identifierarna från de moduler som svarade på närvaron, normalt eller utökat |
-| P3 sökning | Går genom de valda presetintervallen, om du valde några |
-| P4 verifiering | Läser om upp till 64 okända av avkodningskvalitet från tidigare faser |
-| P5 skalningsprov | Frågar upp till 64 okatalogiserade positiva svar efter deras sammansatta värdbeskrivning via `0x24` |
+<SpecList rows={[
+  ["Enskild läsning (Single Read)", "Läser en specifik datapunkt från en vald styrenhet direkt och visar både avkodat värde och råbytes."],
+  ["Intervallsvep (Bounded Sweep)", "Går igenom ett valt nummerintervall på en styrenhet under en fastställd gräns för antal anrop och listar vilka punkter som svarar med data."],
+  ["Helfordonsskanning (Scan-All)", "Skannar alla valda styrenheter i tre faser (närvarokontroll, katalogläsning och verifiering) inom en gemensam anropsbudget."],
+  ["Övervakning över tid (Live Watch)", "Läser en liten grupp datapunkter upprepade gånger (exempelvis 30 prov med 10 sekunders mellanrum) och klassificerar automatiskt vilka bytes som är fasta inställningar, räknare eller rörliga givare."],
+]} />
 
-En tyst modul klassas som okänd, inte som frånvarande. Tystnad är inget bevis för att en modul
-saknas, så katalogfasen körs bara på de moduler som svarade och resten förblir synliga i fliken för
-täckning. En modul som svarade men avvisade närvaroprovet är fortfarande närvarande.
+## Inbyggd tolkning av rådata
 
-Mellan närvaron och katalogen kontrollerar appen VIN igen. Om det live-lästa VIN skiljer sig från det
-som sessionen öppnades mot stoppar körningen med en identitetsavvikelse i stället för att blanda två
-fordon i en insamling.
+När du klickar på ett mätvärde som ännu inte har en färdig formel i katalogen visar
+**byte-tolkaren** automatiskt hur rådata ser ut i de vanligaste formaten:
 
-## Förlopp under en körning
+- Heltal (8-bitars, 16-bitars och 32-bitars)
+- Läsbar text (ASCII / UTF-8, exempelvis serienummer och mjukvarukoder)
+- Vanliga fordonsenheter (millivolt till volt, tiondels grader till Celsius och hundradels procent)
 
-Förloppet rapporteras per fas och per läsning. Varje fas annonserar sig med ett planerat antal
-läsningar, varje skickad läsning rapporterar sin modul, identifierare och utfall, och varje fas
-avslutas med sina egna summor. Appen strömmar raderna till en live-svans och behåller de senaste 400
-på skärmen. Den avslutade körningen rapporterar sedan skickade begäranden, positiva svar, avvisanden,
-spärrade rader, misslyckanden och hur många moduler som var närvarande.
+Detta är ett visningshjälpmedel för att utforska okända datapunkter och ändrar aldrig katalogen på
+egen hand.
 
-## Pausa, återuppta och avbryta
+## Nästa steg
 
-Körningen i appen kan pausas, återupptas och avbrytas medan den pågår. Paus håller körningen mellan
-läsningar, och anslutningen kontrolleras fortfarande medan den hålls, så en frånkoppling avslutar
-hållet i stället för att parkera körningen på obestämd tid.
-
-Avbrott kontrolleras mellan prov. Varje planerad läsning som inte skickades på grund av ett avbrott
-registreras med ett uttryckligt utfall i stället för att tappas, så artefakten förblir giltig och
-täckningen förblir ärlig. En körning som skurits av en budget följer samma regel: resultatet är
-ofullständigt, anger vilket skäl som stoppade det, och namnger fortfarande varje läsning som inte
-gjordes.
-
-## Budgetar för begäranden
-
-En fullständig insamling körs under en budget som omfattar alla faser, så ingen enskild fas kan göra
-av med hela utrymmet. Standardvärdena är:
-
-<SpecList
-  rows={[
-    ["Begäranden", "4000 under hela körningen"],
-    ["DID per modul", "256"],
-    ["Positiva svar", "2000"],
-    ["Svarsbyte", "4 MiB totalt, 512 KiB per modul"],
-    ["Väggklocka", "180 sekunder"],
-    ["Fördröjning mellan begäranden", "10 ms"],
-    ["Svarstimeout per läsning", "500 ms, ett nytt försök"],
-  ]}
-/>
-
-Appen exponerar antalet begäranden och taket för DID per modul; båda börjar på 4000 och 256. Resten
-är körningens standardvärden. En sökfas håller också undan en verifieringsreserv, det minsta av 64
-begäranden och en fjärdedel av begäransbudgeten, så ett presetsvep aldrig kan svälta
-verifieringsfasen.
-
-En läsning vars definition förväntar sig en stor nyttolast köper mer tid: timeouten skalas till 250
-ms plus 2 ms per förväntad byte, med tak vid 8 sekunder, och faller aldrig under basens timeout. En
-okatalogiserad läsning behåller den fasta timeouten om inte en tidigare läsning av samma
-identifierare lärde appen dess nyttolastlängd.
-
-## Vad ett svep är
-
-Ett svep svarar på en fråga över en lista av moduler: har modulen svarat, och vad sade den. Flera
-funktioner rider på samma söm i stället för att var och en skriver sin egen loop: läsningen av
-modulernas drifttid, kaskaden för tysta moduler och styrmodulregistret. Bara gränserna per flöde
-stannar hos flödet, som ett antal poster, en deadline eller ett modultak.
-
-Varje steg i ett svep är antingen ett prov eller en överhoppning, och en överhoppning bär alltid sitt
-skäl. Det är vad som håller täckningen synlig: en modul som inte provades namnges fortfarande i
-resultatet, med skälet till att den förbigicks.
-
-## Ordning, avbrott och kända frånvarande moduler
-
-Sömmen låser tre beteenden:
-
-- **Närvarande först.** När sessionen redan vet vilka moduler som svarade provas de före dem som inte
-  gjorde det, så användbara svar strömmar in före tysta timeouter. Bara ordningen på tråden ändras;
-  varje modul finns fortfarande med i resultatet.
-- **Avbrott mellan prov.** När avbrottsflaggan är satt skickas inget mer prov. Det pågående provet
-  avslutas, och varje återstående modul dyker upp som en avbruten överhoppning.
-- **Hoppa över kända frånvarande, som tillval.** Ett svep kan hoppa över moduler som sessionen har
-  lärt sig är frånvarande. Standard är att inte hoppa över: styrmodulregistret provar medvetet kända
-  frånvarande moduler med en kort timeout i stället.
-
-Kaskaden för tysta moduler är svepet som finns för tystnaden. Den kör fem steg mot varje modul: en
-närvarokontroll `0x3E 0x00`, en utökad session `0x10 0x03`, identitetsläsningar, en läsning av
-felkodsantal och en nedstängning tillbaka till standardsessionen på varje väg. En modul rapporteras
-som tyst, som närvarande men bara i standardsessionen, eller som närvarande och utökad. Proven
-använder enbart unicast-adressering, aldrig en broadcast, och budgeten per prov är som standard 600
-ms eftersom en tyst modul inte ska kosta en full punktläsningstimeout.
-
-## Batteriets insamlingsvy
-
-Inspektionssidan har sin egen insamling. En passage över bussen ger batterirapporten och paketets
-maxtemperatur tillsammans, så korskontrollerna och laddningsdiagnosen delar ett svep i stället för
-att var och en läser paketet två gånger. Kanaler slås upp via sin katalognyckel och inte via
-position, och varje värde bär om det kom från en experimentell avkodare.
-
-Om en kanal inte svarade förblir den frånvarande i stället för att få ett standardvärde, och
-kompositionen rapporterar otillräckliga data i stället för att läsa om eller avbryta passagen. Det är
-vad som gör att en delvis tyst buss fortfarande kan ge en ärlig rapport med en angiven lucka.
-
-## Var resultatet hamnar
-
-En avslutad insamling lagras som en `did-scan-all/2`-artefakt i sessionsarkivet, tillsammans med
-artefakterna per delsystem som den diagnostiska rapporten, batteriet och cellerna, modulregistret,
-firmware-revisionen och viloförbrukningen. Artefakten bär varje bevisrad med sin modul, identifierare,
-fas, utfall, bevarade negativa svarskod, katalognamn, avkodade värde, nyttolastens digest, latens och
-antal försök, plus summorna per fas och det ärliga stoppskälet.
-
-Export går genom backendens integritetsskiktade exportör, så redigeringsregeln för varje identifierare
-tillämpas där artefakten skrivs. Ett uppföljande nytt försök kan begränsas till de moduler vars
-körningar bar ett trådfel; en spärrad `0x33`-rad är aldrig ett mål för ett nytt försök.
-
-Arkivets fulla form, dess lagringstid och dess jämförelseregler finns i
-[Sessioner och bevis](/docs/sessions-and-evidence).
-
-## Nästa
-
-- [Viloförbrukning](/docs/parasitic-drain): viloströmmens registrering läst från CEM.
-- [Sessioner och bevis](/docs/sessions-and-evidence): hur artefakter lagras och jämförs.
-- [Livedata](/docs/live-telemetry): samplingsloopen för signaler som ändras.
+- [Datapunkter (DID-katalog)](/docs/did-catalogue): hur katalogen översätter råbytes till fysiska enheter.
+- [Sessioner och bevis](/docs/sessions-and-evidence): hur du exporterar och delar fångster med integritetsmaskering.
+- [Styrmodulregister](/docs/ecu-reference): alla styrenheter som kan väljas vid ett svep.

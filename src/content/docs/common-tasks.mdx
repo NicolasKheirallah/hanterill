@@ -1,39 +1,46 @@
-Start with the job you need to do. These paths use the app's screen names; each linked page explains
-the readings and limits in detail.
+import { TaskRouter } from "@/components/docs/mdx/TaskRouter";
 
-## Check a used car
+Use this guide when you have a specific job in mind and want the shortest path through the app.
 
-1. Confirm the model and diagnostic path in [Supported vehicles](/docs/supported-vehicles).
-2. Connect with the car parked, then confirm its identity on **Overview** and **Vehicle Entity**.
-3. Run **Fault Codes** and **Battery Health**. Note any missing modules or cells.
-4. Open **Inspection Report** and read the findings and coverage gaps beside the score.
-5. Save the session and export a report if you need to share it. Check VIN masking before sharing.
+<TaskRouter />
 
-A **Not evaluated** verdict means there was too little evidence. On a Testing or Research platform,
-do not treat decoded values as a purchase decision. See [Reading results](/docs/reading-results).
+## 1. Inspecting a used EV before buying it
 
-## Investigate a warning light
+When you have 10 minutes with a car on a test drive or at a dealership:
 
-1. Run **Fault Codes** and look at active versus stored codes and the modules that answered.
-2. Open the relevant code to read its status and any freeze frame.
-3. Save the scan before repairing anything. The freeze frame may be lost if codes are cleared.
-4. Use [DTC scanning](/docs/dtc-scanning) to interpret the code and coverage.
+1. **Connect and run a full check**: Plug in your ENET cable, wake the dashboard, connect on the **Connection** screen, and click **Run full check** on **Overview**.
+2. **Check the Battery Health screen**:
+   - Look at **State of Health (SoH)** to see how much usable capacity remains compared with when the pack was new.
+   - Check the **Cell Map** spread (delta in millivolts). A healthy, well-balanced pack typically shows all cell groups within a few millivolts of each other.
+   - Check the **8-band temperature history** to see if the battery has spent unusual time at extreme temperatures.
+3. **Check the Cross-Check screen**:
+   - Verify that the **VIN** and **Odometer mileage** agree across the car's modules. If one module reports a different VIN or a much higher mileage than the dashboard, the app flags the disagreement immediately.
+4. **Print or save the Inspection Report**:
+   - Open **Inspection Report**, pick the **Executive inspection** or **Battery certificate** layout, and print or save it as a PDF. Your session is also saved automatically in **Sessions & Reports** so you can compare multiple used cars side by side at home.
 
-Clearing codes changes the car and erases evidence. Read [Safety](/docs/safety) before using it.
+## 2. Investigating a dashboard warning light
 
-## Check a repair
+1. Connect to the car and open **Fault Codes (DTCs)**, then click **Scan all modules**.
+2. Keep the filter on **Needs Attention** first. Modern cars store hundreds of internal self-test records that never light a warning lamp; **Needs Attention** shows only the **Active** and **Pending** faults that matter right now.
+3. Click any fault code to open its detail drawer:
+   - Read the plain-language description of the code and which module reported it.
+   - Inspect the **Freeze-frame snapshot** to see the exact mileage, speed, 12 V battery voltage, and battery temperature at the moment the fault occurred. (A cascade of communication faults with a freeze-frame voltage below 11.5 V often points to a weak 12 V battery rather than a failed high-voltage component.)
 
-1. Open the saved session from before the repair.
-2. Run a new scan on the same car and save it.
-3. Use **Diff since last scan** or **DTC History Diff** for new, persistent and resolved faults.
-4. Compare battery cells, ECU inventory or firmware in **Sessions & Reports** when those domains
-matter to the repair.
+## 3. Verifying a repair and clearing fault codes
 
-A code missing from a module that did not answer is **unverified**, not resolved.
-[Sessions and evidence](/docs/sessions-and-evidence) explains the comparison rules.
+1. **Before the repair**: Run a scan so your "before" state (including freeze-frame snapshots) is saved in **Sessions & Reports**.
+2. **After completing the physical repair**: Connect to the car, open **Fault Codes (DTCs)**, and click **Clear fault codes**.
+3. By default, Hanterill clears codes only in control units that reported faults. It saves available fault details first, then scans again to show which codes remain or return.
+4. Click **Compare with previous scan** on the Fault Codes screen to view a side-by-side before-and-after record showing which codes cleared.
 
-## Check whether software changed
+## 4. Checking what a dealer visit or OTA update changed
 
-Run **Firmware SBOM** before and after the visit, save each session, then open the firmware diff.
-Compare module addresses, part numbers, software versions and serials. A replaced module and a
-software update are different changes. See [Firmware and inventory](/docs/firmware-and-inventory).
+1. Before taking your car into a workshop (or before installing an over-the-air software update), run a scan so Hanterill saves your car's module software inventory.
+2. When you get the car back, run a new scan and open **Sessions & Reports -> Firmware Diff**.
+3. Hanterill compares every control unit side by side and highlights exactly which modules received new software versions and which ones were untouched.
+
+## 5. Chasing an overnight 12 V battery drain
+
+1. Connect to the car after it has been parked overnight and open **12 V Sleep Drain**.
+2. Check the **12 V battery health, State of Charge, and standby current histogram** to see how many hours the car spent in deep sleep versus higher current-draw bands.
+3. Check the **Wake-state history** and **TCAM & GPS** screens to see whether the telematics module or a body controller kept waking the car up while parked. See [Parasitic drain](/docs/parasitic-drain).
