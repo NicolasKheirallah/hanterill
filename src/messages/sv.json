@@ -1048,7 +1048,7 @@
     },
     "batteryHealth": {
       "hWhere": "Var siffran kommer ifrån",
-      "pWhere": "Hälsotillstånd rapporteras av batterihanteringssystemet, inte beräknas av Hanterill. Hanterill läser den, och värdena bakom den, direkt från fordonet.",
+      "pWhere": "Hanterill läser hälsotillstånd från batteristyrenheten. Där funktionen stöds läser appen också inlärd cellkapacitet och jämför den med ett referensvärde för bilens batteri.",
       "hWhat": "Vad Hanterill läser",
       "reads": [
         "Hälsotillstånd och laddningsnivå",
@@ -1056,7 +1056,7 @@
         "Varje cellgruppotential enligt den packtopologi som gäller (108 på CMA: 27 moduler, 4 grupper vardera)",
         "Minimum, maximum och delta över cellgrupper",
         "Pack- och modultemperaturer, visade som ett termiskt rutnät",
-        "Uppskattad användbar kapacitet mot nominell",
+        "Inlärd cellkapacitet jämförd med batteriets referensvärde, där värdet finns",
         "Korskontroller: rapporterad packspänning mot cellsumman, rapporterad effekt mot beräknad"
       ],
       "hTopologies": "Packtopologier",

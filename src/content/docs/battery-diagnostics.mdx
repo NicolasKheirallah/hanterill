@@ -1,86 +1,76 @@
+import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 import { ScreenShot } from "@/components/docs/mdx/ScreenShot";
 
-The dashboard shows how full the battery is. **Battery Health** adds information about its condition: estimated remaining capacity, temperatures and differences between cell groups. Hanterill reads these values from the car's battery controller.
+The charge percentage on the dashboard tells you how full the battery is today. Battery Health helps you understand its condition over time. Hanterill reads values reported by the car, then puts related readings next to each other so you can see what they mean.
 
 <ScreenShot
   root="/assets/battery-health.png"
-  alt="Battery Health screen showing State of Health, State of Charge, pack voltage and thermal sensors"
-  caption="The Battery Health screen showing State of Health, State of Charge, pack voltage, and thermal readings."
+  alt="Battery Health screen with charge, health, voltage and temperature readings"
+  caption="Battery Health brings the available battery readings into one view."
 />
 
-## 1. State of Health (SoH) and usable capacity
+<SafetyNotice level="read-only">
+Battery diagnostics are read-only. Hanterill reads the car's values without changing battery settings.
+</SafetyNotice>
 
-**State of Health (SoH)** is the battery management computer's own measure of how much usable charge capacity your high-voltage battery has today compared with when it left the factory, expressed as a percentage.
+## Health, charge level and capacity
 
-- **Read directly, never guessed**: Hanterill does not invent or estimate your State of Health from range guesses. It reads the exact health percentage reported by the car's battery management computer, alongside the estimated usable energy in kilowatt-hours (kWh) compared with the pack's nominal new capacity.
-- **How lithium-ion packs age normally**: Most electric vehicle batteries lose a few percent of capacity during their first year or two as the protective chemical layer inside the cells stabilizes, and then age much more slowly over the following years. Comparing your reading across multiple saved sessions is the best way to see that steady curve.
+The battery controller, called the BECM, reports several numbers that sound similar but answer different questions.
 
-## 2. State of Charge (SoC) and cross-checking across modules
+| Reading | What it means | How Hanterill gets it |
+| --- | --- | --- |
+| **State of Health (SoH)** | The car's estimate of how much capacity the battery retains compared with when it was new. | Reads the percentage reported by the BECM. |
+| **State of Charge (SoC)** | How full the battery is right now. It changes as you drive or charge. | Reads the available charge values reported by the car. |
+| **Learned capacity** | How much charge the BECM has learned that individual cell groups can hold. The app shows an average in amp-hours (Ah) when available. | Reads the BECM's cell-group values and calculates their average. |
 
-**State of Charge (SoC)** tells you how full the battery is right now. On the **Battery Health** and **Cross-Check** screens, Hanterill compares the charge percentage reported by the battery management computer against the charge figures reported by the central gateway and driver display:
+A car can report **90% SoH and 20% SoC** at the same time. In that example, the controller estimates that the battery can hold about 90% of the charge it held when new, while it is currently charged to 20%. The percentages describe different things.
 
-- Why the numbers can differ slightly: The dashboard shows a **usable (display) State of Charge** that reserves a small safety buffer at the very top and bottom of the pack to protect the battery from overcharging or deep discharge. The battery module itself also tracks the raw technical charge level. Showing them side by side explains why "100% on the dash" is slightly below the physical ceiling of the cells.
+### How to interpret SoH
 
-## 3. Cell-group voltages and the Cell Map
+Hanterill displays the SoH reported by the BECM. It does not work it out from the range shown on the dashboard. SoH is the controller's estimate, not a laboratory test or a promise that the car will drive a particular distance. Speed, weather, heating, driving style and battery temperature all affect range.
 
-A high-voltage EV battery is built from dozens of **series cell groups** wired end to end. On the reference Polestar 2 and CMA electric Volvos (78 kWh and 82 kWh packs), there are **27 modules**, each holding **4 series cell groups**, for **108 cell-group voltages** in total.
+A single SoH reading is useful context. Saved readings from the same car are more useful for seeing whether its estimate changes over time. A small difference between two visits is less informative than a repeated pattern. If the controller does not return a usable SoH value, the app shows that the value is unavailable.
+
+### What usable capacity means
+
+Usable capacity is the energy the car makes available for normal driving, usually expressed in kilowatt-hours (kWh). It is different from the battery's total physical capacity because the car keeps some charge in reserve. It is also different from the energy left in the battery **right now**, which depends on SoC.
+
+The app's **learned capacity** reading is related to usable capacity, but it is not the same number. The BECM supplies learned capacity in amp-hours (Ah). Hanterill compares the average with the original charge capacity expected for the detected battery variant and shows the difference as **capacity fade**. This percentage is calculated by the app from a BECM reading and the battery variant's reference value.
+
+Amp-hours measure charge; kilowatt-hours measure energy. The kWh capacity bar on this website uses sample figures to explain the idea. It is not a live kWh measurement from your car. In the app, use the reported SoH and learned capacity as the available evidence. Pay attention to any provisional label: it means the interpretation still needs more verification for that vehicle.
+
+## Why charge percentages can differ
+
+The driver display and the battery controller may use different scales for charge level. The car can also keep a reserve at the top and bottom of the battery's operating range. Hanterill places the available charge readings side by side. A small difference is not, on its own, proof of a fault.
+
+## Cell groups and the Cell Map
+
+A battery contains many cell groups. The Cell Map shows the voltage of each group that answered during the scan. It helps you find a group that stands out even when the overall battery reading looks ordinary. The map uses the layout detected for the vehicle; the number of groups varies by battery.
 
 <ScreenShot
   root="/assets/cell-map.png"
-  alt="Cell Map screen showing all 108 cell-group voltages across 27 modules"
-  caption="The Cell Map screen showing all 108 cell-group voltages across 27 modules, shaded by deviation from the pack average."
+  alt="Cell Map showing voltage readings across the battery's cell groups"
+  caption="The Cell Map shows the measured cell-group voltages and where they sit in the pack."
 />
 
-For every cell group in the pack, Hanterill calculates and displays:
+Hanterill shows the lowest, highest and average cell-group voltage. **Voltage spread** is the gap between the highest and lowest reading, measured in millivolts (mV), or thousandths of a volt. It describes the pack at the moment of the scan. Charge level, temperature and recent driving or charging can affect it. Compare scans made under similar conditions; a group that repeatedly stands out is more meaningful than one unusual result.
 
-- **Minimum and Maximum cell-group voltage**: the lowest and highest group in the pack at the moment of the scan.
-- **Pack average (mean)**: the average voltage across all populated cell groups.
-- **Cell spread (Delta, in millivolts)**: the gap between the highest and lowest cell group (`Max - Min`), expressed in thousandths of a volt (`mV`).
+Some cell groups may not answer. The app leaves their positions blank and marks the scan as incomplete. You can use **Re-read missing modules** to try again. A missing reading is never treated as zero. Where the BECM supplies separate cell-group health or learned-capacity readings, the app can summarize those as well; they are different from the voltage spread shown on the Cell Map.
 
-### What a healthy cell spread looks like
+## Temperature, power and other readings
 
-When the car is parked and the battery has rested, all cell groups should sit very close to the same voltage:
+Battery Health shows the temperatures and coolant readings the car provides. A difference between warm and cool sensors can be useful context, but it does not by itself identify a faulty part. The page also shows available charge and discharge power limits. These are the limits the car reports at the time of the scan, not a guarantee of the power you will always get.
 
-- **Under 10 mV**: Well balanced. Typical of a healthy pack at rest.
-- **10 to 25 mV**: Slightly widened spread, which can happen right after fast charging or spirited driving before the balancing circuit has finished equalizing the cells.
-- **Over 30 mV at rest**: Worth watching closely. If one specific cell group stays noticeably lower than its neighbors both at high charge and low charge, it can limit the usable range of the entire pack.
+**Thermal exposure** is a separate, optional read. Where supported, Hanterill asks another car control unit for its record of time spent in different temperature ranges. The displayed history is cumulative; it does not describe only the current trip. If the car does not return it, the app says so. Hanterill also shows the available 12 V supply reading, which belongs to the car's low-voltage system.
 
-### Automatic support for 11 battery pack layouts
+## Checks and missing data
 
-Hanterill adapts the **Cell Map** automatically to your car's exact battery layout (108-group and 96-group CMA EV packs, 96-group and 102-group center-tunnel plug-in hybrid packs, and 107-group, 108-group, and 110-group SEA packs). You can also inspect the pack in an interactive **3D physical layout** that shows where each module sits in the floor, footwell, or center tunnel.
+Hanterill compares readings that should agree, such as the battery's reported voltage and the sum of the cell-group voltages. It can also check reported power against voltage and current, and whether current looks plausible while the car is parked. A disagreement may come from an incomplete scan, a changing operating state or a reading that needs closer inspection. It is a prompt to investigate, not a diagnosis from one number.
 
-### Retrying missed battery modules
+The page distinguishes a value that was measured, one calculated from readings, one marked provisional and one that was not reported. Missing or uncertain data should not be interpreted as a healthy or unhealthy result.
 
-Some battery modules may not answer during a scan. Hanterill leaves their readings blank and offers **Retry missed modules**. It does not turn a missing value into zero or fill it from another module.
+## Compare readings over time
 
-## 4. Pack temperatures and the 8-band lifetime temperature history
+Save a session with a battery report to add a point to **Battery Health Trend**. The trend shows SoH, SoC and, when available, the **spread of cell-group SoH values**. That last figure compares the health percentages reported for cell groups; it is **not** the voltage spread from the Cell Map. The trend groups visits by vehicle and leaves uncaptured values blank. You can export its table as a CSV file.
 
-Temperature has a major influence on both daily driving range and long-term battery aging. Hanterill reads two sets of thermal information from the battery computer:
-
-1. **Current pack and coolant temperatures**: The lowest, highest, and average temperature sensors inside the pack right now, plus the inlet and outlet coolant temperatures and the status of the high-voltage coolant pump and chiller valve.
-2. **Lifetime temperature residence history (8 temperature bands)**: The battery computer keeps a cumulative log of how much of its life the battery has spent in **eight temperature bands**:
-   - Below `-10 °C`
-   - `-10 °C` to `0 °C`
-   - `0 °C` to `10 °C`
-   - `10 °C` to `20 °C`
-   - `20 °C` to `30 °C`
-   - `30 °C` to `40 °C`
-   - `40 °C` to `50 °C`
-   - Above `50 °C`
-
-When inspecting a used EV, this 8-band histogram lets you see immediately whether the battery has lived a normal life in moderate temperatures (`10 °C` to `30 °C`) or spent unusual time above `40 °C`.
-
-## 5. Multi-session Battery Health History and Cell Comparison
-
-Every time you scan your car, Hanterill links the battery reading to your vehicle's local history:
-
-- **Battery Health Trend chart**: Tracks **State of Health (SoH)**, **State of Charge (SoC)**, and **Cell Spread (mV)** across every saved visit for that car, and lets you export the trend table to **CSV** with one click.
-- **Cell-by-cell comparison between sessions**: Pick any two saved sessions in **Sessions & Reports -> Cell History Diff** to compare all 108 cell groups by physical position, making it easy to verify whether a weak cell group improved after balancing or continued to drift.
-
-## 6. Built-in consistency cross-checks
-
-Whenever you read the battery, Hanterill automatically checks the car's numbers against each other:
-
-- **Pack voltage versus sum of cells**: Adds up all individual cell-group voltages and compares that total against the overall pack voltage sensor. They should agree within a couple of volts.
-- **Parked current plausibility**: Checks that the pack current sensor reads near zero when the car is parked with charging and climate turned off.
-- **Thermal spread**: Checks the gap between the warmest and coolest temperature probes inside the pack.
+For a closer look at cell voltages, **Compare cell captures** compares two cell-map captures that you supply. It compares the same cell positions in the two captures. The saved-session trend does not automatically compare complete cell maps.

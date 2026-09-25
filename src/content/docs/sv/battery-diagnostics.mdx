@@ -1,112 +1,76 @@
 import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
 import { ScreenShot } from "@/components/docs/mdx/ScreenShot";
 
-Instrumentpanelen visar hur laddat batteriet är. **Batterihälsa** visar också batteriets uppskattade skick, temperaturer och skillnader mellan cellgrupperna. Hanterill läser uppgifterna från bilens batteristyrenhet.
+Laddningsprocenten på instrumentpanelen visar hur fullt batteriet är i dag. Batterihälsa hjälper dig att förstå hur batteriets skick förändras över tid. Hanterill läser värden som bilen rapporterar och visar sådant som hör ihop bredvid varandra.
 
 <ScreenShot
   root="/assets/battery-health.png"
-  alt="Vyn Batterihälsa: hälsotillstånd, laddningsnivå, paketspänning och -ström samt korskontrollerna"
-  caption="Batterihälsa: de uppmätta paketvärdena och korskontrollerna som jämför dem mot varandra"
+  alt="Vyn Batterihälsa med laddning, hälsotillstånd, spänning och temperatur"
+  caption="Batterihälsa samlar de tillgängliga batterivärdena i en vy."
 />
 
 <SafetyNotice level="read-only">
-All batteridiagnostik i Hanterill är helt skrivskyddad. Appen ställer frågor till batteristyrenheten
-och visar svaren utan att ändra några inställningar, balanseringsgränser eller kontaktorer i
-fordonet.
+Batteridiagnostiken är skrivskyddad. Hanterill läser bilens värden utan att ändra batteriets inställningar.
 </SafetyNotice>
 
-## Tre olika mått som ofta kallas "batterihälsa"
+## Hälsa, laddningsnivå och kapacitet
 
-För att tolka siffrorna rätt är det bra att hålla isär tre mått som visas i programmet:
+Batteristyrenheten, BECM, rapporterar flera värden som låter lika men svarar på olika frågor.
 
-| Mått | Var det kommer ifrån | Vad det berättar |
+| Värde | Vad det betyder | Hur Hanterill får fram det |
 | --- | --- | --- |
-| **Hälsotillstånd (SoH %)** | Läses direkt från batteristyrenheten (BECM) | Hur mycket lagringskapacitet batteriet har kvar jämfört med när fordonet var nytt |
-| **Cellbalans och cellsammanfattning** | Räknas fram ur alla enskilda cellmätningar i paketet | Hur jämna cellerna är i spänning, kapacitet och laddningsnivå |
-| **Inspektionsrapportens poäng (0–100)** | Räknas fram av Hanterills rapportmotor | En helhetsbedömning av hela fordonet där batterihälsan är en av flera delar |
+| **Hälsotillstånd (SoH)** | Bilens uppskattning av hur mycket kapacitet batteriet har kvar jämfört med när det var nytt. | Läser procentsatsen som BECM rapporterar. |
+| **Laddningsnivå (SoC)** | Hur fullt batteriet är just nu. Värdet ändras när du kör eller laddar. | Läser de laddningsvärden bilen lämnar. |
+| **Inlärd kapacitet** | Hur mycket laddning BECM har lärt sig att enskilda cellgrupper kan lagra. Appen visar ett genomsnitt i amperetimmar (Ah) när värdena finns. | Läser BECM:s cellgruppsvärden och räknar ut deras genomsnitt. |
 
-## 1. Hälsotillstånd (State of Health, SoH)
+En bil kan rapportera **90 % SoH och 20 % SoC** samtidigt. I exemplet uppskattar styrenheten att batteriet kan lagra omkring 90 % av laddningen det lagrade som nytt, medan det just nu är laddat till 20 %. Procentsatserna beskriver olika saker.
 
-**State of Health (SoH)** anger hur stor andel av sin ursprungliga kapacitet batteripaketet har kvar.
-Ett batteri med **91,14 % SoH** har förlorat knappt 9 % av sin ursprungliga kapacitet sedan
-tillverkningen. Det är den enskilt viktigaste siffran när du utvärderar ett begagnat elfordon.
+### Så tolkar du SoH
 
-- På eldrivna CMA-fordon rapporterar BECM SoH med två decimalers noggrannhet (exempelvis `91,14 %`).
-- På SPA- och SEA1-fordon läser Hanterill motsvarande hälsovärde enligt respektive plattforms datastruktur.
-- Varje avläsning kontrolleras så att den ligger inom ett rimligt fysiskt intervall (0 till 100 %) innan den visas på skärmen.
+Hanterill visar det SoH-värde som BECM rapporterar. Appen räknar inte fram värdet från räckvidden på instrumentpanelen. SoH är styrenhetens uppskattning, inte ett laboratorietest eller ett löfte om en viss körsträcka. Hastighet, väder, uppvärmning, körsätt och batteritemperatur påverkar också räckvidden.
 
-## 2. Laddningsnivå (State of Charge, SoC)
+En enskild avläsning ger användbar bakgrund. Sparade avläsningar från samma bil hjälper dig bättre att se om bilens uppskattning förändras över tid. En liten skillnad mellan två besök säger mindre än ett återkommande mönster. Om styrenheten inte lämnar ett användbart SoH-värde visar appen att värdet saknas.
 
-**State of Charge (SoC)** visar hur fulladdat batteriet är just nu. Ett batteri kan ha **92 % SoH**
-(mycket friskt) och samtidigt ligga på **20 % SoC** (behöver laddas).
+### Vad användbar kapacitet betyder
 
-Batteristyrenheten håller reda på två interna laddningsnivåer: den faktiska tekniska laddningsnivån
-i cellerna och den visade laddningsnivån på förardisplayen. Hanterill visar båda och markerar om de
-skiljer sig åt med mer än 2 procentenheter.
+Användbar kapacitet är den energi bilen låter dig använda vid vanlig körning. Den anges oftast i kilowattimmar (kWh). Den skiljer sig från batteriets totala fysiska kapacitet eftersom bilen sparar en reserv. Den skiljer sig också från den energi som finns **kvar just nu**, som beror på SoC.
 
-## 3. Cellkartan: alla enskilda celler på en skärm
+Appens värde för **inlärd kapacitet** hör ihop med användbar kapacitet, men är inte samma siffra. BECM lämnar inlärd kapacitet i amperetimmar (Ah). Hanterill jämför genomsnittet med den ursprungliga laddningskapacitet som hör till bilens batterivariant och visar skillnaden som **kapacitetsminskning**. Appen räknar ut procentsatsen från BECM:s värde och batterivariantens referensvärde.
 
-En enda totalsiffra för batteriet kan dölja en enskild svag cell. Ett friskt batteripaket har alla
-sina cellgrupper inom några få millivolt från varandra. Om en enskild cellgrupp däremot ligger
-betydligt lägre än resten begränsar den räckvidden för hela paketet.
+Amperetimmar mäter laddningsmängd; kilowattimmar mäter energi. Kapacitetsstapeln i kWh på webbplatsen använder exempelvärden för att förklara jämförelsen. Den är inte en direkt mätning i kWh från din bil. I appen kan du använda rapporterat SoH och inlärd kapacitet som underlag. Var uppmärksam på märkningen preliminär: den betyder att tolkningen behöver kontrolleras på fler bilar av den varianten.
 
-Därför läser Hanterill av spänningen för varje enskild cellgrupp i batteriet och ritar upp dem i en
-interaktiv **Cellkarta** (108 cellgrupper fördelade på 27 moduler i ett standardpaket på CMA, eller
-96, 102, 107, 110 respektive 120 celler beroende på plattform och batteristorlek).
+## Varför laddningsprocenten kan skilja sig
+
+Förardisplayen och batteristyrenheten kan använda olika skalor för laddningsnivån. Bilen kan också spara en reserv vid den övre och nedre gränsen för batteriets användbara spann. Hanterill visar de tillgängliga laddningsvärdena bredvid varandra. En liten skillnad är inte i sig ett tecken på fel.
+
+## Cellgrupper och Cellkartan
+
+Batteriet innehåller många cellgrupper. Cellkartan visar spänningen för varje grupp som svarade vid avläsningen. Då blir det lättare att hitta en grupp som sticker ut även om batteriets övergripande värde ser vanligt ut. Kartan följer den batterivariant som upptäcks i bilen; antalet grupper varierar.
 
 <ScreenShot
   root="/assets/cell-map.png"
-  alt="Vyn Cell- och värmekarta: varje cellgrupp utplacerad fysiskt över paketet, färgad efter avvikelse från paketmedelvärdet"
-  caption="Cell- och värmekarta: samma spänningar utplacerade över det fysiska paketet, så en svag punkt får en position"
+  alt="Cellkarta med spänningsvärden för batteriets cellgrupper"
+  caption="Cellkartan visar cellgruppernas uppmätta spänning och deras placering i batteriet."
 />
 
-### Så tolkar du cellspänningsspridningen (delta i mV)
+Hanterill visar cellgruppernas lägsta, högsta och genomsnittliga spänning. **Spänningsspridningen** är skillnaden mellan högsta och lägsta värde, mätt i millivolt (mV), alltså tusendelar av en volt. Den beskriver batteriet vid just den avläsningen. Laddningsnivå, temperatur och nylig körning eller laddning kan påverka resultatet. Jämför avläsningar från liknande förhållanden; en grupp som sticker ut gång på gång säger mer än ett enstaka värde.
 
-Skillnaden mellan den högsta och den lägsta cellgruppen när fordonet står i vila kallas **cell-delta**
-och mäts i millivolt (`mV`):
+Vissa cellgrupper kanske inte svarar. Appen lämnar deras positioner tomma och markerar avläsningen som ofullständig. Med **Läs om saknade moduler** kan du försöka igen. Ett saknat värde räknas aldrig som noll. Där BECM även lämnar hälsovärden eller inlärd kapacitet för cellgrupperna kan appen sammanfatta dem. Det är andra mått än spänningsspridningen i Cellkartan.
 
-| Spridning i vila | Bedömning i vyn | Vad det innebär |
-| --- | --- | --- |
-| **20 mV eller lägre** | **Jämn (Tight)** | Alla cellgrupper ligger mycket nära varandra. |
-| **20 till 35 mV** | **Normal** | Normal spridning i vila för den här batterikemin. |
-| **35 till 60 mV** | **Bevaka (Watch)** | Någon cellgrupp släpar efter något; låt gärna fordonet balansera vid en AC-laddning och mät igen. |
-| **Över 60 mV** | **Obalanserad (Imbalanced)** | Tydlig avvikelse i vila som kan tyda på en försvagad cell eller ett balanseringsbehov. |
+## Temperatur, effekt och andra värden
 
-Utöver cellspänningar sammanställer Hanterill även cellvis SoH (%), inlärd cellkapacitet (Ah) och
-cellvis SoC (%) där styrenheten rapporterar dessa block.
+Batterihälsa visar de temperaturer och kylvätskevärden som bilen lämnar. Skillnaden mellan varma och kalla givare kan ge sammanhang, men pekar inte ensam ut en trasig del. Sidan visar också de tillgängliga gränserna för laddnings- och uttagseffekt. Det är gränser som bilen rapporterar vid avläsningen, inte ett löfte om att samma effekt alltid finns.
 
-## 4. Temperaturgivare och livstidshistorik
+**Temperaturhistorik** är en separat, valfri avläsning. Där funktionen stöds frågar Hanterill en annan styrenhet i bilen hur länge batteriet har befunnit sig i olika temperaturintervall. Historiken är samlad över tid och beskriver inte bara den aktuella resan. Om bilen inte lämnar historiken visar appen det. Hanterill visar också tillgänglig 12 V-spänning, som hör till bilens lågspänningssystem.
 
-Hög värme och sträng kyla påverkar hur snabbt ett litiumjonbatteri åldras. På skärmen
-**Batterihälsa** visar Hanterill två typer av temperaturinformation:
+## Kontroller och saknade värden
 
-- **Aktuella temperaturgivare**: Läser av de inbyggda temperatursensorerna i batteripaketet samt kylvätsketemperatur vid in- och utlopp så att du ser medeltemperatur, lägsta/högsta punkt och temperaturspridning.
-- **Livstidshistorik för temperatur**: Batteristyrenheten sparar hur många timmar batteriet har tillbringat i tolv olika tiogradiga temperaturintervall (från −35 °C upp till +75 °C) under hela fordonets livslängd. Hanterill visar detta som ett överskådligt diagram tillsammans med andelen tid i det gynnsamma temperaturfönstret (15 till 35 °C) och ett **termiskt stressindex (0 till 100)**.
+Hanterill jämför värden som borde stämma överens, till exempel batteriets rapporterade spänning och summan av cellgruppernas spänningar. Appen kan också jämföra rapporterad effekt med spänning och ström samt bedöma om strömmen verkar rimlig när bilen står parkerad. En avvikelse kan bero på en ofullständig avläsning, att bilens driftläge ändrades eller att ett värde behöver undersökas närmare. En enskild avvikelse är ingen diagnos.
 
-## 5. Säkerhets- och rimlighetskontroller
+Sidan skiljer mellan uppmätta värden, värden som räknats fram, preliminära tolkningar och värden som bilen inte rapporterade. Ett saknat eller osäkert värde ska inte tolkas som att batteriet är friskt eller dåligt.
 
-Utöver cellerna kontrollerar Hanterill även:
+## Jämför avläsningar över tid
 
-- **Högspänningsisolation (isolationsmotstånd)**: Bekräftar att högspänningssystemet är ordentligt isolerat från fordonets chassi.
-- **Högspänningsinterlock (HVIL) och kontaktorer**: Visar att säkerhetsslingan är hel och om huvudkontaktorerna är öppna eller slutna.
-- **Automatiska korskontroller**: Jämför den rapporterade totalspänningen med summan av alla enskilda cellspänningar samt jämför rapporterad effekt med spänning gånger ström så att avvikande givarvärden upptäcks direkt.
+Spara en session med en batterirapport för att lägga till en punkt under **Över sparade sessioner**. Trenden visar SoH, SoC och, när värdet finns, **spridningen mellan cellgruppernas SoH-värden**. Det sista måttet jämför cellgruppernas rapporterade hälsoprocent. Det är **inte** spänningsspridningen i Cellkartan. Trenden grupperar besök per bil och lämnar värden som inte fångades tomma. Tabellen kan exporteras som CSV.
 
-## Batterilayouter på CMA, SPA och SEA1
-
-Varje plattform och batterivariant har sin egen cellkarta i Hanterill:
-
-- **CMA**: 108 celler (78 kWh), 96 celler (69 kWh Standard Range) och 82 kWh-utförandet.
-- **SPA**: Plug-in-hybridpaket med 96 celler, 102 celler och 108 celler (Long Range).
-- **SEA1**: Både LFP-batteriet (49/51 kWh) och NMC-batteriet (66/69 kWh), där appen automatiskt känner av batterikemin och cellantalet.
-
-<Callout kind="warning" title="SPA och SEA1 är markerade som provisoriska">
-Medan CMA-batteriavläsningarna är fullt verifierade på produktionsfordon, kontrolleras skalningen
-för vissa enskilda mätvärden på SPA och SEA1 fortfarande över fler årsmodeller. Dessa värden visas
-med en tydlig provisorisk markering i gränssnittet.
-</Callout>
-
-## Nästa steg
-
-- [Laddning](/docs/charging): följ AC- och DC-laddning, effekt och temperaturer i realtid.
-- [Vilodränering](/docs/parasitic-drain): mät hur mycket energi fordonet förbrukar när det står parkerat.
-- [Inspektionsrapporter](/docs/inspection-reports): se hur batterihälsan vägs in i helhetsbetyget från 0 till 100.
+För att granska cellspänningar närmare kan **Jämför cellavläsningar** jämföra två cellkartor som du själv anger. Funktionen jämför samma cellpositioner i båda avläsningarna. Den sparade batteritrenden jämför inte fullständiga cellkartor automatiskt.

@@ -221,7 +221,7 @@
     },
     "batteryHealth": {
       "hWhere": "Where the number comes from",
-      "pWhere": "State of health is reported by the battery management system, not calculated by Hanterill. Hanterill reads it, and the values behind it, directly from the vehicle.",
+      "pWhere": "Hanterill reads state of health from the battery controller. Where supported, it also reads learned cell capacity and compares it with the reference for your battery to show capacity loss.",
       "hWhat": "What Hanterill reads",
       "reads": [
         "State of health and state of charge",
@@ -229,7 +229,7 @@
         "Every cell-group potential on the active pack topology (108 on CMA: 27 modules, 4 groups each)",
         "Minimum, maximum and delta across cell groups",
         "Pack and module temperatures, rendered as a thermal grid",
-        "Estimated usable capacity against nominal",
+        "Learned cell capacity compared with the battery's reference, where available",
         "Cross-signal checks: reported pack voltage against the cell sum, reported power against calculated"
       ],
       "hTopologies": "Pack topologies",
