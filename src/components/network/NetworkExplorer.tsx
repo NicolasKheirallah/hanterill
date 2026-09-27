@@ -347,7 +347,7 @@ function NetworkExplorerInner() {
       const vp = getViewportForBounds(bounds, w, h, 0.1, 4, 0)
       const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()
       const url = await toPng(viewport, {
-        backgroundColor: bg || '#12151a',
+        backgroundColor: bg || '#292929',
         width: w,
         height: h,
         pixelRatio: 1,

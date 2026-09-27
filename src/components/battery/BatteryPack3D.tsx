@@ -206,7 +206,7 @@ function Modules({
 function StudioEnvironment() {
   return (
     <Environment resolution={256}>
-      <color attach="background" args={["#12151a"]} />
+      <color attach="background" args={["#292929"]} />
       <Lightformer intensity={2.4} position={[2.5, 5, 4]} scale={[8, 5, 1]} color="#fdfaf3" />
       <Lightformer intensity={1.1} position={[-6, 2.5, 1]} scale={[6, 8, 1]} color="#e8ecf2" />
       <Lightformer

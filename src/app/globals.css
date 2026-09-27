@@ -17,29 +17,37 @@
  * sits on, in both themes. See design.md. */
 
 :root {
-  --bg-primary: oklch(19.5% 0.012 265);
-  --bg-secondary: oklch(23% 0.012 265);
-  --surface: oklch(25.5% 0.011 265);
-  --surface-raised: oklch(28.5% 0.011 265);
+  /* Fluent 2 dark neutrals: background1 #292929, background2 #1F1F1F; cards
+   * sit one step up (#2C2C2C), flyouts above that. */
+  --bg-primary: #292929;
+  --bg-secondary: #1f1f1f;
+  --surface: #2c2c2c;
+  --surface-raised: #313131;
 
-  --text-primary: oklch(94% 0.006 85);
-  --text-secondary: oklch(78% 0.007 85);
-  --text-muted: oklch(66.5% 0.008 85);
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-muted: #aeaeae;
 
-  --line: oklch(31% 0.011 265);
-  --line-strong: oklch(41% 0.013 265);
+  --line: #3d3d3d;
+  --line-strong: #5c5c5c;
 
-  --accent: oklch(70% 0.085 45);
-  --accent-hover: oklch(76% 0.08 45);
-  --accent-fg: oklch(16% 0.02 45);
-  --accent-tint: oklch(29% 0.035 45);
+  /* Fluent 2 brand: links and focus carry brandForeground (#479EF5 on dark);
+   * the filled CTA pairs the same token with near-black brand-10 text, the
+   * way a WinUI accent button does. */
+  --accent: #479ef5;
+  --accent-hover: #62abf5;
+  --accent-fg: #061724;
+  --accent-tint: #082338;
 
-  --status-ok: oklch(74% 0.13 150);
-  --status-warning: oklch(78% 0.13 80);
-  --status-error: oklch(70% 0.14 25);
-  --status-info: oklch(72% 0.09 250);
+  /* Status hues, lifted for dark text usage: Fluent red #C50F1F is 2.4:1 on
+   * #292929, so the dark set uses the lifted red family, as the old bronze
+   * system did. */
+  --status-ok: #54b054;
+  --status-warning: #f9ae45;
+  --status-error: #f1707b;
+  --status-info: #6cb8f6;
 
-  --grid-line: oklch(93% 0.008 85 / 0.045);
+  --grid-line: oklch(100% 0 0 / 0.05);
 
   /* 4-point named spacing scale (mirrored to Tailwind --spacing-* below) */
   --space-3xs: 0.25rem;
@@ -89,29 +97,29 @@
 }
 
 :root[data-theme="light"] {
-  --bg-primary: oklch(96.2% 0.006 80);
-  --bg-secondary: oklch(93.5% 0.007 80);
-  --surface: oklch(98% 0.004 80);
-  --surface-raised: oklch(99.2% 0.002 80);
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
 
-  --text-primary: oklch(23% 0.012 265);
-  --text-secondary: oklch(42% 0.011 265);
-  --text-muted: oklch(50% 0.011 265);
+  --text-primary: #242424;
+  --text-secondary: #424242;
+  --text-muted: #616161;
 
-  --line: oklch(87.5% 0.008 80);
-  --line-strong: oklch(79% 0.01 80);
+  --line: #e0e0e0;
+  --line-strong: #d1d1d1;
 
-  --accent: oklch(50% 0.1 45);
-  --accent-hover: oklch(43% 0.095 45);
-  --accent-fg: oklch(98.5% 0.008 80);
-  --accent-tint: oklch(94% 0.03 45);
+  --accent: #0f6cbd;
+  --accent-hover: #115ea3;
+  --accent-fg: #ffffff;
+  --accent-tint: #ebf3fc;
 
-  --status-ok: oklch(50% 0.12 150);
-  --status-warning: oklch(55% 0.12 75);
-  --status-error: oklch(52% 0.16 25);
-  --status-info: oklch(50% 0.09 250);
+  --status-ok: #0e700e;
+  --status-warning: #bc5006;
+  --status-error: #c50f1f;
+  --status-info: #0f6cbd;
 
-  --grid-line: oklch(24% 0.012 265 / 0.05);
+  --grid-line: oklch(0% 0 0 / 0.05);
 
   color-scheme: light;
 }
@@ -145,29 +153,29 @@
  * value goes in both blocks. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --bg-primary: oklch(96.2% 0.006 80);
-    --bg-secondary: oklch(93.5% 0.007 80);
-    --surface: oklch(98% 0.004 80);
-    --surface-raised: oklch(99.2% 0.002 80);
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
 
-    --text-primary: oklch(23% 0.012 265);
-    --text-secondary: oklch(42% 0.011 265);
-    --text-muted: oklch(50% 0.011 265);
+    --text-primary: #242424;
+    --text-secondary: #424242;
+    --text-muted: #616161;
 
-    --line: oklch(87.5% 0.008 80);
-    --line-strong: oklch(79% 0.01 80);
+    --line: #e0e0e0;
+    --line-strong: #d1d1d1;
 
-    --accent: oklch(50% 0.1 45);
-    --accent-hover: oklch(43% 0.095 45);
-    --accent-fg: oklch(98.5% 0.008 80);
-    --accent-tint: oklch(94% 0.03 45);
+    --accent: #0f6cbd;
+    --accent-hover: #115ea3;
+    --accent-fg: #ffffff;
+    --accent-tint: #ebf3fc;
 
-    --status-ok: oklch(50% 0.12 150);
-    --status-warning: oklch(55% 0.12 75);
-    --status-error: oklch(52% 0.16 25);
-    --status-info: oklch(50% 0.09 250);
+    --status-ok: #0e700e;
+    --status-warning: #bc5006;
+    --status-error: #c50f1f;
+    --status-info: #0f6cbd;
 
-    --grid-line: oklch(24% 0.012 265 / 0.05);
+    --grid-line: oklch(0% 0 0 / 0.05);
 
     color-scheme: light;
   }
@@ -708,15 +716,15 @@ h3:hover .heading-anchor,
     --text-muted: #4a4f57;
     --line: #c9cdd3;
     --line-strong: #6b7178;
-    --accent: #7a3f22;
-    --accent-hover: #5f3019;
+    --accent: #0f548c;
+    --accent-hover: #115ea3;
     --accent-fg: #ffffff;
-    --accent-tint: #f4ece7;
+    --accent-tint: #ebf3fc;
     --cell-neutral: #9aa0a8;
-    --status-ok: #1d5c37;
-    --status-warning: #6b4a05;
-    --status-error: #8c1d1d;
-    --status-info: #1c4272;
+    --status-ok: #0e700e;
+    --status-warning: #bc5006;
+    --status-error: #c50f1f;
+    --status-info: #0f548c;
     color-scheme: light;
   }
   body {

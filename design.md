@@ -4,14 +4,38 @@ A locked design system for this site. Every page reads this file before emitting
 code. Do not regenerate per page - extend or amend this file when the system
 needs to grow.
 
-Current direction: **dark-tech instrument panel** (overhaul, 2026-09-06). It
-replaces the earlier editorial / luxe-technical pass (Fraunces roman serif,
-"engineering broadsheet dressed like a maison"). The OKLCH token *values* and
-the dark-base / light-remap structure are carried over unchanged, including the
-bronze accent; the display face, the section-head voice and the chrome devices
-change. Every text / surface pair below still passes WCAG 2.x (4.5:1 normal
-text, 3:1 large text and UI, against the lightest surface each colour sits on)
-in BOTH themes.
+Current direction: **dark-tech instrument panel on Fluent 2 colour**. The
+layout, chrome devices, type and motion are the 2026-09-06 instrument-panel
+system; on 2026-09-28 the colour and theming were remapped to Microsoft
+Fluent 2 (the desktop app shipped the same direction in 0.2.2), replacing the
+bronze accent and the warm-ink neutrals. Token names, the dark-base /
+light-remap structure and every consumer are unchanged - only the values
+moved. Every text / surface pair passes WCAG 2.x (4.5:1 normal text, 3:1
+large text and UI) in BOTH themes; the Fluent values were checked with a
+contrast script before landing.
+
+## Fluent 2 colour anchors (2026-09-28)
+
+Dark is Fluent's dark theme: page `#292929`, inset bands `#1F1F1F`, cards
+`#2C2C2C`, flyouts `#313131`, text `#FFFFFF / #E0E0E0 / #AEAEAE`, hairlines
+`#3D3D3D` / `#5C5C5C`. Light is Fluent's light theme: page `#FFFFFF`, inset
+bands `#F5F5F5`, text `#242424 / #424242 / #616161`, hairlines `#E0E0E0` /
+`#D1D1D1`. Brand is communication blue: `#0F6CBD` (light links and filled
+CTAs, white label) and `#479EF5` (dark links and focus, near-black
+brand-10 `#061724` label on filled CTAs - the WinUI accent-button pairing).
+Accent tint: `#EBF3FC` light, `#082338` dark. Status, lifted for dark text
+usage: green `#0E700E` / `#54B054`, amber `#BC5006` / `#F9AE45`, red
+`#C50F1F` / `#F1707B` (Fluent's own `#C50F1F` is 2.4:1 on `#292929`), info
+blue `#0F6CBD` / `#6CB8F6`. Telemetry series (readable ≥3:1 on both
+canvases): `#3D96E8`, `#21A19A`, `#F7630C`. Canvas / 3D scene background and
+theme-color meta: `#292929` dark, `#FFFFFF` light. Print keeps a deepened
+accent (`#0F548C`) on white paper.
+
+Where this file's older rules conflict with Fluent's published neutrals -
+"never pure white" (Fluent light background and dark foreground are
+`#FFFFFF`), the warm-hue neutrals (hue 265/85), and the bronze accent - the
+Fluent values win as of this amendment. "Never pure black" still holds: no
+surface or text in either system ships `#000000`.
 
 ## Genre
 
@@ -47,22 +71,24 @@ canvas / 3D code, which cannot read CSS custom properties.
 
 | Token | Dark (base) | Light (re-map) |
 | --- | --- | --- |
-| `--bg-primary` | `oklch(19.5% 0.012 265)` deep ink | `oklch(96.2% 0.006 80)` bone |
-| `--bg-secondary` | `oklch(23% 0.012 265)` | `oklch(93.5% 0.007 80)` |
-| `--surface` | `oklch(25.5% 0.011 265)` | `oklch(98% 0.004 80)` |
-| `--surface-raised` | `oklch(28.5% 0.011 265)` | `oklch(99.2% 0.002 80)` |
-| `--text-primary` | `oklch(94% 0.006 85)` warm ivory | `oklch(23% 0.012 265)` ink |
-| `--text-secondary` | `oklch(78% 0.007 85)` | `oklch(42% 0.011 265)` |
-| `--text-muted` | `oklch(66.5% 0.008 85)` | `oklch(50% 0.011 265)` |
-| `--line` | `oklch(31% 0.011 265)` hairline | `oklch(87.5% 0.008 80)` |
-| `--line-strong` | `oklch(41% 0.013 265)` bezel | `oklch(79% 0.01 80)` |
-| `--accent` | `oklch(70% 0.085 45)` bronze backlight | `oklch(50% 0.1 45)` bronze |
-| `--accent-hover` | `oklch(76% 0.08 45)` | `oklch(43% 0.095 45)` |
-| `--accent-fg` | `oklch(16% 0.02 45)` | `oklch(98.5% 0.008 80)` |
-| `--accent-tint` | `oklch(29% 0.035 45)` | `oklch(94% 0.03 45)` |
+| `--bg-primary` | `#292929` Fluent bg1 | `#FFFFFF` |
+| `--bg-secondary` | `#1F1F1F` Fluent bg2 (inset) | `#F5F5F5` Fluent bg3 |
+| `--surface` | `#2C2C2C` card | `#FFFFFF` |
+| `--surface-raised` | `#313131` flyout | `#FFFFFF` |
+| `--text-primary` | `#FFFFFF` | `#242424` |
+| `--text-secondary` | `#E0E0E0` | `#424242` |
+| `--text-muted` | `#AEAEAE` | `#616161` |
+| `--line` | `#3D3D3D` hairline | `#E0E0E0` |
+| `--line-strong` | `#5C5C5C` bezel | `#D1D1D1` |
+| `--accent` | `#479EF5` brand on dark | `#0F6CBD` brand |
+| `--accent-hover` | `#62ABF5` | `#115EA3` |
+| `--accent-fg` | `#061724` brand-10 label on filled CTA | `#FFFFFF` |
+| `--accent-tint` | `#082338` | `#EBF3FC` |
 
-sRGB anchors: dark panel `#12151a`, ivory `#edebe7`, bronze `#cb8e72`; light
-paper `#f5f2ee`, ink `#1a1d23`, bronze `#914f2f`.
+sRGB anchors (canvas / 3D / OG card, which cannot read CSS custom
+properties): dark panel `#292929`, text `#f5f5f5`, secondary `#d6d6d6`, line
+`#3d3d3d`, brand `#479ef5`; light page `#ffffff`, ink `#242424`, brand
+`#0f6cbd`.
 
 Carried rules:
 
@@ -81,11 +107,11 @@ Accent shows on `<= 5%` of any viewport: the wordmark brackets, one link colour
 instrument, the filled primary CTA, and the selected-module emissive in the 3D
 scene. Never a fill behind a whole section, never a gradient.
 
-Status hues (OKLCH, both themes lift lightness in dark): `--status-ok` green
-`150`, `--status-warning` amber `80/75`, `--status-error` red `25`,
-`--status-info` blue `250`. Tone plus a word, never colour alone. Canvas / 3D
-telemetry series: bronze `#cb8e72`, steel `#7ea4cf`, sage `#7fae8e`; 3D pack
-scene background is the dark-panel anchor `#12151a`.
+Status hues (both themes lift lightness in dark; values in the Fluent 2
+anchors section above). Tone plus a word, never colour alone. Canvas / 3D
+telemetry series: Fluent blue `#3D96E8`, teal `#21A19A`, orange `#F7630C`
+(≥3:1 on both canvases); 3D pack scene background is the dark-panel anchor
+`#292929`.
 
 ## Typography
 

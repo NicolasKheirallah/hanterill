@@ -25,11 +25,11 @@ const WIDTHS = [480, 640, 1024, 1600, 2400];
 
 /** Docs tokens, kept in sync with the dark theme in globals.css. */
 const OG = {
-  bg: "#12151a",
-  text: "#edebe7",
-  sec: "#b9b7b2",
-  line: "#2e3036",
-  accent: "#cb8e72",
+  bg: "#292929",
+  text: "#f5f5f5",
+  sec: "#d6d6d6",
+  line: "#3d3d3d",
+  accent: "#479ef5",
 };
 
 // ---------------------------------------------------------------- images ----

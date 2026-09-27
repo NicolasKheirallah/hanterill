@@ -18,7 +18,7 @@ import { cn } from "@/lib/cn";
 const WINDOW_SEC = 15;
 const SERIES_VARS = ["--accent", "--status-info", "--status-warning"] as const;
 /** Fallbacks; the real values are read from CSS at draw time (canvas cannot resolve var()). */
-const SERIES_COLORS = ["#cb8e72", "#79a9db", "#e3ad4b"];
+const SERIES_COLORS = ["#3d96e8", "#21a19a", "#f7630c"];
 
 /**
  * Continuously moving telemetry. The render loop runs on requestAnimationFrame
@@ -63,8 +63,8 @@ export function LiveTelemetryChart() {
     const read = () => {
       const cs = getComputedStyle(document.documentElement);
       palette.current = {
-        line: cs.getPropertyValue("--line").trim() || "#2e3036",
-        lineStrong: cs.getPropertyValue("--line-strong").trim() || "#474a52",
+        line: cs.getPropertyValue("--line").trim() || "#3d3d3d",
+        lineStrong: cs.getPropertyValue("--line-strong").trim() || "#5a5a5a",
         series: SERIES_VARS.map((v, i) => cs.getPropertyValue(v).trim() || SERIES_COLORS[i]),
       };
     };
@@ -125,8 +125,8 @@ export function LiveTelemetryChart() {
     ctx.clearRect(0, 0, w, h);
 
     const pal = palette.current ?? {
-      line: "#2e3036",
-      lineStrong: "#474a52",
+      line: "#3d3d3d",
+      lineStrong: "#5a5a5a",
       series: [...SERIES_COLORS],
     };
     const line = pal.line;
