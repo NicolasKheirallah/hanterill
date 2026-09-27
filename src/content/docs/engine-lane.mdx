@@ -1,43 +1,13 @@
-Hanterill also has an **Engine Diagnostics** view for supported combustion and hybrid cars. It appears when the car's engine controller responds. The available readings depend on the model and how much of that vehicle has been verified.
+**Engine Diagnostics** is for combustion and hybrid vehicles where the relevant control units answer. The screen shows which units were found, which requested readings returned a value and which functions are unavailable for that car.
 
-## 1. How the app knows your car has a combustion engine
+## What you may see
 
-On a pure electric car (such as a Polestar 2 or EX40), the **Engine Control Module (ECM)** and **Transmission Control Module (TCM)** slots in the catalogue stay silent because no engine or multi-gear gearbox is installed.
+Depending on the vehicle, the catalogue can include engine, transmission, mild-hybrid battery and diesel aftertreatment readings. The app labels each available reading with its source and status. It also keeps unresolved entries visible instead of assigning them a guessed value. A petrol car, for example, should not be expected to return diesel aftertreatment data.
 
-When the engine controller answers during discovery, Hanterill shows **Engine Diagnostics** automatically.
+The catalogue is broader than the set of readings verified on any one car. A unit appearing in the catalogue does not mean it is fitted or that every parameter will answer. Check the coverage shown on the screen before relying on a result.
 
-## 2. What the Engine Diagnostics screen reads
+## How to use the screen
 
-The Engine Diagnostics screen groups measurements across four powertrain modules:
+Start with the units that answered, then read the measured values and their status. Compare a surprising value with the car's operating state and any related fault codes. An unavailable or provisional engine value should not be used as a basis for a repair decision without further checks.
 
-### Engine Control Module (`ECM`)
-- **Engine speed (RPM), coolant temperature, and intake air temperature**
-- **Oil temperature, oil pressure, and calculated engine oil level**
-- **Turbocharger boost pressure** (target versus actual) and manifold absolute pressure
-- **Fuel rail pressure, fuel tank level, and throttle / accelerator pedal position**
-- **12 V control-module supply voltage and ambient barometric pressure**
-- **Diesel Particulate Filter (DPF) status** (on diesel variants): soot load, ash accumulation, and distance since last regeneration.
-
-### Transmission Control Module (`TCM`)
-- **Gearbox oil temperature**
-- **Selected gear and actual engaged gear**
-- **Input and output shaft speeds**
-- **Transmission adaptation status and counters**
-
-### 48 V Mild-Hybrid Battery Module (`MVBM`, on B-series mild hybrids)
-- **48 V battery State of Charge (%) and State of Health (%)**
-- **48 V pack voltage, current, and temperature**
-
-### Urea / AdBlue Aftertreatment (`UCM`, on diesel variants)
-- **Reductant (AdBlue) tank level, temperature, and dosing status**
-
-## 3. CMA versus SPA combustion and hybrid vehicles
-
-It is helpful to understand how the two Volvo platforms differ when reading engine data:
-
-- **CMA combustion and hybrid vehicles (such as the Volvo XC40 petrol/diesel/PHEV and Lynk & Co)**: Read engine, transmission, 48 V mild-hybrid, and aftertreatment parameters directly over Ethernet using the CMA engine parameter catalogue.
-- **SPA combustion and T8 plug-in hybrid vehicles (XC60, S60, V60, S90, V90, XC90)**: Connect over Ethernet for **vehicle identity, 41-module inventory, and full-car fault-code scanning** (verified on a live 2018 V90 T6). However, on SPA cars, many live engine parameters are broadcast on the car's internal CAN bus rather than served over the CMA Ethernet engine identifiers, so live engine sensor tiles on SPA are marked accordingly while SPA-specific parameter mapping continues.
-
-## 4. Service and maintenance boundaries on engine modules
-
-Engine readings are read-only. A separate grille-shutter calibration may be available where supported and needs confirmation. Hanterill does not run forced filter regeneration, actuate the AdBlue pump, reset transmission adaptations or unlock the 48 V system. You can read the available values and fault codes before deciding what further service is needed.
+The engine screen reads data. Service actions that change the car are separate and require their own support and confirmation. Do not infer from a readable engine parameter that Hanterill can run a workshop routine for it.

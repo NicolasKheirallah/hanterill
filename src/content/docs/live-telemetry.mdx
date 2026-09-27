@@ -1,37 +1,15 @@
-A scan shows what the car reported at one point in time. **Live Telemetry** follows selected readings as they change. You can watch them during a test and save the recording for later review.
+A scan captures what the car reported at one moment. **Live Data** follows selected readings as they change. Use it to observe a test and, when useful, save the samples for later review.
 
-## 1. Choosing what to watch (Channel presets and custom channels)
+## Choose readings
 
-At the top of the **Live Telemetry** screen, you can start quickly with built-in channel groups or pick individual measurements from any module:
+The screen offers presets for battery and high-voltage health, fast charging, powertrain, 12 V supply, climate and the full battery pack. A preset selects only signals the current catalogue offers. You can also choose individual available channels. A signal absent from your car will not become a zero reading.
 
-- **Battery & High Voltage preset**: Pack voltage, pack current, real-time power (kW), State of Charge, and minimum/maximum pack temperatures.
-- **Drivetrain & Inverters preset**: Front and rear motor speed, torque delivery, and inverter coolant and stator temperatures.
-- **Thermal & Heat Pump preset**: Cabin heater, chiller, radiator, and compressor temperatures and pressures.
-- **12 V Low-Voltage preset**: DC-DC converter output voltage, 12 V battery current, and 12 V State of Charge.
-- **Custom selection**: Toggle any readable parameter from the catalogue to build your own chart view.
+## Watch or record
 
-## 2. How live sampling works
+Start a stream to ask the car for repeated samples. The update rate depends on the car, the connection and how many channels you select. More channels can make each one update less often. The chart uses the samples actually received; missing samples remain gaps.
 
-When you click **Start live stream**, Hanterill asks the selected control units to sample your chosen channels on a steady schedule:
+**Pause** stops polling until you choose **Resume**. It does not keep recording new vehicle data in the background. **Stop** ends the run and retains the samples collected so far. Leaving the page also stops the live sampler. Have a passenger operate the computer if the vehicle is moving.
 
-- **Periodic streaming where supported**: When a module supports periodic streaming, Hanterill registers your chosen channels once and the module streams updates automatically until you pause or leave the screen.
-- **Polled sampling fallback**: For channels that do not support periodic streaming, Hanterill polls the module at a steady interval.
-- **Why fewer channels update faster**: The car's diagnostic gateway shares its bandwidth across every module you query. Watching 3 to 5 channels gives you a crisp, fast waveform (several updates per second), whereas watching 15 channels spreads the updates across more modules.
+## Review and export
 
-## 3. Reading the chart and honest gap accounting
-
-Hanterill plots live data like lab instrumentation rather than a decorative dashboard gauge:
-
-- **Synchronized crosshair**: Move your mouse (or use the Left and Right arrow keys on your keyboard) across the chart to inspect the exact values of every active channel at the same millisecond.
-- **Pause and inspect**: Click **Pause** at any moment to freeze the screen and examine a voltage dip or torque spike without stopping the background recording.
-- **Honest gap accounting**: If a module is briefly busy and misses a sample interval, Hanterill counts the missed interval and shows a real gap in the line rather than drawing a fake smooth curve across missing data.
-- **One stream at a time**: To keep the car's gateway responsive, Hanterill runs only one live stream at a time and automatically stops streaming as soon as you switch to another task.
-
-## 4. Recording a run and replaying it offline
-
-When chasing an intermittent issue (such as a power sag under acceleration or a climate loop that stops cooling after 20 minutes), you can record the entire live session:
-
-1. Select your channels and click **Record**.
-2. Drive or run the test (always have a passenger operate the laptop if the car is moving).
-3. Click **Stop** when finished.
-4. You can **replay the recording offline** inside the app at any time, scrub back and forth along the timeline, or click **Export CSV** to open the time-stamped measurements in Excel, Numbers, or Python.
+You can replay a saved recording, move through its timeline and export the recorded values as CSV. The screen can also import supported recording files. A replay shows the samples in that recording; it does not contact the car or fill in readings that were never captured.

@@ -1,4 +1,4 @@
-If Hanterill cannot find the car, start with the simple checks below. The car may be asleep, the cable may lack the required activation signal or the computer may be blocking the local connection. Work through the steps in order before changing network settings.
+If Hanterill cannot find the car, start with the simple checks below. The car may be asleep, a plug may be loose or the computer may be blocking the local connection. Work through the steps in order before changing network settings.
 
 ## 1. Is the car awake?
 
@@ -13,7 +13,7 @@ Look at the RJ45 port on your computer or USB-to-Ethernet adapter. Within a coup
 - **If no light comes on at all**:
   - Make sure the 16-pin OBD-II connector is pushed all the way into the socket under the dashboard.
   - Check that your USB-C Ethernet adapter is plugged into a real data port, not a charge-only port.
-  - **On Volvo EX30, Polestar 4, or Zeekr models (SEA platform)**: These cars keep their Ethernet port completely switched off unless the cable supplies 12 V power to **Pin 8** (the activation pin) of the OBD-II plug. Some inexpensive ENET cables leave Pin 8 unwired. See [Hardware and adapters](/docs/hardware-and-adapters) for how to check Pin 16 to Pin 8 with a multimeter.
+  - Check that the Ethernet adapter is firmly connected to your computer. If possible, try another port or adapter.
 
 ## 3. Does the app say "Waiting for network address (DHCP)"?
 
@@ -34,7 +34,7 @@ Hanterill talks to the car using UDP and TCP on port `13400`.
 
 Unlike CMA cars (Polestar 2, XC40/EX40, C40/EC40), which reply to a UDP broadcast as soon as you click **Find vehicle**, SEA-platform gateways often stay silent on broadcast.
 
-- **How Hanterill handles it**: When broadcast discovery times out, Hanterill automatically tries connecting directly to the car's standard gateway addresses (`169.254.19.1` and `169.254.1.1`) over TCP port `13400`. As long as your Ethernet adapter has a `169.254.x.x` address and your cable powers Pin 8, direct connection happens automatically.
+- **How Hanterill handles it**: When broadcast discovery times out, Hanterill automatically tries connecting directly to the car's standard gateway addresses (`169.254.19.1` and `169.254.1.1`) over TCP port `13400`. Once the car is awake and your Ethernet adapter has a `169.254.x.x` address, this attempt happens automatically over the same ENET cable.
 
 ## 6. Why did a few modules time out during a full scan?
 

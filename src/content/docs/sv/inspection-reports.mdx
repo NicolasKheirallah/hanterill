@@ -1,46 +1,13 @@
-import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+En **inspektionsrapport** samlar de värden som hämtats från bilen och visar underlaget för bedömningen. Du kan läsa den på skärmen, spara den som PDF eller behålla en strukturerad kopia med dina handlingar.
 
-**Inspektionsrapport** samlar uppgifter från en sparad fordonskontroll i ett dokument som du kan skriva ut. Den visar batteri, felkoder och andra tillgängliga avläsningar. Om underlag saknas framgår det i rapporten.
+## Läs resultatet
 
-<SafetyNotice level="read-only" title="Rapporten ändrar inte bilen">
-Rapporten bygger på avläsningar av bilen. Att öppna, skriva ut eller spara den ändrar inga inställningar i fordonet.
-</SafetyNotice>
+Rapporten kan visa ett poängtal och ett av fyra resultat: **Utan anmärkning**, **Utan anmärkning med mindre noteringar**, **Kräver åtgärd** eller **Ofullständig**. Den väger in tillgängliga uppgifter om batteri, felkoder, 12 V-system och värden som borde stämma överens mellan bilens delar. Fynden visar vilka avläsningar som påverkade resultatet och vilka som bara är upplysningar. Ett poängtal är en tolkning av insamlade data, inte ett intyg om att varje del av bilen har kontrollerats.
 
-## Vad rapporten bedömer
+Om ett viktigt värde, till exempel batteriets SoH, saknas kan rapporten få resultatet **Otillräckligt underlag** i stället för en lugnande poäng. Saknade kontroller listas så att du ser vad som inte gick att bedöma. Ett preliminärt värde behöver också tolkas varsamt eftersom det kan behöva kontrolleras på fler bilar av samma variant.
 
-Hanterill granskar fyra områden. Rapporten visar både resultatet och de avläsningar som ligger bakom det:
+## Granska och exportera
 
-1. **Batteriets hälsa**: Bilens uppskattning av hur mycket användbar kapacitet högspänningsbatteriet har kvar.
-2. **Skillnader mellan cellgrupper**: Om någon del av batteriet har tydligt annan spänning än de andra vid avläsningen.
-3. **Felkoder**: Vilka system som rapporterar fel och om felen är aktiva eller äldre händelser.
-4. **Identitet och mätarställning**: Om uppgifter från flera styrenheter stämmer överens.
+På skärmen kan du växla mellan **Sammanfattning** och **Fullständig rapport**. Vid PDF-export finns tre dokumentmallar: en översiktlig inspektion, en batteriinriktad rapport och en teknisk sammanställning. Innehållet beror på vad avläsningen faktiskt fångade. En batterimall kan inte fylla i ett saknat cellvärde eller göra ett exempelvärde från webbplatsen till en mätning.
 
-Kontroller av till exempel 12 V-batteri och kommande service kan också visas som noteringar. De ger sammanhang utan att räknas som ett fel i högspänningsbatteriet.
-
-Rapportens sammanfattning kan vara **Utan anmärkning**, **Bevaka**, **Kräver uppmärksamhet** eller **Otillräckligt underlag**. Läs alltid fynden bakom sammanfattningen. Ett enskilt betyg ersätter inte en fysisk kontroll av bilen.
-
-## När bilen inte lämnar tillräckligt med data
-
-Ett uteblivet svar räknas inte som ett godkänt resultat. Om batteriet eller felkoderna inte kunde läsas klart markeras den delen som saknad. Rapporten anger då att underlaget är otillräckligt och visar vilken kontroll som behöver göras om.
-
-På modeller där vissa avläsningar fortfarande provas ut anger rapporten också att tolkningen är preliminär. Använd inte ett preliminärt eller ofullständigt resultat som enda grund för köp eller reparation.
-
-## Välj rapport efter mottagare
-
-| Rapport | Innehåll | När den passar |
-| --- | --- | --- |
-| **Översiktlig inspektion** | Fordonsidentitet, sammanfattning, batterihälsa, aktuella fel och kontroll av mätarställning. | När någon behöver en kort överblick. |
-| **Batteriintyg** | Batteriets hälsa, tillgängliga kapacitetsuppgifter, cellgrupper och temperaturhistorik. | När batteriets skick är huvudfrågan. |
-| **Teknisk rapport** | Utförligare uppgifter om styrenheter, felkoder och kontrollerna bakom bedömningen. | För egna fordonsanteckningar eller verkstadsarbete. |
-
-## Skriv ut och dela
-
-Välj rapporttyp och använd **Skriv ut / Spara PDF** för att skapa en utskrift eller PDF. Du kan dölja chassinumret innan du delar rapporten. GPS-position tas inte med om du inte själv väljer att inkludera den.
-
-Du kan också öppna en sparad session och skapa rapporten senare, utan att koppla in bilen igen.
-
-## Läs vidare
-
-- [Batteridiagnostik](/docs/battery-diagnostics): förstå batteriets värden.
-- [Felkoder](/docs/dtc-scanning): läs fel och sparade ögonblicksbilder.
-- [Tolka resultat](/docs/reading-results): kontrollera täckning och tillförlitlighet.
+Kontrollera inställningarna för maskering av bilens identifieringsnummer och valfritt innehåll före export. Platsuppgifter tas bara med om du väljer det. Du kan lägga till en anteckning eller markera ett fynd som undantaget; undantaget fortsätter att synas i rapporten. En sparad rapport kan öppnas igen och bedömas med appens nuvarande regler. Tolkningen kan då skilja sig från den ursprungliga. Behåll ursprungsresultatet när du jämför bedömningar över tid.

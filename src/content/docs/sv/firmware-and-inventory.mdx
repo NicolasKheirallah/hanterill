@@ -1,43 +1,13 @@
-Varje styrenhet i bilen har en egen hårdvaru- och mjukvaruversion. **Mjukvara och inventering** samlar versionerna från de styrenheter som svarar. Du kan jämföra listan före och efter ett verkstadsbesök eller en uppdatering.
+Varje styrenhet kan lämna uppgifter om sin hårdvara och programvara. **Styrenhetsinventering** visar vilka enheter som svarade vid en upptäcktsskanning. **Programvaruinventering** ber svarande enheter om de identifieringsuppgifter som finns. Uppgifterna hör ihop, men att en enhet upptäcktes betyder inte att dess programvaruversion lästes.
 
-## Vad som läses av från varje styrenhet
+## Täckning för enheter och programvara
 
-Under en inventering frågar Hanterill varje aktiv styrenhet i plattformens styrmodulregister efter:
+En inventering listar enheter som svarade och sådana som inte gjorde det. En tyst enhet kan vara tillval, sova eller inte gå att nå. Jämför med bilens kända utrustning och läs igen innan du antar att den har gått sönder.
 
-<SpecList rows={[
-  ["Mjukvarunummer och version", "Visar exakt vilken mjukvarurevision som körs i styrenheten just nu."],
-  ["Hårdvarunummer och version", "Visar den fysiska hårdvarurevisionen för styrenhetens kretskort."],
-  ["Serienummer", "Identifierar den specifika fysiska enheten (praktiskt för att se om en modul har bytts ut)."],
-  ["Lagrat chassinummer (VIN)", "Kontrollerar att styrenheten är inprogrammerad för samma fordon som övriga moduler."],
-]} />
+En programvaruinventering kan ge hårdvarunummer, programvarunummer, serienummer och leverantörsuppgifter. Alla enheter lämnar inte varje fält. Appen visar både enhetstäckning och täckning per uppgift så att du ser skillnaden mellan en enhet som svarade och en version som faktiskt hämtades. En avbruten inventering är ofullständig.
 
-## Se exakt vad en OTA- eller verkstadsuppdatering ändrade
+## Jämför före och efter service
 
-Genom att spara en session före och efter en uppdatering kan du se exakt vilka styrenheter som
-uppgraderades:
+Spara en programvaruinventering före ett verkstadsbesök eller en uppdatering och gör en till efteråt. En jämförelse kan visa versionssträngar som ändrats, är oförändrade eller saknas i den ena avläsningen. En ändrad version visar att enheten rapporterar annan programvara. En oförändrad version bevisar inte att inga inställningar eller kalibreringar ändrats. En saknad version är inget bevis för att en uppdatering misslyckades.
 
-1. Gör en avläsning på skärmen **Mjukvara och inventering** innan du installerar en OTA-uppdatering eller lämnar in fordonet på service.
-2. Gör en ny avläsning efteråt.
-3. Öppna **Sessioner** (eller klicka på jämför direkt i mjukvaruvyn) för att se en tydlig tabell över alla styrenheter där mjukvaruversionen har ändrats från version A till version B.
-
-På så sätt ser du direkt om en uppdatering berörde batteristyrenheten (**BECM**), växelriktarna,
-klimatstyrenheten (**CCM**), bromsstyrenheten (**BCM2**) eller bara infotainmentsystemet (**IHU**).
-
-## Upptäcka utbytta eller felmatchade moduler
-
-När du inspekterar ett begagnat fordon hjälper mjukvaru- och hårdvaruinventeringen dig också att se
-om en styrenhet har bytts ut mot en begagnad del från ett annat fordon:
-
-- Om en styrenhet rapporterar ett annat chassinummer (VIN) än centraldatorn (**CEM**) markeras avvikelsen direkt.
-- Tillsammans med mätarställningskontrollen på skärmen [Fordon](/docs/vehicle-identity) (som jämför miltalet över upp till 29 styrenheter) ger det en mycket tydlig bild av fordonets historik.
-
-## Exportera mjukvarulistan
-
-Du kan exportera hela mjukvaru- och hårdvarutabellen som JSON eller CSV, eller inkludera den i en
-utskrivbar [Inspektionsrapport](/docs/inspection-reports) för din servicepärm.
-
-## Nästa steg
-
-- [Styrmodulregister](/docs/ecu-reference): se alla styrenheter som ingår i CMA-, SPA- och SEA1-registren.
-- [Sessioner och bevis](/docs/sessions-and-evidence): jämför två sparade sessioner sida vid sida.
-- [Fordonsidentitet](/docs/vehicle-identity): kontroll av chassinummer och mätarställning över alla moduler.
+Behåll båda avläsningarna med datum och fordonsidentitet. Appen kan inte återskapa en version som aldrig lästes, och jämförelsen bevisar inte exakt vilket arbete verkstaden utförde.

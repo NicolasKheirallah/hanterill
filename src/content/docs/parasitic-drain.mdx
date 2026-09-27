@@ -1,34 +1,13 @@
-Even on an electric car with a huge high-voltage battery in the floor, **every computer, door lock, relay, and safety system runs on the small 12 V lead-acid battery** under the hood. When you park and lock the car, the high-voltage battery disconnects for safety until you next drive or charge. If something keeps the car's electronics awake overnight, that small 12 V battery can run flat, leaving the car unable to unlock or close its high-voltage contactors in the morning.
+The **12 V Sleep Drain** screen helps you see whether the car reports unusually high current use while parked. It reads a current estimate and a distribution of stored current samples from the car's central electronics module. It does not identify which part of the car woke up.
 
-The **12 V Sleep Drain** screen reads the **Battery Monitoring Sensor (BMS)** on the 12 V battery terminal and the **Central Electronic Module (CEM)** so you can see how healthy your 12 V battery is and whether the car is actually sleeping when parked.
+## Why an awake reading is different
 
-## 1. Why reading live current while plugged in is not enough
+Opening a door or connecting diagnostic equipment wakes parts of the car. Current measured at that moment is not the same as current while it sleeps. The drain screen uses the car's stored sample distribution to give you more context than one live reading.
 
-As soon as you open the driver's door, sit in the seat, and plug in a diagnostic cable, the car wakes up its displays, gateway, and control units. Live 12 V current draw while the car is awake is typically **10 to 25 Amps**, which tells you nothing about what the car was doing at 3:00 AM while parked and locked.
+Choose **Read 12V drain** to see the reported average current and how many samples fell into each current range. The app also compares the average with the distribution. If they disagree substantially, it marks the result as inconsistent instead of quietly combining them.
 
-Fortunately, the car's **Battery Monitoring Sensor** stays awake 24 hours a day and keeps a continuous internal log of how much current the car drew while parked and locked. Hanterill reads that stored history after you wake the car up.
+## How to use the result
 
-## 2. What the 12 V Sleep Drain screen shows
+A larger share of samples in higher-current ranges can suggest that the car spent more time awake or drawing power. It does not name the responsible module or explain when each sample was taken. The screen has no wake-event timeline, 12 V battery health reading or total energy used while parked. You can export the displayed ranges as CSV.
 
-### Current 12 V battery health and charge
-- **12 V State of Charge (%) and State of Health (%)**: How full the 12 V AGM battery is right now and how much of its original capacity remains.
-- **12 V voltage, current, and temperature**: Measured directly at the battery post by the monitoring sensor, plus cross-checks against the 12 V supply voltage seen by other modules in the car.
-- **Days in service and lifetime energy counters**: How long the current 12 V battery adaptation has been running and how much total charge has flowed in and out of it.
-
-### Parked standby current histogram (time in band)
-A healthy, sleeping car draws a tiny trickle of current (typically **under 20 to 50 milliamps**, or `0.02` to `0.05 A`) to keep the keyless entry receiver and alarm listening.
-
-Hanterill reads the car's **standby current histogram**, which records how many hours and minutes the parked car spent in each current-draw band:
-- **Deep sleep band (0 to 50 mA)**: Normal parked sleep.
-- **Light wake / background check bands (50 mA to 1 A)**: Brief wake-ups (for example, checking cellular connection or battery status).
-- **Elevated drain bands (1 A and above)**: A module or accessory (such as a stuck telematics modem, an aftermarket dashcam wired to permanent power, or a door latch that never signaled locked) is preventing the car from going to sleep.
-
-### Accumulated sleep energy draw and wake reasons
-Alongside the time-in-band histogram, Hanterill shows the **total amp-hours (Ah) drawn while parked** and the **gateway wake-state log**, helping you see whether the **Telematics module (TCAM)**, a charger handshake, or a body module repeatedly woke the vehicle overnight.
-
-## 3. How to investigate a flat or weak 12 V battery
-
-1. Leave the car locked overnight without plugging in a charger.
-2. The next morning, connect Hanterill and open **12 V Sleep Drain** right away.
-3. Check whether the parked hours accumulated in the **0 to 50 mA** deep-sleep band or in the higher current bands.
-4. If the car slept normally all night (under 50 mA) but the 12 V State of Charge still dropped sharply, the 12 V battery itself is worn out and losing charge internally. If you replace the 12 V battery, remember to run the **12 V battery adaptation reset** in [Service functions](/docs/service-functions) so the car knows a fresh battery is installed.
+If the 12 V battery goes flat, compare drain readings taken under similar conditions and check the battery's condition separately. Charging, remote services and ordinary scheduled activity can all affect what the car does while parked. A drain result is evidence to investigate, not proof that a particular component is faulty.

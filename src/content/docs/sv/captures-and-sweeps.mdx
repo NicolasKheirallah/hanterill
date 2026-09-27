@@ -1,42 +1,13 @@
-De vanliga vyerna läser de värden som behövs för en viss uppgift. I **Fångster** och **DID-utforskare** kan du spara och granska ett bredare underlag från bilen. De här verktygen visas i användarläget **Forskning** och är främst till för den som undersöker ovanliga svar eller nya mätvärden.
+En vanlig diagnosvy läser värdena som behövs för just den uppgiften. En bredare skanning frågar fler styrenheter efter fler uppgifter. Använd den när du behöver en större ögonblicksbild och har tid att granska vad som svarade.
 
-## Vad en diagnostikfångst är
+## Välj omfattning
 
-Under en vanlig skanning sparar Hanterill både det avkodade värdet (till exempel `91,14 %`) och det
-råa svaret som styrenheten skickade. En **diagnostikfångst** går ett steg längre och sparar hela
-sekvensen av frågor och svar med exakta tidsstämplar, svarstider och utfallskoder.
+Skannern kan läsa ett urval av styrenheter eller en större del av katalogen. En större avläsning tar längre tid och kan ge många saknade eller ostödda svar. Appen visar förlopp och täckning så att du ser hur mycket som försöktes, besvarades, hoppades över eller avbröts.
 
-Det är praktiskt i tre situationer:
+Du kan avbryta en pågående skanning. Behandla ett delresultat som just ett delresultat: en styrenhet som aldrig nåddes är inte kontrollerad. Om anslutningen bryts eller bilen somnar, anslut igen och läs om i stället för att anta att alla återstående enheter fungerar.
 
-1. **Granska i efterhand vid skrivbordet**: Du kan göra en femton minuter lång helfordonsskanning ute i fordonet och sedan utforska varje styrenhets svar inomhus.
-2. **Jämföra före och efter en händelse**: Du kan spela in en fångst med avstängd kupévärme och en med påslagen kupévärme för att se exakt vilka datapunkter som ändrade värde.
-3. **Bidra med underlag för nya modeller**: Om du kör ett SPA- eller SEA1-fordon kan du exportera en maskerad fångst så att fler mätvärden kan verifieras.
+## Granska en insamling
 
-## Fyra typer av svep i DID-utforskaren
+Skannern visar värden som kom tillbaka och markerar saknade eller ostödda svar. Om du exporterar en insamling, behåll tidpunkt, bil och täckning tillsammans med filen. Appen kan analysera insamlingsfiler som stöds utan anslutning till bilen. En sådan granskning kan inte fylla i värden som aldrig sparades.
 
-På skärmen **DID-utforskare** kan du välja mellan fyra lägen:
-
-<SpecList rows={[
-  ["Enskild läsning (Single Read)", "Läser en specifik datapunkt från en vald styrenhet direkt och visar både avkodat värde och råbytes."],
-  ["Intervallsvep (Bounded Sweep)", "Går igenom ett valt nummerintervall på en styrenhet under en fastställd gräns för antal anrop och listar vilka punkter som svarar med data."],
-  ["Helfordonsskanning (Scan-All)", "Skannar alla valda styrenheter i tre faser (närvarokontroll, katalogläsning och verifiering) inom en gemensam anropsbudget."],
-  ["Övervakning över tid (Live Watch)", "Läser en liten grupp datapunkter upprepade gånger (exempelvis 30 prov med 10 sekunders mellanrum) och klassificerar automatiskt vilka bytes som är fasta inställningar, räknare eller rörliga givare."],
-]} />
-
-## Inbyggd tolkning av rådata
-
-När du klickar på ett mätvärde som ännu inte har en färdig formel i katalogen visar
-**byte-tolkaren** automatiskt hur rådata ser ut i de vanligaste formaten:
-
-- Heltal (8-bitars, 16-bitars och 32-bitars)
-- Läsbar text (ASCII / UTF-8, exempelvis serienummer och mjukvarukoder)
-- Vanliga fordonsenheter (millivolt till volt, tiondels grader till Celsius och hundradels procent)
-
-Detta är ett visningshjälpmedel för att utforska okända datapunkter och ändrar aldrig katalogen på
-egen hand.
-
-## Nästa steg
-
-- [Datapunkter (DID-katalog)](/docs/did-catalogue): hur katalogen översätter råbytes till fysiska enheter.
-- [Sessioner och bevis](/docs/sessions-and-evidence): hur du exporterar och delar fångster med integritetsmaskering.
-- [Styrmodulregister](/docs/ecu-reference): alla styrenheter som kan väljas vid ett svep.
+Betrakta inte en gammal insamling som en ny skanning. En senare appversion kan ha bättre namn eller tolkningar av sparade uppgifter, men det ändrar inte vad bilen svarade när insamlingen gjordes.

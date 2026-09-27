@@ -13,6 +13,16 @@ Laddningsprocenten på instrumentpanelen visar hur fullt batteriet är i dag. Ba
 Batteridiagnostiken är skrivskyddad. Hanterill läser bilens värden utan att ändra batteriets inställningar.
 </SafetyNotice>
 
+## NMC och LFP: vilket batteri har bilen?
+
+**NMC** (nickel, mangan och kobolt) och **LFP** (litiumjärnfosfat) är två typer av litiumjonbatterier. Litiumjon är samlingsnamnet; NMC och LFP berättar mer om materialen i batteriet. Ingen av beteckningarna säger i sig om batteriet är friskt eller slitet.
+
+Samma bilmodell kan säljas med olika batterier. Volvo EX30 Standard Range har till exempel LFP, medan Extended Range-versionerna har NMC. Utgå inte bara från modellnamnet när du avgör vilken typ din bil har. Kontrollera bilens batteriinformation eller fordonsspecifikation. Hanterill väljer en batterilayout utifrån värden som bilen lämnar, men layouten är inget direkt kemiskt test. Det är särskilt viktigt att komma ihåg om bilen är märkt preliminär.
+
+NMC-batterier ger ofta längre räckvidd med ett batteri av en viss storlek. LFP använder varken nickel eller kobolt i det aktiva batterimaterialet, och spänningen förändras mindre under en stor del av laddningsintervallet. Därför säger **spänningen ensam mindre om hur fullt ett LFP-batteri är**. Om bilens uppskattning av laddningsnivån ändras betyder det inte automatiskt att batteriets hälsa plötsligt har försämrats. Bilens batteristyrenhet gör uppskattningen; Hanterill visar det bilen rapporterar.
+
+Jämför helst **samma bil och batterivariant** över tid. Kapaciteten eller cellspänningen i ett LFP-batteri är ingen allmän måttstock för ett NMC-batteri. Bilens egna gränser och referensvärden är viktigare än kemins namn.
+
 ## Hälsa, laddningsnivå och kapacitet
 
 Batteristyrenheten, BECM, rapporterar flera värden som låter lika men svarar på olika frågor.
@@ -24,6 +34,8 @@ Batteristyrenheten, BECM, rapporterar flera värden som låter lika men svarar p
 | **Inlärd kapacitet** | Hur mycket laddning BECM har lärt sig att enskilda cellgrupper kan lagra. Appen visar ett genomsnitt i amperetimmar (Ah) när värdena finns. | Läser BECM:s cellgruppsvärden och räknar ut deras genomsnitt. |
 
 En bil kan rapportera **90 % SoH och 20 % SoC** samtidigt. I exemplet uppskattar styrenheten att batteriet kan lagra omkring 90 % av laddningen det lagrade som nytt, medan det just nu är laddat till 20 %. Procentsatserna beskriver olika saker.
+
+BECM gör sina uppskattningar för batteriet som sitter i just den bilen. Hanterill omvandlar inte beteckningen NMC eller LFP till ett hälsobetyg. Bedöm ett lägre SoH-värde mot tidigare avläsningar från samma bil, bilens meddelanden och hur den fungerar, inte mot en annan batterityp.
 
 ### Så tolkar du SoH
 
@@ -68,6 +80,14 @@ Batterihälsa visar de temperaturer och kylvätskevärden som bilen lämnar. Ski
 Hanterill jämför värden som borde stämma överens, till exempel batteriets rapporterade spänning och summan av cellgruppernas spänningar. Appen kan också jämföra rapporterad effekt med spänning och ström samt bedöma om strömmen verkar rimlig när bilen står parkerad. En avvikelse kan bero på en ofullständig avläsning, att bilens driftläge ändrades eller att ett värde behöver undersökas närmare. En enskild avvikelse är ingen diagnos.
 
 Sidan skiljer mellan uppmätta värden, värden som räknats fram, preliminära tolkningar och värden som bilen inte rapporterade. Ett saknat eller osäkert värde ska inte tolkas som att batteriet är friskt eller dåligt.
+
+## Ta hand om batteriet i vardagen
+
+- **Använd laddningsgränsen som bilen rekommenderar** vid vanlig körning. Rätt gräns kan skilja mellan bilmodeller, även om båda har NMC eller båda har LFP. Ladda till 100 % när du behöver hela räckvidden och bilen tillåter det. Låt helst inte bilen stå länge med mycket hög eller mycket låg laddning.
+- **Om bilen har NMC** kan den rekommendera en vardagsgräns under 100 %. Använd bilens egen rekommendation i stället för en procentsats från en annan modell.
+- **Om bilen har LFP**, följ tillverkarens eller bilens eventuella råd om full laddning. Vissa LFP-bilar behöver laddas fullt ibland för att uppskattningen av laddningsnivån ska hålla sig rätt. Det gäller inte automatiskt alla LFP-batterier. En full laddning återställer inte förlorad batterihälsa.
+- **Om bilen ska stå oanvänd i flera veckor**, följ bilens råd för långtidsparkering och kontrollera laddningsnivån med jämna mellanrum. Låt inte något av batterierna stå nära tomt. Skydda bilen mot långvarig extrem värme när det går.
+- **I kyla** kan laddningen gå långsammare och tillgänglig effekt minska tills batteriet blivit varmare. Använd bilens batteriförvärmning inför snabbladdning om funktionen finns. Batteristyrenheten sätter säkra gränser. Hanterills värden kan hjälpa dig att förstå dem, men ändrar dem inte.
 
 ## Jämför avläsningar över tid
 

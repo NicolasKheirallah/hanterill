@@ -28,27 +28,26 @@ SPA underpins the larger 60-series and 90-series Volvos (**XC60, S60, V60, S90, 
 SEA underpins the **Volvo EX30**, **Polestar 4**, and **Zeekr 001 / 009 / X**.
 
 - **Direct gateway connection**: Unlike CMA cars that broadcast their presence as soon as you plug in, SEA vehicles often stay silent on UDP broadcast. Hanterill automatically falls back to connecting directly to the SEA gateway (`169.254.19.1`), which has been verified on a live 2024 Zeekr 001.
-- **Hardware note**: SEA vehicles require your ENET cable to supply 12 V on **OBD Pin 8** to switch on the car's Ethernet port. See [Hardware and adapters](/docs/hardware-and-adapters) if your adapter link light does not come on.
 - **Battery and module catalogues**: The 25-module SEA1 catalogue and the battery pack layouts for the EX30 (49/51 kWh LFP and 69 kWh NMC) and Polestar 4 / Zeekr 001 (100 kWh NMC) are built into the app and are currently in **Testing**.
 
 ### SPA2 (Volvo EX90 and Polestar 3) - Research
 
 Second-generation SPA vehicles use a newer core-computing gateway and security model. They are currently under research and are not yet usable for diagnostics.
 
-## Built-in battery pack layouts (11 topologies)
+## Built-in battery pack layouts (10 topologies)
 
-When you open the **Battery Health** screen, Hanterill does not assume every car has the same battery. Instead, it selects the matching pack layout from **11 catalogued battery topologies** so that a 96-group, 102-group, 107-group, 108-group, or 110-group battery reports 100% complete at its true cell-group count, and shows where the modules physically sit in the car:
+When you open the **Battery Health** screen, Hanterill does not assume every car has the same battery. It uses the available readings to select among **10 catalogued battery layouts**. The expected number of cell groups depends on the pack, so a complete scan is judged against the selected layout. On vehicles still in testing, treat the selected layout as provisional rather than proof of battery chemistry.
+
+The two CMA Long Range capacities share one row below because they have the same cell-group layout.
 
 | Platform & Vehicle Family | Pack Variant & Chemistry | Series Cell Groups | Module Layout | Physical Location in the Car |
 | :--- | :--- | :--- | :--- | :--- |
 | **CMA Electric** (Polestar 2, EX40, EC40) | Long Range (78 / 82 kWh NMC) | **108 groups** | 27 modules x 4 groups | Under-floor + rear footwell + center tunnel (2 layers) |
-| **CMA Electric** (Polestar 2, EX40, EC40) | Standard Range (69 kWh LFP, 2024+) | **96 groups** | 24 modules x 4 groups | Under-floor + rear footwell |
-| **CMA Plug-in Hybrid** (XC40 T4/T5, Lynk & Co 01) | Early PHEV (9.7 / 10.7 kWh) | **96 groups** | 6 modules x 16 groups | Center tunnel |
-| **CMA Plug-in Hybrid** (Lynk & Co 01 EM-P) | Long-Range PHEV (17.6 kWh) | **102 groups** | 6 modules x 17 groups | Center tunnel |
+| **CMA Electric** (Polestar 2, EX40, EC40) | Standard Range (69 kWh) | **96 groups** | 24 modules x 4 groups | Under-floor + rear footwell |
 | **SPA Plug-in Hybrid** (XC60 / S60 / V60 / S90 / V90 / XC90 T8) | Early T8 Twin Engine (10.4 / 11.6 kWh) | **96 groups** | 6 modules x 16 groups | Center tunnel (2 layers) |
 | **SPA Plug-in Hybrid** (XC60 / S60 / V60 / S90 / V90 / XC90 T8) | Extended Range T8 (18.8 kWh, 2022.5+) | **102 groups** | 6 modules x 17 groups | Center tunnel (3 layers) |
 | **SPA Electric** | Standard Range (69 kWh) | **96 groups** | 24 modules x 4 groups | Under-floor |
 | **SPA Electric** | Long Range (78 kWh) | **108 groups** | 27 modules x 4 groups | Under-floor |
-| **SEA1 Electric** (Volvo EX30) | Standard Range (49 / 51 kWh LFP) | **107 groups** | 4 modules (26-27 groups each) | Under-floor skateboard |
-| **SEA1 Electric** (Volvo EX30) | Extended Range & Twin (69 kWh NMC) | **108 groups** | 4 modules x 27 groups | Under-floor skateboard |
-| **SEA Electric** (Polestar 4, Zeekr 001) | Long Range (100 kWh NMC) | **110 groups** | 4 modules (27-28 groups each) | Under-floor skateboard |
+| **SEA1 Electric** (Volvo EX30) | Standard Range (51 kWh LFP) | **120 groups** | Series layout | Under-floor skateboard |
+| **SEA1 Electric** (Volvo EX30) | Extended Range & Twin (69 kWh NMC) | **107 groups** | Series layout | Under-floor skateboard |
+| **SEA Electric** (Zeekr-class pack) | Long Range (100 kWh NMC) | **110 groups** | Series layout | Under-floor skateboard |

@@ -1,58 +1,17 @@
-The car's control units check their sensors and connections as you drive. When one detects a problem, it may save a fault code. **Fault Codes** shows the codes reported by each responding control unit and, when available, the conditions the car saved with them.
+A control unit may store a fault code when it detects a problem. **Fault Codes** shows the codes returned by the units that answered the scan. A code is a clue about the system that noticed a problem; it does not, by itself, identify the part that needs replacing.
 
-## 1. Why the screen opens on "Needs Attention"
+## Read the list
 
-If you ask a modern Volvo or Polestar for every status record across all 40+ fault-capable modules without filtering, the car will return **hundreds of internal records**. That is because the diagnostic standard uses the same table both for real faults and for tracking whether hundreds of routine self-tests have finished running since the last time codes were cleared.
+The screen starts with faults that need attention, mainly active and pending codes. You can include stored codes and filter the list by status or system. An **active** code means its fault condition was reported at the scan; **pending** means the unit has seen a condition that has not yet been confirmed. A **stored** code records a confirmed event and may remain after the condition stops. The exact meaning depends on the status reported by that unit.
 
-To keep you from scrolling through hundreds of normal self-test entries, Hanterill decodes each code's status flags into four clear categories and opens the **Fault Codes** screen filtered to **Needs Attention** by default:
+Select a code to see the explanation Hanterill has for it and the supporting data the car returns. Some units provide a snapshot of conditions when the code was set, such as mileage or voltage; others provide little or none. A snapshot belongs to that code and unit. Do not assume that every code includes speed, temperature or the same counters. **Code Lookup** can explain a known code without connecting to a car.
 
-| Status badge | What it means in plain language | Shown in "Needs Attention"? |
-| :--- | :--- | :--- |
-| **Active** | The fault is happening **right now** at the moment of the scan. | **Yes** |
-| **Pending** | The module saw the problem during the current or previous drive cycle and is watching to see if it happens again before lighting a warning lamp. | **Yes** |
-| **Stored** | The fault happened enough times in the past to be confirmed and saved in memory, even if it is not happening at this exact second. | Shown under **Stored / All** |
-| **Historical** | An old or cleared event kept only in the module's long-term log. | Shown under **All** |
+## Compare scans
 
-You can switch the filter bar between **Needs Attention**, **Active**, **Pending**, **Stored**, and **All** at any time, or filter by module domain (Powertrain, Chassis, Body, Network).
+The comparison tools can show codes that appeared, disappeared or changed status between two scans. Make sure both scans belong to the same car. A code missing from an incomplete scan is not proof that the underlying problem is gone.
 
-## 2. How to read a fault code
+## Clear codes only when appropriate
 
-Automotive fault codes follow a standard 7-character format such as `P0A80-00` or `B1B25-13`:
+Clearing changes the car's stored fault memory and can erase information needed for diagnosis. In a build that permits write operations, the app asks for confirmation. It normally targets units that reported faults; you can choose a wider scope. Backing up available fault snapshots and verifying with another scan are enabled by default, but you can change those options. An optional unit restart is a separate choice and may be refused by the car.
 
-- **First letter (the system)**:
-  - **P** (*Powertrain*): motors, inverters, high-voltage battery, charger, transmission, or engine.
-  - **C** (*Chassis*): brakes, stability control, steering, or suspension.
-  - **B** (*Body*): climate control, airbags, lighting, doors, seats, or instrument cluster.
-  - **U** (*Network / Communication*): a missing message or low-voltage dip between two modules on the car's network.
-- **Middle characters**: identify the specific sensor, circuit, or component.
-- **Last two characters (the failure symptom)**: describe *how* the circuit failed, such as an open wire, a short to ground, a signal out of range, or a missing calibration.
-
-## 3. Freeze-frame snapshots: what the car was doing when the fault happened
-
-A fault code by itself tells you *what* complained, but the **Freeze-frame snapshot** tells you *when and under what conditions* it happened.
-
-When you click any fault code in Hanterill, the detail drawer fetches the module's stored snapshot and extended counters:
-- **Odometer mileage** when the fault was first and last recorded.
-- **12 V system voltage** at the moment the fault tripped. (If five modules logged communication codes at the exact same mileage and the freeze frame shows `10.8 V`, the real culprit was a weak 12 V battery during startup, not five broken modules.)
-- **Vehicle speed, battery State of Charge, pack voltage, current, and temperatures** at the second the fault set.
-- **Occurrence and healing counters**: how many times the fault has happened and how many clean drive cycles have passed since.
-
-## 4. Comparing with your previous scan
-
-At the top of the **Fault Codes** screen, clicking **Compare with previous scan** immediately compares your current scan against the most recent saved scan for the same car. It highlights:
-- **New faults** that appeared since your last check.
-- **Cleared faults** that disappeared after a repair.
-- **Status changes** (for example, an **Active** fault that stepped down to **Stored**).
-
-## 5. Offline fault-code lookup
-
-**Code Lookup** works without a car connected. Enter a fault code to see its description, system and reported failure type when the app has a matching entry.
-
-## 6. Clearing fault codes safely
-
-Clearing fault codes is a vehicle-changing action, so it always asks for your explicit confirmation first. When you click **Clear fault codes**, Hanterill gives you clear, practical options:
-
-- **Clear faulted modules only (Default) or Clear all modules**: By default, Hanterill only sends the clear command to the modules that actually reported fault codes, which finishes much faster and avoids resetting clean modules unnecessarily. You can switch to **All modules** whenever you want a full-car clear.
-- **Save freeze-frame snapshots before clearing (On by default)**: Because clearing a module's fault memory erases its stored freeze frames, Hanterill automatically saves those snapshots into your local session archive before erasing them.
-- **Re-read and verify after clearing (On by default)**: After clearing, Hanterill pauses briefly and re-scans the modules to verify which codes stayed gone and which codes came right back because the underlying physical fault is still present.
-- **Optional module restart for stubborn latched codes**: A few modules latch certain historical codes until the module restarts. When needed, and only while the car is safely parked, an optional reset-and-recheck step can restart stubborn modules and re-establish the diagnostic connection automatically.
+In a read-only build, **Clear fault codes** does not transmit a clear command. The app offers a comparison workflow instead. After any attempted clear, check the result for each unit and scan again. A code that returns points to a condition that still needs attention.

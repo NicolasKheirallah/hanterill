@@ -1,51 +1,13 @@
-När ett fordon står parkerat och låst ska nästan alla styrenheter gå ned i djupvila så att batteriet
-knappt tappar någon laddning. Om en styrenhet däremot vägrar somna eller väcker fordonet upprepade
-gånger uppstår **vilodränering** (även kallat viloström).
+Vyn **12 V-viloförbrukning** hjälper dig att se om bilen rapporterar ovanligt hög strömförbrukning när den står parkerad. Den läser ett uppskattat strömvärde och en fördelning av sparade strömprover från bilens centrala elektronikstyrenhet. Den pekar inte ut vilken del av bilen som väckte den.
 
-Skärmen **Vilodränering** i Hanterill mäter hur mycket energi som faktiskt försvunnit ur batteriet
-under en parkeringsperiod, helt utan att hålla en dator inkopplad medan fordonet står parkerat.
+## Varför en vaken bil ger ett annat värde
 
-## Varför du inte ska lämna en kabel inkopplad över natten
+När du öppnar en dörr eller ansluter diagnosutrustning vaknar delar av bilen. Strömmen som mäts då är inte samma sak som strömmen när bilen sover. Viloströmsvyn använder bilens sparade fördelning av prover för att ge mer sammanhang än en enda direktavläsning.
 
-Om du lämnar en diagnostikdator aktivt ansluten och frågar batteriet om laddningsnivån var tionde
-sekund hela natten håller dina egna frågor fordonets gateway och bussar vakna. Då mäter du den
-förbrukning som diagnostikverktyget självt orsakar i stället för fordonets verkliga viloförbrukning.
+Välj **Läs 12 V-förbrukning** för att se rapporterad medelström och hur många prover som hamnade i varje strömområde. Appen jämför också medelvärdet med fördelningen. Om de skiljer sig tydligt markerar den resultatet som motsägelsefullt i stället för att slå ihop värdena utan kommentar.
 
-Därför arbetar Hanterill genom att **jämföra två korta avläsningar** – en när du parkerar fordonet
-och en när du kommer tillbaka:
+## Så använder du resultatet
 
-1. **Avläsning A (när du parkerar)**: Anslut till fordonet, gör en batteriavläsning så att sessionen sparas, koppla från och lås fordonet.
-2. **Parkering i vila**: Låt fordonet stå oladdat och okört i minst några timmar (helst över natten eller ett dygn).
-3. **Avläsning B (när du är tillbaka)**: Anslut igen, gör en ny avläsning och öppna skärmen **Vilodränering**.
+En större andel prover i högre strömområden kan tyda på att bilen oftare var vaken eller drog mer ström. Resultatet säger inte vilken modul som ansvarade eller när varje prov togs. Vyn saknar tidslinje över uppvaknanden, 12 V-batteriets hälsovärde och sammanlagd energiförbrukning under parkering. Du kan exportera de visade områdena som CSV.
 
-## Vad skärmen Vilodränering räknar fram
-
-När du väljer två sparade sessioner från samma fordon räknar Hanterill fram:
-
-<SpecList rows={[
-  ["Förfluten tid", "Exakt antal timmar och minuter mellan avläsning A och avläsning B."],
-  ["Förändring i laddningsnivå (SoC %)", "Hur många procentenheter högspänningsbatteriet har sjunkit under parkeringen, samt omräknat till procent per dygn (%/24 h)."],
-  ["Energiförlust (Wh / kWh) och medeleffekt (W)", "Uppskattad energiförbrukning i wattimmar och genomsnittlig effekt i watt baserat på paketets kapacitet och hälsotillstånd (SoH)."],
-  ["12-voltsbatteriets spänningsutveckling", "Jämför 12-voltsbatteriets spänning vid start och slut så att du ser om lågvattensystemet har belastats."],
-]} />
-
-## När en beräkning varnas eller avvisas
-
-För att du aldrig ska bli vilseledd av en felaktig siffra kontrollerar Hanterill automatiskt att
-jämförelsen är giltig:
-
-- **Samma fordon krävs**: Om de två sessionerna har olika chassinummer (VIN) blockeras jämförelsen.
-- **För kort tid**: Om det har gått mindre än en timme mellan avläsningarna markeras intervallet som för kort, eftersom små temperaturförändringar i batteriet annars kan se ut som dränering.
-- **Fordonet har körts eller laddats emellan**: Om mätarställningen har ökat eller om laddningsnivån (SoC) är högre vid avläsning B än vid avläsning A flaggar Hanterill att fordonet inte har stått i obruten vila.
-- **Temperaturskillnad**: Om batteritemperaturen har sjunkit kraftigt över natten visar Hanterill temperaturändringen bredvid resultatet, eftersom ett kallare batteri tillfälligt kan rapportera någon procent lägre tillgänglig SoC utan att energi har läckt bort.
-
-## Vad är en normal vilodränering?
-
-- **Friskt fordon i vila**: Under **0,5 % till 1,0 % SoC per dygn** (ofta bara några få watt i genomsnitt för larm, fjärrstyrningsmottagare och periodisk kontroll av 12-voltsbatteriet).
-- **Förhöjd förbrukning**: Om fordonet tappar **2 % till 5 % per dygn** utan att kupévärmare eller schemalagd förklimatisering varit aktiv tyder det på att en styrenhet, en eftermonterad dashcam i OBD-/12V-uttaget eller en dörr-/låsmodul hindrar fordonet från att gå ned i djupvila.
-
-## Nästa steg
-
-- [Batterihälsa](/docs/battery-diagnostics): kontrollera högspänningsbatteriets och 12-voltsbatteriets värden.
-- [Sessioner och bevis](/docs/sessions-and-evidence): hur sparade sessioner lagras och jämförs.
-- [Felkodsskanning](/docs/dtc-scanning): se om någon styrenhet har satt felkoder för låg 12 V-spänning.
+Om 12 V-batteriet blir tomt, jämför avläsningar från liknande förhållanden och kontrollera batteriets skick separat. Laddning, fjärrtjänster och bilens vanliga schemalagda aktivitet kan påverka vad den gör när den står stilla. Ett viloströmsvärde är underlag för fortsatt undersökning, inte bevis för att en viss del är trasig.

@@ -1,64 +1,15 @@
-När en diagnostikskanning är klar möts du av siffror, färgkoder, mognadsmarkeringar och ibland en
-handfull felkoder. Den här guiden hjälper dig att tolka resultaten med is i magen och skilja helt
-normala observationer från verkliga problem som kräver åtgärd.
+Ett värde på en diagnosskärm är användbart först när du vet om bilen lämnade det, när det lästes och hur säkert appen kan tolka det. Kontrollera det innan du drar en slutsats.
 
-## 1. Ett modernt fordon har nästan alltid några lagrade felkoder
+## Se vad som svarade
 
-Det vanligaste misstaget när man kopplar in ett diagnostikverktyg för första gången är att tro att
-ett friskt fordon alltid ska ha **noll felkoder** i alla 40+ styrenheter.
+En avläsning kan vara fullständig, ofullständig eller inte stödd för just den bilen. Där vyn visar täckning kan du jämföra hur många värden som efterfrågades med hur många som kom tillbaka. Ett saknat svar är inte noll. En tyst styrenhet kan saknas i bilen, sova, vara upptagen eller inte gå att nå; en enda avläsning visar inte vilken förklaring som gäller.
 
-I verkligheten loggar moderna fordon tillfälliga händelser hela tiden:
+Appen kan skilja **uppmätta** värden från värden som **beräknats** ur andra avläsningar. En preliminär tolkning betyder att avkodningen behöver kontrolleras mer. Varken ett preliminärt eller ett saknat värde bevisar att något är fel eller att allt är friskt.
 
-- En mobiltelefon som tappar Bluetooth-kontakten kan sätta en lagrad infotainmentskod.
-- En kamerasikt som skymdes av kraftigt regn eller frost för tre veckor sedan ligger kvar som en historisk ADAS-kod.
-- En tillfällig spänningsdipp i 12-voltsbatteriet under en kall vintermorgon kan lämna en nätverkskod (`U`-kod) i flera dörr- eller sätesmoduler samtidigt.
+## Se när och hur värdet lästes
 
-### Så avgör du om en felkod är viktig
+En sparad session visar vad bilen rapporterade när sessionen fångades. Realtidsdata visar nyare prover medan avläsningen pågår. Jämför värden under liknande förhållanden: batteriets laddningsnivå, temperatur, körläge och laddning kan ändra siffrorna. Det är ofta mer användbart att upprepa ett oväntat värde än att dra en slutlig slutsats av en enda skanning.
 
-Titta på tre saker när du klickar på en felkod under **Felkoder (DTC)**:
+## Använd jämförelser varsamt
 
-<SpecList rows={[
-  ["1. Är koden Aktiv eller bara Lagrad?", "En Aktiv kod betyder att felet finns just nu. En Lagrad (historisk) kod som inte är aktiv betyder att händelsen inträffade tidigare men att systemet fungerar normalt just nu."],
-  ["2. Begär koden en varningslampa?", "Om flaggan för varningslampa är avslagen bedömer styrenheten själv att händelsen inte påverkar normal körning."],
-  ["3. Vad visar ögonblicksbilden?", "Kolla mätarställningen och 12-voltsspänningen i ögonblicksbilden. Om felet bara inträffade en enda gång för 15 000 km sedan, eller när 12 V-spänningen var under 11,5 V, är det nästan alltid en gammal engångshändelse."],
-]} />
-
-## 2. Varför vissa styrenheter visar "Inget svar"
-
-När du tittar i **Styrmodulregistret** eller i en skanningsöversikt kan några rader stå som **Inget
-svar (Did not answer)**. Det betyder sällan att en styrenhet är trasig:
-
-1. **Tillval som inte finns på ditt fordon**: Katalogen innehåller alla moduler som plattformen kan utrustas med (till exempel luftfjädring, elmanövrerad dragkrok, head-up-display eller baksätesvärme). Om ditt fordon inte beställdes med det tillvalet finns inte boxen i fordonet.
-2. **Sovande underbussar**: Om fordonet skannades utan att aktivt tändningsläge var påslaget sover många komfort- och kameramoduler. Slå på tändningen (tryck på bromspedalen i läge **P**) eller kör **Väckningssekvensen** under **Anslutning**.
-
-## 3. Vad mognadsmarkeringarna betyder
-
-Bredvid vissa mätvärden i Hanterill (särskilt i Tekniker- och Forskningsläge eller på plattformarna
-SPA och SEA1) visas en mognadsmarkering:
-
-<SpecList rows={[
-  ["Verifierad (Verified)", "Enhet, skalningsformel och rimliga gränsvärden är bekräftade på riktiga fordon."],
-  ["Hög / Medel (High / Medium)", "Välkänd mätpunkt vars beteende stämmer med fysiska förändringar i fordonet."],
-  ["Provisorisk (Provisional)", "Värdet läses från fordonet med en fungerande formel som fortfarande dubbelkontrolleras över fler årsmodeller och motorvarianter."],
-  ["Experimentell / Okänd", "Styrenheten svarar med data, men den exakta fysiska enheten är ännu inte slutgiltigt fastställd."],
-]} />
-
-Fatta aldrig dyra reparationsbeslut enbart på ett mätvärde som är markerat som provisoriskt eller
-experimentellt utan att kontrollera mot en andra källa.
-
-## 4. Så tolkar du korskontroller och avvikelser
-
-På skärmar som **Batterihälsa** och **Fordon** utför Hanterill automatiska **korskontroller** (till
-exempel att jämföra total batterispänning med summan av alla 108 cellspänningar, eller att jämföra
-mätarställningen över upp till 29 styrenheter):
-
-- **Samstämmig (Consistent)**: Alla jämförda signaler stämmer överens inom normal tolerans.
-- **Notering / Granska (Watch / Warning)**: Det finns en mindre skillnad (exempelvis några procents glapp mellan teknisk SoC och visad SoC) som är värd att känna till men som ofta har en naturlig förklaring.
-- **Avvikelse (Mismatch)**: Två värden som borde stämma överens skiljer sig tydligt (till exempel en utbytt begagnad styrenhet som rapporterar ett annat miltal eller chassinummer).
-- **Otillräckliga data**: En av signalerna i jämförelsen kunde inte läsas under sessionen, så kontrollen hoppades över i stället för att gissa.
-
-## Nästa steg
-
-- [Inspektionsrapporter](/docs/inspection-reports): se hur observationerna vägs samman till ett helhetsbetyg.
-- [Felkodsskanning](/docs/dtc-scanning): läs mer om statusflaggor och ögonblicksbilder.
-- [Batteridiagnostik](/docs/battery-diagnostics): riktlinjer för SoH och cellbalans i millivolt.
+Korskontroller jämför värden som hör ihop, till exempel batteripaketets spänning med summan av cellernas spänningar eller laddningsnivåer från olika styrenheter. Värden som stämmer överens ger större förtroende, men bevisar inte att varje givare är rätt. En skillnad kan bero på tidpunkten, en ofullständig avläsning eller ett verkligt problem. Läs täckningen och de enskilda värdena innan du bestämmer vad som ska undersökas.

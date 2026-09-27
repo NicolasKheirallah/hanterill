@@ -1,47 +1,15 @@
-En skanning visar vad bilen rapporterade vid ett tillfälle. I **Livedata** kan du följa valda värden när de förändras och spara en inspelning för att granska den senare.
+En avläsning visar vad bilen rapporterade vid ett visst ögonblick. **Livedata** följer valda värden när de ändras. Använd vyn för att följa ett test och spara proverna om du vill granska dem senare.
 
-## Vad du kan följa i Livedata
+## Välj värden
 
-Du kan kombinera mätvärden från olika styrenheter på samma skärm eller välja en färdig
-signalsamling:
+Vyn har förval för batteri och högspänning, snabbladdning, drivlina, 12 V-system, klimat och hela batteripaketet. Ett förval väljer bara signaler som finns i den aktuella katalogen. Du kan också välja enskilda tillgängliga värden. En signal som saknas i din bil blir inte ett nollvärde.
 
-- **Batteri och eldrift**: Paketspänning (V), ström (A), effekt (kW), laddningsnivå (SoC %), högsta/lägsta cellspänning, växelriktartemperaturer och motorvarvtal.
-- **Termiskt system och klimat**: Kylvätsketemperaturer före och efter batteri och motorer, kylpumpars hastighet, värmepumpstryck, kupétemperatur och fläkthastighet.
-- **Chassi och bromsar**: 12-voltsbatteriets spänning, hjulhastigheter, bromstryck och styrvinkel.
-- **Förbränningsmotor och hybrid (CMA/SPA)**: Motorvarvtal, kylvätsketemperatur, oljetemperatur, laddtryck, bränsletryck, gasspjäll och avgastemperaturer.
+## Följ eller spela in
 
-## Två sätt att hämta livedata under ytan
+Starta en ström för att be bilen om upprepade mätningar. Hur ofta värdena uppdateras beror på bilen, anslutningen och hur många kanaler du väljer. Fler kanaler kan göra att varje kanal uppdateras mer sällan. Diagrammet bygger på de prover som faktiskt kom fram; saknade prover får förbli luckor.
 
-När du trycker på **Starta** väljer Hanterill automatiskt den effektivaste metoden för varje
-styrenhet:
+**Pausa** stoppar avläsningen tills du väljer **Återuppta**. Appen fortsätter inte att spela in nya fordonsvärden i bakgrunden. **Stoppa** avslutar körningen och behåller de prover som samlats in. Om du lämnar vyn stoppas också avläsningen. Låt en passagerare sköta datorn om bilen rör sig.
 
-<SpecList rows={[
-  ["Periodisk strömning", "Om styrenheten stöder periodisk sändning ber Hanterill modulen att själv skicka det valda mätvärdet med jämna mellanrum. När du trycker på Stopp avregistreras strömningen direkt så att ingen trafik fortsätter i bakgrunden."],
-  ["Taktad avfrågning", "För styrenheter som inte använder periodisk strömning frågar Hanterill efter de valda värdena i en jämn takt utan att överbelasta fordonets gateway."],
-]} />
+## Granska och exportera
 
-Om du har en stödd USB-till-CAN-adapter ansluten kan Hanterill dessutom lyssna passivt på
-kontinuerliga CAN-meddelanden som sänds på bussen.
-
-## Verktyg under en pågående mätning
-
-Medan graferna rullar på skärmen **Livedata** kan du:
-
-- **Se min-, max- och nuvarande värde**: Varje mätkort visar lägsta och högsta noterade värde sedan start tillsammans med det aktuella värdet och dess enhet.
-- **Pausa och granska kurvan**: Frys grafen tillfälligt för att inspektera en spik eller dipp medan mätningen fortsätter i bakgrunden.
-- **Ändra uppdateringsintervall**: Välj snabb uppdatering när du följer ett gaspådrag eller bromstryck, eller ett lugnare intervall när du loggar temperaturer under en timslång laddning.
-- **Automatiskt skydd mot överbelastning**: Om en styrenhet tillfälligt är upptagen sänker Hanterill automatiskt frågetakten ett steg i stället för att avbryta hela inspelningen.
-
-## Spara och exportera till CSV eller JSON
-
-Varje livedatakörning sparas i din aktiva session med tidsstämplar på millisekundnivå. När du har
-stoppat mätningen kan du exportera hela tidsserien till:
-
-- **CSV**: Öppnas direkt i Excel, Numbers, Google Kalkylark eller Python/MATLAB med en kolumn per givare och en rad per tidsstämpel.
-- **JSON**: Innehåller både mätvärdena, enheterna, källstyrenheterna och sessionens metadata.
-
-## Nästa steg
-
-- [Delsystemsvyer](/docs/subsystem-telemetry): färdiga översiktsskärmar för klimat, bromsar, styrning, ADAS och kaross.
-- [Motorvy](/docs/engine-lane): livedata och diagnostik för bensin-, diesel- och hybridmodeller.
-- [Laddning](/docs/charging): följ AC- och DC-laddning i realtid.
+Du kan spela upp en sparad inspelning, flytta dig längs tidslinjen och exportera värdena som CSV. Vyn kan också importera inspelningsfiler som stöds. En uppspelning visar bara proverna i inspelningen. Den kontaktar inte bilen och fyller inte i värden som aldrig fångades.

@@ -1,35 +1,13 @@
-Each control unit in a car has its own hardware and software version. **ECU Inventory & Firmware** collects the versions reported by units that answer, so you can compare them after a repair or software update.
+Each control unit can report information about its hardware and software. **ECU Inventory** shows which units answered a discovery scan. **Firmware Audit** asks responding units for their available identification records. These are related tasks, but discovering a unit does not mean its software version was read.
 
-## 1. What the ECU Inventory reads from each module
+## Inventory and firmware coverage
 
-When you scan the module inventory, Hanterill asks every control unit in the car's catalogue (49 modules on CMA, 41 on SPA, 25 on SEA1) to report its identity records:
+An inventory scan lists units that answered and units that did not. A silent unit may be optional, asleep or unreachable. Compare it with the car's known equipment and repeat the scan before assuming it has failed.
 
-- **Module name and network domain**: For example, *Battery Energy Control Module (High Voltage)*, *Brake Control Module 2 (Chassis)*, or *Central Electronic Module (Gateway)*.
-- **Hardware part number and revision**: The physical circuit-board part number installed at the factory (or replaced during a repair).
-- **Software part numbers and versions**: The exact firmware version currently running on that module.
-- **Serial number and supplier code**: Identifies the component manufacturer (scrubbed automatically whenever you export a support bundle).
-- **Fault-code capability and status**: Shows whether the module supports fault codes and whether it currently holds any active or stored codes.
+A firmware audit can return hardware part numbers, software part numbers, serial numbers and supplier information. Not every unit supplies every field. The audit shows both module coverage and field coverage so you can tell the difference between a unit that answered and a version that was actually obtained. An interrupted audit remains partial.
 
-## 2. How Hanterill knows which modules belong to your car
+## Compare before and after service
 
-No single car has every module in the platform catalogue. For example, a single-motor Polestar 2 or EX40 does not have a rear-axle inverter (`IEM`) or a combustion engine controller (`ECM`), and a car without a head-up display or power tailgate will not have those controllers on the wire.
+Save a firmware audit before a workshop visit or software update and take another afterward. A comparison can show version strings that changed, stayed the same or were missing from one capture. A changed version is evidence that a unit reports different software. An unchanged version does not prove that no settings or calibrations changed. A missing version is not evidence that an update failed.
 
-- **First scan on a vehicle**: Hanterill queries the full platform catalogue (using a fast broadcast query followed by targeted checks) to see which modules answer.
-- **Per-vehicle presence memory**: Once Hanterill knows which modules are fitted to your car, it remembers that list locally (keyed by a privacy-safe hash of the car's VIN). On future visits, Hanterill knows the difference between an **optional module your car never had** and a **module that answered last month but has gone silent today** (which can point to a blown fuse or wiring fault).
-- You can click **Re-scan all catalogue slots** at any time if you have retrofitted hardware or want to probe every slot fresh.
-
-## 3. Proving what a dealer visit or OTA update changed
-
-Over-the-air (OTA) release notes and workshop invoices often say simply *"General stability improvements"* without telling you which systems were touched.
-
-With Hanterill, you can see the exact module-by-module truth:
-
-1. Save a scan **before** installing an OTA update or dropping the car off at a workshop.
-2. Save a scan **after** the update or service visit.
-3. Open **Sessions & Reports -> Firmware Diff** and select the two sessions.
-
-Hanterill compares every module across both visits and groups them clearly:
-- **Software updated**: Shows the old software version alongside the new software version for every module that received new firmware (for example, seeing that an OTA update touched the *Battery Energy Control Module*, *Climate Control Module*, and *Infotainment Head Unit*).
-- **Hardware changed**: Highlights if a physical control unit was replaced during a workshop repair.
-- **Unchanged**: Confirms which modules are running the exact same software as before.
-- **Added or missing**: Flags if a module appeared or disappeared between the two scans.
+Keep the two captures with their dates and vehicle identity. The app cannot reconstruct a version that was never read, and its comparison should not be used as proof of exactly what a workshop performed.

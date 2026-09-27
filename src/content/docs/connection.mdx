@@ -1,19 +1,19 @@
 import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 
-Hanterill connects to supported cars through a wired Ethernet cable. The car's central gateway receives the app's requests and passes them to the appropriate control unit. This page covers the connection and what to check when it fails.
+Hanterill connects to supported cars through a standard ENET cable. The same cable works across supported models, including Volvo EX30, Polestar 4 and Zeekr. The car's central gateway receives the app's requests and passes them to the appropriate control unit. This page covers the connection and what to check when it fails.
 
 ## How the physical connection works
 
 When you plug an ENET cable between your car's OBD-II port and your computer's Ethernet adapter, three things happen in order:
 
-1. **The cable wakes the car's Ethernet port**: Inside the car's OBD-II socket, four pins carry standard 100 Mbps Ethernet (pins 3, 11, 12, and 13) and one pin acts as an activation line (pin 8). Applying power or a resistor signal to that activation pin tells the car's central gateway that a diagnostic tool is plugged in, so the car powers up its Ethernet port.
+1. **The car detects the connection**: The same ENET cable connects supported models to your computer. Keep the car awake so its diagnostic connection is available.
 2. **Both sides pick local network addresses automatically**: Neither your laptop nor your car runs a home router (DHCP server). Instead, after a few seconds of waiting, both your computer and the car automatically pick **link-local IP addresses** in the `169.254.x.x` range. Your computer's operating system will often call this a "Self-assigned IP" or "Unidentified network with no internet access". That is completely normal and is exactly what the car expects.
 3. **Hanterill opens the connection**: The car's gateway accepts the connection and passes requests to the battery, brake and other control units.
 
 <ProtocolFlow
   steps={[
     { node: "Computer", detail: "169.254.x.x link-local" },
-    { node: "ENET cable", detail: "OBD-II pins 3/8/11/12/13" },
+    { node: "ENET cable", detail: "same cable for supported models" },
     { node: "Vehicle gateway", detail: "CEM / VGM on port 13400" },
     { node: "Control units", detail: "Battery, brakes, climate, body" },
   ]}
@@ -38,7 +38,7 @@ While connecting, the **Connection** screen shows a live, plain-language status 
 | Status shown in the app | What it means in plain language | What to do |
 | :--- | :--- | :--- |
 | **Waiting for network address (DHCP)** | Your computer just detected the cable and is still waiting a few seconds to see if a home router is present before picking its `169.254.x.x` address. | Wait 5 to 10 seconds and click **Find vehicle** again. |
-| **Link down / No carrier** | The Ethernet adapter sees no electrical signal from the car. | Check that the car is awake, both plugs are seated, and (on EX30 / Polestar 4 / Zeekr) that your cable powers activation pin 8. |
+| **Link down / No carrier** | The Ethernet adapter sees no electrical signal from the car. | Check that the car is awake, both plugs are seated and your computer's Ethernet adapter is connected. |
 | **Port closed on gateway** | The car is on the network, but its diagnostic port is currently asleep or refused the connection. | Wake the dashboard (press the brake pedal or turn ignition on) and try again. |
 | **Unreadable traffic** | Data arrived on the wire that is not valid diagnostic traffic. | Disconnect any VPN client or virtual network bridge that may be intercepting local traffic. |
 | **Connected (DoIP)** | Routing is active and the car's gateway is ready to answer diagnostic requests. | Proceed to **Overview**, **Battery Health**, or **Fault Codes**. |

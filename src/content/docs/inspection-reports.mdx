@@ -1,37 +1,13 @@
-**Inspection Report** turns a saved vehicle scan into a document you can print or keep with the car's records. It brings battery, fault and other available readings together and shows when missing data limits the result.
+An **Inspection Report** brings together the readings collected for a vehicle and shows the evidence behind its assessment. You can review it on screen, save it as a PDF or keep a structured copy with your records.
 
-## 1. The four scored areas
+## Read the result
 
-Hanterill evaluates **four areas** and gives an overall result: **Pass**, **Watch**, **Attention** or **Inconclusive**. You can read the findings behind that result:
+The report may show a score and one of four results: **Sound**, **Advisories**, **Attention** or **Inconclusive**. It considers available battery, fault-code, 12 V and vehicle-consistency evidence. The findings explain which readings affected the result and which are notes only. A score is an interpretation of the data captured, not a certificate that every part of the car was inspected.
 
-1. **High-voltage battery health (SoH)**: Grades the battery management computer's reported **State of Health** percentage against expected aging bands.
-2. **Cell-group voltage balance**: Measures the millivolt spread (`Max - Min`) across all series cell groups in the battery pack to spot weak or drifting cell groups that a dashboard percentage hides.
-3. **Fault-code severity (DTCs)**: Weighs fault codes by their **live status** (an **Active** fault on a safety, brake, or high-voltage module carries much more weight than a single **Historical** comfort code) rather than simply counting how many codes exist.
-4. **Odometer and identity consistency**: Cross-checks the car's **VIN** and **odometer mileage** across up to 29 modules (instrument cluster, brakes, gateway, battery, and body controllers). Any disagreement between modules is flagged immediately as a tamper or module-replacement finding.
+If a key reading such as battery State of Health is missing, the report can be **Inconclusive** rather than assigning a reassuring score. Coverage gaps are listed so you can see what was not checked. A provisional reading also deserves care: its interpretation may need more verification for that vehicle.
 
-### Advisory checks that inform without penalizing
-Alongside the four scored areas, the report includes **advisory checks** (such as 12 V battery charge level, remaining days/kilometers to the next scheduled service, and thermal loop spread). Advisory items appear clearly on the report so you know about an upcoming service or a tired 12 V battery, without unfairly dragging down the high-voltage battery or drivetrain score.
+## Review and export
 
-## 2. Honest handling of missing data
+On screen, switch between **Summary** and **Full report**. The PDF export offers three document templates: an executive inspection, a battery-focused report and a technical dossier. Their contents depend on what the scan actually captured. A battery-focused template cannot supply a missing cell reading or turn a sample website capacity figure into a measurement.
 
-If a scan was interrupted before the battery or fault-code read finished, Hanterill **never treats missing data as a pass**. Instead:
-
-- Any domain that could not be read is marked **Missing / Not read**.
-- The overall report verdict steps down to **Inconclusive** and lists exactly which check needs to be run to complete the grade.
-- Similarly, if you connect to a vehicle platform whose decoders are still marked as **Testing** (such as early SEA or SPA battery paths), the report automatically caps its verdict confidence and notes that the platform mapping is provisional.
-
-## 3. Three printable report styles
-
-At the top of the **Inspection Report** screen, you can switch between **three print-ready layouts** depending on who will read the document:
-
-| Report style | What it includes | Best used for |
-| :--- | :--- | :--- |
-| **Executive inspection** | A clean one-page summary of vehicle identity, overall score, battery health, active faults, and odometer cross-check. | Handing to a buyer, seller, or dealer during a used-car inspection. |
-| **Battery certificate** | Focused specifically on the high-voltage traction battery: State of Health, usable capacity, cell-group voltage spread, 27-module breakdown, and 8-band lifetime temperature history. | Proving EV battery condition when buying, selling, or checking warranty health. |
-| **Technical dossier** | The complete multi-page record: all four scored rules, every module's hardware and software part numbers, full fault list with freeze frames, and consistency cross-checks. | Keeping a complete workshop or long-term ownership record. |
-
-## 4. Printing, PDF export, privacy, and offline re-scoring
-
-- **Print or save as PDF**: Click **Print / Save PDF** to format the chosen layout cleanly for A4 or Letter paper.
-- **VIN and GPS privacy**: You can mask the car's 17-character VIN with a single toggle before printing or sharing. **GPS location is off by default** and never appears in an inspection report unless you explicitly enable it.
-- **Re-score saved sessions offline**: Because every session saves the underlying readings in your local archive, you can open any past session from months or years ago and view or print its inspection report without reconnecting to the car.
+Before exporting, review the VIN masking and optional content choices. Location is included only if you enable it. You can add a note or mark a finding as excluded; the report keeps that exclusion visible. A stored report can be reopened and rescored using the app's current rules, which may produce a different interpretation from the original one. Keep the original result when comparing assessments over time.

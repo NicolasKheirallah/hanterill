@@ -1,51 +1,19 @@
-Hanterill sparar skanningar som sessioner på din dator. I **Sessioner** kan du granska tidigare avläsningar, lägga till anteckningar, jämföra två besök och exportera ett underlag. Historiken finns kvar när bilen är frånkopplad.
+En **session** är ett sparat besök hos en bil. I **Sessioner och rapporter** kan du lägga till en anteckning, öppna värdena från besöket igen och exportera dem senare. Innehållet beror på vilka vyer och avläsningar du faktiskt använde innan du sparade.
 
-## Vad som sparas i en session
+## Spara och granska ett besök
 
-En session samlar uppgifter från ett besök vid bilen:
+Anslut till bilen, samla in de värden du behöver och välj **Spara aktuell session**. En batterirapport, felkodsskanning, programvaruinventering eller inspelning finns i sessionen bara om den fångades. Saknade avläsningar fylls inte i tyst. Sessionslistan är tillgänglig även när bilen är frånkopplad.
 
-- **Fordonsidentitet och tidsstämpel**: Datum, klockslag, plattform, modell och chassinummer (VIN).
-- **Alla avlästa värden och råsvar**: Batterihälsa, cellspänningar, felkoder med ögonblicksbilder, mjukvaruversioner och delsystemsvärden, tillsammans med de exakta råbytes som styrenheterna skickade.
-- **Egna anteckningar**: Du kan namnge sessionen och skriva fria anteckningar (till exempel *"Före 6 000-milaservice"*, *"Efter byte av 12 V-batteri"* eller *"Provkörning av begagnat objekt"*).
-- **Kraschsäker lagring**: Varje fil skrivs atomärt till disken så att en sparad session aldrig blir trasig om datorn skulle få slut på batteri eller om kabeln rycks ur.
+Om en skanning avbröts, kontrollera täckningen innan du betraktar sessionen som fullständig. En styrenhet som inte lästes under besöket blir inte ett verifierat resultat bara för att sessionen sparades.
 
-## Jämför två sessioner sida vid sida (Diff)
+## Jämför två besök
 
-En enskild avläsning visar hur fordonet mår idag, men en **jämförelse mellan två sessioner** visar
-hur fordonet har förändrats över tid:
+Välj två sessioner för att öppna felkodsjämförelsen. Den visar vilka registrerade koder som ändrades mellan besöken. Batterivyn har också en trend för SoH, SoC och spridningen mellan cellgruppernas SoH-värden från sparade batterirapporter. Den trenden är något annat än Cellkartans spänningsspridning.
 
-1. Öppna **Sessioner** i sidofältet.
-2. Välj en baslinjesession (till exempel från förra året eller före ett verkstadsbesök) och en nyare session.
-3. Klicka på **Jämför**.
+Andra jämförelsevyer kan visa ändringar i programvara eller styrenhetslista när båda avläsningarna innehåller rätt uppgifter. **Jämför cellavläsningar** behöver två cellavläsningar som du anger i verktyget; att välja två sessioner jämför inte automatiskt varje cellspänning. Kontrollera alltid att båda besöken gäller samma bil.
 
-Hanterill visar direkt:
+## Export och integritet
 
-<SpecList rows={[
-  ["Skillnader i felkoder", "Vilka felkoder som är helt nya, vilka som har försvunnit och vilka som ligger kvar sedan förra gången."],
-  ["Skillnader i mjukvara", "Exakt vilka styrenheter som har fått ny mjukvaruversion efter ett verkstadsbesök eller en OTA-uppdatering."],
-  ["Utveckling i batterihälsa", "Hur hälsotillstånd (SoH %), cellbalans (delta i mV) och mätarställning har förändrats mellan de två datumen."],
-]} />
+Sessioner kan exporteras som JSON, som CSV-tabeller och som samlingar av filer. Du kan importera en session som stöds på en annan dator. Kontrollera maskeringen av bilens identifieringsnummer innan du delar något: en export kan innehålla fordonsidentitet och detaljerade mätvärden. Ett supportpaket är en separat export där känsliga uppgifter filtreras bort för felrapportering.
 
-För att du aldrig ska råka jämföra två olika fordon av misstag kontrollerar identitetsspärren att
-båda sessionerna har samma chassinummer (VIN) innan jämförelsen visas.
-
-## Förseglade bevispaket och integritetsnivåer vid export
-
-När du exporterar en session eller en rapport kan du välja mellan tre integritetsnivåer beroende på
-vem som ska ta del av filen:
-
-<SpecList rows={[
-  ["Fullständig (Research / Eget arkiv)", "Behåller alla rådata, serienummer och hela det 17-ställiga chassinumret för din egen dokumentation."],
-  ["Support (Maskerad)", "Maskerar chassinumret till början och slut, hashar serienummer och rensar bort eventuella platsuppgifter medan alla diagnostiska mätvärden och felkoder finns kvar."],
-  ["Publik (Anonymiserad)", "Tar bort alla fordonsidentifierande fält så att du tryggt kan dela en intressant mätning i ett forum."],
-]} />
-
-Varje exporterat bevispaket innehåller dessutom kryptografiska kontrollsummor (digests) över de
-uppmätta svaren så att du i efterhand kan verifiera att en sparad rapport inte har ändrats i ett
-textredigeringsprogram.
-
-## Nästa steg
-
-- [Mjukvara och inventering](/docs/firmware-and-inventory): se hur mjukvaruversioner jämförs mellan besök.
-- [Vilodränering](/docs/parasitic-drain): använd två sparade sessioner för att beräkna viloförbrukning.
-- [Integritet](/docs/privacy): var dina sessionsfiler lagras på datorn och hur du rensar dem.
+Behåll de ursprungliga sparade uppgifterna när du jämför besök eller bedömer en äldre rapport på nytt. En senare appversion kan tolka samma avläsningar annorlunda, men den kan inte lägga till en mätning som aldrig gjordes.

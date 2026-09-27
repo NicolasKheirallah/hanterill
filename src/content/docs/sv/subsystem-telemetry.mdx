@@ -1,60 +1,21 @@
-Hanterill har separata vyer för bland annat klimat, drivning, laddning och bilens 12 V-system. Varje vy samlar uppgifter som hör till samma system. Vissa jämför också närliggande mätvärden och markerar när de inte stämmer överens.
+Hanterill har separata diagnosvyer för klimat, drivmotorer, elförsörjning, styrning, telematik, GPS och serviceschema. Varje vy frågar efter värden som hör till det systemet. Vilka fält som finns beror på bilen och vilka styrenheter som svarar.
 
-## 1. Klimat och värmehantering (CCM)
+## Klimat och drivmotorer
 
-Klimatstyrenheten (**CCM**) sköter inte bara kupévärmen utan arbetar på eldrivna fordon även ihop med
-värmepumpen, högspänningsvärmaren och batterikylningen:
+**Klimat** kan visa tryck och temperatur i köldmediesystemet, kompressorns arbete, värmarens temperaturer, batterikylning och fläktutgång. Ett tomt fält betyder att värdet inte kom tillbaka. Vyn visar källan för ett värde när den kan.
 
-- **Kupétemperaturer**: Inställd temperatur för vänster och höger zon jämfört med uppmätt temperatur i kupén och utanför bilen.
-- **Värmepump och AC-krets**: Köldmedietryck, kompressorns varvtal och effektförbrukning samt förångarens temperatur.
-- **Kylvätskekretsar och spjäll**: Temperaturer i kylvätskekretsen, cirkulationspumpar, kupéfläktens hastighet och luftspjällens lägen.
+**Drivmotorer** kan visa värden från främre och bakre motorn, till exempel varvtal, vridmoment, spänning och temperatur. Appen kan jämföra sidorna när båda svarar. Att en bakre motor saknas i en bil som byggts med en motor är inget fel på en bakre motor.
 
-## 2. Bromsar och chassi (BCM / BCM2)
+## Elförsörjning och styrning
 
-Bromsstyrenheten hanterar både den hydrauliska färdbromsen, regenerativ bromsning och den
-elektroniska parkeringsbromsen (EPB):
+**Elförsörjning** samlar tillgängliga värden från högspänningssystemet och 12 V-systemet. Olika enheter kan rapportera besläktade spänningar; en skillnad behöver bedömas med bilens driftläge i åtanke. Den bevisar inte ensam att en kabel eller jordpunkt är trasig.
 
-- **Hjulhastigheter per hjul**: Visar hastigheten från alla fyra ABS-givare sida vid sida så att du direkt ser om en krans eller givare avviker.
-- **Bromstryck och pedalrörelse**: Huvudcylinderns hydraultryck och bromspedalens läge.
-- **Elektronisk parkeringsbroms (EPB)**: Visar om ställdonen på bakaxeln är åtdragna, släppta, i rörelse eller i serviceläge, samt strömförbrukning i respektive parkeringsbromsmotor.
-- **12-voltsmatning till bromssystemet**: Spänningsnivå vid bromsstyrenheten.
+**Styrning** visar de styrvärden och den status bilen lämnar. Ett värde som inte uppdateras som väntat kan bero på hur enheten skickar diagnosdata. Läs felkoder och upprepa avläsningen innan du drar slutsatsen att en givare är trasig. Kalibrering är en separat serviceåtgärd som ändrar bilen.
 
-## 3. Styrning och hjulupphängning (PSCM / SASM / SUM)
+## Telematik, GPS och serviceschema
 
-Samlar data från servostyrningsmodulen (**PSCM**), rattvinkelsensorn (**SASM**) och, på fordon med
-aktiv fjädring, fjädringsstyrenheten (**SUM**):
+**Telematik** kan visa reservbatteriet och andra tillgängliga värden från enheten. **GPS** läser bilens position först när du begär en positionsbestämning. Granska platsuppgifter innan du delar en export. Vyerna visar vad enheterna svarade; de pekar inte ensamma ut orsaken till svag signal eller en varning om nödsamtal.
 
-- **Rattvinkel och vinkelhastighet**: Visar aktuell rattvinkel i grader och om nollpunktskalibreringen är giltig.
-- **Vridmoment i rattstång och servomotor**: Visar hur mycket kraft föraren lägger på ratten och hur mycket elservot hjälper till.
-- **Nivågivare och dämpare**: Visar fjädringsväg per hörn på fordon utrustade med elektroniskt styrd fjädring.
+**Serviceschema** visar de underhållsräknare bilen lämnar, till exempel kvarvarande sträcka, tid och drifttimmar. Vissa värden kan saknas. Att läsa en räknare återställer den inte; återställning är en separat serviceåtgärd som måste bekräftas.
 
-## 4. Förarstöd och kameror/radarer (ADAS)
-
-Följer status och kalibreringstillstånd för framåtriktad kamera (**ASDM / FLR**), hörnsensorer för
-döda vinkeln (**SODL / SODR**) och parkeringskameror (**PAC / PAS**):
-
-- **Kalibreringsstatus och sikt**: Visar om kamera eller radar rapporterar godkänd kalibrering eller om sikten är skymd av smuts, imma eller en ny vindruta.
-- **Ultraljudssensorer (parkeringshjälp)**: Visar uppmätt avstånd för de främre och bakre parkeringssensorerna.
-- **Styrspänning och modulernas temperatur**: Kontrollerar att kameror och värmeelement i vindrutans kamerahus får rätt matning.
-
-## 5. Kaross, dörrar och säten (CEM / DDM / PDM / PSM)
-
-Läser av centraldatorn (**CEM**), dörrstyrenheterna (**DDM, PDM, RDDM, RPDM**), elbakluckan
-(**POT**) och sätesmodulerna:
-
-- **Dörr-, huv- och bakluckekontakter**: Visar exakt vilken dörr eller lucka som rapporterar öppen eller låst (praktiskt om larmet löser ut eller om fordonet vägrar låsa).
-- **Fönsterhissarnas läge och klämskydd**: Visar om fönsterhissarna är kalibrerade för automatisk upp-/nedkörning.
-- **Sätesvärme, rattvärme och sätesmotorer**: Visar aktiv effekt och temperaturgivare i säten och ratt.
-
-## 6. Yttre och inre belysning (HCM / HCML / HCMR)
-
-Läser av strålkastarstyrenheterna för vänster och höger sida samt kupébelysningen:
-
-- **Status för halvljus, helljus, varselljus (DRL) och blinkers**: Bekräftar om respektive LED-grupp är aktiv och drar normal ström.
-- **Automatisk höjdreglering och kurvljus (Pixel / Matrix LED)**: Visar strålkastarnas höjdvinkel och styrvinkelföljning.
-
-## Nästa steg
-
-- [Livedata](/docs/live-telemetry): kombinera valfria givare från flera delsystem i samma graf.
-- [Servicefunktioner](/docs/service-functions): kalibrerings- och servicelägesrutiner för bromsar, klimat, fönster och kameror.
-- [Styrmodulregister](/docs/ecu-reference): se vilka styrenheter som ingår i varje delsystem.
+Läs avläsningens status och tidpunkt i alla dessa vyer. Gör inte om ett saknat fält till noll och dra inte en diagnos från ett enda avvikande värde.

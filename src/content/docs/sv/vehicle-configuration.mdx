@@ -1,53 +1,13 @@
-import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+**Fordonskonfiguration** läser de utrustningsuppgifter bilen lämnar. De kan hjälpa dig att förstå vilka funktioner den nuvarande konfigurationen rapporterar, men de är inte ett fullständigt fabriksintyg eller ett bevis för att en del monterades efter leverans.
 
-Varje fordon lämnar fabriken med en digital specifikation som lagras i centraldatorn (**CEM**). Den
-berättar exakt vilka tillval, utrustningspaket och hårdvaruvarianter som fordonet byggdes med.
-Skärmen **Konfiguration** läser ut denna konfiguration i skrivskyddat läge och låter dig även
-jämföra konfigurationen mellan två sparade sessioner.
+## Läs utrustningskartan
 
-<SafetyNotice level="read-only" title="Skrivskyddad konfigurationsavläsning">
-Hanterill läser bara ut fordonets lagrade konfiguration och fabriksbyggblad. Appen ändrar aldrig
-fordonets utrustningskoder eller bilkonfiguration.
-</SafetyNotice>
+Vyn läser en utrustningskarta från bilen och namnger de poster som appen kan tolka. Du kan söka efter en funktion, filtrera efter kategori eller visa poster som verkar finnas, saknas eller stöds men inte är monterade. En post utan verifierat namn får behålla sin plats i kartan i stället för att tilldelas en gissad funktion.
 
-## 1. Tillvalskartan (vad fordonet är utrustat med)
+Vissa ytterligare konfigurationsposter sparas som underlag även när appen inte kan tolka deras betydelse. Att en post finns i bilen betyder inte att Hanterill kan få fram lack, klädsel, ursprungliga paket eller en fullständig ändringshistorik ur den.
 
-Centraldatorn (**CEM**) lagrar en kompakt tabell över plattformens fabrikstillval. För varje
-tillvalsplats anger värdet ett av tre tydliga lägen:
+## Kontrollera en möjlig eftermontering
 
-<SpecList rows={[
-  ["Monterat / Aktivt", "Utrustningen eller funktionen sitter i just det här fordonet och är aktiverad."],
-  ["Stöds av plattformen, men ej monterat", "Tillvalet finns till modellen men beställdes inte på detta exemplar."],
-  ["Ej tillämpbart", "Tillvalet erbjuds inte på den här modellen eller marknaden."],
-]} />
+Appen har en kontroll av kompatibilitet för eftermontering. Den jämför det underlag som finns för den valda funktionen och kan visa att hårdvara saknas eller att den aktuella konfigurationen inte stämmer. Tolka resultatet som vägledning utifrån tillgängliga värden. Det kan inte bevisa när en funktion monterades eller om en verkstad gjorde en godkänd uppgradering.
 
-I Hanterill visas både de namngivna utrustningsposterna i klarspråk (grupperade efter område som
-chassi, klimat, belysning, ljudsystem och förarstöd) och den underliggande tabellen. För varje känt
-tillval visas även vilka styrenheter som hör ihop med utrustningen.
-
-## 2. Fabriksbyggblad och fordonsprofil
-
-Utöver tillvalskartan läser Hanterill av fordonets **fabriksbyggblad** där styrenheten stöder det.
-Byggbladet innehåller bland annat:
-
-- Modellkod, årsmodell och karosstyp
-- Drivline- och batterivariant
-- Exteriör färgkod och interiörklädsel
-- Marknads- och regionspecifikation
-
-Innan byggbladet presenteras kontrollerar Hanterill att det lagrade chassinumret i posten stämmer
-överens med fordonets aktuella chassinummer (VIN) så att data från en utbytt modul aldrig visas som
-fordonets eget byggblad.
-
-## 3. Jämför konfiguration mellan två tillfällen
-
-Om ett fordon har fått utrustning eftermonterad (till exempel en originaldragkrok eller en
-mjukvaruuppgradering på verkstad) kan du jämföra två sparade sessioner i **Konfiguration**.
-Hanterill markerar då exakt vilka tillvalsplatser som har ändrats mellan det tidigare och det nyare
-tillfället.
-
-## Nästa steg
-
-- [Fordonsidentitet](/docs/vehicle-identity): hur chassinummer (VIN), plattform och mätarställning verifieras.
-- [Funktioner och stöd](/docs/capabilities-and-gating): varför appen visar olika funktioner för olika bilar.
-- [Sessioner och bevis](/docs/sessions-and-evidence): spara och jämför sessioner över tid.
+Du kan ladda ner en konfigurationsrapport för dina handlingar. Granska fordonsidentifierare och otolkade poster innan du delar den. Att läsa kartan ändrar inte bilens konfiguration.

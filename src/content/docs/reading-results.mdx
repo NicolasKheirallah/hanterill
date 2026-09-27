@@ -1,35 +1,15 @@
-Before relying on a reading, check whether the car answered, when the value was read and how well its interpretation has been verified. Hanterill shows these as **coverage**, **freshness** and **confidence**.
+A number on a diagnostic screen is useful only when you know whether the car returned it, when it was read and whether the app can interpret it confidently. Check those details before acting on a result.
 
-## 1. Coverage: did every module answer?
+## Check what answered
 
-A modern Volvo or Polestar has dozens of individual computers (up to 49 in the CMA catalogue). Not every car has every optional module fitted, and occasionally a busy module on a secondary network takes longer to answer.
+A scan may be complete, partial or unsupported for a particular vehicle. Where the screen provides coverage, compare the number of requested readings with the number returned. A missing response is not zero. A control unit that does not answer could be absent from that vehicle, asleep, busy or unreachable; one silent scan cannot tell you which.
 
-- **Answered versus expected**: At the top of every scan and subsystem page, Hanterill shows how many modules or parameters answered out of the total requested (for example, `108 / 108 cell groups` or `36 modules answered`).
-- **Missing is never shown as zero**: If a module or cell group did not answer, Hanterill shows an explicit **No response** or **Not supported** badge. It never fills an unanswered slot with `0 V` or `0 °C`, which in other tools can look like a dead battery cell or a broken temperature sensor.
-- **Why a module says "Not supported"**: When a module replies that it does not support a particular parameter (common when a car lacks an optional feature like a rear motor, a head-up display, or a fuel-fired heater), Hanterill records that refusal cleanly so you know the module is healthy and simply does not carry that option.
+The app may distinguish **measured** values from values **calculated** from other readings. A provisional interpretation means the decoder needs more verification. Neither a provisional value nor a missing value should be treated as proof of a fault or proof of good health.
 
-## 2. Freshness: when was this value read?
+## Check when and how it was read
 
-Diagnostic values over Ethernet are read when you run a scan, open a subsystem screen, or start a live telemetry stream.
+A saved session shows what the car reported when that session was captured. Live Data shows newer samples while a stream is running. Compare readings under similar conditions: battery charge level, temperature, driving state and charging state can change the numbers. Repeating a surprising measurement is often more useful than treating one scan as final.
 
-- **Timestamps on every reading**: Each screen shows when the data was captured (or whether you are viewing a **Saved session** from your archive or a **Simulated vehicle**).
-- **Resting versus under-load readings**: Keep in mind what the car was doing when a number was read. For example, high-voltage battery **cell spread (delta in mV)** is most meaningful when the car has been parked at rest for at least a few minutes. During hard acceleration or fast DC charging, currents of several hundred amps flow through the pack, and a temporary 15 to 25 mV spread across modules is normal ohmic resistance rather than a weak cell.
+## Use comparisons carefully
 
-## 3. Confidence and verification badges
-
-Because Hanterill supports multiple vehicle platforms and hundreds of parameters, it labels how each decoder was verified:
-
-- **Verified**: Confirmed against real reference vehicles (such as the Polestar 2 and CMA electric Volvos) and cross-checked against physical measurements.
-- **Cross-checked**: Verified by comparing two or more independent readings inside the car (for example, checking that the sum of all 108 cell-group voltages matches the overall pack voltage sensor).
-- **Provisional / Testing**: The parameter layout and scaling are defined in the catalogue (for example, on newer SEA or SPA hybrid battery paths), but still need confirmation across more real vehicles. Treat provisional values as informative rather than a basis for a major repair or purchase decision.
-
-## 4. Using Cross-Check when a number looks suspicious
-
-Whenever a single reading surprises you, open the **Cross-Check** screen in the sidebar. Cross-Check compares the same physical quantity across multiple independent modules in the car:
-
-- **Pack voltage** versus **sum of all cell groups**
-- **Battery State of Charge** across the battery computer, central gateway, and instrument cluster
-- **12 V voltage** across the 12 V battery sensor, gateway, brake controller, and cluster
-- **Odometer mileage** and **VIN** across up to 29 modules
-
-If two independent modules agree on a number, you can trust what the sensors are seeing. If only one module disagrees with the rest of the car, you have isolated the sensor or module that needs attention.
+Cross-checks compare related values, such as pack voltage with the sum of cell voltages or charge figures from different units. Agreement increases confidence in a reading, but it does not prove every sensor is correct. A disagreement can reflect timing, an incomplete read or a real issue. Read the coverage and the individual values before deciding what to investigate next.

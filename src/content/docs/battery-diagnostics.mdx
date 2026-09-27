@@ -13,6 +13,16 @@ The charge percentage on the dashboard tells you how full the battery is today. 
 Battery diagnostics are read-only. Hanterill reads the car's values without changing battery settings.
 </SafetyNotice>
 
+## NMC and LFP: which battery does your car have?
+
+**NMC** (nickel, manganese and cobalt) and **LFP** (lithium iron phosphate) are two types of lithium-ion battery. “Lithium-ion” is the broad family; NMC and LFP tell you more about the materials inside. Neither label is a health rating.
+
+Some models are sold with different battery packs. For example, the Volvo EX30 Standard Range uses LFP, while its Extended Range versions use NMC. Do not decide which battery you have from the model name alone. Check the car's battery information or vehicle specification. Hanterill selects a battery layout from the readings it receives, but a detected layout is not a direct chemical test, especially on a vehicle marked provisional.
+
+NMC packs commonly offer more range for a given pack size. LFP avoids nickel and cobalt in its active battery material, and its voltage changes less through much of a charge. That flatter pattern means **voltage alone tells you less about how full an LFP battery is**. A change in the displayed charge estimate is not automatically a sudden loss of battery health. The car's battery controller makes the charge estimate; Hanterill displays what the car reports.
+
+When comparing battery reports, compare **the same car and battery variant** over time. A capacity or cell-voltage value from an LFP pack is not a useful “good” or “bad” target for an NMC pack. The car's own limits and reference values matter more than the chemistry name.
+
 ## Health, charge level and capacity
 
 The battery controller, called the BECM, reports several numbers that sound similar but answer different questions.
@@ -24,6 +34,8 @@ The battery controller, called the BECM, reports several numbers that sound simi
 | **Learned capacity** | How much charge the BECM has learned that individual cell groups can hold. The app shows an average in amp-hours (Ah) when available. | Reads the BECM's cell-group values and calculates their average. |
 
 A car can report **90% SoH and 20% SoC** at the same time. In that example, the controller estimates that the battery can hold about 90% of the charge it held when new, while it is currently charged to 20%. The percentages describe different things.
+
+The BECM calculates its estimates for the battery fitted to that car. Hanterill does not turn a pack's NMC or LFP label into a health score. A lower SoH should be judged against earlier readings from the same car, the car's messages and how it performs, rather than against a different battery type.
 
 ### How to interpret SoH
 
@@ -68,6 +80,14 @@ Battery Health shows the temperatures and coolant readings the car provides. A d
 Hanterill compares readings that should agree, such as the battery's reported voltage and the sum of the cell-group voltages. It can also check reported power against voltage and current, and whether current looks plausible while the car is parked. A disagreement may come from an incomplete scan, a changing operating state or a reading that needs closer inspection. It is a prompt to investigate, not a diagnosis from one number.
 
 The page distinguishes a value that was measured, one calculated from readings, one marked provisional and one that was not reported. Missing or uncertain data should not be interpreted as a healthy or unhealthy result.
+
+## Everyday battery care
+
+- **Use the charge target recommended in your car** for ordinary driving. The right target can vary by model and battery, even when two cars both use NMC or both use LFP. Charge to 100% when you need the full range and the car allows it; avoid leaving the car at a very high or very low charge for a long time.
+- **For an NMC car**, a daily target below 100% may be recommended. Use the car's displayed daily target instead of applying a number copied from another model.
+- **For an LFP car**, follow any full-charge instruction shown by its manufacturer or in the car. Some LFP vehicles ask for an occasional full charge to help the charge estimate stay accurate; that is a vehicle instruction, not a rule for every LFP pack. A full charge does not restore lost SoH.
+- **If the car will sit unused for weeks**, use its long-term parking guidance and check its charge level periodically. Do not store either type close to empty. Protect the car from prolonged extreme heat where practical.
+- **In cold weather**, allow for slower charging and reduced available power until the battery warms. If the car offers battery preconditioning before a fast-charge stop, use it. The battery controller sets the safe limits; Hanterill's readings help explain them but do not override them.
 
 ## Compare readings over time
 

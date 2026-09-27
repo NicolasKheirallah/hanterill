@@ -1,28 +1,13 @@
-The car stores a record of its factory equipment and current configuration. **Vehicle Configuration** reads that information to help you check which features were fitted and whether a setting has changed since the car was built.
+**Vehicle Configuration** reads the option information the car makes available. It can help you understand which features the current configuration reports, but it is not a complete factory build certificate or proof that a part was fitted after delivery.
 
-You can open this view from **Vehicle** and print the configuration report. Some entries may remain undecoded; the app should show those as unknown rather than guess their meaning.
+## Read the option map
 
-## 1. Two records inside the gateway
+The screen reads an option map from the car and shows entries it can name. You can search by feature, filter by category or view entries that appear present, absent or supported but not fitted. An entry without a verified name remains identified by its position rather than being assigned a guessed feature.
 
-Hanterill reads two complementary configuration records from the car's central gateway:
+Some additional configuration records are retained as evidence even when the app cannot decode their meaning. A record existing in the car does not mean Hanterill can extract paint, upholstery, original packages or a complete change history from it.
 
-1. **The active Car Configuration Map (256 option slots)**: A table of 256 numbered feature slots that the car's modules check when they wake up. Each slot holds a setting code that tells the car what hardware or software feature is currently enabled (for example, whether Pilot Assist, Pixel LED headlights, a heat pump, a Harman Kardon sound system, or a towbar is active).
-2. **The Factory Build Record**: The original factory specification written when the car was built, including the **anchor VIN**, **exterior paint code and color name**, **interior upholstery and trim code**, **model year and market**, and the list of factory option packages.
+## Check a possible retrofit
 
-## 2. Searching and reading your car's equipment
+The app offers a retrofit compatibility check. It compares the evidence it has for a selected feature and may report that hardware is missing or the current configuration does not match. Treat that result as guidance about the available readings. It cannot prove when a feature was installed or whether a workshop performed an authorised upgrade.
 
-On the **Vehicle Configuration** tab, you do not have to decipher numbered slots:
-
-- **Live search and category filter**: Type any word (such as `"audio"`, `"headlight"`, `"towbar"`, `"heat pump"`, or `"cruise"`) to filter the 256 configuration slots immediately.
-- **Named versus unmapped slots**: Where a slot's meaning has been verified in the Hanterill catalogue, the app shows the human-readable feature name and its current setting. Slots whose exact factory meaning has not yet been confirmed are shown honestly by their slot number and value rather than guessed.
-
-## 3. Spotting retrofits, software unlocks, or replaced modules
-
-Because Hanterill reads both the **Factory Build Record** (how the car left the factory) and the **active Car Configuration Map** (how the car is configured today), comparing the two helps you spot changes made after the car was built:
-
-- **Retrofitted equipment or software unlocks**: For example, a factory towbar added at a dealer, or a software-enabled feature such as Pilot Assist or a performance upgrade enabled after delivery.
-- **Anchor VIN cross-check**: Compares the VIN stored inside the factory build record against the VIN reported by the rest of the car's modules to confirm the central gateway belongs to the vehicle.
-
-## 4. Printable Configuration Report
-
-Click **Print Configuration Report** on the **Vehicle** screen to generate a clean, print-ready build sheet containing your car's identity, factory paint and trim codes, and decoded equipment list. Just like in the [Inspection report](/docs/inspection-reports), you can mask the car's 17-character VIN with one click before printing or saving to PDF.
+You can download a configuration report for your records. Review vehicle identifiers and undecoded entries before sharing it. Reading the map does not change the car's configuration.

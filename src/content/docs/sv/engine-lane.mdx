@@ -1,50 +1,13 @@
-import { SafetyNotice } from "@/components/docs/mdx/SafetyNotice";
+**Motordiagnostik** är till för förbrännings- och hybridbilar där de berörda styrenheterna svarar. Vyn visar vilka enheter som hittades, vilka efterfrågade värden som kom tillbaka och vilka funktioner som inte är tillgängliga för bilen.
 
-För fordon med förbränningsmotor, mildhybrid (48 V) eller laddhybrid på plattformarna **CMA** och
-**SPA** har Hanterill en dedikerad **motorvy (Engine Lane)** vid sidan av elbilsdiagnostiken. Den
-läser av motor-, växellåds- och avgasreningsvärden i ett helt skrivskyddat flöde.
+## Vad du kan se
 
-<SafetyNotice level="read-only" title="Helt skrivskyddad motordiagnostik">
-Motorvyn läser endast mätvärden och statusposter från motorns, växellådans och avgasreningens
-styrenheter. Den ändrar inga motorparametrar och startar inga tvingade regenereringar.
-</SafetyNotice>
+Beroende på bil kan katalogen innehålla värden för motor, växellåda, mildhybridbatteri och avgasrening på dieselbilar. Appen visar källan och statusen för varje tillgängligt värde. Den låter också olösta poster vara synliga i stället för att ge dem ett gissat värde. En bensinbil förväntas till exempel inte lämna data om dieselsystemets avgasrening.
 
-## Vilka styrenheter som ingår i motorvyn
+Katalogen är bredare än de värden som har verifierats på en enskild bil. Att en styrenhet finns i katalogen betyder inte att den sitter i bilen eller att varje värde svarar. Läs täckningen på skärmen innan du litar på resultatet.
 
-På bensin-, diesel- och hybridmodeller kontrollerar motorvyn vilka av följande fem styrenheter som
-svarar i fordonet:
+## Så använder du vyn
 
-<SpecList rows={[
-  ["ECM (Engine Control Module)", "Motorstyrenheten för bensin- eller dieselmotorn."],
-  ["TCM (Transmission Control Module)", "Växellådsstyrenheten för automatlådan eller dubbelkopplingslådan."],
-  ["NRCM (NOx Reduction Control Module)", "Styrenheten för AdBlue- och SCR-avgasrening på dieselmodeller."],
-  ["MVBM (Medium Voltage Battery Module)", "48-voltsbatteriet på mildhybridmodeller (B-motorer)."],
-  ["DEM (Differential Electronic Module)", "Styrenheten för fyrhjulsdriften (Haldex / bakaxelkoppling) på mekaniskt fyrhjulsdrivna modeller."],
-]} />
+Börja med enheterna som svarade och läs sedan uppmätta värden och deras status. Jämför ett oväntat värde med bilens driftläge och eventuella felkoder. Ett saknat eller preliminärt motorvärde bör kontrolleras vidare innan det används som grund för en reparation.
 
-Om du ansluter ett eldrivet fordon (BEV) hålls dessa förbrännings- och hybridkanaler separerade så
-att elbilsöversikten förblir ren.
-
-## Vad motorvyn läser av
-
-Motorvyn är uppdelad i sju tydliga områden:
-
-1. **Motorns grundvärden och temperaturer**: Motorvarvtal (RPM), kylvätsketemperatur, motoroljetemperatur, oljenivå och omgivningstemperatur.
-2. **Luft, laddtryck och gasspjäll**: Insugstryck och laddtryck (boost), luftmassemätare (MAF), insugstemperatur och gasspjällets öppningsgrad.
-3. **Bränslesystem**: Bränsletryck i högtrycksrail, bränslenivå och bränsletrim/blandningsadaption.
-4. **Tändning och förbränning**: Tändvinkel och misständningsräknare.
-5. **Avgasrening, partikelfilter (DPF/GPF) och AdBlue (SCR)**: Sotbelastning i partikelfiltret, differenstryck över filtret, avgastemperaturer före och efter katalysator samt AdBlue-nivå och kvalitet på dieselmodeller.
-6. **Växellåda (TCM)**: Växellådsoljans temperatur, valt växelläge, ingående och utgående axelvarvtal samt kopplingsstatus.
-7. **48-volts mildhybridsystem (MVBM)**: Spänning, ström, laddningsnivå och temperatur för 48-voltsbatteriet.
-
-## Live-avläsning för förbränningsmotorer
-
-Utöver den samlade ögonblicksrapporten kan du i motorvyn följa de viktigaste motorsignalerna i
-realtid medan motorn går på tomgång eller varmkörs, exempelvis för att kontrollera när termostaten
-öppnar eller hur laddtryck och bränsletryck reagerar.
-
-## Nästa steg
-
-- [Livedata](/docs/live-telemetry): spela in och exportera tidslinjegrafer till CSV.
-- [Styrmodulregister](/docs/ecu-reference): se hur de 49 CMA- och 41 SPA-modulerna är uppdelade.
-- [Fordon som stöds](/docs/supported-vehicles): plattformsstöd för CMA och SPA.
+Motorvyn läser data. Serviceåtgärder som ändrar bilen är separata och kräver eget stöd och egen bekräftelse. Att ett motorvärde går att läsa betyder inte att Hanterill kan köra en verkstadsrutin för det.

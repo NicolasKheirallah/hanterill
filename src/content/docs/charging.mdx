@@ -1,36 +1,17 @@
-If charging is slower than expected or does not start, open **Charging** and **Power**. These screens show what the car reports about the charging connection, battery limits and electrical system. They can help you narrow down the cause, although a missing reading cannot identify a fault by itself.
+The **Charging** screen helps you investigate a charge session that is slow or will not start. It shows the charging readings the car makes available and offers a separate **Diagnose charge limit** check. Read the result alongside the charger display and any fault codes; one missing value cannot identify the cause.
 
-## 1. How AC and DC charging differ inside the car
+## What the screen reads
 
-Understanding which part of the car is in charge helps explain what you see on screen:
+Choose **Read charging telemetry** to see the charge-port lock state, the cable's reported current rating and the battery pack voltage. A blank value means that reading was not returned. The screen does not show a complete AC or DC charge curve.
 
-- **AC charging (home wallbox, destination charger, or domestic socket)**: Alternating current (AC) from the wall enters the car's **On-Board Charger (OBC)**. The OBC converts that AC power into high-voltage direct current (DC) to feed the battery. During AC charging, speed is limited by whichever of three things is lowest: the **cable's resistor rating**, the **wallbox pilot signal**, or the **car's own AC current limit** (set in the center screen or by the OBC's internal temperature).
-- **DC fast charging (CCS public fast chargers)**: The external charger converts AC to high-voltage DC outside the car and connects straight to the battery pack through the fast-charge contactors. During DC fast charging, the **battery management computer (BECM)** continuously tells the station the maximum current and power the pack can safely accept based on its **State of Charge** and **cell temperature**.
+AC charging uses the car's on-board charger to turn power from a wallbox into power the battery can store. At a DC fast charger, the external station supplies DC power. In either case, the available charging power can change as the battery warms or fills.
 
-## 2. What the Charging screen shows
+## Diagnose a charging limit
 
-### Connector, lock, and cable status
-Before any power flows, the car checks the physical plug:
+**Diagnose charge limit** is a separate read. It uses the available cable rating, the car's charge-power limit, battery temperature, charge level, actual power and whether the car reports that it is charging. Depending on those inputs, the app may point to cable capability, the on-board charger, battery temperature or charge level. If the inputs do not support a conclusion, it shows an unknown result.
 
-- **Plug detection (Proximity pin)**: Confirms whether a charging handle is physically seated in the charge port.
-- **Charge-port lock actuator**: Shows whether the locking pin has engaged to secure the plug. (Many "charging fault" messages at public stations happen simply because a heavy cable pulled down on the handle and stopped the locking pin from sliding all the way in.)
-- **Cable amp rating**: Charging cables contain a small resistor inside the plug that tells the car the maximum current the copper wire can safely carry (for example, 13 A, 16 A, 20 A, or 32 A).
+A limit shown during one scan describes the car's state at that moment. For example, a high charge level can reduce charging power, but the reading does not prove that the charger is working correctly. If charging will not start, check whether the plug is seated and locked, then compare the car's message with the station's message and scan for fault codes.
 
-### Live AC and DC electrical readings
-- **AC input voltage, current, and frequency** coming from the wallbox into the On-Board Charger.
-- **High-voltage DC output voltage, current, and power (kW)** flowing into the traction battery.
-- **Charger and converter temperatures**: If an On-Board Charger gets too warm inside a hot garage, it smoothly dials back charging current to protect itself.
+## When a reading is missing
 
-## 3. Plain-language charge-limitation diagnosis
-
-Instead of making you compare half a dozen raw numbers by hand, the **Charging** screen runs a **charge-limitation check** that answers the question: *"What is currently capping my charging speed?"*
-
-Depending on what the modules report, Hanterill highlights the limiting factor in plain language:
-
-1. **Limited by the charging station or wallbox**: The wallbox's pilot signal is offering less current than the car and cable can accept (common on load-shared home chargers or busy public AC posts).
-2. **Limited by the charging cable**: The cable plugged into the port is rated for lower current (for example, a 16 A cable used on a 32 A wallbox).
-3. **Limited by an in-car current limit**: A user-configured AC amp cap is active in the car's center display.
-4. **Limited by battery temperature (cold-gate)**: On DC fast charging, a cold battery pack cannot accept full fast-charge current without risking lithium plating on the cells. Once the battery heater warms the pack into its ideal window (`25 °C` to `35 °C`), the current limit rises.
-5. **Limited by high State of Charge (the normal charge curve)**: Above roughly 50% to 60% State of Charge, every lithium-ion battery gradually steps down its maximum charging current as cell voltages approach their upper ceiling.
-
-If a required sensor reading is unavailable or the car is not currently plugged into a charger, Hanterill states clearly that no active limit can be attributed rather than guessing.
+The app shows whether each charging value was measured or unavailable. Do not treat a blank cable rating, lock state or power value as zero. Repeat the read while the car is connected to the charger if the first attempt did not return enough information.

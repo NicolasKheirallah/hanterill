@@ -1,32 +1,13 @@
-The **Battery Health** and **Climate** screens read the values needed for those tasks. **Captures & Sweeps** collects a broader record across responding control units. Use it when you want to keep a detailed snapshot or investigate a value that does not appear on a regular screen.
+An ordinary diagnostic screen reads the values needed for its task. A broader scan asks more control units for more readings. Use it when you need a wider snapshot and have time to review what answered.
 
-## 1. What a full-car sweep collects
+## Choose the scope
 
-A full-car sweep walks through the platform's module catalogue (up to 49 modules on CMA) and reads the known data parameters for each module that answers:
+The scanner can work with a selected set of units or a wider catalogue. A larger scope takes longer and can produce many unavailable or unsupported results. The app shows progress and coverage so you can tell how much was attempted, answered, skipped or stopped.
 
-- **Module identity and software versions** across every reachable control unit.
-- **All catalogued battery, thermal, drivetrain, chassis, body, and telematics parameters**.
-- **Response status and timing**: For every parameter requested, Hanterill records whether the module returned a value, politely reported that the parameter is not supported on this car's trim level, or timed out, along with how many milliseconds the module took to reply.
+You can cancel an active scan. Keep the partial result only as a partial result: a unit that was never reached has not been checked. If the connection drops or the car goes to sleep, reconnect and read again rather than assuming every remaining unit is healthy.
 
-## 2. How a sweep progresses and how to pause or stop it
+## Review a capture
 
-Because a full sweep queries dozens of modules and hundreds of individual parameters, the **Captures & Sweeps** screen shows live progress module by module:
+The scanner displays readings that answered and indicates missing or unsupported responses. Where you export a capture, keep its time, vehicle and coverage information with the file. The app can analyze supported capture files offline. Offline review does not contact the car and cannot fill in readings that were never saved.
 
-- **Fast discovery first**: Hanterill checks which modules are fitted to your car so it does not waste time waiting on optional modules your car does not have.
-- **Gentle handling of sleeping sub-bus modules**: Some comfort and body modules sit on secondary networks that nap even while the dashboard is awake. Hanterill uses a safe wake-up sequence when probing quiet modules and allows them to return to sleep afterward.
-- **Stop or cancel at any time**: Clicking **Stop sweep** cancels the remaining queue immediately and keeps every reading collected up to that point.
-
-## 3. Resuming an interrupted sweep (Retry missed modules)
-
-If a door closes, the car's gateway briefly pauses, or a busy module times out halfway through a sweep, you never have to start over from scratch:
-
-- Click **Retry missed modules** on the **Captures & Sweeps** screen.
-- Hanterill keeps all the modules that already completed and re-queries **only the modules that timed out or were interrupted**, merging their new answers into the same capture.
-
-## 4. Re-checking saved captures offline
-
-Every sweep you run is saved locally on your computer as a complete capture file:
-
-- **Offline parameter browsing**: You can open any saved capture in the **DID Explorer** indoors, without being connected to the car, and search or filter every value your car returned.
-- **Automatic re-decoding as the catalogue grows**: Because the capture stores the module's exact response alongside the decoded value, whenever a new release of Hanterill adds new parameter definitions or improved decoders, you can open your old saved captures and see the newly decoded values immediately without plugging back into the car.
-- **Smart per-car learning**: Hanterill remembers which parameters each module in your car actually supports, making repeat sweeps on the same vehicle faster.
+Do not treat an old capture as a fresh scan. A later app release may have better names or interpretation for stored data, but that does not change what the vehicle returned on the day of the capture.

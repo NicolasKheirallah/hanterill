@@ -1,36 +1,19 @@
-Hanterill saves each scan as a **session** on your computer. In **Sessions & Reports**, you can review past readings, add notes, compare two visits and export a record. The history remains available when the car is disconnected.
+A **session** is a saved visit to a vehicle. In **Sessions & Reports**, you can add a note, reopen the readings captured during that visit and export them later. What a session contains depends on which screens and scans you actually ran before saving it.
 
-## 1. What is saved inside a session
+## Save and review a visit
 
-A saved session is a complete, time-stamped record of what your car reported during that visit:
+Connect to the car, collect the readings you need and choose **Save current session**. A battery report, fault scan, firmware audit or recording appears in the session only if it was captured. Missing work is not silently filled in. The session list remains available when the car is disconnected.
 
-- **Vehicle identity and mileage**: Platform, model year, powertrain, odometer readings across modules, and VIN (which you can mask with one click whenever sharing or exporting).
-- **High-voltage battery and 12 V health**: State of Health, State of Charge, pack voltage and current, all individual cell-group voltages, and thermal readings.
-- **Fault codes and freeze-frame snapshots**: Every fault code reported across the car, its live status (*Active*, *Pending*, *Stored*, *Historical*), and the freeze-frame conditions saved when the fault tripped.
-- **Module inventory and software versions**: Every control unit that answered, along with its hardware and software part numbers.
-- **Subsystem readings and raw module responses**: All decoded subsystem measurements plus the underlying raw module responses, so you can filter, inspect, or re-evaluate a saved session offline at any time without plugging back into the car.
-- **Your operator notes**: Free-text notes you attach to the session (for example, *"After replacing 12 V battery"* or *"Pre-purchase check on silver 2022 Dual Motor"*).
+If a scan stopped early, check its coverage before treating the saved session as complete. A module that was not read during the visit cannot become a verified result simply because the session was saved.
 
-### Safe local storage
-Sessions are written atomically to your computer's local application data folder so a power loss or sudden unplugging never corrupts your archive. If a file on disk is ever damaged, Hanterill quarantined and recovers it automatically on startup.
+## Compare two visits
 
-## 2. The five built-in comparisons
+Select two sessions to open the fault-code comparison. It shows which recorded codes changed between the selected visits. The battery page also has a trend for SoH, SoC and cell-group SoH spread from saved battery reports. That trend is different from the Cell Map's voltage spread.
 
-Having two saved sessions lets you prove what changed over time or after a workshop visit:
+Other comparison views can show changes in firmware or module inventory when both captures contain the required data. **Compare cell captures** needs two cell captures supplied to that tool; selecting two sessions does not automatically compare every cell voltage. Always confirm that both visits belong to the same car.
 
-1. **Fault Code Diff (DTC Diff)**: Pick a "before repair" and "after repair" session to see which fault codes were **cleared**, which **remained**, which **newly appeared**, and which changed status (for example, from *Active* to *Stored*).
-2. **Battery Health History & Trend**: Tracks a single car's **State of Health (SoH)**, **State of Charge (SoC)**, and **cell spread (mV)** across every saved visit over months and years, with one-click CSV export.
-3. **Cell-by-Cell History Diff**: Compares every individual cell group (all 108 positions on a CMA pack, or the matching count on SPA and SEA packs) between two sessions to see whether a weak cell group recovered after balancing or drifted further.
-4. **Module Inventory Diff**: Shows if a control unit went missing on the network or started answering again after a wiring or fuse repair.
-5. **Firmware & Software Diff**: Compares every module's software and hardware part numbers between two sessions to show the exact list of modules updated by an over-the-air (OTA) update or a dealer service visit.
+## Export and privacy
 
-## 3. Exporting and sharing your data
+Sessions can be exported as JSON, as CSV tables and as collections of files. You can import a supported session file on another computer. Check VIN masking before sharing: an export may contain vehicle identity and detailed readings. A support bundle is a separate, privacy-filtered export for reporting a problem.
 
-You own everything Hanterill reads from your car. From **Sessions & Reports**, you can export any session in standard formats:
-
-| Export format | What it contains | Best used for |
-| :--- | :--- | :--- |
-| **Printable PDF / Print view** | Formatted **Executive inspection**, **Battery certificate**, or **Technical dossier** report. | Handing to a buyer, seller, or workshop, or keeping in your car's service folder. |
-| **JSON session export** | The complete structured session record, including decoded measurements and raw module responses (with optional VIN masking). | Archiving, backing up, or importing into another computer running Hanterill. |
-| **CSV spreadsheets** | Tables for cell-group voltages, fault codes, module software versions, live telemetry recordings, and battery health trends. | Opening in Excel, Numbers, Google Sheets, or data-analysis scripts. |
-| **Support bundle (`.zip`)** | Privacy-scrubbed diagnostic logs and session summary with VIN, serial numbers, and GPS automatically removed. | Attaching to a bug report or support question (see [Get help](/docs/get-help)). |
+Keep the original saved data when comparing visits or rescoring an older report. A later version of the app may interpret the same captured readings differently, but it cannot add a measurement that was never taken.

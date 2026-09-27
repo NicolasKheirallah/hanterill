@@ -1,46 +1,36 @@
 import { TaskRouter } from "@/components/docs/mdx/TaskRouter";
 
-Use this guide when you have a specific job in mind and want the shortest path through the app.
+Choose the task closest to what you want to check. Each path starts with a read; actions that change the car require their own confirmation.
 
 <TaskRouter />
 
-## 1. Inspecting a used EV before buying it
+## Check a used electric car
 
-When you have 10 minutes with a car on a test drive or at a dealership:
+1. Connect and read the vehicle identity and fault codes. Check which control units answered.
+2. Open **Battery Health**. Read the car's reported SoH and SoC, then open the **Cell Map** if cell readings are available. Compare cell voltage spread only with readings taken under similar conditions.
+3. Open the **Inspection Report** and read its findings and coverage gaps. A missing battery or fault reading is not a pass.
+4. Save the session yourself so you can return to the captured evidence later. Choose VIN masking before sharing a PDF.
 
-1. **Connect and run a full check**: Plug in your ENET cable, wake the dashboard, connect on the **Connection** screen, and click **Run full check** on **Overview**.
-2. **Check the Battery Health screen**:
-   - Look at **State of Health (SoH)** to see how much usable capacity remains compared with when the pack was new.
-   - Check the **Cell Map** spread (delta in millivolts). A healthy, well-balanced pack typically shows all cell groups within a few millivolts of each other.
-   - Check the **8-band temperature history** to see if the battery has spent unusual time at extreme temperatures.
-3. **Check the Cross-Check screen**:
-   - Verify that the **VIN** and **Odometer mileage** agree across the car's modules. If one module reports a different VIN or a much higher mileage than the dashboard, the app flags the disagreement immediately.
-4. **Print or save the Inspection Report**:
-   - Open **Inspection Report**, pick the **Executive inspection** or **Battery certificate** layout, and print or save it as a PDF. Your session is also saved automatically in **Sessions & Reports** so you can compare multiple used cars side by side at home.
+## Investigate a warning
 
-## 2. Investigating a dashboard warning light
+1. Open **Fault Codes** and scan. Start with active and pending codes, then include stored codes if you need the history.
+2. Select a code to see which unit reported it and whether it supplied a snapshot of the conditions at the time. The available snapshot fields vary.
+3. Record the result before repairing anything. A code indicates where to investigate; it does not identify the failed part by itself.
 
-1. Connect to the car and open **Fault Codes (DTCs)**, then click **Scan all modules**.
-2. Keep the filter on **Needs Attention** first. Modern cars store hundreds of internal self-test records that never light a warning lamp; **Needs Attention** shows only the **Active** and **Pending** faults that matter right now.
-3. Click any fault code to open its detail drawer:
-   - Read the plain-language description of the code and which module reported it.
-   - Inspect the **Freeze-frame snapshot** to see the exact mileage, speed, 12 V battery voltage, and battery temperature at the moment the fault occurred. (A cascade of communication faults with a freeze-frame voltage below 11.5 V often points to a weak 12 V battery rather than a failed high-voltage component.)
+## Verify a repair
 
-## 3. Verifying a repair and clearing fault codes
+1. Save a scan before the repair. After the repair, scan again and compare the results from the same car.
+2. Clear fault codes only if the installed app supports write actions and you intend to change the car's fault memory. Review the backup and verification options before confirming.
+3. Read the result for each unit and scan again. A code that returns needs further investigation.
 
-1. **Before the repair**: Run a scan so your "before" state (including freeze-frame snapshots) is saved in **Sessions & Reports**.
-2. **After completing the physical repair**: Connect to the car, open **Fault Codes (DTCs)**, and click **Clear fault codes**.
-3. By default, Hanterill clears codes only in control units that reported faults. It saves available fault details first, then scans again to show which codes remain or return.
-4. Click **Compare with previous scan** on the Fault Codes screen to view a side-by-side before-and-after record showing which codes cleared.
+## Check a software update
 
-## 4. Checking what a dealer visit or OTA update changed
+1. Run **Firmware Audit** before the update and save its results.
+2. Repeat the audit afterward. Compare only version fields that were actually read on both visits.
+3. A changed version shows what the unit reports now. An unchanged or missing version does not prove exactly what the workshop did.
 
-1. Before taking your car into a workshop (or before installing an over-the-air software update), run a scan so Hanterill saves your car's module software inventory.
-2. When you get the car back, run a new scan and open **Sessions & Reports -> Firmware Diff**.
-3. Hanterill compares every control unit side by side and highlights exactly which modules received new software versions and which ones were untouched.
+## Investigate 12 V drain
 
-## 5. Chasing an overnight 12 V battery drain
-
-1. Connect to the car after it has been parked overnight and open **12 V Sleep Drain**.
-2. Check the **12 V battery health, State of Charge, and standby current histogram** to see how many hours the car spent in deep sleep versus higher current-draw bands.
-3. Check the **Wake-state history** and **TCAM & GPS** screens to see whether the telematics module or a body controller kept waking the car up while parked. See [Parasitic drain](/docs/parasitic-drain).
+1. After the car has been parked, open **12 V Sleep Drain** and read the average current and sample distribution.
+2. Check whether the app marks the readings as consistent. Higher-current samples suggest more time awake or drawing power, but do not identify the cause.
+3. Check 12 V battery condition separately and compare readings under similar conditions. The drain screen has no wake-cause log.

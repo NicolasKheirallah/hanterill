@@ -1,57 +1,21 @@
-Hanterill has separate views for systems such as climate control, drive units, charging and the 12 V supply. Each view groups the readings relevant to that system. Some views also compare related readings and flag values that do not agree.
+Hanterill has separate diagnostic screens for climate, drive units, power, steering, telematics, GPS and service schedule. Each screen asks for the readings relevant to that system. The available fields depend on the car and on which control units answer.
 
-## 1. Climate & Heat Pump (`CCM`)
+## Climate and drive units
 
-Modern electric Volvos and Polestars use a shared thermal system that heats and cools both the passenger cabin and the high-voltage battery pack. The **Climate** screen reads the **Climate Control Module (CCM)** and **Battery Energy Control Module (BECM)** to show:
+**Climate** can show refrigerant pressure and temperature, compressor activity, heater temperatures, battery cooling readings and fan output. A blank field means that value was not returned. The screen identifies the source unit for a reading when it can.
 
-- **Heat pump and A/C compressor state**: Compressor speed, power draw, and high-side / low-side refrigerant pressures.
-- **Coolant loop temperatures and deltas**: Inlet and outlet temperatures across the cabin heater loop, battery thermal loop, and drivetrain radiator loop, with the temperature difference (*delta*) calculated automatically so you can see whether heat is actually being transferred.
-- **High-voltage PTC heater and chiller valves**: Whether the electric auxiliary heater or battery chiller valve is active.
-- **Cabin sensors and blend doors**: Interior temperature sensors, evaporator temperature, and the status of the cabin air-distribution dampers.
+**Drive Units** can show front and rear motor readings such as speed, torque, voltage and temperature. The app may compare the two sides when both answer. A missing rear unit on a car built with one motor is not a failed rear motor.
 
-## 2. Drive Units (`VCU1`, `IHFA`, `IEM`)
+## Power and steering
 
-On dual-motor cars, the front axle is driven by the **Front High-Voltage Inverter (IHFA)** and the rear axle is driven by the **Rear Axle Drive Inverter (IEM / ERAD)**, coordinated by the **Vehicle Control Unit (VCU1)**.
+**Power** groups available high-voltage and 12 V supply readings. Different units may report related voltages; a difference is something to examine with the car's operating state in mind. It does not alone prove that a cable or ground connection is faulty.
 
-- **Side-by-side front and rear comparison**: Compares inverter temperature, motor stator temperature, coolant temperature, DC bus voltage, and torque delivery between the front and rear axles.
-- **Single-motor awareness**: On single-motor cars, the unpopulated axle is left cleanly blank rather than displayed as fake zeros.
-- **Parked rotor drift filter**: Resolver sensors inside electric motors can report tiny sub-RPM numbers from electrical noise even when the car is parked. When the car is stationary, Hanterill labels that noise cleanly at the display layer while preserving the raw sensor reading underneath.
+**Steering** shows the steering values and status the car reports. A reading that does not update as expected may reflect how that unit supplies diagnostic data. Check for fault codes and repeat the read before treating it as a failed sensor. Calibration is a separate service action that changes the car.
 
-## 3. Power & DC-DC Converter (`OBC` & `BMS`)
+## Telematics, GPS and service schedule
 
-Because an electric car has no alternator belts, a **DC-DC converter** steps the 400 V traction battery down to ~14 V to power the car's lights, computers, and 12 V battery. The **Power** screen shows:
+**Telematics** can show the backup battery and other available module readings. **GPS** reads the car's position only when you request a fix. Review location data before sharing an export. These screens report what the unit returned; they cannot by themselves identify the cause of a weak signal or an emergency-call warning.
 
-- **DC-DC converter output voltage and current** feeding the 12 V system.
-- **12 V rail agreement across modules**: Compares the voltage measured at the 12 V battery post against the supply voltage reported by the central gateway, brake controller, and instrument cluster. A large drop on one module points to a corroded ground strap or poor connector.
+**Service Schedule** shows the maintenance counters the car supplies, such as remaining distance, time and operating hours. Some counters can be unavailable. Reading a counter does not reset it; a reset is a separate confirmed service action.
 
-## 4. Steering (`PSCM` & `SAS`)
-
-Reads the **Steering Angle Sensor (SAS)** and **Power Steering Control Module (PSCM)**:
-
-- **Steering wheel angle (degrees) and turn rate (degrees/second)**.
-- **Calibration status**: Confirms whether the steering angle sensor has a valid zero-point calibration.
-- **Note on live steering updates**: On some CMA vehicles, the diagnostic gateway only updates the diagnostic steering-angle readout at key-on, while continuous millisecond-by-millisecond steering movement travels on the car's internal CAN bus. Hanterill notes this clearly on screen so a static diagnostic number is never mistaken for a broken sensor.
-
-## 5. Telematics, TCAM Backup Battery & GPS (`TCAM`)
-
-The **Telematics and Connectivity Antenna Module (TCAM)** runs the car's LTE/5G cellular connection, emergency SOS call system, Bluetooth phone-as-key, and satellite positioning (GNSS/GPS).
-
-### TCAM emergency backup battery health (with automatic fallback)
-Inside the TCAM sits a small dedicated backup battery so the car can place an emergency SOS call even if the main 12 V battery is disconnected in a collision. When that small backup battery ages, the dashboard often displays an *"eCall service required"* warning.
-
-- Hanterill reads the TCAM backup battery's **State of Health, charge level, voltage, and temperature**.
-- **Automatic fallback on newer TCAM software**: On some software versions, the primary backup-battery read returns a 66-byte GPS log record instead of battery health. Hanterill detects that automatically by checking the response layout and switches to the secondary TCAM battery-health read so you still get an accurate backup-battery reading.
-
-### On-request GPS satellite skyplot and signal quality
-To protect your privacy, Hanterill **never reads your car's GPS coordinates automatically** during a scan. The **TCAM & GPS** screen only queries satellite positioning when you explicitly click **Read GPS fix**:
-
-- **Live satellite skyplot**: Shows how many GPS, GLONASS, Galileo, and BeiDou satellites the roof antenna currently sees, their elevation and azimuth in the sky, and their signal-to-noise ratio (`C/N0` in dB-Hz) to diagnose a water-damaged shark-fin antenna.
-- **Privacy by default**: Even if you click **Read GPS fix** to test the antenna, exact coordinates are excluded from printable inspection reports by default and scrubbed from support bundles.
-
-## 6. Service Schedule (`DIM`)
-
-Reads the **Driver Information Module (DIM)** behind the steering wheel to show the car's internal maintenance counters:
-
-- **Distance remaining (km / miles)** and **time remaining (days / months)** until the next scheduled service.
-- **Engine hours / operating time** since the last service reset.
-- **Counter plausibility check**: Flags an advisory if one service counter was reset without the others, or if the distance since last service exceeds the car's total odometer mileage.
+Across these screens, use the reading state and capture time. Do not turn a missing field into zero or treat a single outlying value as a diagnosis.

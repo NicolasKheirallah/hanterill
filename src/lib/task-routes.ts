@@ -11,17 +11,17 @@ export type TaskRoute = {
 };
 
 export const taskRoutes: TaskRoute[] = [
-  { key: "noVehicle", href: "/docs/connection" },
+  { key: "noVehicle", href: "/docs/troubleshooting" },
   { key: "usedBattery", href: "/docs/battery-diagnostics" },
   { key: "worthBuying", href: "/docs/inspection-reports" },
   { key: "activeFaults", href: "/docs/dtc-scanning" },
   { key: "repairCleared", href: "/docs/sessions-and-evidence" },
   { key: "dealerUpdate", href: "/docs/firmware-and-inventory" },
-  { key: "flatBattery", href: "/docs/workspace-tour" },
+  { key: "flatBattery", href: "/docs/parasitic-drain" },
   { key: "powerLoss", href: "/docs/live-telemetry" },
   { key: "intermittent", href: "/docs/live-telemetry" },
-  { key: "modulesFitted", href: "/docs/ecu-reference" },
+  { key: "modulesFitted", href: "/docs/firmware-and-inventory" },
   { key: "didMeaning", href: "/docs/did-catalogue" },
-  { key: "customerReport", href: "/docs/sessions-and-evidence" },
-  { key: "buildLimits", href: "/docs/safety" },
+  { key: "customerReport", href: "/docs/inspection-reports" },
+  { key: "buildLimits", href: "/docs/capabilities-and-gating" },
 ];

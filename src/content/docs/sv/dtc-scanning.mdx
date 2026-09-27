@@ -1,83 +1,17 @@
-Bilens styrenheter kontrollerar sina givare och anslutningar under körning. Om en styrenhet upptäcker ett problem kan den spara en felkod. Vyn **Felkoder** visar koder från styrenheter som svarar och, när bilen har sparat dem, uppgifter om när felet uppstod.
+En styrenhet kan spara en felkod när den upptäcker ett problem. **Felkoder** visar koderna från de enheter som svarade vid avläsningen. En kod ger en ledtråd om vilket system som märkte problemet. Den pekar inte ensam ut vilken del som ska bytas.
 
-## Vilka styrenheter som tillfrågas
+## Läs listan
 
-En felkodsskanning går igenom alla styrenheter i plattformens styrmodulregister som stöder
-felkodslagring:
+Vyn börjar med fel som behöver uppmärksamhet, främst aktiva och väntande koder. Du kan ta med lagrade koder och filtrera efter status eller system. En **aktiv** kod betyder att felvillkoret rapporterades vid avläsningen. **Väntande** betyder att enheten har sett ett villkor som ännu inte bekräftats. En **lagrad** kod beskriver en bekräftad händelse och kan finnas kvar efter att villkoret upphört. Den exakta betydelsen beror på statusen som just den enheten lämnar.
 
-- **CMA**: 40 felkodskapabla styrenheter (av 49 i registret; de 9 övriga undermodulerna lagrar inga egna felkoder och hoppas över automatiskt).
-- **SPA**: Alla katalogiserade styrenheter i SPA-registret på 41 moduler.
-- **SEA1**: Alla katalogiserade styrenheter i SEA1-registret på 25 moduler.
+Välj en kod för att se Hanterills förklaring och de kompletterande uppgifter bilen lämnar. Vissa enheter sparar förhållandena när koden sattes, till exempel körsträcka eller spänning. Andra lämnar få eller inga sådana värden. En ögonblicksbild hör till just den koden och enheten. Utgå inte från att varje kod innehåller hastighet, temperatur eller samma räknare. **Koduppslagning** kan förklara en känd kod utan anslutning till bilen.
 
-Skanningen visar tydligt hur många styrenheter som svarade utan fel, hur många som rapporterade
-minst en felkod och vilka moduler som inte svarade (till exempel för att ett visst tillval inte är
-monterat på fordonet).
+## Jämför avläsningar
 
-## Så läser du en felkod
+Jämförelseverktygen kan visa koder som tillkommit, försvunnit eller ändrat status mellan två avläsningar. Kontrollera att båda kommer från samma bil. En kod som saknas i en ofullständig avläsning är inget bevis för att felet är borta.
 
-En standardiserad felkod består av en bokstav följt av fyra till sex tecken:
+## Rensa koder när det är lämpligt
 
-<SpecList rows={[
-  ["P (Powertrain)", "Drivlina, elmotorer, växelriktare, högspänningsbatteri, laddning eller förbränningsmotor och växellåda."],
-  ["C (Chassis)", "Chassi, ABS-bromsar, parkeringsbroms, styrväxel, hjulupphängning och stabilitetskontroll."],
-  ["B (Body)", "Kaross, klimat, dörrar, säten, belysning, krockkuddar och kupéfunktioner."],
-  ["U (Network)", "Nätverk och kommunikation mellan styrenheter (exempelvis ett tillfälligt tappat meddelande på en CAN-buss)."],
-]} />
+Rensning ändrar bilens sparade felminne och kan ta bort uppgifter som behövs vid felsökning. I en appversion som tillåter skrivåtgärder måste du bekräfta åtgärden. Appen riktar den normalt till enheter som rapporterade fel, men du kan välja bredare omfattning. Säkerhetskopiering av tillgängliga felögonblicksbilder och ny kontroll efter rensningen är påslagna från början; du kan ändra valen. Omstart av en enhet är ett separat val och bilen kan neka den.
 
-### Felkodens status (Aktiv, Väntande, Lagrad, Permanent)
-
-Tillsammans med varje kod skickar styrenheten en statusflagga som berättar om felet pågår just nu
-eller ligger kvar i historiken:
-
-- **Aktivt (Test failed now)**: Felet finns just i detta ögonblick. Om du rensar koden utan att åtgärda orsaken kommer den tillbaka direkt.
-- **Väntande (Pending)**: Styrenheten har noterat en avvikelse under nuvarande eller föregående körcykel men väntar på att se om felet upprepas innan en permanent kod eller varningslampa tänds.
-- **Bekräftat / Lagrat (Confirmed / Stored)**: Felet har inträffat tillräckligt många gånger för att sparas i felminnet. Även om felet har upphört (till exempel efter att ett glappande kontaktstycke satts tillbaka) ligger koden kvar som lagrad tills den rensas eller åldras ut.
-- **Permanent**: En lagstadgad drivline- eller säkerhetskod som inte kan raderas manuellt med en knapp, utan raderas av styrenheten själv när den har genomfört ett antal felfria körcykler efter reparationen.
-- **Varningslampa begärd (MIL / Warning Indicator)**: Anger att just den här felkoden tänder ett varningsmeddelande på förardisplayen.
-
-## Ögonblicksbilder (vad fordonet gjorde när felet uppstod)
-
-När du klickar på en felkod i Hanterill hämtar appen kodens **ögonblicksbild** och utökade
-felräknare direkt från styrenheten. En ögonblicksbild fungerar som en liten färdskrivare som sparats
-i exakt det ögonblick då felet registrerades:
-
-- **Mätarställning (km)** vid första och senaste tillfället felet inträffade
-- **Fordonshastighet** och valt körläge
-- **12-voltsbatteriets spänning** (mycket användbart för att avslöja spökfel som bara berott på ett svagt 12 V-batteri vid kallstart)
-- **Högspänningsbatteriets spänning, ström och laddningsnivå (SoC)**
-- **Yttertemperatur och modulens temperatur**
-- **Frekvensräknare**: Hur många gånger felet har upprepats sedan det först dök upp
-
-## Jämför felkoder med ett klick (Före / Efter)
-
-På skärmen **Felkoder (DTC)** kan du med ett klick jämföra din aktuella skanning med en tidigare
-skanning från samma fordon. Hanterill delar automatiskt upp resultatet i tre grupper:
-
-1. **Nya felkoder**: Koder som tillkommit sedan den förra skanningen.
-2. **Lösta / Försvunna felkoder**: Koder som fanns vid det förra tillfället men som nu är borta.
-3. **Kvarstående felkoder**: Koder som fanns vid båda tillfällena (inklusive om deras status har ändrats från aktiv till historisk).
-
-## Rensa felkoder (och varför vissa koder kräver omstart)
-
-När du har åtgärdat ett fel kan du klicka på **Rensa felkoder** och bekräfta säkerhetsdialogen.
-Hanterill utför då rensningen i sex kontrollerade steg:
-
-1. Öppnar en utökad diagnostiksession mot varje berörd styrenhet.
-2. **Sparar alla ögonblicksbilder först**: Innan något raderas ur fordonet säkerhetskopierar Hanterill ögonblicksbilderna till ditt lokala sessionsarkiv så att historiken inte går förlorad.
-3. Skickar rensningskommandot.
-4. Väntar medan styrenheterna uppdaterar sitt interna felminne.
-5. Gör ett riktat nytt försök mot enskilda moduler om gatewayen var tillfälligt upptagen.
-6. Läser av alla styrenheter på nytt och visar vilka koder som försvann och vilka som eventuellt ligger kvar.
-
-### Valfritt steg: Tvinga modulomstart för låsta felkoder
-
-Vissa styrenheter håller kvar en felkod i arbetsminnet tills modulen har startats om. Om en kod som
-borde vara löst ligger kvar kan du i rensningsdialogen välja **Tvinga modulomstart**, som startar om
-de berörda styrenheterna, väntar cirka fem sekunder och kör en andra rensning. Av säkerhetsskäl
-vägrar Hanterill att starta om någon modul om fordonet rapporterar att det befinner sig i körläge.
-
-## Nästa steg
-
-- [Tolka dina resultat](/docs/reading-results): hur du skiljer ofarliga nätverkskoder från verkliga hårdvarufel.
-- [Säkerhet](/docs/safety): hur skrivskyddat läge och bekräftelsedialoger fungerar.
-- [Sessioner och bevis](/docs/sessions-and-evidence): hur tidigare skanningar och ögonblicksbilder lagras.
+I en skrivskyddad appversion skickar **Rensa felkoder** inget rensningskommando. Appen erbjuder i stället ett jämförelseflöde. Efter ett rensningsförsök bör du läsa resultatet för varje enhet och skanna igen. En kod som kommer tillbaka tyder på ett villkor som fortfarande behöver undersökas.
