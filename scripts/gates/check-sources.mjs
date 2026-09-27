@@ -2,6 +2,7 @@
 // CONSISTENCY_FAILED on any miss; prints CONSISTENCY_PASSED only when all pass.
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
+import { readDocsRegistry } from "../docs-registry.mjs";
 
 const ROOT = process.cwd();
 const failures = [];
@@ -119,28 +120,25 @@ expect(!/Node\.js 22|Node 20/i.test(readmes), "Node floor drift (README)", "READ
 const pkg = JSON.parse(await read("package.json"));
 expect(/>=\s*24/.test(pkg.engines?.node || ""), "package engines", String(pkg.engines?.node));
 
-// 9. Docs registry <-> content files <-> routes coherence (en map = source of
-// truth; sv map must stay a subset with files on disk).
-const registry = await read("src/lib/docs-registry.ts");
-const docMeta = await read("src/lib/docs.ts");
-const enBlock = registry.slice(registry.indexOf("en: {"), registry.indexOf("sv: {"));
-const svBlock = registry.slice(registry.indexOf("sv: {"));
-const regSlugs = [...enBlock.matchAll(/"([a-z][a-z-]*)":\s*\(\)\s*=>\s*import\("@\/content\/docs\/\1\.mdx"\)/g)].map((m) => m[1]);
-const svSlugs = [...svBlock.matchAll(/"([a-z][a-z-]*)":\s*\(\)\s*=>\s*import\("@\/content\/docs\/sv\/\1\.mdx"\)/g)].map((m) => m[1]);
-const metaSlugs = [...docMeta.matchAll(/slug:\s*"([a-z-]+)"/g)].map((m) => m[1]);
-expect(JSON.stringify(regSlugs) === JSON.stringify(metaSlugs), "docs slug sets differ", `${metaSlugs} vs ${regSlugs}`);
-expect(svSlugs.every((s) => metaSlugs.includes(s)), "sv doc outside registry", svSlugs.filter((s) => !metaSlugs.includes(s)).join(","));
-const docsDir = await readdir(join(ROOT, "src/content/docs"));
-const svDir = await readdir(join(ROOT, "src/content/docs/sv"));
-for (const s of regSlugs) expect(docsDir.includes(`${s}.mdx`), `missing mdx ${s}`, "not on disk");
-for (const f of docsDir.filter((x) => x.endsWith(".mdx"))) expect(regSlugs.includes(f.replace(/\.mdx$/, "")), `orphan mdx ${f}`, "not in registry");
-for (const f of svDir) expect(svSlugs.includes(f.replace(/\.mdx$/, "")), `orphan sv mdx ${f}`, "not in sv registry");
-for (const s of svSlugs) expect(svDir.includes(`${s}.mdx`), `missing sv mdx ${s}`, "not on disk");
+// 9. Docs registry <-> content files coherence. src/content/docs.json is the
+//    single hand-edited registry (metadata + Swedish coverage); a doc's slug
+//    is its filename and a translation exists when the sv mdx exists. One
+//    reader, scripts/docs-registry.mjs, validates the whole contract —
+//    prebuild runs through the same module, so build and gate cannot disagree.
+let metaSlugs = [];
+try {
+  const registry = await readDocsRegistry();
+  metaSlugs = registry.metas.map((m) => m.slug);
+  expect(metaSlugs.length > 0, "docs registry parsed", "no docs");
+  expect(registry.svSlugs.every((s) => metaSlugs.includes(s)), "sv doc outside registry", registry.svSlugs.filter((s) => !metaSlugs.includes(s)).join(","));
+} catch (e) {
+  fail("docs registry coherent", String(e?.message ?? e));
+}
 
 // 10. No /docs/development links remain anywhere.
 const devLinks = all.filter(([, c]) => /\/docs\/development/.test(c)).map(([f]) => f);
 expect(devLinks.length === 0, "dead /docs/development links", devLinks.join(" | "));
-expect(!docsDir.includes("development.mdx"), "development.mdx removed", "still present");
+expect(!metaSlugs.includes("development"), "development.mdx removed", "still present");
 
 // 11. Changelog source page exists and covers both releases, minus build-from-source.
 const rel = await read("src/content/docs/releases.mdx");

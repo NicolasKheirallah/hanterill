@@ -139,13 +139,17 @@ for (const form of rejected) {
 expect(msgHits === 0, "no invented Swedish in the catalog", `${msgHits} occurrences`);
 
 // 8. The docs registry carries Swedish titles and summaries that render in the
-//    sidebar and in page metadata, so it is held to the same vocabulary.
-const registry = readFileSync(join(ROOT, "src/lib/docs.ts"), "utf8");
+//    sidebar and in page metadata, so it is held to the same vocabulary. The
+//    registry is data (src/content/docs.json), so this reads it as data.
+const docsMeta = JSON.parse(readFileSync(join(ROOT, "src/content/docs.json"), "utf8"));
+const registryStrings = docsMeta.flatMap((d) => [d.titleSv, d.summarySv]).filter(Boolean);
 let regHits = 0;
-for (const form of rejected) {
-  if (new RegExp(`\\b${form}\\b`, "i").test(registry)) {
-    regHits++;
-    failures.push(`invented Swedish in docs.ts registry: "${form}"`);
+for (const s of registryStrings) {
+  for (const form of rejected) {
+    if (new RegExp(`\\b${form}\\b`, "i").test(s)) {
+      regHits++;
+      failures.push(`invented Swedish in docs.json registry: "${form}"`);
+    }
   }
 }
 expect(regHits === 0, "no invented Swedish in the registry", `${regHits} occurrences`);
