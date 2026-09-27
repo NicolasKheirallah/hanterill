@@ -3,6 +3,7 @@
  * These are illustrative figures chosen for the site. They are not a
  * reading from any vehicle.
  */
+import { channels, type ChannelId } from "./telemetry-sim";
 
 export const demoVehicle = {
   model: "Polestar 2",
@@ -119,17 +120,37 @@ export const dtcStateMeta = {
   historical: { tone: "muted" },
 } as const;
 
-/** Channel display names come from the `telemetry.channelNames` message keys by `id`. */
-export const liveChannels = [
-  { id: "pack_v", unit: "V", value: 398.6, min: 360, max: 410 },
-  { id: "pack_a", unit: "A", value: -1.4, min: -220, max: 260 },
-  { id: "batt_t", unit: "°C", value: 23.1, min: 10, max: 45 },
-  { id: "inv_t", unit: "°C", value: 34.7, min: 10, max: 80 },
-  { id: "motor_nm", unit: "N·m", value: 0, min: -120, max: 330 },
-  { id: "lv_v", unit: "V", value: 14.2, min: 11, max: 15 },
-];
+/**
+ * The live-channel panels. The channel facts (id, unit, decimals, ranges) live
+ * in one registry — telemetry-sim's `channels`, which also drives the
+ * LiveTelemetryChart — so the two views of a channel cannot disagree. This
+ * module only adds what the demo panels uniquely hold: the illustrative
+ * snapshot reading for each channel. Labels come from the
+ * `telemetry.channelNames` message keys by `id`.
+ */
+const liveSnapshot: Record<ChannelId, number> = {
+  pack_v: 398.6,
+  pack_a: -1.4,
+  batt_t: 23.1,
+  inv_t: 34.7,
+  motor_nm: 0,
+  lv_v: 14.2,
+};
 
-/** One-minute trace for the live chart. Deterministic pseudo-random walk. */
+export type LiveChannel = { id: ChannelId; unit: string; value: number };
+
+export const liveChannels: LiveChannel[] = channels.map((c) => ({
+  id: c.id,
+  unit: c.unit,
+  value: liveSnapshot[c.id],
+}));
+
+/**
+ * One-minute parked trace for the mini charts: a small random walk around the
+ * pack's resting voltage, clamped like a car that is sitting still. The drive
+ * cycle in telemetry-sim.sample tells a different story (acceleration, regen);
+ * both anchor on the same channel facts.
+ */
 export function liveTrace(points = 90): number[] {
   const out: number[] = [];
   let v = 398.6;
