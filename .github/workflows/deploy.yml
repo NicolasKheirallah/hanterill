@@ -49,6 +49,12 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
 
+      # This workflow fires on master pushes and release events without CI in
+      # the path, so the quality seam has to live here too: lint, types and
+      # the full gate suite must pass before anything is uploaded for publish.
+      - name: Site gates
+        run: npm run gates
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out

@@ -103,15 +103,15 @@ export const footerNav = [
 ] as const;
 
 /**
- * The download panel's three OS rows. No architecture claims here: which
- * builds exist is a fact of the current release, and DownloadPanel derives
- * that from the actual release assets so the panel cannot advertise a file
- * that is not there.
+ * The download panel's three OS rows. No artifact filenames here: which builds
+ * exist is a fact of the current release, and DownloadPanel derives that from
+ * the actual release assets so the panel cannot advertise a file that is not
+ * there.
  */
 export const platforms = [
-  { id: "windows", label: "Windows", artifact: "Hanterill-setup.exe", note: "Windows 10 and 11" },
-  { id: "macos", label: "macOS", artifact: "Hanterill.dmg", note: "Apple silicon Macs" },
-  { id: "linux", label: "Linux", artifact: ".deb / .rpm / .tar.gz / .AppImage", note: "Ubuntu, Debian, Fedora, Arch" },
+  { id: "windows", label: "Windows", note: "Windows 10 and 11" },
+  { id: "macos", label: "macOS", note: "Apple silicon Macs" },
+  { id: "linux", label: "Linux", note: "Ubuntu, Debian, Fedora, Arch" },
 ] as const;
 
 export type PlatformId = (typeof platforms)[number]["id"];

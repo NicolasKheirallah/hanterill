@@ -63,6 +63,13 @@ const ci = await readFile(join(ROOT, ".github/workflows/ci.yml"), "utf8").catch(
 expect(/pull_request/.test(ci), "ci triggers on PR", "no pull_request trigger");
 expect(/lint/.test(ci) && /tsc/.test(ci), "ci runs lint and typecheck", "missing steps");
 
+// the gates run in front of publish: CI and the deploy workflow both go
+// through the one `npm run gates` script, so the list of gates lives in
+// package.json and nowhere else
+const deployYml = await readFile(join(ROOT, ".github/workflows/deploy.yml"), "utf8").catch(() => "");
+expect(ci.includes("npm run gates"), "ci runs the gates script", "npm run gates missing");
+expect(deployYml.includes("npm run gates"), "deploy runs the gates script", "publish without gates");
+
 // tsconfig stricter — parsed as the JSON it is, not grepped
 const tsconfig = JSON.parse(await readFile(join(ROOT, "tsconfig.json"), "utf8"));
 expect(tsconfig.compilerOptions?.noUnusedLocals === true, "tsconfig noUnusedLocals", "off");

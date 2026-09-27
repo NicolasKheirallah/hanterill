@@ -9,7 +9,8 @@
     "build": "next build",
     "serve": "npx serve out",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "gates": "node scripts/gates/check-sources.mjs && node scripts/gates/check-i18n.mjs && node scripts/gates/check-sv-terms.mjs && node scripts/gates/check-a11y.mjs && node scripts/gates/check-out.mjs && node scripts/gates/check-hygiene.mjs && node scripts/gates/check-budget.mjs && node scripts/gates/check-explorer.mjs --data && node scripts/gates/check-explorer.mjs --css && node scripts/gates/check-explorer.mjs --keys && node scripts/gates/check-explorer.mjs --out && node scripts/gates/check-explorer.mjs --improve && node scripts/gates/check-explorer.mjs --improve2"
   },
   "engines": {
     "node": ">=24"

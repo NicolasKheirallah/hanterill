@@ -23,18 +23,7 @@ jobs:
       - run: npm run lint
       - run: npx tsc --noEmit
       - run: npm run build
+      # The same one-shot a contributor runs locally; deploy.yml runs it
+      # before publishing too, so nothing ships unverified.
       - name: Site gates
-        run: |
-          node scripts/gates/check-sources.mjs
-          node scripts/gates/check-i18n.mjs
-          node scripts/gates/check-sv-terms.mjs
-          node scripts/gates/check-a11y.mjs
-          node scripts/gates/check-out.mjs
-          node scripts/gates/check-hygiene.mjs
-          node scripts/gates/check-budget.mjs
-          node scripts/gates/check-explorer.mjs --data
-          node scripts/gates/check-explorer.mjs --css
-          node scripts/gates/check-explorer.mjs --keys
-          node scripts/gates/check-explorer.mjs --out
-          node scripts/gates/check-explorer.mjs --improve
-          node scripts/gates/check-explorer.mjs --improve2
+        run: npm run gates

@@ -9,6 +9,7 @@ import { detectPlatform } from "@/lib/platform";
 import {
   archMatches,
   assetArchLabel,
+  assetFormat,
   assetsForPlatform,
   detectArch,
   formatBytes,
@@ -113,7 +114,7 @@ export function DownloadPanel({ release }: { release: Release | null }) {
                           className="press inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-sm border border-line-strong px-4 text-[14px] font-medium text-text-primary transition-colors hover:bg-bg-secondary"
                         >
                           <Download className="h-4 w-4" strokeWidth={1.75} />
-                          {t("downloadFormat", { format: assetFormatOf(asset.name) })}
+                          {t("downloadFormat", { format: assetFormat(asset.name) })}
                         </a>
                       </li>
                     );
@@ -121,9 +122,10 @@ export function DownloadPanel({ release }: { release: Release | null }) {
                 </ul>
               ) : (
                 // No asset matched (offline, or the release ships nothing for
-                // this OS): one honest row pointing at the releases page.
+                // this OS): one honest row — the platform note, never a
+                // wish-list filename — pointing at the releases page.
                 <div className="flex flex-col gap-2 border-t border-line pt-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="font-mono text-[12px] text-text-muted">{p.artifact}</div>
+                  <div className="font-mono text-[12px] text-text-muted">{p.note}</div>
                   <a
                     href={site.releasesUrl}
                     target="_blank"
@@ -193,11 +195,4 @@ export function DownloadPanel({ release }: { release: Release | null }) {
       ) : null}
     </div>
   );
-}
-
-/** Lowercase extension from an asset name: ".dmg", ".exe", ".deb". */
-function assetFormatOf(name: string): string {
-  if (/\.tar\.gz$/i.test(name)) return ".tar.gz";
-  const m = name.match(/(\.[a-z]+)$/i);
-  return m ? m[1].toLowerCase() : "";
 }
