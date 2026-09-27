@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
 import { docGroups, docSummary, docTitle, docs } from "@/lib/docs";
+import { docTasks } from "@/lib/task-routes";
 import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({
@@ -13,19 +14,6 @@ export async function generateMetadata({
   const { locale } = await params;
   return pageMeta({ locale, path: "/docs", id: "docs" });
 }
-
-/**
- * Task entry points, in the order a new owner meets them. The grouped
- * reference below stays complete; these four answer the goal a reader arrives
- * with before they know the taxonomy. Hrefs are structure; labels live in the
- * message catalog (`docs.tasks`).
- */
-const docTasks = [
-  { key: "connect", href: "/docs/connection" },
-  { key: "support", href: "/docs/supported-vehicles" },
-  { key: "faults", href: "/docs/dtc-scanning" },
-  { key: "battery", href: "/docs/battery-diagnostics" },
-] as const;
 
 export default async function DocsIndex({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

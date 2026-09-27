@@ -1,0 +1,23 @@
+{
+  "taskRoutes": [
+    { "key": "noVehicle", "href": "/docs/troubleshooting" },
+    { "key": "usedBattery", "href": "/docs/battery-diagnostics" },
+    { "key": "worthBuying", "href": "/docs/inspection-reports" },
+    { "key": "activeFaults", "href": "/docs/dtc-scanning" },
+    { "key": "repairCleared", "href": "/docs/sessions-and-evidence" },
+    { "key": "dealerUpdate", "href": "/docs/firmware-and-inventory" },
+    { "key": "flatBattery", "href": "/docs/parasitic-drain" },
+    { "key": "powerLoss", "href": "/docs/live-telemetry" },
+    { "key": "intermittent", "href": "/docs/live-telemetry" },
+    { "key": "modulesFitted", "href": "/docs/firmware-and-inventory" },
+    { "key": "didMeaning", "href": "/docs/did-catalogue" },
+    { "key": "customerReport", "href": "/docs/inspection-reports" },
+    { "key": "buildLimits", "href": "/docs/capabilities-and-gating" }
+  ],
+  "docTasks": [
+    { "key": "connect", "href": "/docs/connection" },
+    { "key": "support", "href": "/docs/supported-vehicles" },
+    { "key": "faults", "href": "/docs/dtc-scanning" },
+    { "key": "battery", "href": "/docs/battery-diagnostics" }
+  ]
+}

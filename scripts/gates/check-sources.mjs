@@ -145,20 +145,27 @@ for (const [f, c] of all) {
 }
 expect(!/revalidate:\s*3600/.test(await read("src/lib/github.ts")), "meaningless revalidate", "still present");
 
-// 13. Task-router hrefs resolve, and every locale has a label for each row.
-const taskRoutes = await read("src/lib/task-routes.ts");
-const routeKeys = [...taskRoutes.matchAll(/key:\s*"(\w+)",\s*href:\s*"(\/docs\/[a-z-]+)"/g)].map(
-  (m) => ({ key: m[1], href: m[2] }),
-);
-expect(routeKeys.length > 0, "task routes present", "none parsed");
-for (const r of routeKeys) {
+// 13. Task-route hrefs resolve, and every locale has a label for each row.
+//     The tables are data (src/lib/task-routes.json): taskRoutes drives the
+//     TaskRouter table (labels under tasks.rows.*), docTasks the task cards
+//     on the docs index (labels under docs.tasks.*).
+const taskTables = JSON.parse(await read("src/lib/task-routes.json"));
+const taskRows = taskTables.taskRoutes ?? [];
+const docTaskRows = taskTables.docTasks ?? [];
+expect(taskRows.length > 0, "task routes present", "none");
+expect(docTaskRows.length > 0, "docs index tasks present", "none");
+for (const r of [...taskRows, ...docTaskRows]) {
   expect(metaSlugs.includes(r.href.replace("/docs/", "")), `task route ${r.key} target`, r.href);
 }
 const enMsgs = JSON.parse(await read("src/messages/en.json"));
 const svMsgs = JSON.parse(await read("src/messages/sv.json"));
-for (const r of routeKeys) {
-  expect(!!enMsgs.tasks?.rows?.[r.key], `tasks en label ${r.key}`, "missing");
-  expect(!!svMsgs.tasks?.rows?.[r.key], `tasks sv label ${r.key}`, "missing");
+for (const r of taskRows) {
+  expect(!!enMsgs.tasks?.rows?.[r.key]?.task && !!enMsgs.tasks?.rows?.[r.key]?.screen, `tasks en label ${r.key}`, "missing");
+  expect(!!svMsgs.tasks?.rows?.[r.key]?.task && !!svMsgs.tasks?.rows?.[r.key]?.screen, `tasks sv label ${r.key}`, "missing");
+}
+for (const r of docTaskRows) {
+  expect(!!enMsgs.docs?.tasks?.[r.key]?.title && !!enMsgs.docs?.tasks?.[r.key]?.body, `docs tasks en label ${r.key}`, "missing");
+  expect(!!svMsgs.docs?.tasks?.[r.key]?.title && !!svMsgs.docs?.tasks?.[r.key]?.body, `docs tasks sv label ${r.key}`, "missing");
 }
 
 console.log(`source checks: ${checks.passed} passed, ${checks.failed} failed`);

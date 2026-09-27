@@ -3,33 +3,17 @@ import { site } from "@/lib/site";
 import { docsSlugs } from "@/lib/docs";
 import { getLatestRelease } from "@/lib/github";
 import { routing } from "@/i18n/routing";
+import routesJson from "@/lib/generated/routes.json";
 
 // Required under output: "export" — the build errors on this route otherwise.
 export const dynamic = "force-static";
 
-const paths = [
-  "",
-  "/features",
-  "/features/walkthrough",
-  "/features/battery-health",
-  "/features/vehicle-diagnostics",
-  "/features/live-data",
-  "/features/system-telemetry",
-  "/features/inspection-reports",
-  "/features/sessions-and-evidence",
-  "/features/service-functions",
-  "/case-study",
-  "/vehicles",
-  "/network",
-  "/download",
-  "/changelog",
-  "/screenshots",
-  "/troubleshooting",
-  "/docs",
-  "/safety",
-  "/privacy",
-  "/about",
-  "/projects",
+// The marketing routes are generated: prebuild walks src/app/[locale] and
+// records every directory with a page.tsx, so a page is listed the moment it
+// exists instead of being typed into this array in parallel with the
+// filesystem. The docs' [...slug] pages come from the docs registry below.
+const paths: string[] = [
+  ...routesJson.routes,
   ...docsSlugs().map((s) => `/docs/${s}`),
 ];
 

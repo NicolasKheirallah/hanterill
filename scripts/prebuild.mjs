@@ -184,6 +184,36 @@ async function buildCommandIndex({ metas }) {
   );
 }
 
+// ---------------------------------------------------------------- routes ----
+
+// The sitemap lists every page the app router can emit, and the filesystem is
+// the truth about that. Walk src/app/[locale] and record each directory that
+// holds a page.tsx, so a page is in the sitemap the moment it exists instead
+// of being typed into a parallel list and only caught by a gate. Route groups
+// and dynamic segments are skipped; the docs' [...slug] pages are added by
+// sitemap.ts from the docs registry.
+async function buildRoutes() {
+  const LOCALE_DIR = join(ROOT, "src/app", "[locale]");
+  const routes = [];
+  if (existsSync(join(LOCALE_DIR, "page.tsx"))) routes.push("");
+  async function walk(dir, prefix) {
+    for (const e of await readdir(dir, { withFileTypes: true })) {
+      if (!e.isDirectory()) continue;
+      if (e.name.startsWith("_") || e.name.startsWith(".") || /^[([]/.test(e.name)) continue;
+      const child = join(dir, e.name);
+      const path = `${prefix}/${e.name}`;
+      if (existsSync(join(child, "page.tsx"))) routes.push(path);
+      await walk(child, path);
+    }
+  }
+  await walk(LOCALE_DIR, "");
+  routes.sort((a, b) => a.length - b.length || a.localeCompare(b));
+  const outDir = join(ROOT, "src/lib/generated");
+  await mkdir(outDir, { recursive: true });
+  await writeFile(join(outDir, "routes.json"), JSON.stringify({ generated: "prebuild", routes }, null, 2) + "\n");
+  console.log(`prebuild: routes.json (${routes.length} pages)`);
+}
+
 if (!existsSync(join(ASSETS, "overview.png"))) {
   console.error("prebuild: public/assets missing, run from the repo root");
   process.exit(1);
@@ -193,3 +223,4 @@ await buildOg();
 const registry = await readDocsRegistry();
 await buildDocsRegistry(registry);
 await buildCommandIndex(registry);
+await buildRoutes();
