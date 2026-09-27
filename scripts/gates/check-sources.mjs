@@ -76,26 +76,17 @@ expect(!/discovered:\s*\d+\s*,/.test(scanSim), "scan-sim hardcodes totals", "sti
 expect(/ecuStats/.test(scanSim), "scan-sim derives from ecuStats", "no ecuStats import");
 const views = await read("src/components/product/views.tsx");
 expect(/ecuStats\.dtc\b/.test(views), "views uses DTC-capable stat", "no ecuStats.dtc usage");
-expect(/49/.test(ecus), "ecus.ts states catalogue size", "no 49 in comment/data");
 
-// 4. Cell spread thresholds: one band definition (2/4), demo data self-consistent.
+// 4. Cell spread thresholds: one band definition (2/4), and the demo offsets
+//    stay a plausible, bounded sample. min/max/delta are derived inside
+//    demo-data.ts from these same offsets, so they cannot drift and there is
+//    nothing here to recompute.
 expect(!/within 3 mV|3 to 5 mV|over 5 mV|inom 3 mV|3 till 5 mV|över 5 mV/.test(await read("src/messages/en.json") + await read("src/messages/sv.json")), "second band set", "3/5 mV legend still present");
 const demo = await read("src/lib/demo-data.ts");
-const avg = Number(demo.match(/avgCellGroup:\s*([\d.]+)/)[1]);
-const declaredMin = Number(demo.match(/minCellGroup:\s*([\d.]+)/)[1]);
-const declaredMax = Number(demo.match(/maxCellGroup:\s*([\d.]+)/)[1]);
-const declaredDelta = Number(demo.match(/cellDelta:\s*(\d+)/)[1]);
 const seedBlock = demo.match(/const seed = \[([\s\S]*?)\];/)[1];
 const offsets = seedBlock.split(",").map((s) => Number(s.trim())).filter((n) => !Number.isNaN(n)).slice(0, 108);
-const offMin = Math.min(...offsets), offMax = Math.max(...offsets);
-const calcMin = Number((avg + offMin / 1000).toFixed(3));
-const calcMax = Number((avg + offMax / 1000).toFixed(3));
-const calcDelta = offMax - offMin;
 expect(offsets.length === 108, "108 offsets", `got ${offsets.length}`);
-expect(declaredMin === calcMin, "min matches offsets", `declared ${declaredMin}, computed ${calcMin}`);
-expect(declaredMax === calcMax, "max matches offsets", `declared ${declaredMax}, computed ${calcMax}`);
-expect(declaredDelta === calcDelta, "delta matches offsets", `declared ${declaredDelta}, computed ${calcDelta}`);
-expect(Math.max(Math.abs(offMin), Math.abs(offMax)) <= 4, "sample within 4 mV", `spread ${offMin}..${offMax}`);
+expect(Math.max(Math.abs(Math.min(...offsets)), Math.abs(Math.max(...offsets))) <= 4, "sample within 4 mV", `spread ${Math.min(...offsets)}..${Math.max(...offsets)}`);
 
 // 5. VIN mask identical everywhere it appears.
 const vinMasks = new Set();

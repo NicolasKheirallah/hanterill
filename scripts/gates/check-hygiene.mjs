@@ -63,9 +63,9 @@ const ci = await readFile(join(ROOT, ".github/workflows/ci.yml"), "utf8").catch(
 expect(/pull_request/.test(ci), "ci triggers on PR", "no pull_request trigger");
 expect(/lint/.test(ci) && /tsc/.test(ci), "ci runs lint and typecheck", "missing steps");
 
-// tsconfig stricter
-const tsconfig = await readFile(join(ROOT, "tsconfig.json"), "utf8");
-expect(/"noUnusedLocals":\s*true/.test(tsconfig), "tsconfig noUnusedLocals", "off");
+// tsconfig stricter — parsed as the JSON it is, not grepped
+const tsconfig = JSON.parse(await readFile(join(ROOT, "tsconfig.json"), "utf8"));
+expect(tsconfig.compilerOptions?.noUnusedLocals === true, "tsconfig noUnusedLocals", "off");
 
 // package.json hygiene: dead tooltip dep removed (InfoLabel gone), typecheck script added
 const pkg = JSON.parse(await readFile(join(ROOT, "package.json"), "utf8"));

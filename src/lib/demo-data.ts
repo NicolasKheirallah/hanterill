@@ -14,28 +14,10 @@ export const demoVehicle = {
   odometer: "41 208 km",
 };
 
-export const batteryDemo = {
-  soh: 94.72,
-  soc: 62,
-  packVoltage: 398.6,
-  packCurrent: -1.4,
-  avgCellGroup: 3.721,
-  minCellGroup: 3.717,
-  maxCellGroup: 3.725,
-  cellDelta: 8,
-  tempMin: 21.4,
-  tempMax: 24.9,
-  capacityNominal: 78,
-  capacityEstimated: 73.9,
-  modules: 27,
-  groupsPerModule: 4,
-};
-
 /**
  * 108 potentials as offset in millivolts from the pack mean. Fixed set.
  * Bands: |offset| <= 2 ok, <= 4 watch, above 4 flagged. Module 14 carries the
- * single imbalanced pair (-4 / +4), which is the pack delta of 8 mV quoted
- * above.
+ * single imbalanced pair (-4 / +4).
  */
 export const cellOffsets: number[] = (() => {
   const seed = [
@@ -48,6 +30,28 @@ export const cellOffsets: number[] = (() => {
   ];
   return seed.slice(0, 108);
 })();
+
+const avgCellGroup = 3.721;
+
+export const batteryDemo = {
+  soh: 94.72,
+  soc: 62,
+  packVoltage: 398.6,
+  packCurrent: -1.4,
+  avgCellGroup,
+  // Derived from cellOffsets, never declared: the spread story and the 108
+  // offsets it describes cannot disagree. Module 14's -4/+4 pair is the
+  // 8 mV pack delta the panels quote.
+  minCellGroup: Number((avgCellGroup + Math.min(...cellOffsets) / 1000).toFixed(3)),
+  maxCellGroup: Number((avgCellGroup + Math.max(...cellOffsets) / 1000).toFixed(3)),
+  cellDelta: Math.max(...cellOffsets) - Math.min(...cellOffsets),
+  tempMin: 21.4,
+  tempMax: 24.9,
+  capacityNominal: 78,
+  capacityEstimated: 73.9,
+  modules: 27,
+  groupsPerModule: 4,
+};
 
 /** Absolute voltage for potential i (module = floor(i/4)+1, group = i%4+1). */
 export function cellVoltage(index: number): number {
