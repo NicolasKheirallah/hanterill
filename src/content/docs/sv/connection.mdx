@@ -1,4 +1,4 @@
-På skärmen **Anslutning** väljer du bil och nätverksadapter. Samma vanliga ENET-kabel fungerar för alla modeller som stöds, även Volvo EX30, Polestar 4 och Zeekr. Börja med den automatiska sökningen. Det finns också ett direktanslutningsläge, alternativ för särskild CAN-utrustning och ett demoläge som fungerar utan bil.
+På skärmen **Anslutning** väljer du bil och nätverksadapter. Samma vanliga ENET-kabel fungerar för alla modeller som stöds, även Volvo EX30, Polestar 4 och Zeekr. Börja med den automatiska sökningen. Det finns också ett direktanslutningsläge och ett demoläge som fungerar utan bil.
 
 ## Innan du klickar på Anslut: fordonets tändningsläge
 
@@ -8,7 +8,7 @@ att alla styrenheter ska svara vid en skanning bör fordonet vara i aktivt tänd
 - **På eldrivna CMA- och SEA1-fordon**: Sitt i förarsätet med nyckeln i kupén och tryck ned bromspedalen en gång så att förardisplayen tänds, men behåll växelväljaren i **P (Park)**.
 - **På SPA- och bensin-/hybridfordon**: Tryck eller vrid på startreglaget utan att röra bromspedalen för att slå på tändningsläge II.
 
-## De fyra anslutningslägena
+## Anslutningslägena
 
 ### 1. Automatisk identifiering (Rekommenderas för Ethernet / DoIP)
 
@@ -30,18 +30,7 @@ gateway använder från en tidigare session:
 2. Fyll i fordonets IP-adress (ett `169.254.x.x`-nummer) och standardporten `13400`.
 3. Klicka på **Anslut**. Hanterill öppnar då en direkt TCP-anslutning till fordonets gateway utan att behöva använda UDP.
 
-### 3. CAN-adapter (ISO-TP och passiv CAN-lyssning)
-
-Om du använder ett dedikerat USB-till-CAN-gränssnitt i stället för en Ethernet-kabel kan Hanterill
-kommunicera direkt över fordonets CAN-bussar:
-
-- **Linux SocketCAN**: Ansluter till ett inbyggt nätverksgränssnitt som `can0` eller `vcan0`.
-- **Lawicel SLCAN (macOS, Windows och Linux)**: Ansluter till en USB-serie-CAN-adapter (exempelvis CANable eller USBtin) vid `500 kbps` eller `250 kbps`.
-
-Utöver att ställa diagnostiska frågor över ISO-TP kan en CAN-anslutning även **lyssna passivt på
-kontinuerliga CAN-meddelanden** på bussen utan att sända några egna förfrågningar.
-
-### 4. Demoläge (Utforska programmet utan fordon)
+### 3. Demoläge (Utforska programmet utan fordon)
 
 Om du vill testa Hanterill vid skrivbordet innan du går ut till fordonet:
 
@@ -52,6 +41,10 @@ Om du vill testa Hanterill vid skrivbordet innan du går ut till fordonet:
 Alla skärmar i programmet fungerar då precis som vid en riktig anslutning, med en tydlig
 **Demo**-markering i sidofältet så att demodata aldrig blandas ihop med dina riktiga
 fordonssessioner.
+
+Appen har inget CAN-läge: alla vyer läser över Ethernet-länken. Passiv CAN-lyssning finns bara
+som en experimentell kommandoradsväg för specialister (SocketCAN på Linux, eller en CANsub-adapter
+från CSS Electronics) och beskrivs i [kommunikationsguiden](/docs/architecture).
 
 ## Vad som händer när du ansluter
 

@@ -109,12 +109,12 @@ CAN is used in two distinct ways during diagnostics:
 
 ### Diagnostic questions over CAN (ISO-TP)
 
-When you connect to a vehicle's CAN pins using a compatible USB-to-CAN hardware adapter (such as a
-SocketCAN or Lawicel adapter), the same UDS diagnostic questions travel over CAN instead of
-Ethernet. Because a single standard CAN frame holds only 8 bytes of data, a transport rule called
-**ISO-TP (ISO 15765)** automatically splits longer diagnostic messages (like a 17-character VIN or
-a list of fault codes) into a sequence of small numbered packets and reassembles them at the other
-end.
+When a vehicle's CAN pins are reached through a compatible CAN interface (a SocketCAN interface on
+Linux, or a CSS Electronics CANsub adapter), the same UDS diagnostic questions travel over CAN
+instead of Ethernet. Because a single standard CAN frame holds only 8 bytes of data, a transport
+rule called **ISO-TP (ISO 15765)** automatically splits longer diagnostic messages (like a
+17-character VIN or a list of fault codes) into a sequence of small numbered packets and
+reassembles them at the other end.
 
 ### Passive CAN bus listening (continuous broadcast frames)
 
@@ -125,13 +125,14 @@ There is an important difference between **UDS diagnostic polling** and **native
 
 Because the car's gateway only forwards question-and-answer UDS traffic over the Ethernet cable,
 some fast real-time signals that travel continuously on the internal CAN buses are not exposed as
-individual UDS questions. When you connect a supported CAN hardware interface, Hanterill can listen
-passively to those continuous CAN broadcasts in real time without adding a single extra request to
-the car's network.
+individual UDS questions. Hanterill's desktop screens all read over the Ethernet link; passive CAN
+listening is a separate, experimental command-line lane (SocketCAN on Linux, or a CANsub adapter)
+whose readings stay provisional. Where connected, it listens to the continuous CAN broadcasts
+without adding a single extra request to the car's network.
 
 ## Next
 
-- [Connection](/docs/connection): how to connect with an Ethernet cable or a CAN adapter.
+- [Connection](/docs/connection): how the desktop app connects with an ENET cable.
 - [ECU reference](/docs/ecu-reference): the control units across the car's networks.
 - [CMA Network Explorer](/network): trace the Ethernet, CAN, LIN, and FlexRay buses visually.
 - [Safety](/docs/safety): how Hanterill keeps diagnostic traffic safe for your vehicle.

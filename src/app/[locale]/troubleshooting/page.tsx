@@ -5,7 +5,7 @@ import { LocalizedPageHeader } from "@/components/ui/PageHeader";
 import { Section, MoreLink, Figure } from "@/components/ui/layout";
 import { Disclosure } from "@/components/ui/Disclosure";
 import { StatusMarker } from "@/components/ui/StatusBadge";
-import { RecommendedAdapters } from "@/components/download/RecommendedAdapters";
+import { AdapterList } from "@/components/docs/mdx/AdapterList";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -90,7 +90,7 @@ export default async function TroubleshootingPage({ params }: { params: Promise<
 
           <aside className="lg:sticky lg:top-24">
             <Figure caption={t("figureCaption")}>
-              <RecommendedAdapters />
+              <AdapterList />
             </Figure>
             <p className="mt-6 font-mono text-[length:var(--text-micro)] leading-relaxed text-text-muted">
               {t("stillStuck")}

@@ -16,6 +16,11 @@ märker att ingen router finns tilldelar den automatiskt en länk-lokal adress s
 `169.254.x.x`. Om du klickade på **Skanna nätverk** samma sekund som du satte i kabeln, vänta 10
 sekunder och prova igen.
 
+- **På Linux**: NetworkManager väljer inte en länk-lokal adress av sig själv. Ställ in IPv4-metoden
+  för den trådbundna anslutningen till **endast länk-lokal** en gång (till exempel
+  `nmcli connection modify "Wired connection 1" ipv4.method link-local`) och koppla sedan ur och i
+  kabeln igen.
+
 ### Kontrollera brandvägg och lokalt nätverkstillstånd
 
 - **macOS**: Gå till **Systeminställningar -> Integritet och säkerhet -> Lokalt nätverk** och se till att reglaget bredvid **Hanterill** är påslaget.

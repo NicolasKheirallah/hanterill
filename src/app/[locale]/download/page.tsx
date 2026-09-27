@@ -7,7 +7,7 @@ import { Section, MoreLink } from "@/components/ui/layout";
 import { Prose } from "@/components/ui/Prose";
 import { DownloadPanel } from "@/components/download/DownloadPanel";
 import { Figure } from "@/components/ui/layout";
-import { RecommendedAdapters } from "@/components/download/RecommendedAdapters";
+import { AdapterList } from "@/components/docs/mdx/AdapterList";
 import { getLatestRelease } from "@/lib/github";
 import { site } from "@/lib/site";
 
@@ -71,7 +71,7 @@ export default async function DownloadPage({ params }: { params: Promise<{ local
             <p>{t("pBudget")}</p>
           </Prose>
           <Figure caption={td("adaptersCaption")}>
-            <RecommendedAdapters />
+            <AdapterList />
           </Figure>
         </div>
 

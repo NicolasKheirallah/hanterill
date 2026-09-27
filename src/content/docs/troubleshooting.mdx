@@ -21,6 +21,7 @@ When you first plug the Ethernet cable in, your computer spends 5 to 10 seconds 
 
 - **What to do**: Wait about 10 seconds after plugging the cable in until the adapter on the **Connection** screen shows an address starting with `169.254.`, then click **Find vehicle**.
 - **Do not set a `192.168.x.x` static IP**: Leave your Ethernet adapter set to **Automatic (DHCP)**. Setting a home-style `192.168.x.x` address prevents your computer from talking to the car's `169.254.x.x` gateway.
+- **On Linux**: NetworkManager does not fall back to a link-local address on its own. Set the wired connection's IPv4 method to **Link-Local Only** once (for example `nmcli connection modify "Wired connection 1" ipv4.method link-local`), then unplug and replug the cable.
 
 ## 4. Is a VPN or firewall blocking port 13400?
 

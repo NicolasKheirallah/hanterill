@@ -3,12 +3,14 @@ import { getTranslations } from "next-intl/server";
 /**
  * The adapters that actually work, and the ones that do not.
  *
- * This is the first pre-purchase question for a passive-cable product - the
- * README names six makes and none of it was on the site. Anything with a
- * chipset that terminates the link is the wrong part, so the list is
- * deliberately short and specific rather than "any USB Ethernet adapter".
+ * This is the first pre-purchase question for a passive-cable product. The
+ * list is deliberately short and specific rather than "any USB Ethernet
+ * adapter": anything with a chipset that terminates the link is the wrong
+ * part. One component for every surface that tells the story — the docs
+ * hardware page, the download page and the troubleshooting page — all reading
+ * the `adapters` message namespace, so the list cannot drift between them.
  */
-export async function RecommendedAdapters() {
+export async function AdapterList() {
   const t = await getTranslations("adapters");
 
   const works = t.raw("works") as string[];

@@ -1,29 +1,45 @@
+import { AdapterList } from "@/components/docs/mdx/AdapterList";
+import { ScreenShot } from "@/components/docs/mdx/ScreenShot";
+
 For the usual Hanterill checks, you need an **ENET cable** and a wired Ethernet port on your computer. The cable joins the car's diagnostic socket to your computer. You do not need a wireless scan dongle or an account.
 
 ## Choose an ENET cable
 
-Look for a cable described as **OBD-II to Ethernet (ENET)**. It has a wide plug for the car at one end and a network plug for the computer at the other. It is a cable, so there is no software to install for the cable itself.
+Look for a cable described as **OBD-II to Ethernet (ENET)**. It has a wide plug for the car at one end and a network plug for the computer at the other. It is a passive cable with no electronics inside, so there is no software to install for the cable itself.
 
-The same ENET cable is used for all models Hanterill supports. You do not need a different cable for Volvo EX30, Polestar 4 or Zeekr vehicles.
+Listings use many names for the same part: "ENET cable", "OBD-II to Ethernet", "OBD to RJ45", and often "BMW ENET cable" (sold for the ISTA and E-Sys workshop tools). They are all wired the same. Buy whichever passive OBD-II-to-RJ45 cable you find — on eBay, Amazon, or at a car-parts shop — and it will work.
+
+The same ENET cable is used for all models Hanterill supports, including Volvo EX30, Polestar 4 and Zeekr. Models differ in what has been verified in software, not in hardware; [Supported vehicles](/docs/supported-vehicles) tracks that per model.
 
 If the car is awake but your computer never shows an Ethernet connection, check both plugs and the computer's Ethernet adapter before changing software settings. [Troubleshooting](/docs/troubleshooting) walks through the checks in order.
 
 ## Connect the cable to your computer
 
-If your computer has a network socket, plug the cable in there. Otherwise, use a standard USB-to-Ethernet adapter. A dock with a working network socket is also suitable.
+Any wired Ethernet port works: the built-in socket on your computer, a **USB-C hub or dock with an RJ45 port**, or a dedicated USB Ethernet adapter. The [adapter list](#adapters-that-work-and-ones-that-do-not) below names chipsets and makes that are known to work.
 
-Leave the adapter's network settings on **automatic**. The car and computer establish a direct local connection. Your computer may report that this network has no internet; that is expected and does not mean the cable has failed. You can keep Wi-Fi on for other tasks.
+Leave the adapter's network settings on **automatic**. The car and computer establish a direct local connection. Your computer may report that this network has no internet; that is expected and does not mean the cable has failed. You can keep Wi-Fi on for other tasks. On Linux, set the connection to **Link-Local** instead of DHCP once — NetworkManager does not fall back to a link-local address by itself.
 
-## Why a wireless scan dongle is different
+The **Connection** screen in the app lists the adapters it sees, ranks the wired ones first, and shows a plain-language verdict for each, so an adapter problem usually announces itself there.
 
-A common Bluetooth or Wi-Fi OBD dongle uses a different connection from the Ethernet link Hanterill uses for its regular vehicle checks. It cannot replace an ENET cable for reading the supported battery, fault and module screens.
+<ScreenShot
+  root="/assets/connections.png"
+  alt="The Connection screen listing network adapters with a verdict for each"
+  caption="The Connection screen ranks the adapters it sees and tells you which one to use."
+/>
 
-## When a separate CAN adapter matters
+## Adapters that work, and ones that do not
 
-Some fast signals are broadcast only on the car's internal networks. They may need a separate CAN adapter and access to the relevant internal network. This is optional specialist work. An ENET cable is enough for Hanterill's regular connection, battery, fault-code and service screens. The [communication guide](/docs/architecture) explains the difference in plain language.
+The short version: the adapter must hand your computer a real network interface. Wireless OBD dongles and anything that speaks a serial protocol cannot carry the diagnostic traffic, no matter what the listing promises.
+
+<AdapterList />
+
+## What a CAN adapter will not do
+
+Hanterill's screens all run over the Ethernet link, and the desktop app does not use a CAN adapter — adding one does not unlock anything. The car's internal CAN buses are explained in the [communication guide](/docs/architecture), including the experimental command-line lane that can passively listen to them; that is specialist tooling, not part of the app you download.
 
 ## Next steps
 
 - [Getting started](/docs/getting-started): connect for the first time.
+- [Connection](/docs/connection): the link-local network setup behind that "no internet" warning, in detail.
 - [Supported vehicles](/docs/supported-vehicles): check what has been verified for your model.
 - [Troubleshooting](/docs/troubleshooting): work through connection problems.

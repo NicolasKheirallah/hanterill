@@ -1,29 +1,45 @@
-För Hanterills vanliga kontroller behöver du en **ENET-kabel** och en kabelansluten Ethernet-port på datorn. Kabeln går mellan bilens diagnosuttag och datorn. Du behöver ingen trådlös diagnosdongel eller något konto.
+import { AdapterList } from "@/components/docs/mdx/AdapterList";
+import { ScreenShot } from "@/components/docs/mdx/ScreenShot";
+
+För Hanterills vanliga kontroller behöver du en **ENET-kabel** och en kabelansluten Ethernet-port på datorn. Kabeln går mellan fordonets diagnosuttag och datorn. Du behöver ingen trådlös diagnosdongel eller något konto.
 
 ## Välj en ENET-kabel
 
-Leta efter en kabel som beskrivs som **OBD-II till Ethernet (ENET)**. Den har en bred kontakt för bilen i ena änden och en nätverkskontakt för datorn i den andra. Själva kabeln kräver ingen programvara.
+Leta efter en kabel som beskrivs som **OBD-II till Ethernet (ENET)**. Den har en bred kontakt för fordonet i ena änden och en nätverkskontakt för datorn i den andra. Det är en passiv kabel utan elektronik, så själva kabeln kräver ingen programvara.
 
-Samma ENET-kabel används för alla bilmodeller som Hanterill stöder. Du behöver ingen annan kabel för Volvo EX30, Polestar 4 eller Zeekr.
+Säljannonser använder många namn på samma kabel: "ENET-kabel", "OBD-II till Ethernet", "OBD till RJ45" och ofta "BMW ENET-kabel" (såld för verkstadsverktygen ISTA och E-Sys). Alla är kopplade på samma sätt. Köp vilken passiv OBD-II-till-RJ45-kabel du hittar — på eBay, Amazon eller i en bildelsbutik — så fungerar den.
 
-Om bilen är vaken men datorn aldrig visar någon Ethernet-anslutning, kontrollera båda kontakterna och datorns Ethernet-adapter innan du ändrar nätverksinställningar. [Felsökning](/docs/troubleshooting) tar dig genom kontrollerna i ordning.
+Samma ENET-kabel används för alla modeller Hanterill stöder, bland annat Volvo EX30, Polestar 4 och Zeekr. Modeller skiljer sig i vad som har verifierats i programvaran, inte i hårdvaran; [Fordon som stöds](/docs/supported-vehicles) håller reda på det per modell.
+
+Om fordonet är vaket men datorn aldrig visar någon Ethernet-anslutning, kontrollera båda kontakterna och datorns Ethernet-adapter innan du ändrar nätverksinställningar. [Felsökning](/docs/troubleshooting) tar dig genom kontrollerna i ordning.
 
 ## Anslut kabeln till datorn
 
-Om datorn har en nätverksport ansluter du kabeln där. Annars använder du en vanlig USB-till-Ethernet-adapter. En docka med en fungerande nätverksport går också bra.
+Alla trådbundna Ethernet-portar fungerar: den inbyggda porten på datorn, en **USB-C-hubb eller docka med RJ45-port** eller en egen USB-Ethernet-adapter. [Adapterlistan](#adaptrar-som-fungerar-och-sådana-som-inte-gör-det) nedan namnger kretsar och märken som är kända att fungera.
 
-Låt nätverksinställningarna för adaptern stå på **automatiskt**. Bilen och datorn skapar en direkt, lokal anslutning. Datorn kan skriva att nätverket saknar internet. Det är normalt och betyder inte att kabeln har slutat fungera. Du kan ha Wi-Fi på samtidigt för andra uppgifter.
+Låt nätverksinställningarna för adaptern stå på **automatiskt**. Fordonet och datorn skapar en direkt, lokal anslutning. Datorn kan skriva att nätverket saknar internet. Det är normalt och betyder inte att kabeln har slutat fungera. Du kan ha Wi-Fi på samtidigt för andra uppgifter. På Linux ställer du in anslutningen på **länk-lokal** i stället för DHCP, en gång — NetworkManager väljer inte en länk-lokal adress av sig själv.
 
-## Varför en trådlös diagnosdongel inte ersätter kabeln
+Skärmen **Anslutning** i appen listar de adaptrar den ser, rangordnar de trådbundna först och visar ett klarspråkligt omdöme för varje, så ett adapterproblem brukar synas där.
 
-En vanlig OBD-dongel med Bluetooth eller Wi-Fi använder en annan anslutning än Ethernet-länken för Hanterills vanliga fordonskontroller. Den kan inte ersätta ENET-kabeln när du läser de batteri-, felkods- och styrenhetsvyer som stöds.
+<ScreenShot
+  root="/assets/connections.png"
+  alt="Skärmen Anslutning med lista över nätverksadaptrar och omdöme för varje"
+  caption="Skärmen Anslutning rangordnar de adaptrar den ser och talar om vilken du ska använda."
+/>
 
-## När en separat CAN-adapter behövs
+## Adaptrar som fungerar, och sådana som inte gör det
 
-Vissa snabba signaler sänds bara på bilens interna nätverk. För att se dem kan man behöva en separat CAN-adapter och åtkomst till rätt internt nätverk. Det är ett valfritt specialistarbete. ENET-kabeln räcker för Hanterills vanliga anslutning, batterivyer, felkoder och servicevyer. [Guiden om kommunikationen](/docs/architecture) förklarar skillnaden utan tekniska kommandon.
+Kort sagt: adaptern måste ge datorn ett riktigt nätverksgränssnitt. Trådlösa OBD-donglar och allt som talar ett seriellt protokoll kan inte bära diagnostiktrafiken, oavsett vad annonsen lovar.
+
+<AdapterList />
+
+## Vad en CAN-adapter inte gör
+
+Hanterills vyer körs alla över Ethernet-länken, och appen använder ingen CAN-adapter — att köpa en ger dig inget extra. Fordonets interna CAN-bussar förklaras i [kommunikationsguiden](/docs/architecture), inklusive den experimentella kommandoradsvägen som kan lyssna passivt på dem; det är specialistverktyg, inte en del av appen du laddar ner.
 
 ## Läs vidare
 
 - [Kom igång](/docs/getting-started): anslut för första gången.
+- [Anslutning](/docs/connection): nätverksuppsättningen med länk-lokal bakom varningen om "inget internet", i detalj.
 - [Fordon som stöds](/docs/supported-vehicles): se vad som har verifierats för din modell.
 - [Felsökning](/docs/troubleshooting): kontrollera vanliga anslutningsproblem.

@@ -108,11 +108,11 @@ CAN används på två skilda sätt vid diagnostik:
 
 ### Diagnostikfrågor över CAN (ISO-TP)
 
-När du ansluter till fordonets CAN-stift med en kompatibel USB-till-CAN-adapter (exempelvis en
-SocketCAN- eller Lawicel-adapter) färdas samma UDS-frågor över CAN i stället för över Ethernet.
-Eftersom en vanlig CAN-ram bara rymmer 8 bytes åt gången delar transportstandarden **ISO-TP
-(ISO 15765)** automatiskt upp längre meddelanden (som ett 17-ställigt chassinummer eller en lista
-med felkoder) i små numrerade paket och sätter ihop dem igen hos mottagaren.
+När fordonets CAN-stift nås via ett kompatibelt CAN-gränssnitt (ett SocketCAN-gränssnitt på Linux,
+eller en CANsub-adapter från CSS Electronics) färdas samma UDS-frågor över CAN i stället för över
+Ethernet. Eftersom en vanlig CAN-ram bara rymmer 8 bytes åt gången delar transportstandarden
+**ISO-TP (ISO 15765)** automatiskt upp längre meddelanden (som ett 17-ställigt chassinummer eller
+en lista med felkoder) i små numrerade paket och sätter ihop dem igen hos mottagaren.
 
 ### Passiv CAN-lyssning (kontinuerliga bussmeddelanden)
 
@@ -123,12 +123,14 @@ Det är en viktig skillnad mellan **UDS-diagnostikfrågor** och **ordinarie CAN-
 
 Eftersom fordonets gateway bara vidarebefordrar fråga-och-svar-trafik (UDS) över Ethernet-kabeln är
 vissa snabba realtidssignaler som rullar kontinuerligt på de interna CAN-bussarna inte tillgängliga
-som enskilda UDS-frågor. När du ansluter ett stödd CAN-gränssnitt kan Hanterill lyssna passivt på
-dessa kontinuerliga CAN-ramar i realtid utan att lägga till en enda egen fråga på fordonets nätverk.
+som enskilda UDS-frågor. Hanterills vyer läser alla över Ethernet-länken; passiv CAN-lyssning finns
+som en separat, experimentell kommandoradsväg (SocketCAN på Linux, eller en CANsub-adapter) och
+dess avläsningar är provisoriska. När den är ansluten lyssnar den på de kontinuerliga CAN-ramarna
+utan att lägga till en enda egen fråga på fordonets nätverk.
 
 ## Nästa steg
 
-- [Anslut till fordonet](/docs/connection): hur du ansluter med Ethernet-kabel eller CAN-adapter.
+- [Anslut till fordonet](/docs/connection): hur appen ansluter med en ENET-kabel.
 - [Styrmodulregister](/docs/ecu-reference): styrenheterna på fordonets olika nätverk.
 - [CMA-nätverksutforskaren](/network): följ Ethernet-, CAN-, LIN- och FlexRay-bussarna visuellt.
 - [Säkerhet](/docs/safety): hur Hanterill håller diagnostiktrafiken säker för ditt fordon.
