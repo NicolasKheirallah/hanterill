@@ -6,9 +6,10 @@
  * else follows Swedish motor-industry convention (styrenhet for ECU, felkod for
  * DTC, frysta ramdata for freeze frame, vilström for drain).
  *
- * The docs must speak the same language as the product. This file is the
- * mapping, and `scripts/gates/check-sv-terms.mjs` fails the build when a doc
- * uses an invented synonym instead.
+ * The docs must speak the same language as the product. The term table itself
+ * is data — `sv-terms.json`, the one artifact — and
+ * `scripts/gates/check-sv-terms.mjs` imports it directly to fail the build
+ * when a doc uses an invented synonym instead.
  *
  * Two distinct things are tracked, because they call for different fixes:
  *
@@ -24,6 +25,8 @@
  *    checked in screen-name positions, never in prose.
  */
 
+import termsJson from "./sv-terms.json";
+
 export type SvTerm = {
   /** English term as used in the docs. */
   en: string;
@@ -38,60 +41,12 @@ export type SvTerm = {
   appLabel?: string;
 };
 
-export const svTerms: SvTerm[] = [
-  // Modules and diagnostics
-  { en: "ECU", sv: "styrenhet", reject: [] },
-  { en: "fault code / DTC", sv: "felkod", reject: [] },
-  { en: "freeze frame", sv: "frysta ramdata", reject: ["frysbild", "frysbilder"] },
-  {
-    en: "ECU inventory",
-    sv: "styrmodulregister",
-    reject: ["styrenhetsinventering", "ECU-inventering"],
-    appLabel: "Styrenhetsregister",
-  },
-  { en: "module", sv: "modul", reject: [] },
-  { en: "coverage", sv: "täckning", reject: [] },
-  { en: "payload", sv: "nyttolast", reject: [] },
-
-  // Battery and energy
-  { en: "state of health", sv: "hälsotillstånd", reject: [] },
-  { en: "state of charge", sv: "laddningsnivå", reject: [] },
-  { en: "cell group", sv: "cellgrupp", reject: [] },
-  { en: "quiescent drain", sv: "viloförbrukning", reject: ["sömndrift", "sömnström"] },
-  { en: "quiescent current", sv: "vilström", reject: [] },
-
-  // Vehicle and connection
-  { en: "vehicle", sv: "fordon", reject: [] },
-  { en: "connection", sv: "anslutning", reject: [] },
-  { en: "interface", sv: "gränssnitt", reject: [] },
-  { en: "link", sv: "länk", reject: [] },
-  { en: "gateway", sv: "gateway", reject: [] },
-  { en: "routing activation", sv: "routningsaktivering", reject: ["diagnostikväg"] },
-  { en: "discovery", sv: "upptäckt", reject: ["upptäcktsbroadcast"] },
-
-  // Safety and writes
-  { en: "read-only", sv: "skrivskyddad", reject: [] },
-  { en: "write", sv: "skrivning", reject: [] },
-  { en: "confirm-gated", sv: "kräver bekräftelse", reject: ["bekräftelsekrävande", "bekräftelsegrindad"] },
-
-  // Evidence and sessions
-  { en: "evidence", sv: "bevis", reject: [] },
-  { en: "session", sv: "session", reject: [] },
-  { en: "measured", sv: "uppmätt", reject: [] },
-  { en: "derived", sv: "härledd", reject: [] },
-  { en: "decode", sv: "avkoda", reject: [] },
-
-  // App surfaces
-  { en: "live data", sv: "livedata", reject: [], appLabel: "Realtidstelemetri" },
-  { en: "inspection report", sv: "inspektionsrapport", reject: [], appLabel: "Besiktningsrapport" },
-  { en: "desktop app", sv: "appen", reject: ["skrivbordsapp"] },
-  {
-    en: "released build",
-    sv: "den skarpa versionen",
-    reject: ["släpptbygget", "släppta appen", "släpptbyggen", "släpptbygderna"],
-  },
-  { en: "capability", sv: "kapacitet", reject: [] },
-];
+export const svTerms: SvTerm[] = termsJson.map((t) => ({
+  en: t.en,
+  sv: t.sv,
+  reject: t.reject,
+  ...(t.appLabel ? { appLabel: t.appLabel } : {}),
+}));
 
 /** Every form that is never idiomatic Swedish. */
 export function rejectedSvForms(): string[] {

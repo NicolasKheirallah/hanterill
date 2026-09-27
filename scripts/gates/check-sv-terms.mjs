@@ -26,10 +26,11 @@ const dir = join(ROOT, "src/content/docs/sv");
 const files = readdirSync(dir).filter((f) => f.endsWith(".mdx"));
 const blobs = files.map((f) => [f, readFileSync(join(dir, f), "utf8")]);
 
-// 1. Rejected forms must not appear anywhere in the Swedish docs.
-const termsSrc = readFileSync(join(ROOT, "src/lib/sv-terms.ts"), "utf8");
-const rejected = [...termsSrc.matchAll(/reject:\s*\[([^\]]*)\]/g)]
-  .flatMap((m) => [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]));
+// 1. Rejected forms must not appear anywhere in the Swedish docs. The term
+//    table is data — src/lib/sv-terms.json — read as data, not parsed out of
+//    TypeScript source.
+const terms = JSON.parse(readFileSync(join(ROOT, "src/lib/sv-terms.json"), "utf8"));
+const rejected = terms.flatMap((t) => t.reject);
 
 expect(rejected.length > 5, "rejected-form list parsed", `got ${rejected.length}`);
 
