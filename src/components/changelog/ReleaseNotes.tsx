@@ -75,7 +75,8 @@ function blocks(body: string): Block[] {
     const text = line.trim();
     if (!text) {
       flushParagraph();
-      flushList();
+      // A blank line does not close a list: CHANGELOG entries separate their
+      // items with one. The list closes when a heading arrives.
       continue;
     }
     const heading = /^(#{1,6})\s+(.*?)\s*#*\s*$/.exec(text);
@@ -109,7 +110,13 @@ function blocks(body: string): Block[] {
       list.items.push(ordered[1]);
       continue;
     }
-    flushList();
+    if (list) {
+      // Continuation of the previous item. CHANGELOG bullets wrap their
+      // description onto indented lines; trimming the indent must not orphan
+      // the description out of the bullet it belongs to.
+      list.items[list.items.length - 1] += ` ${text}`;
+      continue;
+    }
     paragraph.push(text.replace(/^>\s?/, ""));
   }
   flushParagraph();
@@ -177,6 +184,43 @@ function renderBlock(block: Block, key: number): ReactNode {
 }
 
 /**
+ * Leading headings that only restate the row above them - `# Changelog`,
+ * `# Hanterill 0.2.2`, `## [0.2.1] - 2026-09-19` - are dropped, so a release
+ * body does not repeat the version and date the changelog row already shows.
+ */
+function isVersionHeading(block: Block): boolean {
+  if (block.kind !== "heading") return false;
+  const text = block.text.trim();
+  return (
+    /^changelog$/i.test(text) ||
+    /^(?:hanterill\s+)?\[?v?\d+\.\d+.*$/i.test(text)
+  );
+}
+
+/**
+ * One-line plain-text summary of a release body: the first real paragraph,
+ * inline markers stripped. Drives the collapsed changelog rows and the RSS
+ * descriptions.
+ */
+export function releaseSummary(body: string, limit = 160): string {
+  const first = blocks(body).find(
+    (b) => b.kind === "paragraph" && b.text.trim().length > 0,
+  );
+  if (!first || first.kind !== "paragraph") return "";
+  const plain = first.text
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)\s]+\)/g, "$1")
+    .replace(/https?:\/\/\S+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (plain.length <= limit) return plain;
+  const cut = plain.slice(0, limit);
+  const space = cut.lastIndexOf(" ");
+  return (space > limit * 0.6 ? cut.slice(0, space) : cut).replace(/[.,;:]$/, "") + "…";
+}
+
+/**
  * `limit` clamps how many blocks render before the rest folds behind a
  * disclosure. A single release body can be the whole CHANGELOG.md - the 0.2.0
  * notes alone ran to 19,500px - so the list page shows the top of each release
@@ -191,7 +235,12 @@ export function ReleaseNotes({
   limit?: number;
   moreLabel?: string;
 }) {
-  const all = blocks(body);
+  const parsed = blocks(body);
+  // Only the leading run of version headings is dropped; the same heading
+  // shape deeper in the body is content and stays.
+  let start = 0;
+  while (start < parsed.length && isVersionHeading(parsed[start])) start += 1;
+  const all = parsed.slice(start);
   const head = limit ? all.slice(0, limit) : all;
   const tail = limit ? all.slice(limit) : [];
 

@@ -34,7 +34,13 @@ export function buildMeta(args: {
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
-    alternates: { canonical, languages },
+    alternates: {
+      canonical,
+      languages,
+      // The release feed is site-wide discovery: whatever page a reader is
+      // on, their feed reader can find /rss.xml.
+      types: { "application/rss+xml": `${site.url}/rss.xml` },
+    },
     // Next merges metadata shallowly: defining `openGraph` here REPLACES the
     // one in `[locale]/layout.tsx` wholesale, so every property the layout set
     // and this object omits is dropped from the page. That is how `og:type`,

@@ -136,7 +136,7 @@
     },
     "changelog": {
       "title": "Changelog",
-      "desc": "Every Hanterill release with its notes, date and artifacts, read from GitHub Releases. SemVer tags, checksums published alongside the binaries."
+      "desc": "Every Hanterill release with its notes, date and artifacts, read from GitHub Releases. Versions follow SemVer."
     },
     "network": {
       "title": "CMA Network Explorer",
@@ -1303,7 +1303,10 @@
     "showNotes": "Notes",
     "showFullNotes": "Show the full release notes",
     "fetchedAt": "Read from GitHub Releases at build time. Newest is {version}.",
-    "howReleasesWork": "How releases are made"
+    "howReleasesWork": "How releases are made",
+    "installers": "Installers · {count} files · {size}",
+    "notesEnglish": "Release notes are written in English.",
+    "rssFeed": "Release feed (RSS)"
   },
   "tasks": {
     "columnTask": "If you want to",

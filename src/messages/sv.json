@@ -136,7 +136,7 @@
     },
     "changelog": {
       "title": "Ändringslogg",
-      "desc": "Se versioner, datum, versionsinformation och nedladdningsfiler från GitHub Releases. Kontrollsummor publiceras tillsammans med programfilerna."
+      "desc": "Se versioner, datum, versionsinformation och nedladdningsfiler från GitHub Releases. Versioner följer SemVer."
     },
     "network": {
       "title": "Nätverksutforskaren för CMA",
@@ -1291,7 +1291,10 @@
     "showNotes": "Anteckningar",
     "showFullNotes": "Visa hela utgåvans anteckningar",
     "fetchedAt": "Hämtat från GitHub Releases vid byggtillfället. Senaste är {version}.",
-    "howReleasesWork": "Så görs en utgåva"
+    "howReleasesWork": "Så görs en utgåva",
+    "installers": "Installationsfiler · {count} filer · {size}",
+    "notesEnglish": "Utgåvenoteringarna är skrivna på engelska.",
+    "rssFeed": "Utgåvsflöde (RSS)"
   },
   "tasks": {
     "columnTask": "Om du vill",

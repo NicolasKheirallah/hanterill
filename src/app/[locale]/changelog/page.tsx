@@ -5,8 +5,8 @@ import { ExternalLink, GitCommitVertical } from "lucide-react";
 import { LocalizedPageHeader } from "@/components/ui/PageHeader";
 import { Section, MoreLink } from "@/components/ui/layout";
 import { StatusMarker } from "@/components/ui/StatusBadge";
-import { ReleaseNotes } from "@/components/changelog/ReleaseNotes";
-import { getReleases, getTags, formatBytes, type Release } from "@/lib/github";
+import { ReleaseNotes, releaseSummary } from "@/components/changelog/ReleaseNotes";
+import { getReleases, getTags, formatBytes, sameVersionRef, type Release } from "@/lib/github";
 import { site } from "@/lib/site";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -27,7 +27,7 @@ function ReleaseRow({
 }: {
   release: Release;
   locale: string;
-  t: (k: string) => string;
+  t: (k: string, values?: Record<string, string | number>) => string;
   first?: boolean;
 }) {
   const date = release.publishedAt
@@ -38,51 +38,57 @@ function ReleaseRow({
       })
     : null;
 
-  const head = (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-      <span className="font-mono text-[length:var(--text-title)] text-text-primary">{release.version}</span>
-      {first || release.prerelease ? (
-        <StatusMarker tone={first ? "ok" : "warning"}>
-          {first ? t("latest") : t("prerelease")}
-        </StatusMarker>
-      ) : null}
-      {date && release.publishedAt ? (
-        <time className="font-mono text-[length:var(--text-meta)] text-text-muted" dateTime={release.publishedAt}>
-          {date}
-        </time>
-      ) : null}
-    </div>
+  // A release whose name is just the version restated ("v0.2.2" under a
+  // "v0.2.2" header) says nothing and renders as a stutter.
+  const name =
+    release.name && !sameVersionRef(release.name, release.version) && !/^changelog$/i.test(release.name)
+      ? release.name
+      : null;
+
+  const anchorLink = (
+    <a
+      href={`#${anchor(release.version)}`}
+      aria-label="Link to this release"
+      className="font-mono text-[0.75em] text-text-muted no-underline opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
+    >
+      #
+    </a>
   );
+
+  const totalSize = release.assets.reduce((n, a) => n + a.size, 0);
 
   const body = (
     <>
-      {release.name && release.name !== release.version ? (
-        <p className="mt-1 text-[length:var(--text-body)] text-text-secondary">{release.name}</p>
-      ) : null}
+      {name ? <p className="mt-1 text-[length:var(--text-body)] text-text-secondary">{name}</p> : null}
       {release.body.trim() ? (
         <ReleaseNotes body={release.body} limit={14} moreLabel={t("showFullNotes")} />
       ) : (
         <p className="mt-4 text-[length:var(--text-ui)] text-text-muted">{t("noNotes")}</p>
       )}
       {release.assets.length > 0 ? (
-        <ul className="mt-5 divide-y divide-line border-y border-line">
-          {release.assets.map((a) => (
-            <li
-              key={a.downloadUrl}
-              className="flex items-baseline justify-between gap-4 py-1.5 font-mono text-[length:var(--text-meta)]"
-            >
-              <a
-                href={a.downloadUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="truncate text-text-primary transition-colors hover:text-accent"
+        <details className="mt-5">
+          <summary className="inline-flex cursor-pointer list-none items-baseline gap-2 font-mono text-[length:var(--text-meta)] text-text-muted transition-colors hover:text-text-primary [&::-webkit-details-marker]:hidden">
+            {t("installers", { count: release.assets.length, size: formatBytes(totalSize) })}
+          </summary>
+          <ul className="mt-3 divide-y divide-line border-y border-line">
+            {release.assets.map((a) => (
+              <li
+                key={a.downloadUrl}
+                className="flex items-baseline justify-between gap-4 py-1.5 font-mono text-[length:var(--text-meta)]"
               >
-                {a.name}
-              </a>
-              <span className="tnum shrink-0 text-text-muted">{formatBytes(a.size)}</span>
-            </li>
-          ))}
-        </ul>
+                <a
+                  href={a.downloadUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="truncate text-text-primary transition-colors hover:text-accent"
+                >
+                  {a.name}
+                </a>
+                <span className="tnum shrink-0 text-text-muted">{formatBytes(a.size)}</span>
+              </li>
+            ))}
+          </ul>
+        </details>
       ) : null}
       <div className="mt-4">
         <MoreLink href={release.url} external>
@@ -92,34 +98,70 @@ function ReleaseRow({
     </>
   );
 
-  // The newest release is open; older ones are a disclosure. Ten releases of
-  // full notes made this page 18,800px tall - the previous renderer's flat
-  // paragraph output meant nothing was scannable, so the length bought nothing.
+  // One timeline: a hairline rail with a tick per release (bronze for the
+  // newest), the newest entry open, older ones collapsed to version, date and
+  // a one-line summary so the history is scannable without expanding.
+  const tick = (
+    <span
+      aria-hidden
+      className={
+        first
+          ? "absolute top-[1.1rem] -left-[4.5px] h-[9px] w-[9px] rotate-45 border border-accent bg-accent"
+          : "absolute top-[2.35rem] -left-[4.5px] h-[9px] w-[9px] rotate-45 border border-line-strong bg-bg-primary"
+      }
+    />
+  );
+
   if (first) {
     return (
-      <li id={anchor(release.version)} className="scroll-mt-24 py-8">
-        {head}
+      <li id={anchor(release.version)} className="group relative pb-10 pl-6 pt-2 sm:pl-8">
+        {tick}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span className="font-mono text-[length:var(--text-title)] text-text-primary">{release.version}</span>
+          {release.prerelease ? <StatusMarker tone="warning">{t("prerelease")}</StatusMarker> : null}
+          <StatusMarker tone="ok">{t("latest")}</StatusMarker>
+          {date && release.publishedAt ? (
+            <time className="font-mono text-[length:var(--text-meta)] text-text-muted" dateTime={release.publishedAt}>
+              {date}
+            </time>
+          ) : null}
+          {anchorLink}
+        </div>
         {body}
       </li>
     );
   }
 
+  const summary = releaseSummary(release.body);
+
   return (
-    <li id={anchor(release.version)} className="scroll-mt-24">
-      <details className="group py-6">
-        <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-1 [&::-webkit-details-marker]:hidden">
+    <li id={anchor(release.version)} className="group relative pl-6 sm:pl-8">
+      {tick}
+      <details className="py-7">
+        <summary className="flex cursor-pointer list-none flex-wrap items-baseline gap-x-4 gap-y-1 [&::-webkit-details-marker]:hidden">
           <span className="font-mono text-[length:var(--text-body)] text-text-primary transition-colors group-hover:text-accent">
             {release.version}
           </span>
           {release.prerelease ? <StatusMarker tone="warning">{t("prerelease")}</StatusMarker> : null}
           {date && release.publishedAt ? (
-            <time className="font-mono text-[length:var(--text-micro)] text-text-muted" dateTime={release.publishedAt}>
+            <time
+              className="shrink-0 font-mono text-[length:var(--text-micro)] text-text-muted"
+              dateTime={release.publishedAt}
+            >
               {date}
             </time>
           ) : null}
-          <span className="ml-auto font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
+          {summary ? (
+            <span className="min-w-0 flex-1 truncate text-[length:var(--text-body)] text-text-secondary" title={summary}>
+              {summary}
+            </span>
+          ) : (
+            <span className="min-w-0 flex-1" />
+          )}
+          <span className="ml-auto shrink-0 font-mono text-[length:var(--text-micro)] uppercase tracking-[length:var(--track-label)] text-text-muted">
             {t("showNotes")}
           </span>
+          {anchorLink}
         </summary>
         {body}
       </details>
@@ -138,9 +180,14 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
       <LocalizedPageHeader id="changelog" />
 
       <Section>
+        {locale !== "en" ? (
+          <p className="mb-8 rounded-sm border border-line bg-bg-secondary px-3 py-2 font-mono text-[length:var(--text-meta)] text-text-muted">
+            {t("notesEnglish")}
+          </p>
+        ) : null}
         {releases.length > 0 ? (
           <>
-            <ol className="divide-y divide-line border-t border-line-strong">
+            <ol className="relative ml-1 border-l border-line">
               {releases.map((r, i) => (
                 <ReleaseRow key={r.version} release={r} locale={locale} t={t} first={i === 0} />
               ))}
@@ -184,6 +231,9 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
           </MoreLink>
           <MoreLink href={`${site.repoUrl}/blob/${site.websiteBranch}/CHANGELOG.md`} external>
             {t("changelogFile")}
+          </MoreLink>
+          <MoreLink href={`${site.url}/rss.xml`} external>
+            {t("rssFeed")}
           </MoreLink>
           <MoreLink href="/docs/releases">{t("howReleasesWork")}</MoreLink>
         </div>

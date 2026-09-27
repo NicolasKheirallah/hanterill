@@ -35,6 +35,21 @@ async function getJson<T>(path: string): Promise<T | null> {
   }
 }
 
+/**
+ * Display form of a release tag. Tags shipped as `v0.2.1`, then one landed as
+ * `v.0.2.2`; the site shows one style, while links keep pointing at the real
+ * tag/release. Normalizing here fixes every surface at once - changelog rows,
+ * the docs version stamp, the download panel.
+ */
+function normalizeTag(tag: string): string {
+  return tag.replace(/^v\./i, "v");
+}
+
+/** True when two release refs name the same version once punctuation is ignored ("v.0.2.2" == "v0.2.2"). */
+export function sameVersionRef(a: string, b: string): boolean {
+  return a.replace(/[^a-z0-9]/gi, "").toLowerCase() === b.replace(/[^a-z0-9]/gi, "").toLowerCase();
+}
+
 export async function getLatestRelease(): Promise<Release | null> {
   const data = await getJson<{
     tag_name: string;
@@ -47,7 +62,7 @@ export async function getLatestRelease(): Promise<Release | null> {
   }>(`/repos/${site.repo}/releases/latest`);
   if (!data) return null;
   return {
-    version: data.tag_name,
+    version: normalizeTag(data.tag_name),
     name: data.name || data.tag_name,
     url: data.html_url,
     publishedAt: data.published_at,
@@ -76,7 +91,7 @@ export async function getReleases(limit = 30): Promise<Release[]> {
   >(`/repos/${site.repo}/releases?per_page=${limit}`);
   if (!data) return [];
   return data.map((r) => ({
-    version: r.tag_name,
+    version: normalizeTag(r.tag_name),
     name: r.name || r.tag_name,
     url: r.html_url,
     publishedAt: r.published_at,
