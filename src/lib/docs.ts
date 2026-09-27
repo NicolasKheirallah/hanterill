@@ -61,99 +61,55 @@ export function getDoc(slug: string) {
 export const docGroups = ["Start", "Diagnostics", "Reference", "Project"] as const;
 
 export type DocHeading = { id: string; text: string; level: number };
-export type DocIndexEntry = DocMeta & { headings: DocHeading[]; text: string };
-
-/** Mirrors rehype-slug / github-slugger: unicode letters are kept. */
-function slugify(s: string) {
-  // Mirrors github-slugger (used by rehype-slug): unicode letters survive,
-  // punctuation drops, whitespace becomes hyphens.
-  return s
-    .toLowerCase()
-    .trim()
-    .replace(/[^\p{L}\p{N}_\s-]/gu, "")
-    .replace(/\s+/g, "-");
-}
+export type DocIndexEntry = DocMeta & {
+  headings: DocHeading[];
+  text: string;
+  /** Swedish corpus prebuild extracts when a translation exists. */
+  headingsSv?: DocHeading[];
+  textSv?: string;
+};
 
 /**
- * Server-only search index: headings (with the ids rehype-slug will generate)
- * plus a plain-text body for matching technical strings like BECM or 0x496D.
- * Prefers `src/lib/generated/docs-index.json`, written by scripts/prebuild.mjs
- * with imports and JSX stripped. Falls back to parsing the MDX directly when
- * the generated file is absent (fresh checkout before the first build).
+ * Server-only search index: headings (with the ids rehype-slug generates on
+ * the page) plus a plain-text body for matching technical strings like BECM
+ * or 0x496D, read from `src/lib/generated/docs-index.json`, written by
+ * scripts/prebuild.mjs with imports and JSX stripped. `npm run dev` and
+ * `npm run build` both run prebuild first, so the index is always there;
+ * hitting this error means the file was removed or generation failed.
  */
 export async function getDocsIndex(): Promise<DocIndexEntry[]> {
   const { readFile } = await import("node:fs/promises");
   const { join } = await import("node:path");
 
+  let raw: string;
   try {
-    const json = JSON.parse(
-      await readFile(join(process.cwd(), "src/lib/generated/docs-index.json"), "utf8"),
-    ) as { entries?: (DocIndexEntry & { headings: { text: string; id: string; level?: number }[] })[] };
-    if (json.entries?.length) {
-      return json.entries.map((e) => ({
-        ...e,
-        headings: e.headings.map((h) => ({ ...h, level: h.level ?? 2 })),
-      }));
-    }
+    raw = await readFile(join(process.cwd(), "src/lib/generated/docs-index.json"), "utf8");
   } catch {
-    // fall through to direct parsing
+    throw new Error(
+      "src/lib/generated/docs-index.json is missing — run `npm run prebuild` (npm run dev and npm run build run it automatically).",
+    );
   }
-
-  const dir = join(process.cwd(), "src/content/docs");
-  return Promise.all(
-    docs.map(async (d) => {
-      let raw = "";
-      try {
-        raw = await readFile(join(dir, `${d.slug}.mdx`), "utf8");
-      } catch {
-        // fall through with empty body
-      }
-      // Same extraction prebuild.mjs performs via scripts/docs-text.mjs: the
-      // whole stripped body, no cap, so the fallback cannot index less than
-      // the generated corpus does.
-      const headings: DocHeading[] = [];
-      for (const m of raw.matchAll(/^(#{2,3})\s+(.+?)\s*$/gm)) {
-        const text = m[2].replace(/[*_`]/g, "");
-        headings.push({ level: m[1].length, text, id: slugify(text) });
-      }
-      const text = raw
-        .replace(/```[\s\S]*?```/g, " ")
-        .replace(/^import[^;]+;/gm, " ")
-        .replace(/<[^>]+>/g, " ")
-        .replace(/[#>|*_`[\]]/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-      return { ...d, headings, text };
-    }),
-  );
+  const json = JSON.parse(raw) as { entries?: DocIndexEntry[] };
+  if (!json.entries?.length) {
+    throw new Error("src/lib/generated/docs-index.json has no entries — run `npm run prebuild`.");
+  }
+  return json.entries.map((e) => ({
+    ...e,
+    headings: e.headings.map((h) => ({ ...h, level: h.level ?? 2 })),
+  }));
 }
 
 export type DocsTocItem = DocHeading;
 
 /**
- * Headings for the "on this page" rail of one doc. Translated locales read
- * their own MDX so the rail matches the anchors rehype-slug generated on the
- * page; everything else uses the built (English) index.
+ * Headings for the "on this page" rail of one doc, from the prebuilt index.
+ * Translated docs read the `headingsSv` corpus prebuild extracted from the
+ * translated MDX — same slugger, so the rail matches the anchors rehype-slug
+ * generates on the page; everything else uses the (English) headings.
  */
 export async function getDocToc(slug: string, locale = "en"): Promise<DocHeading[]> {
-  if (locale !== "en") {
-    try {
-      const { readFile } = await import("node:fs/promises");
-      const { join } = await import("node:path");
-      const raw = await readFile(
-        join(process.cwd(), "src/content/docs", locale, `${slug}.mdx`),
-        "utf8",
-      );
-      const headings: DocHeading[] = [];
-      for (const m of raw.matchAll(/^(#{2,3})\s+(.+?)\s*$/gm)) {
-        const text = m[2].replace(/[*_`]/g, "");
-        headings.push({ level: m[1].length, text, id: slugify(text) });
-      }
-      return headings;
-    } catch {
-      // no translated file; fall through to the English index
-    }
-  }
-  const idx = await getDocsIndex();
-  return idx.find((e) => e.slug === slug)?.headings.filter((h) => h.level >= 2) ?? [];
+  const entry = (await getDocsIndex()).find((e) => e.slug === slug);
+  if (!entry) return [];
+  const headings = locale !== "en" && entry.headingsSv?.length ? entry.headingsSv : entry.headings;
+  return headings.filter((h) => h.level >= 2);
 }

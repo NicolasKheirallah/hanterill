@@ -1,10 +1,12 @@
 // Docs plain-text extraction for the command-palette search corpus.
 //
-// One implementation, used by scripts/prebuild.mjs (which writes
-// src/lib/generated/docs-index.json) and available for reference by
-// src/lib/docs.ts. The point is that the palette can match any string a reader
-// would search for: a flag (--retry-of), an identifier (0x496D), an OS error
-// (SmartScreen), or a term that only appears deep in a page.
+// The one implementation of heading/text extraction. scripts/prebuild.mjs runs
+// it over every doc when writing src/lib/generated/docs-index.json; the app
+// reads that index (src/lib/docs.ts) instead of re-parsing MDX, so the
+// heading-id contract with rehype-slug lives in exactly one place. The point
+// is that the palette can match any string a reader would search for: a flag
+// (--retry-of), an identifier (0x496D), an OS error (SmartScreen), or a term
+// that only appears deep in a page.
 //
 // The whole stripped body is indexed. There is no truncation: a fixed cap made
 // deep content unreachable from search, which is exactly where the interesting
