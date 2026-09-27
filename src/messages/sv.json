@@ -1376,6 +1376,13 @@
       "Reference": "Referens",
       "Project": "Projekt"
     },
+    "glossaryGroups": {
+      "diagnostics": "Diagnostik",
+      "protocols": "Protokoll",
+      "battery": "Batteri och högspänning",
+      "modules": "Moduler",
+      "platforms": "Plattformar och karosser"
+    },
     "tasks": {
       "title": "Börja med en uppgift",
       "connect": {

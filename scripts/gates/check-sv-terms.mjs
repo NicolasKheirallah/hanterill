@@ -26,6 +26,12 @@ const dir = join(ROOT, "src/content/docs/sv");
 const files = readdirSync(dir).filter((f) => f.endsWith(".mdx"));
 const blobs = files.map((f) => [f, readFileSync(join(dir, f), "utf8")]);
 
+// The glossary data module ships its own Swedish definitions; the docs' data
+// is held to the same vocabulary as the docs prose.
+const glossarySv = JSON.parse(readFileSync(join(ROOT, "src/content/glossary.json"), "utf8"))
+  .flatMap((e) => [e.termSv, e.fullSv, e.meaningSv])
+  .filter(Boolean);
+
 // 1. Rejected forms must not appear anywhere in the Swedish docs. The term
 //    table is data — src/lib/sv-terms.json — read as data, not parsed out of
 //    TypeScript source.
@@ -41,6 +47,14 @@ for (const [f, c] of blobs) {
     if (re.test(c)) {
       invented++;
       failures.push(`invented Swedish in ${f}: "${form}"`);
+    }
+  }
+}
+for (const s of glossarySv) {
+  for (const form of rejected) {
+    if (new RegExp(`\\b${form}\\b`, "i").test(s)) {
+      invented++;
+      failures.push(`invented Swedish in glossary.json: "${form}"`);
     }
   }
 }
@@ -68,7 +82,7 @@ expect(calqueHits === 0, "no English calques", `${calqueHits} occurrences`);
 
 // 3. Voice: the app uses "fordon" far more than "bil". The docs must not
 //    invert that ratio and read over-familiar.
-const whole = blobs.map(([, c]) => c).join("\n");
+const whole = blobs.map(([, c]) => c).join("\n") + "\n" + glossarySv.join("\n");
 const fordon = (whole.match(/\bfordon(en|ets|et)?\b/gi) ?? []).length;
 const bil = (whole.match(/\bbil(en|ar|arna)?\b/gi) ?? []).length;
 expect(
@@ -100,6 +114,15 @@ for (const [f, c] of blobs) {
     if (m) {
       compoundHits++;
       failures.push(`non-Swedish compound in ${f}: "${m[0]}"`);
+    }
+  }
+}
+for (const s of glossarySv) {
+  for (const re of badCompounds) {
+    const m = s.match(re);
+    if (m) {
+      compoundHits++;
+      failures.push(`non-Swedish compound in glossary.json: "${m[0]}"`);
     }
   }
 }

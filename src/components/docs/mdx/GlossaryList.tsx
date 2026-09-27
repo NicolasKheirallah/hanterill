@@ -1,19 +1,26 @@
-import { glossary, glossaryGroups } from "@/lib/glossary";
+import { getLocale, getTranslations } from "next-intl/server";
+import { glossaryEntries, glossaryGroupKeys, glossaryGroups } from "@/lib/glossary";
 
 /**
  * Renders the whole glossary as definition lists grouped by concern, driven by
- * `src/lib/glossary.ts`. One source for the terms used across the docs and the
- * surface UI, so a term cannot be defined two different ways.
+ * `src/content/glossary.json` through `src/lib/glossary.ts`. One source for
+ * the terms used across the docs and the surface UI, so a term cannot be
+ * defined two different ways. The reader's locale picks the fields, so the
+ * Swedish page renders Swedish definitions and group headings rather than
+ * English data.
  */
-export function GlossaryList() {
+export async function GlossaryList() {
+  const locale = await getLocale();
+  const t = await getTranslations("docs");
+  const entries = glossaryEntries(locale);
   return (
     <div className="my-6 space-y-8">
       {glossaryGroups.map((group) => {
-        const rows = glossary.filter((e) => e.group === group);
+        const rows = entries.filter((e) => e.group === group);
         return (
           <section key={group}>
             <h3 className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-muted">
-              {group}
+              {t(`glossaryGroups.${glossaryGroupKeys[group]}`)}
             </h3>
             <dl className="mt-3 divide-y divide-line border-y border-line">
               {rows.map((e) => (

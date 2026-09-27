@@ -1388,6 +1388,13 @@
       "Reference": "Reference",
       "Project": "Project"
     },
+    "glossaryGroups": {
+      "diagnostics": "Diagnostics",
+      "protocols": "Protocols",
+      "battery": "Battery and high voltage",
+      "modules": "Modules",
+      "platforms": "Platforms and bodies"
+    },
     "tasks": {
       "title": "Start from a task",
       "connect": {
