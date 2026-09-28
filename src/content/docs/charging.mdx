@@ -1,10 +1,18 @@
-The **Charging** screen helps you investigate a charge session that is slow or will not start. It shows the charging readings the car makes available and offers a separate **Diagnose charge limit** check. Read the result alongside the charger display and any fault codes; one missing value cannot identify the cause.
+The **Charging** screen helps you investigate a charge session that is slow or will not start. It shows the charging readings the car makes available, the on-board charger's own history, and a separate **Diagnose charge limit** check. Read the results alongside the charger display and any fault codes; one missing value cannot identify the cause.
 
 ## What the screen reads
 
-Choose **Read charging telemetry** to see the charge-port lock state, the cable's reported current rating and the battery pack voltage. A blank value means that reading was not returned. The screen does not show a complete AC or DC charge curve.
+Choose **Read charging telemetry** to see the charge-port lock state, the cable's reported current rating and the battery pack voltage. While the car is actually charging, the screen also reads the on-board charger live: power drawn from the grid, power delivered into the battery, the charger's efficiency, voltage and current per phase, the charge limits in effect and the pilot signal. These figures were verified against the pack voltage and current readings on a charging reference car; a blank value means that reading was not returned.
 
-AC charging uses the car's on-board charger to turn power from a wallbox into power the battery can store. At a DC fast charger, the external station supplies DC power. In either case, the available charging power can change as the battery warms or fills.
+AC charging uses the car's on-board charger to turn power from a wallbox into power the battery can store. At a DC fast charger, the external station supplies DC power and the on-board charger is bypassed. In either case, the available charging power can change as the battery warms or fills.
+
+## The charger's own records
+
+The on-board charger keeps lifetime counters, and the screen reads them directly:
+
+- **Charge counts**: how many AC and DC charges the battery has recorded (shared with the Battery screen's charge history).
+- **Charger cycles**: the charger's own count of charge cycles.
+- **Charger health bars**: See AC charge counts, restarts and lifetime alarms for each power block. An old alarm does not prove a current fault; repeated restarts alongside a charging complaint give you a reason to investigate that block.
 
 ## Diagnose a charging limit
 
@@ -14,4 +22,4 @@ A limit shown during one scan describes the car's state at that moment. For exam
 
 ## When a reading is missing
 
-The app shows whether each charging value was measured or unavailable. Do not treat a blank cable rating, lock state or power value as zero. Repeat the read while the car is connected to the charger if the first attempt did not return enough information.
+The app shows whether each charging value was measured or unavailable. Do not treat a blank cable rating, lock state or power value as zero. The live charge figures only appear while a charge session is running; repeat the read while the car is connected to the charger if the first attempt did not return enough information.

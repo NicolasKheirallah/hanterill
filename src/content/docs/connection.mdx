@@ -50,12 +50,4 @@ Vehicle gateways close idle connections if no message is sent for several second
 - **Automatic keep-alive**: While you are connected, Hanterill sends a lightweight heartbeat in the background so the car's gateway does not fall asleep while you are reading a screen.
 - **Automatic reconnect**: If a module reboot or brief voltage dip interrupts the connection during a scan, Hanterill waits a moment, re-opens the diagnostic channel, and continues without losing the work already collected.
 
-## Exploring with simulated vehicles
-
-At the bottom of the **Connection** screen, you can connect to three built-in **Simulated vehicles** whenever you do not have a car plugged in:
-
-- **Healthy baseline**: a clean reference car for exploring every screen and report layout.
-- **Fault-injected**: a car with active, pending, and stored fault codes and freeze-frame snapshots.
-- **12 V sleep drain**: a car with an elevated parked standby current draw and module wake history.
-
-Simulated sessions work completely offline and label every screen and export as simulated data.
+Released builds connect to real vehicles only. The website has sample readings, but the app has no demo vehicle mode.

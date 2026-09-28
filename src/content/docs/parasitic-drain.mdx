@@ -1,4 +1,4 @@
-The **12 V Sleep Drain** screen helps you see whether the car reports unusually high current use while parked. It reads a current estimate and a distribution of stored current samples from the car's central electronics module. It does not identify which part of the car woke up.
+The **12 V Sleep Drain** screen helps you see whether the car reports unusually high current use while parked. It reads a current estimate and a distribution of stored current samples from the car's central electronics module, alongside the 12 V readings that give them context.
 
 ## Why an awake reading is different
 
@@ -6,8 +6,19 @@ Opening a door or connecting diagnostic equipment wakes parts of the car. Curren
 
 Choose **Read 12V drain** to see the reported average current and how many samples fell into each current range. The app also compares the average with the distribution. If they disagree substantially, it marks the result as inconsistent instead of quietly combining them.
 
+## The readings around the drain verdict
+
+The 12 V picture is assembled from named sources, and each reading says where it came from:
+
+- **Auxiliary battery SoC and terminal voltage** from the central module and the battery module.
+- **Quiescent current** from the central module, with its state and the exact reading it came from.
+- **Coarse 12 V readings** from several modules, useful for spotting one module reporting the supply rail differently.
+- **Short-term and average standby currents** and the 12 V battery's days in service, from the central module's statistics.
+
+When a reading did not answer, the screen says so explicitly instead of leaving a silent gap. You can export the displayed ranges as CSV.
+
 ## How to use the result
 
-A larger share of samples in higher-current ranges can suggest that the car spent more time awake or drawing power. It does not name the responsible module or explain when each sample was taken. The screen has no wake-event timeline, 12 V battery health reading or total energy used while parked. You can export the displayed ranges as CSV.
+A larger share of samples in higher-current ranges can mean the car spent more time awake or drawing power. The drain screen cannot identify the responsible module. Check **Power** for the time the car spent asleep, parked, in use or driving, along with its sleep count and any logged reasons for waking. **Module data** shows those records by module.
 
 If the 12 V battery goes flat, compare drain readings taken under similar conditions and check the battery's condition separately. Charging, remote services and ordinary scheduled activity can all affect what the car does while parked. A drain result is evidence to investigate, not proof that a particular component is faulty.

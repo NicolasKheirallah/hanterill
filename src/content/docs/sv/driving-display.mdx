@@ -1,0 +1,54 @@
+Vyn **Körning och display** läser instrumentklustret – modulen som bilen själv litar på för att
+visa föraren vad som händer. Den svarar på frågorna en köpare eller ägare faktiskt ställer: hur
+mycket har den här bilen egentligen körts, och när är nästa service?
+
+## Körmätarens korskontroll
+
+Huvudkortet är körmätaren. Bilen sparar flera kopior av körda kilometer i olika moduler –
+klustret, gatewayen, batterimodulen med flera – och vyn läser dem tillsammans:
+
+- Korskontrollen redovisas rakt ut, till exempel *"6 av 6 kopior överensstämmer"*.
+- Om kopior inte stämmer, eller om en manipulationsflagga är satt någonstans, säger kortet det med
+  en varningston.
+- Vyn Fordon lägger till den bredare bilden: konsensus för körmätaren över alla moduler som sparar
+  en kopia, och gatewayens reset-logg som en daterad körmätarhistorik.
+
+## Resor och användning
+
+En läsning hämtar klustrets tripdator: resemätare och körtid, medelhastighet och medelförbrukning,
+och räckvidden bilen visar. Översikten innehåller även långtidsräknarna och
+nollställningsräknarna, så du ser om visade värden nyligen nollställts.
+
+## Serviceintervall
+
+Klustret för serviceintervallet i egna räknare. Vyn visar återstående tid och sträcka till nästa
+service och till 12-voltsbatteriets skötselintervall, och varnar när klustrets två
+räknarposter inte längre beskriver samma servicehändelse – vilket du vill veta innan du betalar
+för en service som redan gjorts.
+
+## Displaydata
+
+Tavlan under översikten ger varje displaygrupp i klustret ett kort: avkodade värden som
+nyckeltal och historiken som en tidslinje, med en täckningschip som *"2 av 72 avkodade"*.
+Grupper där inget ännu avkodits delar en ärlig rad i stället för utfyllnadskort. Laddning,
+meddelanden, förarstöd och systemdata följer samma mönster på anrop – varje panel läses första
+gången du öppnar den, i stället för att skicka en salva trafik på bussen när sidan öppnas.
+
+## Inlärd energianvändning
+
+Bilen lär sig sin egen förbrukning när den körs. Vyn visar den inlärda förbrukningen per band –
+sannolikt per hastighetsband, i kWh/100 km på testbilen – tillsammans med hur ofta varje band
+körts. Banden numreras eftersom deras exakta gränser inte är fastställda; datans form är poängen,
+inte sista enheten.
+
+<Callout kind="note" title="Därför markeras vissa siffror *sannolikt*">
+Värden vars skala ännu inte kunnat bekräftas mot bilen märks *sannolikt* i stället för att visas
+som fakta. Etiketten är ett löfte: när en siffra visas utan den har skalan kontrollerats.
+</Callout>
+
+## Läs vidare
+
+- [Moduldata](/docs/module-data): samma klustregrupper i fullvyn för avläsningar, tillsammans med
+  alla andra moduler.
+- [Tolka resultat](/docs/reading-results): hur överensstämmelse mellan moduler bedöms.
+- [Systemtelemetri](/docs/subsystem-telemetry): serviceräknarna i detalj.

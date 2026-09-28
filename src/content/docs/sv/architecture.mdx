@@ -52,7 +52,8 @@ eller tappas bort.
 ## 2. UDS: Hur frågor, sessioner och håll-vaket-pulser fungerar
 
 Inuti varje DoIP-kuvert ligger ett **UDS-meddelande (ISO 14229)**. UDS är det gemensamma språk som
-moderna styrenheter förstår. Nästan allt Hanterill gör bygger på sex tydliga typer av meddelanden:
+moderna styrenheter förstår, och nästan allt Hanterill gör bygger på sex tydliga typer av
+meddelanden:
 
 <SpecList rows={[
   ["Öppna diagnostiksession", "Växlar en styrenhet mellan dess vanliga grundsession och dess utökade diagnostiksession så att alla givare och statusposter kan läsas."],
@@ -75,7 +76,7 @@ läsa ut fordonsgemensamma identitetsposter på bråkdelen av en sekund.
 
 Att **öppna en utökad diagnostiksession måste däremot alltid göras mot en styrenhet i taget**.
 Fordonets gateway är avsiktligt konstruerad för att ignorera gemensamma anrop som försöker byta
-diagnostiksession, så att ett verktyg inte av misstag kan försätta samtliga 40+ datorer i fordonet i
+diagnostiksession, så att ett verktyg inte av misstag kan försätta alla datorer i fordonet i
 utökat läge samtidigt.
 
 ### Väcka sovande styrenheter och låta fordonet somna efteråt
@@ -84,18 +85,12 @@ När ett fordon står parkerat med avslagen tändning går många sekundära sty
 klimat-, sätes- och dörrmoduler på lugnare internbussar) ned i viloläge för att spara på
 12-voltsbatteriet.
 
-Om du behöver skanna ett parkerat fordon utan att slå på tändningen kan Hanterills
-**Väckningssekvens** väcka modulerna i fem steg:
-
-1. Skickar en väckningspuls över gatewayen.
-2. Väcker centraldatorn (CEM) och gatewaymodulen (VGM) först.
-3. Går igenom de centrala drivline- och chassimodulerna en i taget så att gatewayen aktiverar sina interna underbussar.
-4. Skickar en kort håll-vaket-puls så att nyväckta moduler hinner starta klart.
-5. Pausar ett ögonblick så att alla styrenheter är redo innan avläsningen börjar.
-
-Lika viktigt är vad som händer när du är klar: så snart skanningen avslutas eller du kopplar från
-slutar Hanterill att skicka håll-vaket-pulser så att fordonets datorer kan återgå till djupvila
-normalt utan att dränera 12 V-batteriet.
+Medan du är ansluten skickar Hanterill en lätt håll-vaket-puls över gatewayen med jämna
+mellanrum, så att vakna moduler inte somnar mitt i en avläsning. Moduler som sover på sina
+underbussar väcks inte av appen; de svarar först när bilen väcks ordentligt, till exempel av
+bromspedalen eller tändningen. Minns likaså vad som händer när du är klar: så snart skanningen
+avslutas eller du kopplar från slutar Hanterill skicka håll-vaket-pulser, så att fordonets datorer
+kan återgå till djupvila normalt utan att dränera 12 V-batteriet.
 
 ## 3. CAN: Fordonets interna bussar och kontinuerliga realtidssignaler
 
@@ -108,11 +103,11 @@ CAN används på två skilda sätt vid diagnostik:
 
 ### Diagnostikfrågor över CAN (ISO-TP)
 
-När fordonets CAN-stift nås via ett kompatibelt CAN-gränssnitt (ett SocketCAN-gränssnitt på Linux,
-eller en CANsub-adapter från CSS Electronics) färdas samma UDS-frågor över CAN i stället för över
-Ethernet. Eftersom en vanlig CAN-ram bara rymmer 8 bytes åt gången delar transportstandarden
-**ISO-TP (ISO 15765)** automatiskt upp längre meddelanden (som ett 17-ställigt chassinummer eller
-en lista med felkoder) i små numrerade paket och sätter ihop dem igen hos mottagaren.
+När fordonets CAN-stift nås via ett CAN-gränssnitt, som vissa verktyg gör, färdas samma UDS-frågor
+över CAN i stället för över Ethernet. Eftersom en vanlig CAN-ram bara rymmer 8 bytes åt gången
+delar transportstandarden **ISO-TP (ISO 15765)** automatiskt upp längre meddelanden (som ett
+17-ställigt chassinummer eller en lista med felkoder) i små numrerade paket och sätter ihop dem
+igen hos mottagaren.
 
 ### Passiv CAN-lyssning (kontinuerliga bussmeddelanden)
 
@@ -123,10 +118,8 @@ Det är en viktig skillnad mellan **UDS-diagnostikfrågor** och **ordinarie CAN-
 
 Eftersom fordonets gateway bara vidarebefordrar fråga-och-svar-trafik (UDS) över Ethernet-kabeln är
 vissa snabba realtidssignaler som rullar kontinuerligt på de interna CAN-bussarna inte tillgängliga
-som enskilda UDS-frågor. Hanterills vyer läser alla över Ethernet-länken; passiv CAN-lyssning finns
-som en separat, experimentell kommandoradsväg (SocketCAN på Linux, eller en CANsub-adapter) och
-dess avläsningar är provisoriska. När den är ansluten lyssnar den på de kontinuerliga CAN-ramarna
-utan att lägga till en enda egen fråga på fordonets nätverk.
+som enskilda UDS-frågor. Hanterills vyer läser alla över Ethernet-länken och lägger ingen trafik alls
+på fordonets interna CAN-bussar.
 
 ## Nästa steg
 

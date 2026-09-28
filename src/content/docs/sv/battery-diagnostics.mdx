@@ -73,11 +73,19 @@ Vissa cellgrupper kanske inte svarar. Appen lämnar deras positioner tomma och m
 
 Batterihälsa visar de temperaturer och kylvätskevärden som bilen lämnar. Skillnaden mellan varma och kalla givare kan ge sammanhang, men pekar inte ensam ut en trasig del. Sidan visar också de tillgängliga gränserna för laddnings- och uttagseffekt. Det är gränser som bilen rapporterar vid avläsningen, inte ett löfte om att samma effekt alltid finns.
 
-**Temperaturhistorik** är en separat, valfri avläsning. Där funktionen stöds frågar Hanterill en annan styrenhet i bilen hur länge batteriet har befunnit sig i olika temperaturintervall. Historiken är samlad över tid och beskriver inte bara den aktuella resan. Om bilen inte lämnar historiken visar appen det. Hanterill visar också tillgänglig 12 V-spänning, som hör till bilens lågspänningssystem.
+Batterimodulens temperaturkarta visar varje modulblocks två givare i valda enheter, med varmaste och kallaste modul samt spridningen dem emellan. Temperaturbanden som centralmodulen sparar för **12 V**-batteriet är en separat avläsning som visas på effektsidan med numrerade band och antal prov – de beskriver lågspänningsbatteriet, inte drivbatteriet. Hanterill visar också tillgänglig 12 V-spänning, som hör till bilens lågspänningssystem.
+
+## Laddhistorik och per-cell-värden
+
+Batterimodulen håller egna livstidsräknare, och vyerna Batteri och Laddning läser dem direkt:
+
+- **Laddräknare**: hur många normala (AC) och snabba (DC) laddningar batteriet har registrerat. En räknare visas bara när modulens start-, stopp- och laddtabeller är överens; annars förblir fältet tomt och noteringen talar om vilken tabell som inte stämde.
+- **Tid per laddband**: ett diagram över hur länge batteriet legat i vart och ett av sina tio laddband. Banden numreras eftersom deras exakta procentgränser inte är fastställda – formen visar hur batteriet levt, till exempel hur mycket tid det legat nära fullt.
+- **Värmekartor per cell**: SoH, inlärd kapacitet (Ah) och SoC för varje cell, inte bara medeltalet, med lägsta och högsta cell utskriven. En ensam svag cell syns här innan den flyttar paketmedeltalet.
 
 ## Kontroller och saknade värden
 
-Hanterill jämför värden som borde stämma överens, till exempel batteriets rapporterade spänning och summan av cellgruppernas spänningar. Appen kan också jämföra rapporterad effekt med spänning och ström samt bedöma om strömmen verkar rimlig när bilen står parkerad. En avvikelse kan bero på en ofullständig avläsning, att bilens driftläge ändrades eller att ett värde behöver undersökas närmare. En enskild avvikelse är ingen diagnos.
+Hanterill jämför värden som borde stämma överens, till exempel batteriets rapporterade spänning och summan av cellgruppernas spänningar; appen kan också jämföra rapporterad effekt med spänning och ström samt bedöma om strömmen verkar rimlig när bilen står parkerad. En avvikelse kan bero på en ofullständig avläsning, att bilens driftläge ändrades eller att ett värde behöver undersökas närmare. Undersök den; en enskild avvikelse är ingen diagnos.
 
 Sidan skiljer mellan uppmätta värden, värden som räknats fram, preliminära tolkningar och värden som bilen inte rapporterade. Ett saknat eller osäkert värde ska inte tolkas som att batteriet är friskt eller dåligt.
 

@@ -6,10 +6,14 @@ En avläsning kan vara fullständig, ofullständig eller inte stödd för just d
 
 Appen kan skilja **uppmätta** värden från värden som **beräknats** ur andra avläsningar. En preliminär tolkning betyder att avkodningen behöver kontrolleras mer. Varken ett preliminärt eller ett saknat värde bevisar att något är fel eller att allt är friskt.
 
+Vissa värden bär en uttrycklig etikett **sannolikt** – drivenheternas och DC/DC-omvandlarens drifttimmar, inlärda förbrukningsband – eftersom värdet är verkligt men dess enhet eller skala ännu inte bekräftats mot bilen. Histogram utan fastställda bin-gränser visar numrerade band i stället för procent eller temperaturer. Etiketten är inte brus; den är skillnaden mellan ett kontrollerat och ett okontrollerat tal. Där en grupp bara avkodar en del av svaret säger statusraden det rakt ut, till exempel *"12 av 70 värden lästa."*
+
 ## Se när och hur värdet lästes
 
 En sparad session visar vad bilen rapporterade när sessionen fångades. Livedata visar nyare prover medan avläsningen pågår. Jämför värden under liknande förhållanden: batteriets laddningsnivå, temperatur, körläge och laddning kan ändra siffrorna. Det är ofta mer användbart att upprepa ett oväntat värde än att dra en slutlig slutsats av en enda skanning.
 
 ## Använd jämförelser varsamt
 
-Korskontroller jämför värden som hör ihop, till exempel batteripaketets spänning med summan av cellernas spänningar eller laddningsnivåer från olika styrenheter. Värden som stämmer överens ger större förtroende, men bevisar inte att varje givare är rätt. En skillnad kan bero på tidpunkten, en ofullständig avläsning eller ett verkligt problem. Läs täckningen och de enskilda värdena innan du bestämmer vad som ska undersökas.
+Korskontroller jämför värden som hör ihop, till exempel batteripaketets spänning med summan av cellernas spänningar eller laddningsnivåer från olika styrenheter. Appen kör en bredare uppsättning än vad en enskild vy visar: samma körmätarställning från flera moduler, fordonsklockan jämförd över moduler, 12 V-läset från varje modul som rapporterar det (med varje moduls kända avläsningsoffset borttaget), batteritemperatur och paketspänning jämförd mellan termisk hanterare och batterimodul, samt visad laddningsnivå mot kvarvarande energi. Korskontrollvyn visar förväntat och observerat bakom varje omdöme, inte bara omdömet.
+
+Värden som stämmer överens ger större förtroende men bevisar inte att varje givare är rätt; en skillnad kan bero på tidpunkten, en ofullständig avläsning eller ett verkligt problem. Läs täckningen och de enskilda värdena innan du bestämmer vad som ska undersökas.

@@ -22,8 +22,9 @@ The **Vehicle** screen brings together the car's core identity and cross-module 
 checks in one place:
 
 - **Full VIN with one-click privacy masking**: The full 17-character VIN is shown clearly on the Vehicle screen and in Inspection Reports so you can verify the car against its registration documents and chassis plate. Whenever you want to take a screenshot or share a report, a single click masks the identifying characters.
-- **Cross-module odometer check (up to 29 modules)**: Modern cars store mileage in many control units, not just the dashboard display. Hanterill reads and compares odometer values across up to 29 modules so you can see whether all modules agree or whether a module was replaced or tampered with.
-- **Paired keys and live transponder check**: Displays how many keys are currently paired to the immobilizer and shows live recognition when a key fob or transponder is detected inside the cabin. This is especially useful when buying a used car to verify that no unaccounted keys remain registered.
+- **Cross-module odometer check (up to 29 modules)**: Modern cars store mileage in many control units besides the dashboard display. Hanterill reads and compares odometer values across up to 29 modules so you can see whether all modules agree or whether a module was replaced or tampered with.
+- **Paired keys, live transponder and locking history**: Displays how many keys are currently paired to the immobilizer (flagged when a car carries more than the two it is sold with) and shows live recognition when a key fob or transponder is detected inside the cabin. A dated history of recent locks, unlocks and key-button presses (each with its odometer reading) shows how the car has actually been used. This is especially useful when buying a used car to verify that no unaccounted keys remain registered.
+- **Tyre-pressure sensors**: Shows whether the wheels have tyre-pressure sensors learnt in. When the test car has none, the card says so and explains that the app watches wheel speeds instead: a reading that names its own limitation rather than showing a blank.
 - **Vehicle operating mode**: Shows whether the car is in normal customer driving mode or left in workshop, factory, or transport mode.
 
 ## How the vehicle platform is detected
@@ -31,7 +32,8 @@ checks in one place:
 Hanterill never guesses your car's platform from a single clue. Instead, it combines multiple
 pieces of live evidence (the VIN prefix and manufacturer code, the gateway's identity
 signature, and the exact control units that answer on the network) to confirm whether the car
-is built on **CMA**, **SPA**, or **SEA1**.
+is built on **CMA**, **SPA**, **SEA1**, or one of the newer Geely architectures such as
+**SEA2/PMA2** that the app recognizes at research grade.
 
 Platform detection requires agreement across at least two independent checks (for example, both
 the vehicle identity and the responding controller signatures). If a car is only partially

@@ -1,88 +1,78 @@
-På skärmen **Anslutning** väljer du bil och nätverksadapter. Samma vanliga ENET-kabel fungerar för alla modeller som stöds, även Volvo EX30, Polestar 4 och Zeekr. Börja med den automatiska sökningen. Det finns också ett direktanslutningsläge och ett demoläge som fungerar utan bil.
+import { ProtocolFlow } from "@/components/docs/mdx/ProtocolFlow";
 
-## Innan du klickar på Anslut: fordonets tändningsläge
+Hanterill ansluter till bilar som stöds via en vanlig ENET-kabel, och samma kabel fungerar för alla
+modeller, bland annat Volvo EX30, Polestar 4 och Zeekr. Bilens centralgateway tar emot appens
+förfrågningar och vidarebefordrar dem till rätt styrenhet. Den här sidan beskriver
+anslutningen och vad du kan kontrollera när den inte fungerar.
 
-Ett parkerat fordon stänger av merparten av sina styrenheter för att spara på 12-voltsbatteriet. För
-att alla styrenheter ska svara vid en skanning bör fordonet vara i aktivt tändningsläge:
+## Så fungerar den fysiska anslutningen
 
-- **På eldrivna CMA- och SEA1-fordon**: Sitt i förarsätet med nyckeln i kupén och tryck ned bromspedalen en gång så att förardisplayen tänds, men behåll växelväljaren i **P (Park)**.
-- **På SPA- och bensin-/hybridfordon**: Tryck eller vrid på startreglaget utan att röra bromspedalen för att slå på tändningsläge II.
+När du kopplar in en ENET-kabel mellan bilens OBD-II-uttag och datorns Ethernet-adapter händer tre
+saker, i ordning:
 
-## Anslutningslägena
+1. **Bilen upptäcker anslutningen**: Samma ENET-kabel förbinder modellerna som stöds med din
+   dator. Håll bilen vaken så att dess diagnostiska anslutning är tillgänglig.
+2. **Båda sidor väljer lokala nätverksadresser automatiskt**: Varken din dator eller bilen kör en
+   hemrouter (DHCP-server). I stället väljer datorn och bilen efter några sekunder automatiskt
+   **länk-lokala IP-adresser** i intervallet `169.254.x.x`. Operativsystemet kallar det ofta
+   "Självvald adress" eller "Oidentifierat nätverk utan internetåtkomst". Det är helt normalt och
+   exakt vad bilen förväntar sig.
+3. **Hanterill öppnar anslutningen**: Bilens gateway accepterar anslutningen och skickar
+   förfrågningarna vidare till batteri-, broms- och övriga styrenheter.
 
-### 1. Automatisk identifiering (Rekommenderas för Ethernet / DoIP)
+<ProtocolFlow
+  steps={[
+    { node: "Dator", detail: "169.254.x.x länk-lokal" },
+    { node: "ENET-kabel", detail: "samma kabel för alla modeller" },
+    { node: "Fordongateway", detail: "CEM / VGM på port 13400" },
+    { node: "Styrenheter", detail: "Batteri, bromsar, klimat, kaross" },
+  ]}
+  request="hitta fordon och aktivera diagnostisk routing"
+  response="routing aktiv, redo att läsa moduler"
+/>
 
-Det här är standardläget för alla CMA-, SPA- och SEA1-fordon över en vanlig OBD-II-till-Ethernet-kabel
-(ENET):
+## Steg för steg: anslut i appen
 
-1. Koppla in ENET-kabeln mellan fordonets OBD-II-uttag och datorns Ethernet-port.
-2. Vänta cirka 5 till 10 sekunder tills datorns nätverkskort har fått en automatisk länk-lokal adress (`169.254.x.x`).
-3. Välj **Automatisk identifiering** under **Hitta ditt fordon** och klicka på **Skanna nätverk**.
-4. Hanterill skickar ett lokalt identifieringsanrop över kabeln. Om du har flera nätverkskort (till exempel både Wi-Fi och en USB-Ethernet-adapter) väljer Hanterill automatiskt det nätverkskort som har en länk-lokal `169.254.x.x`-adress så att anropet inte hamnar på ditt hemmanätverk.
-5. När fordonet svarar visas dess IP-adress, plattform och chassinummer (VIN). Klicka på **Anslut**.
+1. **Koppla in**: Sätt OBD-II-kontakten under förarplatsens instrumentbräda och RJ45-kontakten på
+   din dator.
+2. **Väck bilen**: Sätt dig i förarsätet eller tryck på bromspedalen så att instrumenteringen
+   tänds.
+3. **Välj Ethernet-adapter**: På skärmen **Anslutning** i Hanterill väljer du din trådbundna
+   Ethernet-adapter. Appen rangordnar automatiskt trådbundna adaptrar med en `169.254.x.x`-adress
+   först och filtrerar bort Wi-Fi, VPN och virtuella adaptrar.
+4. **Klicka på Hitta fordon**:
+   - Hanterill skickar först ett identifieringsanrop över kabeln och ber varje fordonsproxy att
+     meddela sitt VIN och sin adress.
+   - Om inget svar kommer inom tidsfönstret (vilket är vanligt på nyare SEA-fordon som Volvo EX30,
+     Polestar 4 och Zeekr, som är tysta på broadcast) försöker Hanterill automatiskt ansluta direkt
+     till plattformens standardgatewayadresser (`169.254.19.1` och `169.254.1.1`), så att du slipper
+     mata in IP-adresser för hand.
+5. **Klicka på Anslut**: Hanterill aktiverar routing mot gatewayen, identifierar fordonsplattformen
+   och visar **Ansluten**.
 
-### 2. Direkt-IP (Manuell DoIP-anslutning)
+## Förstå anslutningsloggen och statusmarkeringarna
 
-Om datorns brandvägg blockerar UDP-identifieringsanrop, men du redan vet vilken IP-adress fordonets
-gateway använder från en tidigare session:
+Medan anslutningen byggs visar skärmen **Anslutning** en live-logg i klarspråk, så att du aldrig
+behöver gissa varför en anslutning väntar:
 
-1. Växla till **Direkt-IP** på skärmen **Anslutning**.
-2. Fyll i fordonets IP-adress (ett `169.254.x.x`-nummer) och standardporten `13400`.
-3. Klicka på **Anslut**. Hanterill öppnar då en direkt TCP-anslutning till fordonets gateway utan att behöva använda UDP.
+| Status i appen | Vad det betyder | Vad du kan göra |
+| :--- | :--- | :--- |
+| **Väntar på nätverksadress (DHCP)** | Datorn har just upptäckt kabeln och väntar några sekunder på en eventuell hemrouter innan den väljer sin `169.254.x.x`-adress. | Vänta 5–10 sekunder och klicka på **Hitta fordon** igen. |
+| **Länk nere / ingen bärare** | Ethernet-adaptern ser ingen elektrisk signal från bilen. | Kontrollera att bilen är vaken, att båda kontakter sitter i och att datorns adapter är ansluten. |
+| **Port stängd hos gateway** | Bilen är på nätverket, men dess diagnostiska port sover eller nekade anslutningen. | Väck instrumenteringen (tryck på bromspedalen eller slå på tändningen) och försök igen. |
+| **Oläslig trafik** | Data kom på kabeln som inte är giltig diagnostiktrafik. | Koppla från VPN-klienter eller virtuella nätverksbryggor som kan störa lokal trafik. |
+| **Ansluten (DoIP)** | Routing är aktiv och bilens gateway är redo att svara på diagnostikförfrågningar. | Fortsätt till **Översikt**, **Batterihälsa** eller **Felkoder**. |
 
-### 3. Demoläge (Utforska programmet utan fordon)
+## Automatisk återanslutning om bilen tappar länken
 
-Om du vill testa Hanterill vid skrivbordet innan du går ut till fordonet:
+Fordons-gateways stänger inaktiva anslutningar om inget meddelande skicks på några sekunder, eller
+om en modul startar om mitt i en felkodsradering. Hanterill hanterar båda fallen automatiskt:
 
-1. Öppna fliken **Demoläge** på skärmen **Anslutning**.
-2. Välj en av de inbyggda fordonsprofilerna (**CMA**, **SPA** eller **SEA1**) och ett scenario (till exempel ett friskt fordon, ett batteri med cellobalans eller ett fordon med aktiva felkoder).
-3. Klicka på **Starta demosession**.
+- **Automatisk keep-alive**: Medan du är ansluten skickar Hanterill en lättviktig heartbeat i
+  bakgrunden så att bilens gateway inte somnar medan du läser en vy.
+- **Automatisk återanslutning**: Om en modulomstart eller ett kort spänningsbrott avbryter
+  anslutningen under en skanning väntar Hanterill en stund, öppnar den diagnostiska kanalen igen och
+  fortsätter utan att förlora det insamlade arbetet.
 
-Alla skärmar i programmet fungerar då precis som vid en riktig anslutning, med en tydlig
-**Demo**-markering i sidofältet så att demodata aldrig blandas ihop med dina riktiga
-fordonssessioner.
-
-Appen har inget CAN-läge: alla vyer läser över Ethernet-länken. Passiv CAN-lyssning finns bara
-som en experimentell kommandoradsväg för specialister (SocketCAN på Linux, eller en CANsub-adapter
-från CSS Electronics) och beskrivs i [kommunikationsguiden](/docs/architecture).
-
-## Vad som händer när du ansluter
-
-När du klickar på **Anslut** utför Hanterill fyra snabba steg i ordning:
-
-<SpecList rows={[
-  ["1. Öppnar länken", "Upprättar en direkt anslutning till fordonets gatewaymodul (VGM eller CEM)."],
-  ["2. Aktiverar diagnostisk anslutning", "Begär tillstånd från gatewayen att skicka diagnostikförfrågningar vidare till fordonets interna nätverk."],
-  ["3. Läser fordonsidentitet", "Läser av det 17-ställiga chassinumret (VIN) och identifierar vilken plattform (CMA, SPA eller SEA1) fordonet bygger på."],
-  ["4. Kontrollerar aktiva styrenheter", "Frågar vilka styrenheter som är vakna och redo att svara."],
-]} />
-
-## Väcka sovande styrenheter (Väckningssekvens)
-
-Om fordonet står parkerat med avslagen tändning svarar ofta bara gatewayen och ett fåtal
-huvudmoduler, medan klimat-, sätes-, dörr- och kameramoduler sover på sina underliggande bussar.
-
-På skärmen **Anslutning** kan du starta **Väckningssekvensen**, som väcker fordonet i fem steg:
-
-1. Skickar en generell väckningspuls över gatewayen.
-2. Väcker centraldatorn (CEM) och gatewaymodulen (VGM) först.
-3. Kontakterar drivline- och chassimoduler en i taget så att gatewayen aktiverar sina interna underbussar.
-4. Skickar en kort håll-vaket-signal så att nyväckta styrenheter hinner starta upp.
-5. Väntar ett ögonblick så att alla bussar stabiliseras innan avläsningen börjar.
-
-Så snart din skanning är klar eller du kopplar från slutar Hanterill att skicka håll-vaket-signaler
-så att fordonets styrenheter kan återgå till viloläge och spara på 12-voltsbatteriet.
-
-## Automatisk återanslutning om kabeln glappar
-
-Om Ethernet-kabeln råkar ryckas till eller om en styrenhet tillfälligt tappar kontakten under en
-längre skanning avbryter inte Hanterill hela arbetet direkt:
-
-- Appen försöker automatiskt återupprätta den diagnostiska anslutningen upp till tre gånger med en kort paus mellan försöken.
-- Under återanslutningen kontrollerar identitetsspärren att samma chassinummer (VIN) fortfarande sitter i andra änden av kabeln innan en avbruten skanning får fortsätta.
-
-## Nästa steg
-
-- [Hårdvara och adaptrar](/docs/hardware-and-adapters): vilka kablar och adaptrar som fungerar bäst.
-- [Protokoll (DoIP, UDS och CAN)](/docs/architecture): hur meddelanden färdas mellan datorn och fordonet.
-- [Felsökning](/docs/troubleshooting): vad du gör om fordonet inte svarar.
+Släppta byggen av Hanterill talar bara med riktiga fordon – det finns inget demoläge, och inget i
+appen låtsas vara en bil.

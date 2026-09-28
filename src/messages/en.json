@@ -176,7 +176,7 @@
       "hCadence": "Release cadence",
       "pCadence": "Versions follow SemVer tags. The panel shows the latest published release and its assets; if GitHub cannot be reached it links to the releases page.",
       "hHardware": "What hardware you need",
-      "pHardware": "One passive ENET cable and any real Ethernet interface. The cable has no chip in it: OBD-II on one end, RJ45 on the other, wired straight through to the car's diagnostic pins. Everything else is ordinary Ethernet.",
+      "pHardware": "You need a passive ENET cable and an Ethernet port or USB Ethernet adapter. The cable runs from the car's OBD-II socket to RJ45; it contains no chip or driver.",
       "hBudget": "What it costs",
       "pBudget": "A cable costs a few tens of euros and a USB Ethernet adapter about the same, if your laptop has no port. There is no dongle to buy, no subscription to renew, and no account to create.",
       "releasesDocsLink": "Releases and versions",
@@ -249,7 +249,7 @@
       "hInventory": "Inventory and firmware",
       "pInventory": "The inventory lists the hardware and software versions reported by each responding control unit. Compare two saved inventories to see what changed after service or an update. The app also flags mileage readings that disagree.",
       "hEvidence": "Evidence",
-      "pEvidence": "A session exports to JSON or CSV and archives locally. Run one before a repair and one after: the built-in comparison shows fewer codes and fewer active faults. <link>Sessions and evidence</link> covers the comparison views.",
+      "pEvidence": "Save a session before a repair and another afterward. The comparison shows which codes cleared, which remain and whether their status changed. Sessions stay on your computer and can be exported as JSON or CSV. <link>Sessions and evidence</link> explains the views.",
       "dtcDocs": "DTC scanning documentation"
     },
     "liveData": {
@@ -526,16 +526,16 @@
     "network": "Network"
   },
   "pricing": {
-    "promise": "Free for private use, in every release.",
-    "detail": "There is no paid tier, no subscription, no account and no trial, and no feature is held back behind one: every diagnostic function the app has is in the download. The licence reserves an optional commercial licence for workshops that bill for this work, so a private owner never pays.",
+    "promise": "Private use is free in every release.",
+    "detail": "The download includes every diagnostic function in the app. There is no account, trial or paid tier. Workshops that charge for this work can ask about a commercial licence.",
     "heading": "Private use costs nothing",
-    "body": "Hanterill is a tool for owners, not a subscription. It has no paid tier, no account, no trial and no licence server, and no diagnostic feature sits behind one. Private use stays free in every released version.",
-    "commercial": "Businesses are the one exception. The licence keeps a commercial option for workshops and service providers, because commercial use is not what CC BY-NC-ND permits. Private owners are unaffected."
+    "body": "Install Hanterill and use the functions your car supports. Private use costs nothing, now or in later releases.",
+    "commercial": "Workshops and service providers need a commercial licence if they charge for work done with Hanterill. The private-use licence does not cover that work."
   },
   "hero": {
     "eyebrow": "Independent vehicle diagnostics",
     "title": "Read your Volvo or Polestar directly.",
-    "lead": "Connect to a supported Volvo or Polestar over Ethernet. Read battery health, ECU faults and live telemetry. No cloud, no subscription, and free for private use.",
+    "lead": "Plug a supported Volvo or Polestar into your computer with an ENET cable, then read its battery, fault codes and live measurements. The app keeps the session on your machine.",
     "platforms": "Windows, macOS, Linux",
     "principles": "Source-available, local only, no telemetry, free for private use",
     "captures": "Captured on the reference vehicle",
@@ -597,13 +597,13 @@
     }
   },
   "features": {
-    "title": "Everything the vehicle will tell you, over one connection.",
-    "lead": "The battery, every ECU, faults, live data, subsystem telemetry and a scored report, read over one connection. No mode switching between tools.",
+    "title": "Read what the car reports.",
+    "lead": "The same cable reaches the battery controller and other responding modules. Check a fault, watch a reading change, then save the session so you can compare it after the next visit.",
     "batteryTitle": "Battery health",
-    "batteryBody": "State of health and charge, pack voltage, cell-group spread, min, max and delta, and pack temperature. Cross-checks compare reported figures against the measured cells and flag disagreements. The percentage your dashboard shows, and the numbers behind it.",
+    "batteryBody": "Read the battery controller's health and charge estimates alongside pack voltage, cell-group spread and temperatures. Hanterill compares related readings so a number that disagrees with the rest is easier to spot.",
     "batteryCta": "Battery diagnostics",
     "scanTitle": "Full vehicle scan",
-    "scanBody": "Hanterill discovers ECUs over DoIP, identifies which speak UDS, and reads the identification, hardware and software data from each. 49 modules in the CMA registry, 40 of them DTC-capable, probed in one pass.",
+    "scanBody": "Hanterill finds the modules fitted to the car over DoIP and reads their identity, hardware and software records. The CMA catalogue has 49 entries, including 40 that can report fault codes; a given car may have fewer.",
     "scanCta": "Vehicle diagnostics",
     "faultTitle": "Fault codes, by status",
     "faultBody": "Hanterill reads DTCs with their status: active now, pending, stored or historical. The list opens on the codes that need attention. If the ECU saved a snapshot when the fault set, you get that too, with a built-in diff between scans.",
@@ -611,7 +611,7 @@
     "liveBody": "Follow battery, motor and 12 V readings as they change. Save the chart when you need to compare it with a later test.",
     "liveCta": "Live data",
     "systemsTitle": "Every subsystem that answers, on its own page",
-    "systemsBody": "Climate loop, drive units with a front-to-rear cross-check, charging plus charge-limit diagnosis, charger and DC-DC power, TCAM backup battery, steering angle, service schedule, GPS on request, and the CEM option map with the factory build record.",
+    "systemsBody": "Open the climate, drive-unit, charging, power, TCAM and steering views to inspect the readings each system returns. Service intervals, GPS on request and the vehicle option map have their own views too.",
     "systemsCta": "System telemetry",
     "reportsTitle": "A scored health report you can hand to someone",
     "reportsBody": "The report brings battery condition, cell balance, faults and mileage checks together. It shows when missing readings limit the result.",
@@ -622,8 +622,8 @@
     "evidenceTitle": "Before and after, side by side",
     "evidenceBody": "Sessions archive locally and compare inside the app: fault codes before and after a repair, cell potentials module by module, firmware before and after an update.",
     "evidenceCta": "Compare diagnostic sessions",
-    "shellTitle": "Built like instrumentation, not like an app",
-    "shellBody": "A command palette, two-key navigation chords, eight themes plus a density setting, eight interface languages, and a full keyboard path through every screen.",
+    "shellTitle": "Get to the reading you need.",
+    "shellBody": "Use the command palette or two-key shortcuts to move between screens. Choose from eight colour palettes and nine languages; the controls work from the keyboard.",
     "writeAccess": "Asks before it writes",
     "readOnlyNote": "Ordinary checks read information from the car. An action that can change the car asks for confirmation first.",
     "sohLabel": "Battery state of health",
@@ -738,39 +738,39 @@
     "hub": {
       "battery": {
         "title": "Battery health",
-        "body": "State of health and charge, pack voltage, cell-group potentials across every catalogued pack topology, min/max/delta, thermal maps and consistency checks."
+        "body": "Read health and charge estimates with pack voltage, cell-group values and temperatures. The view selects the layout for the detected battery."
       },
       "diagnostics": {
         "title": "Vehicle diagnostics",
-        "body": "ECU discovery over DoIP, identification data, DTCs by status with freeze frames, all-module DID scans and firmware inventory."
+        "body": "See which modules answer, read their fault codes and saved snapshots, then inspect identification and firmware records."
       },
       "live": {
         "title": "Live data",
-        "body": "Pack voltage and current, battery and inverter temperature, motor torque and 12 V system, sampled and plotted with gap accounting."
+        "body": "Plot pack voltage and current, temperatures, motor torque and the 12 V supply. Gaps in a recording remain visible."
       },
       "systems": {
         "title": "System telemetry",
-        "body": "Climate loop, drive units, charging and power, TCAM, steering, service schedule, GPS on request and the vehicle option map."
+        "body": "Open separate readouts for the climate system, drive units, charging, power, TCAM, steering and service schedule."
       },
       "reports": {
         "title": "Inspection reports",
-        "body": "A scored vehicle-condition grade with every verdict traceable to a documented rule version. Printable, exportable, re-scorable."
+        "body": "See which readings affected the inspection result and which were missing. Print the report or recalculate it from a saved session."
       },
       "sessions": {
         "title": "Sessions and evidence",
-        "body": "Sessions archive locally and compare inside the app: fault code diffs, cell history diffs, firmware before and after."
+        "body": "Keep scans on your computer and compare faults, cell readings or firmware between visits."
       },
       "service": {
         "title": "Service functions",
-        "body": "EPB service mode, 12 V adaptation, reminder reset and damper calibration, each behind an explicit confirmation and driven through the running binary's capability manifest."
+        "body": "Check which routines this build offers for your car. Each action asks for confirmation, and the car may refuse a protected routine."
       },
       "walkthrough": {
         "title": "The full walkthrough",
-        "body": "All seven features in one pass, each with its live instrument."
+        "body": "Follow the readings through each feature, with sample instruments you can operate on this site."
       },
       "caseStudy": {
         "title": "One session, start to finish",
-        "body": "A representative session on the reference vehicle: the complaint, the codes, the numbers and the repair."
+        "body": "Follow one sample complaint through the first scan, the repair and the second scan."
       }
     }
   },
@@ -1025,7 +1025,7 @@
     }
   },
   "protocolStack": {
-    "title": "Built on automotive standards.",
+    "title": "Standard protocols, direct connection.",
     "lead": "Hanterill talks to the car's diagnostic network with the same protocols a dealer tool uses. Nothing in between is a proprietary cloud service.",
     "paragraph": "Hanterill finds the car through the cable, opens a diagnostic connection and sends questions to its control units. Ordinary checks read information. Actions that can change the car are separate and ask for confirmation first.",
     "layers": {
@@ -1168,7 +1168,7 @@
       },
       {
         "q": "Can I use it without a car?",
-        "a": "Yes. Open a simulated vehicle from the Connection screen to explore the app without a car. Its readings are labeled as simulated and kept separate from real scans. The connection guide explains what you need for a real vehicle."
+        "a": "No. Released builds talk to real vehicles only; there is no demo mode. Connect an ENET cable to a supported car to get readings. The examples on this site use fixed sample data."
       },
       {
         "q": "What does the inspection report give me?",
@@ -1368,8 +1368,8 @@
   },
   "docs": {
     "eyebrow": "Documentation",
-    "title": "How Hanterill works, in detail.",
-    "lead": "From plugging in a cable to decoding a battery block. Written for owners who want the specifics and engineers who want the protocol.",
+    "title": "Guides for the cable, car and readings.",
+    "lead": "Start with the connection, then follow a reading back to the control unit that supplied it. The reference pages cover the protocol details.",
     "search": "Search documentation",
     "searchPlaceholder": "Search docs, protocols, identifiers…",
     "searchHint": "to search",
@@ -1379,7 +1379,7 @@
     "previous": "Previous",
     "next": "Next",
     "editPage": "Edit this page on GitHub",
-    "repoDocs": "Deeper technical reference in the repository README",
+    "repoDocs": "Project overview in the repository README",
     "versionStamp": "App version",
     "versionUnknown": "unavailable offline",
     "copy": "Copy",
@@ -1481,7 +1481,7 @@
     "eyebrow": "Interactive",
     "title": "Click through a representative session",
     "lead": "The values here are fixed samples. Every panel mirrors a real Hanterill view, but nothing is connected to a car.",
-    "label": "Representative session, simulated vehicle",
+    "label": "Representative session with sample data",
     "previous": "Previous",
     "next": "Next",
     "replay": "Replay",
@@ -1568,12 +1568,12 @@
   "pages": {
     "featuresEyebrow": "Features",
     "featuresTitle": "What Hanterill covers.",
-    "featuresLead": "The full coverage, read over the same connection. Standard diagnostics stay read-only; the operations that change the vehicle each ask for confirmation on their own.",
+    "featuresLead": "Readings from the battery, fault-code scan and other responding modules share one connection. Actions that change the car have their own confirmation.",
     "batteryHealthEyebrow": "Features / Battery health",
     "batteryHealthTitle": "The percentage, and the numbers behind it.",
     "batteryHealthLead": "Hanterill reads high-voltage battery data reported by the vehicle: state of health and charge, pack voltage, cell-group distribution, imbalance and temperature, across every pack topology the catalogue knows.",
     "vehicleDiagnosticsEyebrow": "Features / Vehicle diagnostics",
-    "vehicleDiagnosticsTitle": "Every ECU on the network, not only the one with the light on.",
+    "vehicleDiagnosticsTitle": "See which control units answer.",
     "vehicleDiagnosticsLead": "Hanterill discovers the vehicle ECUs over DoIP, identifies which speak UDS, and reads fault, identification and data-identifier content from each.",
     "liveDataEyebrow": "Features / Live data",
     "liveDataTitle": "Engineering telemetry on a polling loop.",
@@ -1582,10 +1582,10 @@
     "serviceFunctionsTitle": "The operations that change the vehicle stay separate.",
     "serviceFunctionsLead": "Where the car and installed app support them, Hanterill can run certain service actions. Each needs its own confirmation. The car may still refuse a protected routine.",
     "inspectionReportsEyebrow": "Features / Inspection reports",
-    "inspectionReportsTitle": "Before you buy it: a score you can defend.",
+    "inspectionReportsTitle": "Check the evidence before buying.",
     "inspectionReportsLead": "Hanterill turns the same reads into a graded pre-purchase inspection, with every verdict traceable to a documented rule.",
     "sessionsEvidenceEyebrow": "Features / Sessions and evidence",
-    "sessionsEvidenceTitle": "The history of the car, kept on your machine.",
+    "sessionsEvidenceTitle": "Compare this visit with the last one.",
     "sessionsEvidenceLead": "Sessions archive locally and compare inside the app: fault codes, cell potentials, firmware, before and after.",
     "systemTelemetryEyebrow": "Features / System telemetry",
     "systemTelemetryTitle": "Beyond the battery.",
@@ -1594,8 +1594,8 @@
     "vehiclesTitle": "CMA tested. SPA partially supported. SEA1 catalogued.",
     "vehiclesLead": "Select a platform and a vehicle to see which functions are verified. Each status label reflects what has been checked on that car, not the platform it is built on.",
     "downloadEyebrow": "Download",
-    "downloadTitle": "Get Hanterill.",
-    "downloadLead": "Native builds for each desktop platform. Nothing installs automatically and nothing phones home.",
+    "downloadTitle": "Download Hanterill.",
+    "downloadLead": "Choose the installer for your computer. The app runs locally and needs no account.",
     "changelogEyebrow": "Changelog",
     "changelogTitle": "Every release, on the record.",
     "changelogLead": "Each tagged build with its notes, newest first, read from GitHub Releases. Versions follow SemVer; the full change history is kept per version.",
@@ -1615,14 +1615,14 @@
     "screenshotsLead": "Hanterill running on a supported Volvo and Polestar: overview, battery, fault codes, live data, subsystem pages and the scored inspection report.",
     "projectsEyebrow": "Other projects",
     "projectsTitle": "More tools from the same bench.",
-    "projectsLead": "Hanterill is not the only project here. These are other independent tools from the same author, built on the same local-only approach.",
+    "projectsLead": "The same author also builds these independent tools. Each has its own repository and licence.",
     "projectsViewRepo": "View on GitHub",
     "projectsPlatform": "Platform",
     "projectsLicense": "License",
     "projectsSeparate": "Each project is maintained separately, with its own repository, license and release schedule.",
     "networkTitle": "CMA Network Explorer.",
     "networkLead": "Every control unit on the CMA platform as an interactive wiring map: 170 units, 295 typed links across nine networks and 622 documented pin rows. Filter by bus, trace a path between any two modules, and read the connector pin-outs the diagnostics run on.",
-    "walkthroughTitle": "Every feature, one walkthrough.",
+    "walkthroughTitle": "See each feature in use.",
     "walkthroughLead": "What each feature reads, what it does with the values, and where its limits are. The instruments run on the same labelled sample data as the rest of the site.",
     "caseStudyTitle": "One session on the record.",
     "caseStudyLead": "Play through a representative session on the reference vehicle, then read the same session step by step. Fixed sample data, so every figure can be checked against the rest of this site."
@@ -1672,15 +1672,15 @@
       },
       "scan": {
         "title": "Connect and identify",
-        "body": "A passive ENET cable from the OBD-II port to a laptop. Hanterill finds the gateway over UDP 13400, opens a channel on TCP 13400 and activates routing. It then reads the vehicle identification from the gateway and confirms the platform before it asks anything else - the ECU registry, the identifiers and the decoders all follow from that."
+        "body": "Connect the ENET cable between the car and a laptop. Hanterill finds the gateway on UDP port 13400, opens a TCP channel and activates routing. It identifies the vehicle before choosing the module registry and decoders for that platform."
       },
       "codes": {
         "title": "Read the fault memory",
-        "body": "Forty-nine control units answer. Three carry codes, and each one is reported with the status byte the module actually stored - not just the code number. That distinction is the difference between an intermittent fault that has already cleared and one that is present right now."
+        "body": "The scan checks the CMA catalogue and records which control units answer. Three responding units carry fault codes. Hanterill keeps each code's status byte, which shows whether the fault is active now or belongs to an earlier event."
       },
       "freeze": {
         "title": "Read the conditions behind them",
-        "body": "The BECM saved a snapshot with its code: pack voltage, current, state of charge and temperature at the moment the fault set. The snapshot is what turns a code into a diagnosis - it shows the pack was at 62 % and under load when the module flagged the imbalance, not sitting on a charger."
+        "body": "The BECM saved pack voltage, current, charge level and temperature when its code was set. At 62 % charge, the pack was under load when the module flagged the imbalance. That snapshot gives the code context; it does not identify the cause by itself."
       },
       "battery": {
         "title": "Read the pack itself",
@@ -1770,8 +1770,8 @@
     "why": "The test is whether the adapter gives the operating system a real network interface. If it appears as a serial port, or if it terminates the link itself, Hanterill cannot reach the car through it."
   },
   "home": {
-    "moreTitle": "Go deeper.",
-    "moreLead": "Every instrument on this page has a full page behind it. The walkthrough takes each feature in turn; the case study follows one session from complaint to verified repair.",
+    "moreTitle": "Follow a reading further.",
+    "moreLead": "Each instrument links to a page explaining its readings and limits. The case study follows one sample session through a repair.",
     "walkthrough": "The full feature walkthrough",
     "features": "All features",
     "caseStudy": "One session, start to finish",

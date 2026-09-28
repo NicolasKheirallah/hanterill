@@ -19,7 +19,7 @@ Battery diagnostics are read-only. Hanterill reads the car's values without chan
 
 Some models are sold with different battery packs. For example, the Volvo EX30 Standard Range uses LFP, while its Extended Range versions use NMC. Do not decide which battery you have from the model name alone. Check the car's battery information or vehicle specification. Hanterill selects a battery layout from the readings it receives, but a detected layout is not a direct chemical test, especially on a vehicle marked provisional.
 
-NMC packs commonly offer more range for a given pack size. LFP avoids nickel and cobalt in its active battery material, and its voltage changes less through much of a charge. That flatter pattern means **voltage alone tells you less about how full an LFP battery is**. A change in the displayed charge estimate is not automatically a sudden loss of battery health. The car's battery controller makes the charge estimate; Hanterill displays what the car reports.
+NMC packs commonly offer more range for a given pack size. LFP avoids nickel and cobalt in its active battery material, and its voltage changes less through much of a charge, so **voltage alone tells you less about how full an LFP battery is**. When the displayed charge estimate jumps, that is not automatically a sudden loss of battery health. The car's battery controller makes the charge estimate; Hanterill displays what the car reports.
 
 When comparing battery reports, compare **the same car and battery variant** over time. A capacity or cell-voltage value from an LFP pack is not a useful “good” or “bad” target for an NMC pack. The car's own limits and reference values matter more than the chemistry name.
 
@@ -73,11 +73,19 @@ Some cell groups may not answer. The app leaves their positions blank and marks 
 
 Battery Health shows the temperatures and coolant readings the car provides. A difference between warm and cool sensors can be useful context, but it does not by itself identify a faulty part. The page also shows available charge and discharge power limits. These are the limits the car reports at the time of the scan, not a guarantee of the power you will always get.
 
-**Thermal exposure** is a separate, optional read. Where supported, Hanterill asks another car control unit for its record of time spent in different temperature ranges. The displayed history is cumulative; it does not describe only the current trip. If the car does not return it, the app says so. Hanterill also shows the available 12 V supply reading, which belongs to the car's low-voltage system.
+The battery module's temperature map shows both sensors in each module block, the warmest and coolest blocks, and the spread between them. The **12 V** battery's temperature history is a separate reading on the Power screen, with numbered bands and sample counts. Those bands describe the low-voltage battery. Hanterill also shows the 12 V supply reading where the car reports it.
+
+## Charge history and per-cell values
+
+The battery module keeps its own lifetime counters, and the Battery and Charging screens read them directly:
+
+- **Charge counts**: how many normal (AC) and fast (DC) charges the battery has recorded. A count is shown only when the module's start, stop and charge-gained tables agree; otherwise the figure stays empty and the note says which table disagreed.
+- **Time per charge band**: The chart shows how long the battery has spent in each of ten bands. Their exact percentage edges are not established, so the bands stay numbered; the distribution still shows whether the battery has spent more time near one end of its charge range.
+- **Per-cell heat maps**: SoH, learned capacity (Ah) and SoC for every cell individually, with the lowest and highest cell called out alongside the average. A single weak cell shows up here before it moves the pack average.
 
 ## Checks and missing data
 
-Hanterill compares readings that should agree, such as the battery's reported voltage and the sum of the cell-group voltages. It can also check reported power against voltage and current, and whether current looks plausible while the car is parked. A disagreement may come from an incomplete scan, a changing operating state or a reading that needs closer inspection. It is a prompt to investigate, not a diagnosis from one number.
+Hanterill compares readings that should agree, such as the battery's reported voltage and the sum of the cell-group voltages; it can also check reported power against voltage and current, and whether current looks plausible while the car is parked. A disagreement may come from an incomplete scan, a changing operating state or a reading that needs closer inspection. Investigate it; do not treat one number as a diagnosis.
 
 The page distinguishes a value that was measured, one calculated from readings, one marked provisional and one that was not reported. Missing or uncertain data should not be interpreted as a healthy or unhealthy result.
 

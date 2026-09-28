@@ -24,10 +24,12 @@ Du ansvarar för att kontrollera förhållandena runt bilen. Parkera på plant u
 Vissa rutiner har bara begränsad verifiering på riktiga bilar. De kan flytta delar eller ändra inställningar. Kontrollera stödet som visas bredvid åtgärden, följ bilens serviceanvisningar och avbryt om bilen inte bekräftar resultatet. Bilen kan neka en rutin även om den finns i listan.
 </Callout>
 
+**Serviceläget för den elektriska parkeringsbromsen** och växling av **användningsläge** är fortfarande **beta**. Ingen av dem har bekräftats från början till slut på en riktig bil. Läs status och varning före rutinen, och börja inte arbeta fysiskt förrän bilen har bekräftat åtgärden.
+
 | System | Vad den gör | Risk |
 | --- | --- | --- |
-| Elektrisk parkeringsbroms | Dra tillbaka till serviceläge för byte av bromsbelägg | Hög |
-| Elektrisk parkeringsbroms | Återställ från serviceläget | Medel |
+| Elektrisk parkeringsbroms *(beta)* | Dra tillbaka till serviceläge för byte av bromsbelägg | Hög |
+| Elektrisk parkeringsbroms *(beta)* | Återställ från serviceläget | Medel |
 | Styrvinkel | Nolla styrvinkelsensorn | Hög |
 | 12 V-batteri | Återställ adaptionen efter ett batteribyte | Medel |
 | TCAM-stödbatteri | Konditionera telematikens stödbatteri | Medel |
@@ -40,8 +42,8 @@ Vissa rutiner har bara begränsad verifiering på riktiga bilar. De kan flytta d
 | Klimatreglering | Kalibrera klimatanläggningens spjäll | Låg |
 | Taklucka och fönster | Normalisera efter ett strömavbrott | Låg |
 | Grillspjäll | Kalibrera det aktiva grillspjället | Låg |
-| Användningsläge | Sätt fordonet i ett aktivt användningsläge | Medel |
-| Användningsläge | Sätt fordonet i ett inaktivt användningsläge | Medel |
+| Användningsläge *(beta)* | Sätt fordonet i ett aktivt användningsläge | Medel |
+| Användningsläge *(beta)* | Sätt fordonet i ett inaktivt användningsläge | Medel |
 
 ## Guidad luftning av kylvätskan
 
@@ -61,7 +63,7 @@ Parkeringsbromsens serviceläge har en återställningsåtgärd. Du kan också �
 
 ## Rutiner skyddade av säkerhetsnivå
 
-Vissa rutiner skyddas av en säkerhetsnivå i bilens styrenhet. Att en rutin finns i Hanterill betyder inte att varje bil tillåter den. Du kan bekräfta en åtgärd och ändå få ett avslag från bilen.
+Vissa rutiner skyddas av en säkerhetsnivå i bilens styrenhet, och att en rutin finns i Hanterill betyder inte att varje bil tillåter den. Du kan bekräfta en åtgärd och ändå få ett avslag från bilen.
 
 Hanterill kan kontrollera om styrenheten anger att säkerhetsnivån är låst eller upplåst. Kontrollen låser inte upp den, och Hanterill skickar ingen upplåsningsnyckel. Om bilen nekar en skyddad rutin visar appen avslaget i stället för att ange att åtgärden är klar. Försök inte upprepade gånger efter ett avslag.
 

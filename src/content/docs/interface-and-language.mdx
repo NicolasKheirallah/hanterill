@@ -1,6 +1,6 @@
 You can change Hanterill's language, colours and information density in **Settings**. Your choices are saved on your computer and do not require an internet connection.
 
-## Interface languages (8 languages)
+## Interface languages (9 languages)
 
 You can switch the application language at any time in **Settings -> Appearance & Language** without restarting the app:
 
@@ -12,12 +12,13 @@ You can switch the application language at any time in **Settings -> Appearance 
 - **Íslenska / Icelandic** (`is`)
 - **Deutsch / German** (`de`)
 - **中文 / Simplified Chinese** (`zh`)
+- **Nederlands / Dutch** (`nl`)
 
 Standard automotive acronyms (such as **VIN**, **ECU**, **DTC**, **SoH**, and **SoC**) stay consistent across languages so they always match workshop manuals and the [Glossary](/docs/glossary).
 
-## Themes (8 built-in themes)
+## Themes (8 palettes plus Auto)
 
-Hanterill includes **eight themes**, all tested for high contrast and readability, plus an **Auto (System)** option that follows your operating system's day/night schedule:
+Hanterill includes **eight colour palettes**, all tested for high contrast and readability, plus an **Auto (System)** option that follows your operating system's day/night schedule:
 
 | Theme | Style & best use case |
 | :--- | :--- |
@@ -25,17 +26,20 @@ Hanterill includes **eight themes**, all tested for high contrast and readabilit
 | **Neutral Dark** | Low-glare dark slate theme for evening and indoor work. |
 | **Protokoll Light** | Warm paper, high-contrast daylight theme designed for reading outdoors or under bright workshop lights. |
 | **Protokoll Dark** | Carbon-and-amber night workshop theme designed to preserve night vision inside a dark cabin. |
-| **Polestar Light** | Minimal monochrome light palette inspired by Scandinavian instrument clusters. |
-| **Polestar Dark** | Deep monochrome dark palette with crisp white and safety-orange accents. |
-| **Nord** | Calm arctic blue-grey palette for long analysis sessions. |
-| **High Contrast** | Maximum contrast with bold borders and distinct status indicators for visual accessibility. |
+| **OLED Black** | True-black palette for OLED panels: pixel-off dark, minimal glare in a dark cabin. |
+| **Graphite** | Neutral charcoal palette with a single restrained accent for long analysis sessions. |
+| **Nordic Frost** | Calm arctic blue-grey palette for daylight work. |
+| **Workshop Sepia** | Warm, low-blue palette that is easy on the eyes through a long garage session. |
 
-## Audience modes and display density
+Two further switches, **High contrast** and **Reduce motion**, live beside the palette picker, and a live preview shows your choices before you commit them.
 
-Alongside themes, two controls in **Settings** let you tailor how much information fits on screen:
+## Audience modes
 
-- **Audience mode (*Owner*, *Technician*, *Engineer*)**: Adjusts how much technical detail is shown across the sidebar and screens. **Owner** mode keeps the interface focused on clear summaries, battery health, active warnings, and printable reports; **Technician** mode adds freeze frames, subsystem diagnostics, and maintenance routines; **Engineer** mode reveals protocol timings and raw parameter sweeps.
-- **Density (*Comfortable* or *Compact*)**: **Comfortable** gives cards and tables generous breathing room for laptop touchpads; **Compact** tightens row spacing so large module lists and 108-cell battery tables fit on smaller 13-inch workshop laptops without scrolling.
+The **Audience mode** control in **Settings** (*Owner*, *Technician*, *Engineer*) tailors how much information the interface shows:
+
+- **Owner** mode keeps the interface focused on clear summaries, battery health, active warnings, and printable reports.
+- **Technician** mode adds freeze frames, subsystem diagnostics, and maintenance routines.
+- **Engineer** mode reveals protocol timings, evidence detail, and raw parameter sweeps.
 
 ## Keyboard navigation and shortcuts
 
@@ -44,13 +48,18 @@ Every screen in Hanterill can be operated entirely from the keyboard:
 - **`Cmd+K` (macOS) or `Ctrl+K` (Windows / Linux)**: Open the **Command Palette** to jump to any screen, run a scan, switch themes, or search for a module by name.
 - **Two-key navigation chords**: Press `G` followed by a second letter to jump straight to a screen:
   - `G O` -> Overview
+  - `G V` -> Vehicle
   - `G C` -> Connection
+  - `G R` -> Inspection Report
   - `G B` -> Battery Health
-  - `G M` -> Cell Map
+  - `G M` -> Cell & Thermal Map
   - `G E` -> ECU Inventory
   - `G D` -> Fault Codes (DTCs)
   - `G L` -> Live Telemetry
-  - `G S` -> Sessions & Reports
-  - `G ,` -> Settings
+  - `G S` -> Service & Routines
+  - `G H` -> Sessions & Reports
+  - `G N` -> Climate, `G U` -> Drive Units, `G J` -> Charging, `G P` -> Power
+  - `G X` -> DID Explorer, `G I` -> DID Scanner, `G Z` -> Firmware, `G Q` -> 12 V Sleep Drain
+  - `G T` -> TCAM, `G G` -> GPS, `G W` -> Steering, `G Y` -> Service Schedule, `G K` -> Build Configuration, `G A` -> Activity, `G F` -> DTC History Diff, `G ,` -> Settings
 - **`?` (Question mark)**: Open the keyboard shortcut reference sheet from any screen.
 - **`Escape`**: Close any open dialog, drawer, or command palette, or stop a paused chart inspection.

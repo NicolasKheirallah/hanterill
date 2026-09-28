@@ -1,0 +1,37 @@
+Most screens answer one question at a time: is the battery healthy, or why did the 12 V battery go flat over the weekend. The **Module data** screen is different: it shows every named group of readings a module keeps about itself, in one place. It is the closest thing in the app to reading the module's own service records.
+
+## How a readout works
+
+Each module exposes numbered *readout groups*: small sets of related records such as "charge history", "wake-up log" or "12 V statistics". On the **Module data** screen:
+
+- A group **reads as soon as you open it**, and **Read again** in the group header refreshes it.
+- A plain status line tells you how much of the read carried meaning, for example *"All 17 values read."* A group where nothing decoded says so in one line instead of showing filler.
+- Key figures appear as stat tiles, followed by a table of the rows that have a plain value. Rows the app cannot yet decode stay folded away with the reason in words; the counts line still reports how much of the read was meaningful.
+- Raw identifiers (DID numbers, payload bytes) never clutter the screen; they are kept in the saved JSON if you archive the session.
+
+## What each module keeps
+
+- **Battery module (BECM)**: lifetime charge counts (normal AC and fast DC, shown only when the charger's own tables agree), time spent in each charge band, per-cell class and capacity sets, temperature histograms by operating state, and the module's awake time.
+- **Central module (CEM)**: 12 V battery statistics (charge counts, standby currents, temperature bands), the power-mode history (minutes asleep, parked, in use, driving), wake-up and sleep history, and the gateway reset log.
+- **Gateway (VGM)**: security and diagnostic-access logs, network-management and Ethernet error histories, and the reset log with an odometer reading per reset.
+- **Instrument cluster (DIM)**: trip computer, odometer copies, service intervals, display and system data, and the message history. See [Driving and display](/docs/driving-display).
+- **On-board charger (OBC)**: charge cycles, restarts and lifetime alarms per power block.
+- **Climate, thermal manager, drive units, engine module**: coolant circuits and pumps, heat-pump and heater lifetime figures, drive-unit operating hours and heat maps, and the OBD values the engine module mirrors.
+
+Some groups also appear in place on the screen that owns the topic (the battery groups on **Battery Health**, the drive-unit groups on **Drive Units**), so you rarely need to leave the screen you are working in.
+
+## Histories and timelines
+
+Many groups are *histories*: dated events rather than single numbers. Each event is aged against the module's own clock, so a lock event reads as a real timestamp and a reset log entry carries the odometer at the time it happened. Structured events say what they were in words (a lock or unlock, a wake-up with its reason, a reset with its counter) instead of a bare code.
+
+## What the screen will not invent
+
+<Callout kind="caution" title="Readings keep their honest labels">
+Values the app cannot yet decode stay undecoded, hours whose scale is unconfirmed are marked *likely*, and histogram bins without established edges are numbered rather than labelled with units. A verdict you can act on says so; everything else says what is missing.
+</Callout>
+
+Some groups need the module's extended diagnostic session; those carry an **extended** toggle in the group header and read once you allow it.
+
+## Where the data goes
+
+Every readout is part of the session archive, so a capture saved today can be compared with a later visit. See [Sessions and evidence](/docs/sessions-and-evidence) for how sessions, exports and the "Since your last visit" alerts work.

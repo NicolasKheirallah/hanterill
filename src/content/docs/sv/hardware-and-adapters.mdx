@@ -7,7 +7,7 @@ För Hanterills vanliga kontroller behöver du en **ENET-kabel** och en kabelans
 
 Leta efter en kabel som beskrivs som **OBD-II till Ethernet (ENET)**. Den har en bred kontakt för fordonet i ena änden och en nätverkskontakt för datorn i den andra. Det är en passiv kabel utan elektronik, så själva kabeln kräver ingen programvara.
 
-Säljannonser använder många namn på samma kabel: "ENET-kabel", "OBD-II till Ethernet", "OBD till RJ45" och ofta "BMW ENET-kabel" (såld för verkstadsverktygen ISTA och E-Sys). Alla är kopplade på samma sätt. Köp vilken passiv OBD-II-till-RJ45-kabel du hittar — på eBay, Amazon eller i en bildelsbutik — så fungerar den.
+Säljannonser använder många namn på samma kabel: "ENET-kabel", "OBD-II till Ethernet", "OBD till RJ45" och ofta "BMW ENET-kabel" (såld för verkstadsverktygen ISTA och E-Sys). Alla är kopplade på samma sätt. Köp vilken passiv OBD-II-till-RJ45-kabel du hittar (på eBay, Amazon eller i en bildelsbutik) så fungerar den.
 
 Samma ENET-kabel används för alla modeller Hanterill stöder, bland annat Volvo EX30, Polestar 4 och Zeekr. Modeller skiljer sig i vad som har verifierats i programvaran, inte i hårdvaran; [Fordon som stöds](/docs/supported-vehicles) håller reda på det per modell.
 
@@ -17,7 +17,7 @@ Om fordonet är vaket men datorn aldrig visar någon Ethernet-anslutning, kontro
 
 Alla trådbundna Ethernet-portar fungerar: den inbyggda porten på datorn, en **USB-C-hubb eller docka med RJ45-port** eller en egen USB-Ethernet-adapter. [Adapterlistan](#adaptrar-som-fungerar-och-sådana-som-inte-gör-det) nedan namnger kretsar och märken som är kända att fungera.
 
-Låt nätverksinställningarna för adaptern stå på **automatiskt**. Fordonet och datorn skapar en direkt, lokal anslutning. Datorn kan skriva att nätverket saknar internet. Det är normalt och betyder inte att kabeln har slutat fungera. Du kan ha Wi-Fi på samtidigt för andra uppgifter. På Linux ställer du in anslutningen på **länk-lokal** i stället för DHCP, en gång — NetworkManager väljer inte en länk-lokal adress av sig själv.
+Låt nätverksinställningarna för adaptern stå på **automatiskt**. Fordonet och datorn skapar en direkt, lokal anslutning. Datorn kan skriva att nätverket saknar internet. Det är normalt och betyder inte att kabeln har slutat fungera. Du kan ha Wi-Fi på samtidigt för andra uppgifter. På Linux ställer du in anslutningen på **länk-lokal** i stället för DHCP, en gång, eftersom NetworkManager inte väljer en länk-lokal adress av sig själv.
 
 Skärmen **Anslutning** i appen listar de adaptrar den ser, rangordnar de trådbundna först och visar ett klarspråkligt omdöme för varje, så ett adapterproblem brukar synas där.
 
@@ -29,13 +29,13 @@ Skärmen **Anslutning** i appen listar de adaptrar den ser, rangordnar de trådb
 
 ## Adaptrar som fungerar, och sådana som inte gör det
 
-Kort sagt: adaptern måste ge datorn ett riktigt nätverksgränssnitt. Trådlösa OBD-donglar och allt som talar ett seriellt protokoll kan inte bära diagnostiktrafiken, oavsett vad annonsen lovar.
+Adaptern måste ge datorn ett riktigt nätverksgränssnitt. Trådlösa OBD-donglar och allt som talar ett seriellt protokoll kan inte bära diagnostiktrafiken, oavsett vad annonsen lovar.
 
 <AdapterList />
 
 ## Vad en CAN-adapter inte gör
 
-Hanterills vyer körs alla över Ethernet-länken, och appen använder ingen CAN-adapter — att köpa en ger dig inget extra. Fordonets interna CAN-bussar förklaras i [kommunikationsguiden](/docs/architecture), inklusive den experimentella kommandoradsvägen som kan lyssna passivt på dem; det är specialistverktyg, inte en del av appen du laddar ner.
+Hanterills vyer körs alla över Ethernet-länken, och appen använder ingen CAN-adapter; att köpa en ger dig inget extra. Fordonets interna CAN-bussar förklaras i [kommunikationsguiden](/docs/architecture).
 
 ## Läs vidare
 

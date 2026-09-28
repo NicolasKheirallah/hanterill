@@ -240,7 +240,7 @@ export const vehicles: VehicleSupport[] = [
     powertrain: "BEV",
     status: "testing",
     years: "2024 to present",
-    note: "SEA1 module list, direct gateway connection and both battery pack layouts (107-group LFP and 108-group NMC) are defined. Treat readings as provisional while testing continues on more cars.",
+    note: "SEA1 module list, direct gateway connection and both battery pack layouts (120-group LFP and 107-group NMC) are defined. Treat readings as provisional while testing continues on more cars.",
     capabilities: SEA_TESTING,
     research: ["Testing battery reads on more cars", "Software and battery variant matrix"],
   },

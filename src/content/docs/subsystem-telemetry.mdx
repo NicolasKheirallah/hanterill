@@ -1,21 +1,35 @@
-Hanterill has separate diagnostic screens for climate, drive units, power, steering, telematics, GPS and service schedule. Each screen asks for the readings relevant to that system. The available fields depend on the car and on which control units answer.
+Hanterill has separate diagnostic screens for climate, drive units, charging, power, steering, telematics, GPS and service schedule. Each screen asks for the readings relevant to that system. The available fields depend on the car and on which control units answer.
 
-## Climate and drive units
+## Climate and heat pump
 
-**Climate** can show refrigerant pressure and temperature, compressor activity, heater temperatures, battery cooling readings and fan output. A blank field means that value was not returned. The screen identifies the source unit for a reading when it can.
+**Climate** can show refrigerant pressure and temperature, compressor activity, cabin heater temperatures, battery cooling readings and fan output. A blank field means that value was not returned. The screen identifies the source unit for a reading when it can.
 
-**Drive Units** can show front and rear motor readings such as speed, torque, voltage and temperature. The app may compare the two sides when both answer. A missing rear unit on a car built with one motor is not a failed rear motor.
+The heat pump and high-voltage heater keep lifetime records, and the screen reads them: compressor runtime (marked *likely* until its hour-scale is confirmed), stops from overheating and freeze protection, preconditionings done with the heat pump, energy the heat pump saved, and valve cycles, plus a chart of cooling, heat-pump and reheat runtime per outside-temperature band, and the heater's starts, runtime and temperatures.
 
-## Power and steering
+## Coolant circuits
 
-**Power** groups available high-voltage and 12 V supply readings. Different units may report related voltages; a difference is something to examine with the car's operating state in mind. It does not alone prove that a cable or ground connection is faulty.
+One read of the thermal manager shows the car's three coolant circuits as connected cards: the battery circuit (coolant in, pack average, coolant out), the drive-unit circuit (coolant, rear and front motor, rear and front inverter) and the climate circuit (heater in and out). Each card ends with its pump's speed and current. The same read brings charger and DC/DC temperatures, the pack voltage at the contactors, the contactor state and the battery current.
 
-**Steering** shows the steering values and status the car reports. A reading that does not update as expected may reflect how that unit supplies diagnostic data. Check for fault codes and repeat the read before treating it as a failed sensor. Calibration is a separate service action that changes the car.
+## Drive units
 
-## Telematics, GPS and service schedule
+**Drive Units** can show front and rear motor readings such as speed, torque, voltage and temperature live, and compare the two sides when both answer. A missing rear unit on a car built with one motor is not a failed rear motor.
+
+The drive units keep lifetime records too. The view shows operating and powered hours (marked *likely* until the hour scale is confirmed), time spent regenerating or producing torque, temperature history and the remaining share of full torque. A heat map puts time at each torque and speed combination beside the hottest reading there. On the reference car, the front unit does most of the regenerative braking; the two histories make that difference visible.
+
+## Power and the DC/DC converter
+
+**Power** groups available high-voltage and 12 V supply readings, the 12 V battery's temperature-band history with numbered bands and sample counts, and the car's power-mode history: lifetime minutes asleep, parked, in use and driving, how many times the car went to sleep, and how long it has been awake since the last wake-up.
+
+The DC/DC converter that charges the 12 V system sits in the front drive unit. Its lifetime histograms show running time, 12 V output power, current and voltage, maximum power available, high-voltage input current and voltage, and board temperature. The scales are not yet confirmed, so hours are marked *likely* and heat-map axes are numbered. Related voltages may be reported by different units; a difference is something to examine with the car's operating state in mind, not on its own proof of a faulty cable or ground.
+
+## Charging, steering, telematics, GPS and service schedule
+
+**Charging** has its own guide: see [Charging](/docs/charging) for the live charger telemetry and the charger's health counters.
+
+**Steering** is an honest gap on current cars: the steering angle and rate sensors do not answer these reads over the diagnostic channel, and the screen says so rather than showing a stale value. Check for fault codes instead; calibration is a separate service action that changes the car.
 
 **Telematics** can show the backup battery and other available module readings. **GPS** reads the car's position only when you request a fix. Review location data before sharing an export. These screens report what the unit returned; they cannot by themselves identify the cause of a weak signal or an emergency-call warning.
 
-**Service Schedule** shows the maintenance counters the car supplies, such as remaining distance, time and operating hours. Some counters can be unavailable. Reading a counter does not reset it; a reset is a separate confirmed service action.
+**Service Schedule** shows the maintenance counters the car supplies, such as remaining distance, time and operating hours, together with the 12 V battery care interval. It also compares the cluster's two counter records and warns when they no longer describe the same service event. Some counters can be unavailable. Reading a counter does not reset it; a reset is a separate confirmed service action.
 
-Across these screens, use the reading state and capture time. Do not turn a missing field into zero or treat a single outlying value as a diagnosis.
+Across these screens, use the reading state and capture time. Do not turn a missing field into zero or treat a single outlying value as a diagnosis. What the car has learned about its own consumption lives on [Driving and display](/docs/driving-display), and every module's full readout groups are on [Module data](/docs/module-data).

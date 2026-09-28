@@ -30,9 +30,12 @@ SmartScreen visa en varning för okänd utgivare vid första starten. Jämför g
 
 ## Uppdatera Hanterill
 
-Eftersom datorappen Hanterill gör noll internetanslutningar laddar den aldrig ned eller installerar
-uppdateringar i bakgrunden. För att uppdatera till en nyare version hämtar du den senaste
-installationsfilen från [nedladdningssidan](/download) och installerar den över din
+Appen laddar aldrig ned eller installerar uppdateringar i bakgrunden. Den kan kontrollera om en
+nyare version finns, en gång per dag, men bara om du slår på det i **Inställningar -> Uppdateringar**.
+När kontrollen är på frågar appen GitHubs publika releaseflöde om en nyare taggad version finns och
+visar en notis du kan avfärda – anropet är detsamma för alla, skickar inget om din dator eller ditt
+fordon, och ingen installationsfil laddas någonsin ner automatiskt. För att uppdatera hämtar du den
+senaste installationsfilen från [nedladdningssidan](/download) och installerar den över din
 befintliga kopia.
 
 Dina sparade sessioner, fångster och inställningar ligger kvar vid en uppdatering: det lokala
@@ -45,6 +48,7 @@ Varje version länkar till sina fullständiga anteckningar på [ändringsloggsid
 
 | Version | Datum | Höjdpunkter |
 | --- | --- | --- |
+| [0.3.0](/changelog) | 2026-09-27 | Moduldata-avläsningar, historik för drivlina och DC/DC, anslutningsaviseringar, kort för nycklar, däck och laddarhälsa, OBD-utsläppsstatus och ett nionde gränssnittsspråk |
 | [0.2.2](/changelog) | 2026-09-23 | SPA-diagnostikunderlag, stödnivåer bredvid servicerutiner, förseglade bevispaket vid export och felkodsjämförelse med ett klick |
 | [0.2.1](/changelog) | 2026-09-19 | Utökad referenskatalog för styrenheter, skrivskyddad servicestatuskontroll och förbättrad diagnostiktäckning |
 | [0.2.0](/changelog) | 2026-09-13 | Verifiering på ett produktionsfordon (Polestar 2), CMA-styrmodulregister med 49 moduler, periodisk liveströmning, batterilayouter för flera plattformar och åtta gränssnittsspråk |

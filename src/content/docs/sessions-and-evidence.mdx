@@ -12,6 +12,12 @@ Select two sessions to open the fault-code comparison. It shows which recorded c
 
 Other comparison views can show changes in firmware or module inventory when both captures contain the required data. **Compare cell captures** needs two cell captures supplied to that tool; selecting two sessions does not automatically compare every cell voltage. Always confirm that both visits belong to the same car.
 
+## Since your last visit
+
+When you connect, Hanterill saves a small set of readings for later comparison. It includes lifetime charge counts, time in each charge band, selected 12 V statistics, the gateway reset log, clocks from two modules and the VIN. The capture takes seconds; it does not start a full scan.
+
+The capture is compared with the previous stored one for the same car, and the **Since your last visit** list on the Sessions screen reports what actually changed: a charge count that grew, a reset counter that advanced, clocks that lost sync, a key that was added, fault codes that were cleared, or new charger alarms. Findings also appear as toasts when you connect. The first capture stores a baseline and says so; a capture from a different car is never diffed against this one. The trend view shows one row per saved session with the deltas chained per vehicle, so repeated visits build a history without you running anything manually.
+
 ## Export and privacy
 
 Sessions can be exported as JSON, as CSV tables and as collections of files. You can import a supported session file on another computer. Check VIN masking before sharing: an export may contain vehicle identity and detailed readings. A support bundle is a separate, privacy-filtered export for reporting a problem.

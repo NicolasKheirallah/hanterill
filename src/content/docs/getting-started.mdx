@@ -9,9 +9,7 @@ This guide takes you from connecting the cable to saving your first scan. Check 
 - **An Ethernet port on your computer**: a built-in RJ45 port or any standard USB-C or USB-A Ethernet adapter.
 - **Hanterill installed**: download the app for Windows, macOS, or Linux from the [download page](/download). See [Install on your computer](/docs/installation) if your operating system shows a first-launch security prompt.
 
-<Callout kind="note" title="Exploring without a car">
-Open **Connection** and choose a simulated vehicle to explore the app without a car. The available examples include a healthy car, one with fault codes and one with a 12 V battery drain. Simulated readings are labeled and kept separate from real scans.
-</Callout>
+Hanterill talks to real vehicles only: there is no demo mode in the app you download, and every reading on every screen comes from the car it is connected to.
 
 ## Step 1: Plug in the cable
 
@@ -40,7 +38,7 @@ Wait about ten seconds after plugging in. Your computer and the car's central ga
     { node: "Hanterill", detail: "desktop app" },
     { node: "ENET cable", detail: "passive Ethernet link" },
     { node: "Vehicle gateway", detail: "CEM / VGM router" },
-    { node: "Control units", detail: "40+ modules in the car" },
+    { node: "Control units", detail: "every module the gateway reports" },
   ]}
   request="identify vehicle and read module health"
   response="VIN, fault codes, and battery health returned"

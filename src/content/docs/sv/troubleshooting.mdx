@@ -33,14 +33,14 @@ Om fordonet dyker upp i listan med sitt chassinummer men anslutningen misslyckas
 
 - **Se till att inget annat diagnostikprogram körs samtidigt**: Fordonets gateway tillåter bara en aktiv diagnostisk anslutning åt gången.
 - **Koppla ur och koppla in OBD-II-kontakten igen**: Om en tidigare session avbröts tvärt genom att kabeln drogs ur kan gatewayen hålla den gamla kanalen reserverad i cirka 30 sekunder. Dra ur OBD-II-kontakten, vänta 10 sekunder och sätt i den igen.
-- **Prova Direkt-IP**: Om du ser fordonets IP-adress (till exempel `169.254.x.x`) kan du växla till fliken **Direkt-IP** på skärmen **Anslutning** och ansluta direkt via TCP på port `13400`.
+- **Automatisk direktanslutning**: När sökningen efter en broadcast-timeout tar slut försöker Hanterill automatiskt ansluta direkt till bilens standardgatewayadresser (`169.254.19.1` och `169.254.1.1`) över TCP-port `13400`, på samma ENET-kabel.
 
 ## 3. Bara ett fåtal styrenheter svarar (många moduler visar "Inget svar")
 
 Om du bara får svar från 5 till 15 styrenheter i stället för cirka 40+:
 
 1. **Kontrollera tändningsläget**: När fordonet står parkerat med släckt förardisplay är enbart gatewayen och ett fåtal karossmoduler vakna. Tryck på bromspedalen i läge **P** (eller slå på tändningsläge II) och skanna igen.
-2. **Kör Väckningssekvensen**: På skärmen **Anslutning** kan du klicka på **Väck moduler**, som skickar en femstegs väckningssekvens för att väcka sovande underbussar utan att du behöver starta körläget.
+2. **Läs om saknade moduler**: Några kaross- och komfortmoduler sover på underbussar även när förardisplayen lyser. På vyerna **Batterihälsa** och **Fångster och svep** kan du klicka på **Läs om saknade moduler** för att fråga om bara de moduler eller cellblock som gav timeout, utan att köra hela skanningen på nytt.
 3. **Tillvalsmoduler som inte sitter i ditt fordon**: Vissa moduler i katalogen (som luftfjädring, dragkroksmodul eller head-up-display) finns bara på fordon som beställts med den utrustningen. Att en sådan modul inte svarar är helt normalt och inte ett fel.
 
 ## 4. Varningslampor blinkar till på förardisplayen under en skanning
@@ -65,5 +65,5 @@ Om en felkod ligger kvar efter att du har klickat på **Rensa felkoder**:
 ## Nästa steg
 
 - [Få hjälp](/docs/get-help): hur du exporterar ett anonymiserat supportpaket om du kör fast.
-- [Anslut till fordonet](/docs/connection): mer om de fyra anslutningslägena och väckningssekvensen.
+- [Anslut till fordonet](/docs/connection): hur anslutningen fungerar och vad du kan kontrollera när bilen inte svarar.
 - [Säkerhet](/docs/safety): hur Hanterill skyddar fordonet vid avläsning och rensning.

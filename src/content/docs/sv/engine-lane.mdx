@@ -6,6 +6,19 @@ Beroende på bil kan katalogen innehålla värden för motor, växellåda, mildh
 
 Katalogen är bredare än de värden som har verifierats på en enskild bil. Att en styrenhet finns i katalogen betyder inte att den sitter i bilen eller att varje värde svarar. Läs täckningen på skärmen innan du litar på resultatet.
 
+## Standard-OBD-värden och utsläppsstatus
+
+På vyn Fordon visar OBD-kortet de standardvärden motorstyrenheten speglar: kvarvarande
+högspänningsbatteri, utetemperatur, 12 V, hastighet, bränsletyp, den OBD-standard bilen uppfyller
+samt kalibrerings-ID och verifieringsnummer. Där motorstyrenheten svarar lägger kortet för
+utsläppsstatus till varningslampans läge, antalet utsläppskoder, beredskapsmonitorerna (separata
+uppsättningar för tändnings- och kompressionständning) samt sträcka och tid sedan koderna senast
+renses – samma frågor ett generiskt OBD-verktyg ställer, lästa genom bilens diagnostikkanal.
+
+Utsläppskortet visas bara när motorstyrenheten svarar; en helt elektrisk bils styrenhet gör inte
+det, så det visas aldrig för en BEV. "Sträcka sedan koderna rensades" är också en användbar
+begagnatsignal i sig: ett mycket lågt tal bredvid en ren felkodslista är värt en fråga.
+
 ## Så använder du vyn
 
 Börja med enheterna som svarade och läs sedan uppmätta värden och deras status. Jämför ett oväntat värde med bilens driftläge och eventuella felkoder. Ett saknat eller preliminärt motorvärde bör kontrolleras vidare innan det används som grund för en reparation.

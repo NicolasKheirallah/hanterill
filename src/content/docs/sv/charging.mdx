@@ -1,17 +1,47 @@
-Vyn **Laddning** hjälper dig att undersöka varför laddningen går långsamt eller inte startar. Den visar de laddningsvärden bilen lämnar och har en separat kontroll som heter **Diagnostisera laddningsgränsen**. Läs resultatet tillsammans med laddarens meddelanden och eventuella felkoder. Ett saknat värde kan inte ensamt peka ut orsaken.
+Vyn **Laddning** hjälper dig att undersöka varför laddningen går långsamt eller inte startar. Den
+visar de laddningsvärden bilen lämnar, ombordladdarens egen historik och har en separat kontroll
+som heter **Diagnostisera laddningsgränsen**. Läs resultaten tillsammans med laddarens meddelanden
+och eventuella felkoder. Ett saknat värde kan inte ensamt peka ut orsaken.
 
 ## Vad vyn läser
 
-Välj **Läs laddningstelemetri** för att se ladduttagets låsstatus, kabelns rapporterade strömkapacitet och batteripaketets spänning. Ett tomt värde betyder att bilen inte lämnade den avläsningen. Vyn visar inte en fullständig laddkurva för AC eller DC.
+Välj **Läs laddningstelemetri** för att se ladduttagets låsstatus, kabelns rapporterade
+strömkapacitet och batteripaketets spänning. Medan bilen faktiskt laddar läser vyn också
+ombordladdaren live: effekt från nätet, effekt in i batteriet, laddarens verkningsgrad, spänning
+och ström per fas, de effektlämningar som gäller och pilotstyrningen. Dessa värden verifierades
+mot paketspänningen och strömmen på en referensbil som laddade; ett tomt värde betyder att bilen
+inte lämnade den avläsningen.
 
-Vid AC-laddning omvandlar bilens inbyggda laddare strömmen från laddboxen så att batteriet kan ta emot den. Vid DC-snabbladdning levererar den externa laddaren likström. I båda fallen kan tillgänglig laddningseffekt ändras när batteriet blir varmare eller mer laddat.
+Vid AC-laddning omvandlar bilens inbyggda laddare strömmen från laddboxen så att batteriet kan ta
+emot den, medan den externa laddaren vid DC-snabbladdning levererar likström och den inbyggda
+laddaren kopplas förbi. I båda fallen kan tillgänglig laddningseffekt ändras när batteriet blir varmare
+eller mer laddat.
+
+## Laddarens egna räknare
+
+Ombordladdaren håller livstidsräknare, och vyn läser dem direkt:
+
+- **Laddräknare**: hur många AC- och DC-laddningar batteriet har registrerat (delas med
+  batterivyans laddhistorik).
+- **Laddarcyklar**: laddarens egen räknare över laddcykler.
+- **Laddarhälsa som staplar**: antal AC-laddningar, omstarter och livstidslarm per effektblock.
+  Larmen samlas över laddarens liv, så en gammal händelse bevisar inte ett nuvarande fel – men ett
+  block med många omstarter bredvid ett laddningsklagomål är värt en närmare titt.
 
 ## Undersök en laddningsgräns
 
-**Diagnostisera laddningsgränsen** gör en separat avläsning. Den använder tillgängliga värden för kabelns kapacitet, bilens effektgräns, batteritemperatur, laddningsnivå, faktisk effekt och om bilen rapporterar att den laddar. Beroende på underlaget kan appen peka på kabeln, bilens laddare, batteritemperaturen eller laddningsnivån. Om värdena inte räcker visar den att orsaken är okänd.
+**Diagnostisera laddningsgränsen** gör en separat avläsning. Den använder tillgängliga värden för
+kabelns kapacitet, bilens effektgräns, batteritemperatur, laddningsnivå, faktisk effekt och om
+bilen rapporterar att den laddar. Beroende på underlaget kan appen peka på kabeln, bilens laddare,
+batteritemperaturen eller laddningsnivån. Om värdena inte räcker visar den att orsaken är okänd.
 
-En gräns som visas vid en avläsning beskriver bilens läge just då. Hög laddningsnivå kan till exempel sänka effekten, men värdet bevisar inte att laddstationen fungerar som den ska. Om laddningen inte startar, kontrollera att kontakten sitter fast och är låst. Jämför sedan bilens och stationens meddelanden och läs eventuella felkoder.
+En gräns som visas vid en avläsning beskriver bilens läge just då. Hög laddningsnivå kan till
+exempel sänka effekten, men värdet bevisar inte att laddstationen fungerar som den ska. Om
+laddningen inte startar, kontrollera att kontakten sitter fast och är låst. Jämför sedan bilens och
+stationens meddelanden och läs eventuella felkoder.
 
 ## När ett värde saknas
 
-Appen visar om laddningsvärdet mättes eller saknas. Tolka inte ett tomt värde för kabel, lås eller effekt som noll. Läs igen medan bilen är ansluten till laddaren om första försöket gav för lite underlag.
+Appen visar om laddningsvärdet mättes eller saknas. Tolka inte ett tomt värde för kabel, lås eller
+effekt som noll. De live-värden syns bara medan en laddsession pågår; läs igen medan bilen är
+ansluten till laddaren om första försöket gav för lite underlag.

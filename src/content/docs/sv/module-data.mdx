@@ -1,0 +1,62 @@
+De flesta vyer svarar på en fråga i taget: är batteriet friskt, eller varför tog 12-voltsbatteriet
+slut över helgen. Vyn **Moduldata** är annorlunda: den visar varje namngiven grupp av
+avläsningar som en modul sparar om sig själv, på ett ställe. Det är närmast appen kommer modulens
+egna servicehandlingar.
+
+## Så fungerar en avläsning
+
+Varje modul exponerar numrerade *avläsningsgrupper* – små uppsättningar av relaterade poster som
+"laddhistorik", "vakningslogg" eller "12 V-statistik". På vyn **Moduldata**:
+
+- En grupp **läses så snart du öppnar den**, och **Läs igen** i gruppens sidhuvud uppdaterar den.
+- En statusrad i klarspråk talar om hur mycket av läsningen som bar mening, till exempel *"Alla 17
+  värden lästa."* En grupp där inget avkodits säger det i en rad i stället för att visa utfyllnad.
+- Nyckeltal visas som kort, följt av en tabell med raderna som har ett klartextvärde. Rader
+  appen ännu inte kan avkoda hålls ihopvikta med orsaken i ord – räkneraden rapporterar ändå hur
+  mycket av läsningen som bar mening.
+- Råa identifierare (DID-nummer, payloadbyte) stör aldrig vyn; de sparas i JSON-filen om du
+  arkiverar sessionen.
+
+## Vad varje modul sparar
+
+- **Batterimodulen (BECM)**: livstidsräknare för laddningar (normal AC och snabbladdning DC, visas
+  bara när laddarens egna tabeller är överens), tid per laddband, per-cell-klass- och
+  kapacitetsuppsättningar, temperathistogram per driftläge och modulens vakna tid.
+- **Centralmodulen (CEM)**: 12 V-statistik (laddräknare, vilströmmar, temperatband),
+  effektlägeshistoriken (minuter sovande, parkerad, i bruk, körande), vaknings- och sovhistorik samt
+  gatewayens reset-logg.
+- **Gatewayen (VGM)**: säkerhets- och diagnostikåtkomstloggar, nätverkshistoriker för hantering och
+  Ethernet-fel, och reset-loggen med en körmätarställning per reset.
+- **Instrumentklustret (DIM)**: tripdator, körmätarkopior, serviceintervall, display- och
+  systemdata samt meddelandehistoriken. Se [Körning och display](/docs/driving-display).
+- **Ombordladdaren (OBC)**: laddcykler, omstarter och livstidslarm per effektblock.
+- **Klimat, termisk hanterare, drivlina och motorstyrning**: kylkretsar med pumpar,
+  värmepumpens och elementets livstidssiffror, drivenheternas drifttimmar och värmekartor, samt de
+  OBD-värden motorstyrningen speglar.
+
+Vissa grupper visas också på den vy som äger ämnet – batterigrupperna på **Batterihälsa**,
+drivenhetsgrupperna på **Drivlina** – så att du sällan behöver lämna vyn du arbetar i.
+
+## Historiker och tidslinjer
+
+Många grupper är *historiker*: daterade händelser i stället för enskilda tal. Varje händelse åldras
+mot modulens egen klocka, så en låshändelse visas som en verklig tidpunkt och en reset-loggpost
+bär körmätarställningen den hände vid. Strukturerade händelser säger vad de var i ord – en låsning
+eller upplåsning, en vakning med orsak, en reset med räknare – i stället för en bar kod.
+
+## Vad vyn inte hittar på
+
+<Callout kind="caution" title="Avläsningar behåller sina ärliga etiketter">
+Värden appen ännu inte kan avkoda förblir oavkodade, timmar vars skala inte bekräftats markeras
+*sannolikt*, och histogrambin utan fastställda gränser numreras i stället för att märkas med
+enheter. Ett omdöme du kan handla efter säger det; allt annat säger vad som saknas.
+</Callout>
+
+Vissa grupper kräver modulens utökade diagnostiksession; de har en **utökad**-växel i gruppens
+sidhuvud och läses när du tillåter den.
+
+## Vart datan tar vägen
+
+Varje avläsning ingår i sessionsarkivet, så en insamling från idag kan jämföras med ett senare
+besök. Se [Sessioner och bevis](/docs/sessions-and-evidence) för hur sessioner, export och
+listan "Sen ditt senaste besök" fungerar.

@@ -1,68 +1,117 @@
-Den här sidan ger dig en överblick över varje skärm i Hanterill så att du snabbt hittar rätt verktyg
-oavsett om du gör en rutinmässig hälsokontroll, granskar ett begagnat fordon inför köp eller
-felsöker en varningslampa.
+Sidofältet grupperar Hanterills vyer efter arbetsuppgift. Börja med **Översikt** för en allmän
+kontroll och öppna ett specifikt system när du behöver mer detalj.
 
-## Navigering och de tre användarlägena
+## Användarlägen: välj hur mycket detalj du vill se
 
-Sidofältet till vänster grupperar alla skärmar efter arbetsuppgift. Längst upp (eller under
-**Inställningar**) kan du välja mellan tre **användarlägen** som anpassar hur mycket teknisk detalj
-som visas:
+Alla som öppnar ett diagnostikverktyg vill inte se nätverksadresser eller protokolldetaljer. Längst
+upp i gränssnittet (och under **Inställningar**) växlar du mellan tre **användarlägen** när du vill:
 
-<SpecList rows={[
-  ["Ägare (Owner)", "Fokuserar på tydliga sammanfattningar, klarspråksförklaringar och de vanligaste kontrollerna utan att dränka skärmen i rådata."],
-  ["Tekniker (Technician)", "Visar samtliga delsystemsvyer, mjukvaruinventering, servicefunktioner och detaljerade felkodskällor för verkstadsarbete."],
-  ["Forskning (Research)", "Öppnar alla avancerade analysverktyg, inklusive DID-utforskaren, rådatafångster och paketinspektion."],
-]} />
+- **Ägare**: Fokuserar på sammanfattningar i klarspråk, batteritillstånd, aktiva varningar och
+  utskrivbara inspektionsrapporter. Tekniska protokollkolumner och råa verktyg hålls ur vägen.
+- **Tekniker**: Lägger till modulvis felstatus, frysta ramdata, delsystemsvyer, jämförelser mellan
+  sessioner och serviceprocedurer.
+- **Engineer**: Öppnar alla vyer och detaljer i appen, inklusive parameterutforskaren,
+  helfordonssvep, inspektion av råa svar och protokolltidpunkt.
 
-Ett läge raderar eller låser aldrig dina sparade data: du kan växla mellan **Ägare**, **Tekniker**
-och **Forskning** när som helst.
+Att byta användarläge ändrar bara vad som visas; det raderar eller ändrar aldrig dina sparade
+sessioner.
 
-## Start och överblick
+## Vyerna du använder oftast
 
-<SpecList rows={[
-  ["Anslutning", "Hitta ditt fordon över Ethernet (DoIP), anslut via Direkt-IP, kör femstegs väckningssekvensen eller starta en inbyggd demosession."],
-  ["Översikt", "Instrumentpanelen efter anslutning: visar fordonsidentitet, batterisammanfattning, antal aktiva felkoder och snabblänkar till vanliga kontroller."],
-  ["Fordon", "Visar hela det 17-ställiga chassinumret (VIN) med ett klick för integritetsmaskering, mätarställning jämförd över upp till 29 styrenheter, antal registrerade nycklar med live-avkänning av nyckeltransponder samt fordonets driftläge."],
-  ["Konfiguration", "Läser ut fordonets utrustningslista och fabriksbyggblad så att du ser exakt vilka tillval och hårdvarupaket fordonet lämnade fabriken med."],
-]} />
+### Anslutning
+Här väljer du Ethernet-adapter, väcker och söker upp bilen och följer live-anslutningsloggen.
+Släppta byggen talar bara med riktiga fordon. Se [Anslutning](/docs/connection).
 
-## Batteri, energi och drivlina
+### Översikt
+Din startvy när bilen är ansluten. **Kör full kontroll** frågar fordonets styrenheter, kontrollerar
+högspänningsbatteriets hälsa och 12 V-läget, räknar aktiva och lagrade felkoder och sparar en
+komplett sessionsbild.
 
-<SpecList rows={[
-  ["Batterihälsa", "Visar hälsotillstånd (SoH), laddningsnivå (SoC), totalspänning, ström, isolationsmotstånd, temperaturgivare och den interaktiva cellkartan för alla 108 (eller 96) celler."],
-  ["Laddning", "Följer växelströms- (AC) och likströmsladdning (DC) i realtid: nätspänning, laddeffekt, ombordladdarens verkningsgrad, kontaktlås och termiskt flöde."],
-  ["Vilodränering", "Uppskattar hur mycket energi som försvunnit medan fordonet stått parkerat genom att jämföra två sparade sessioner över tid."],
-  ["Motor och drivlina", "Visar elektriska drivmoduler och växelriktare på eldrivna fordon, samt en dedikerad motorvy för förbrännings- och hybridfordon (varvtal, kylvätska, oljetemperatur, laddtryck, bränsletryck och avgasrening)."],
-]} />
+### Fordon
+Visar bilens identitet och kontrollen av mätarställning:
+- **VIN**: visas i sin helhet så att du kan jämföra med registreringshandlingarna, med ett klick
+  för integritetsmaskering när du vill ta skärmbilder eller dela en export.
+- **Körmätarens korskontroll**: jämför mätarställningen över upp till 29 moduler
+  (instrumentkluster, bromsar, centralgateway, batteri och karossmoduler) och markerar varje
+  avvikelse.
+- **Nycklar, låshistorik och driftläge**: visar hur många nycklar bilen har registrerade (med
+  markering om det är fler än de två den såldes med), live-avkänning av nyckeltransponder, en
+  daterad historik över senaste låsningar, upplåsningar och nyckelknappstryckningar samt om bilen
+  står parkerad, är i tillbehörsläge eller körklar.
+- **Däcktryckssensorer**: visar om hjulen har inlärda trycksensorer, och bevakar hjulhastigheter
+  när de saknas.
+- **Fordonskonfiguration**: söker i de 256 fabriksalternativ som centralgatewayen sparar och
+  skriver ett rent utrustningsblad. Se [Fordonskonfiguration](/docs/vehicle-configuration).
 
-## Felkoder, livedata och delsystem
+### Batterihälsa och cellkarta
+Läser högspänningsbatteriet direkt från batteristyrenheten:
+- **Hälsotillstånd (SoH)** och **laddningsnivå (SoC)** (korskontrollerade över flera moduler).
+- **Interaktiv 2D- och 3D-cellkarta**: visar spänningen i varje cellgrupp för den valda batterilayouten.
+  Vyn markerar högsta och lägsta värde samt spridningen i millivolt. Katalogen innehåller 10 layouter.
+- **Värmekartor per cellgrupp** för SoH, inlärd kapacitet och SoC. Referenspaketet har 108 cellgrupper
+  och en temperaturkarta över sina 27 moduler.
+- **Batterihistorik över flera sessioner** följer hur hälsa och cellbalans utvecklas mellan besök,
+  plus livstidsräknare för normal (AC) och snabb (DC) laddning och tiden per laddband. Se
+  [Batteridiagnostik](/docs/battery-diagnostics).
 
-<SpecList rows={[
-  ["Felkoder (DTC)", "Skannar alla svarande styrenheter efter felkoder, visar ögonblicksbilder från tillfället då felet uppstod, jämför felkoder mellan två skanningar med ett klick och låter dig rensa lagrade koder efter bekräftelse."],
-  ["Livedata", "Strömmar utvalda mätvärden i realtid med grafer, min-/maxvärden, pausfunktion och möjlighet att exportera mätserien till CSV eller JSON."],
-  ["Delsystem", "Färdiga, fokuserade översikter för Klimat och värme, Bromsar och chassi, Styrning och hjulupphängning, Förarstöd (ADAS), Kaross och dörrar samt Belysning."],
-]} />
+### Felkoder (DTC)
+Vyn **Felkoder** skannar svarande styrenheter och öppnar på **Behöver åtgärd**. Du kan växla till
+äldre poster, granska detaljerna som sparades med felet, jämföra skanningar eller radera koder
+efter en reparation. Se [Felkodsskanning](/docs/dtc-scanning) för hela processen.
 
-## Styrenheter, mjukvara och underhåll
+### Inspektionsrapport
+Gör om en fordonskontroll till en poängsatt, utskrivbar **begagnatkontroll**. Du väljer mellan tre
+utskriftsformat (*Executive inspection*, *Battery certificate* och *Technical dossier*) beroende på
+om du köper en begagnad bil, dokumenterar batteritillstånd eller arkiverar ett verkstadsbesök. Se
+[Inspektionsrapporter](/docs/inspection-reports).
 
-<SpecList rows={[
-  ["Styrenheter (ECUs)", "Bläddra i styrmodulregistret, se vilka moduler som svarade, kontrollera säkerhetslåsets status i skrivskyddat läge eller starta om en enskild styrenhet."],
-  ["Mjukvara och inventering", "Visar hårdvaru- och mjukvarunummer för varje styrenhet i fordonet och markerar exakt vilka moduler som fått ny mjukvara efter ett verkstadsbesök eller en OTA-uppdatering."],
-  ["Servicefunktioner", "16 verkstads- och underhållsrutiner (exempelvis serviceläge för parkeringsbroms, nollställning av serviceindikator och kalibreringar) med tydliga säkerhetskontroller och markering av säkerhetslåsta rutiner."],
-]} />
+### Korskontroll
+En egen verifieringsvy som jämför hur olika datorer i bilen rapporterar samma sak samtidigt:
+- **VIN-överensstämmelse** mellan gateway, batteri, instrumentkluster och säkerhetsmoduler.
+- **Körmätar-överensstämmelse** mellan modulerna som sparar en kopia, för att upptäcka
+  mätarställningsmanipulation eller utbytta moduler.
+- **SoC-överensstämmelse** mellan batteristyrmodul, centralgateway och förardisplay.
+- **12 V-överensstämmelse** mellan moduler för att hitta ett svagt jordband eller spänningsfall.
+- **Servicemindre-överensstämmelse** inne i instrumentklustret.
 
-## Rapporter, sessioner och avancerade verktyg
+## Livedata och delsystem
 
-<SpecList rows={[
-  ["Inspektionsrapport", "Sammanställer en komplett, utskrivbar fordonsrapport med ett helhetsbetyg från 0 till 100 och sex delbetyg – perfekt vid köp eller försäljning av ett begagnat fordon."],
-  ["Sessioner", "Ditt lokala arkiv på datorn för alla tidigare skanningar. Öppna valfri sparad session, skriv anteckningar, exportera förseglade bevispaket eller jämför två tillfällen sida vid sida."],
-  ["DID-utforskare", "Läser enskilda datapunkter, kör intervallskanningar på en styrenhet, gör helfordonsskanningar i tre faser eller övervakar hur valda värden förändras över tid."],
-  ["Fångster och svep", "Spela in, öppna och analysera råa diagnostikfångster offline utan att vara ansluten till ett fordon."],
-  ["Aktivitet och Inställningar", "Granska sessionsloggen, byt mellan 8 färgteman och 8 språk, hantera integritetsmaskering och lagringsutrymme eller exportera ett anonymiserat supportpaket."],
-]} />
+- **Realtidstelemetri**: Strömmar och ritar mätvärden i realtid (paketsspänning, ström,
+  motormoment, växelrikcartemperaturer, 12 V-räl) och spelar in körningar för uppspelning offline.
+  Se [Realtidstelemetri](/docs/live-telemetry).
+- **Klimat, drivlina, laddning, effekt, styrning, TCAM och GPS, serviceschema**: egna vyer per
+  delsystem: värmepumpens och elementets livstidssiffror, kylkretsar med pumpar, drivenheternas
+  historik med värmekartor för moment och varvtal, DC/DC-omvandlarens livstidshistoriker,
+  laddarens hälsoräknare och live-laddtelemetri, TCAM:s reservbatteri, satellitkarta och
+  servicenedräkningar. Se [Systemtelemetri](/docs/subsystem-telemetry).
+- **Körning och display**: läs instrumentklustrets resor, mätarställning, serviceintervall och
+  displaydata. Mätarställningen jämförs med värden från andra styrenheter. Se
+  [Körning och display](/docs/driving-display).
+- **12 V-vilodränering**: visar hur mycket ström bilen drar när den står parkerad, med de lagrade
+  12 V-statistikerna bakom omdömet. Se [Vilström](/docs/parasitic-drain).
+- **Motordiagnostik**: förbrännings- och hybridmätningar för CMA- och SPA-bilar, plus standard-OBD-värdena
+  (utsläppsberedskap, sträcka sedan koderna rensades) när motorstyrenheten svarar. Se
+  [Motordiagnostik](/docs/engine-lane).
 
-## Nästa steg
+## Historik, underhåll och referens
 
-- [Gränssnitt och språk](/docs/interface-and-language): teman, språk och tangentbordsgenvägar.
-- [Vanliga uppgifter](/docs/common-tasks): steg-för-steg-guider för de vanligaste kontrollerna.
-- [Tolka dina resultat](/docs/reading-results): vad siffrorna och statusmarkeringarna betyder.
+- **Sessioner och jämförelse**: öppna sparade skanningar och jämför felkoder, batteritrender,
+  cellspänningar, styrenhetslistor eller programvara. En kort avläsning vid anslutning ger också
+  listan **Sen ditt senaste besök** underlag för att visa nya laddningar, omstarter, tillagda nycklar
+  och raderade felkoder. Se
+  [Sessioner och bevis](/docs/sessions-and-evidence).
+- **Moduldata**: varje namngiven avläsningsgrupp per modul (batteri, gateway, display, klimat,
+  laddare, drivlina med flera) på ett ställe, med statusrader i klarspråk, livstidshistoriker och
+  tidslinjer. Se [Moduldata](/docs/module-data).
+- **Gateway**: gatewaymodulens säkerhets- och diagnostikloggar, nätverkshistoriker och reset-logg,
+  avkodade till daterade händelser. Se [ECU-referens](/docs/ecu-reference).
+- **Styrenheter och mjukvara**: listar varje modul i bilen med dess hårdvaru- och
+  mjukvarunummer, så att du ser exakt vilka moduler ett verkstadsbesök eller en OTA-uppdatering
+  ändrade. Se [Firmware och inventering](/docs/firmware-and-inventory).
+- **Service och underhåll**: bekräftade underhållsrutiner, exempelvis att dra tillbaka den
+  elektriska parkeringsbromsen inför bromsbyte, nollställa serviceminnet eller kalibrera
+  klimatspjäll. Varje rutin bär en stödetikett; flera är fortfarande i beta. Se
+  [Servicefunktioner](/docs/service-functions).
+- **DID-utforskare, fångster och svep, funktioner och stöd, aktivitetslogg**: avancerade verktyg för
+  att svepa alla läsbara parametrar i bilen, analysera sparade fångster offline, kontrollera vad
+  aktuell mjukvara och det aktuella fordonet stöder och granska kommunikationsloggen.

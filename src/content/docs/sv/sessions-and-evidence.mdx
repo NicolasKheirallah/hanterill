@@ -12,6 +12,12 @@ Välj två sessioner för att öppna felkodsjämförelsen. Den visar vilka regis
 
 Andra jämförelsevyer kan visa ändringar i programvara eller styrenhetslista när båda avläsningarna innehåller rätt uppgifter. **Jämför cellavläsningar** behöver två cellavläsningar som du anger i verktyget; att välja två sessioner jämför inte automatiskt varje cellspänning. Kontrollera alltid att båda besöken gäller samma bil.
 
+## Sen ditt senaste besök
+
+När du ansluter sparar Hanterill några värden för senare jämförelse: antal laddningar, tid i varje laddningsintervall, utvalda 12 V-värden, gatewayens omstartslogg, klockan i två styrenheter och chassinumret. Avläsningen tar några sekunder och startar ingen fullständig skanning.
+
+Fångsten jämförs med den senaste lagrade för samma bil, och listan **Sen ditt senaste besök** på sessionssidan redovisar vad faktiskt ändrats: en laddräknare som vuxit, en reset-räknare som ökat, klockor som tappat synk, en nyckel som lagts till, felkoder som rensats eller nya laddarlarm. Fynd visas även som toast när du ansluter. Den första fångsten sparar en baslinje och säger det; en fångst från en annan bil jämförs aldrig mot den här. Trendvyn visar en rad per sparad session med delta kedjat per fordon, så upprepade besök bygger en historik utan att du kör något manuellt.
+
 ## Export och integritet
 
 Sessioner kan exporteras som JSON, som CSV-tabeller och som samlingar av filer. Du kan importera en session som stöds på en annan dator. Kontrollera maskeringen av bilens identifieringsnummer innan du delar något: en export kan innehålla fordonsidentitet och detaljerade mätvärden. Ett supportpaket är en separat export där känsliga uppgifter filtreras bort för felrapportering.

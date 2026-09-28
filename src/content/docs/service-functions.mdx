@@ -24,10 +24,12 @@ The actions below remain grouped by system. The risk level is Hanterill's guide,
 Some routines have limited verification on real cars. They can move parts or change settings. Check the support label beside the action, follow the car's service procedure and stop if the car does not confirm the result. A listed routine may still be refused by your car.
 </Callout>
 
+The **electric parking brake service mode** and **usage-mode** transitions are still **beta**. Neither has been confirmed end to end on a live car. Check the support label and caveat shown before each routine, and wait for your car to confirm the action before starting physical work.
+
 | System | What it does | Risk |
 | --- | --- | --- |
-| Electric parking brake | Retract to service position for pad replacement | High |
-| Electric parking brake | Restore from service position | Medium |
+| Electric parking brake *(beta)* | Retract to service position for pad replacement | High |
+| Electric parking brake *(beta)* | Restore from service position | Medium |
 | Steering angle | Zero the steering-angle sensor | High |
 | 12 V battery | Adaptation reset after a battery replacement | Medium |
 | TCAM backup battery | Condition the telematics backup battery | Medium |
@@ -40,8 +42,8 @@ Some routines have limited verification on real cars. They can move parts or cha
 | Climate control | Calibrate the HVAC damper | Low |
 | Sunroof and windows | Normalise after a power loss | Low |
 | Grille shutter | Calibrate the active grille shutter | Low |
-| Usage mode | Put the car into an active usage mode | Medium |
-| Usage mode | Put the car into an inactive usage mode | Medium |
+| Usage mode *(beta)* | Put the car into an active usage mode | Medium |
+| Usage mode *(beta)* | Put the car into an inactive usage mode | Medium |
 
 ## Guided coolant bleed
 
@@ -61,7 +63,7 @@ The parking brake has a restore action. You can reverse a usage-mode change and 
 
 ## Security-level protected routines
 
-Some routines are protected by a security level in the car's control unit. A routine appearing in Hanterill does not mean every car will allow it. You can confirm an action and still receive a refusal from the car.
+Some routines are protected by a security level in the car's control unit, and a routine appearing in Hanterill does not mean every car will allow it. You can confirm an action and still receive a refusal from the car.
 
 Hanterill can check whether a control unit reports its security level as locked or unlocked. This check does not unlock it, and Hanterill does not send an unlock key. If the car refuses a protected routine, the app shows the refusal instead of marking the action complete. Do not keep retrying a refused routine.
 

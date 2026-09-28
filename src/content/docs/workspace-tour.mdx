@@ -13,7 +13,7 @@ Switching audience modes only changes what is shown on screen; it never deletes 
 ## The screens you will use most often
 
 ### Connection
-Where you pick your Ethernet adapter, wake and discover the car, watch the live connection log, or launch one of the built-in **Simulated vehicles** to explore the app offline. See [Connection](/docs/connection).
+Where you pick your Ethernet adapter, wake and discover the car, and watch the live connection log. Released builds talk to real vehicles only. See [Connection](/docs/connection).
 
 ### Overview
 Your home screen once connected. Clicking **Run full check** scans the vehicle's control units, checks high-voltage battery health and 12 V status, counts active and stored fault codes, and saves a complete session snapshot.
@@ -22,14 +22,16 @@ Your home screen once connected. Clicking **Run full check** scans the vehicle's
 Shows the car's identity and mileage verification:
 - **VIN**: shown in full on screen so you can verify the car you are inspecting, with a one-click mask toggle whenever you want to hide the VIN for screenshots or shared exports.
 - **Odometer cross-check**: compares mileage recorded across up to 29 modules (instrument cluster, brakes, central gateway, battery, and body controllers) and highlights any discrepancy.
-- **Keys and operating mode**: shows how many keys are paired to the car, live key-transponder recognition, and whether the vehicle is parked, in accessory mode, or ready to drive.
+- **Keys and operating mode**: shows how many keys are paired to the car, live key-transponder recognition, a dated history of recent locks, unlocks and key-button presses, and whether the vehicle is parked, in accessory mode, or ready to drive.
+- **Tyre-pressure sensors**: shows whether the wheels have learnt pressure sensors, and watches wheel speeds when they have not.
 - **Car configuration**: searches the 256 factory option slots stored in the central gateway and prints a clean configuration build sheet. See [Vehicle configuration](/docs/vehicle-configuration).
 
 ### Battery Health & Cell Map
 Reads the high-voltage traction battery directly from the battery management module:
 - **State of Health (SoH)** and **State of Charge (SoC)** (cross-checked across multiple modules).
-- **Interactive 2D and 3D Cell Map** showing every series cell-group voltage across all 11 supported battery pack layouts, highlighting the highest, lowest, and spread (delta) in millivolts.
-- **Multi-session Battery Health History** tracking how your car's battery health and cell balance evolve across visits, plus an **8-band lifetime temperature histogram** showing how much time the pack has spent in cold, moderate, and hot temperature ranges. See [Battery diagnostics](/docs/battery-diagnostics).
+- **Interactive 2D and 3D Cell Map**: See every series cell-group voltage on the selected pack layout. The view marks the highest, lowest and spread (delta) in millivolts; the catalogue covers 10 layouts.
+- **Per-cell heat maps** for SoH, learned capacity and SoC across all 108 cells on the standard packs, plus a module-temperature map of the battery's 27 modules.
+- **Multi-session Battery Health History** tracking how your car's battery health and cell balance evolve across visits, plus lifetime charge counts (normal AC and fast DC) and how much time the battery has spent in each of its charge bands. See [Battery diagnostics](/docs/battery-diagnostics).
 
 ### Fault Codes (DTCs)
 The **Fault Codes** screen scans responding control units and opens on **Needs Attention**. You can switch to older records, inspect details saved with a fault, compare scans or clear codes after a repair. See [Fault codes](/docs/dtc-scanning) for the full process.
@@ -40,7 +42,7 @@ Turns a vehicle scan into a scored, printable **Pre-Purchase Inspection (PPI)** 
 ### Cross-Check
 A dedicated verification screen that compares how different computers inside the car report the same real-world fact at the same moment:
 - **VIN agreement** across the gateway, battery, instrument cluster, and safety modules.
-- **Odometer agreement** across up to 29 modules to spot mileage tampering or replaced modules.
+- **Odometer agreement** across the modules that keep a mileage copy, to spot mileage tampering or replaced modules.
 - **State of Charge (SoC) agreement** between the battery management module, central gateway, and driver display.
 - **12 V supply voltage agreement** across modules to spot a weak ground strap or voltage drop.
 - **Service reminder agreement** inside the instrument cluster.
@@ -48,13 +50,16 @@ A dedicated verification screen that compares how different computers inside the
 ## Live & Subsystem screens
 
 - **Live Telemetry**: Streams and charts real-time measurements (pack voltage, current, motor torque, inverter temperatures, 12 V rail) and records drives for offline replay. See [Live telemetry](/docs/live-telemetry).
-- **Climate, Drive Units, Charging, Power, Steering, TCAM & GPS, Service Schedule**: Dedicated screens for each subsystem in the car, including heat-pump loop temperatures, front and rear motor comparisons, AC/DC charge-limit explanations, TCAM backup battery health, live satellite skyplot, and service countdowns. See [Subsystem telemetry](/docs/subsystem-telemetry).
-- **12 V Sleep Drain**: Shows how much current the car draws while parked and which module woke the car up overnight. See [Parasitic drain](/docs/parasitic-drain).
-- **Engine Diagnostics**: Dedicated combustion and hybrid measurements for CMA and SPA petrol, diesel, and plug-in hybrid cars. See [Engine diagnostics](/docs/engine-lane).
+- **Climate, Drive Units, Charging, Power, Steering, TCAM & GPS, Service Schedule**: Dedicated screens for each subsystem in the car: heat-pump and heater lifetime figures, coolant circuits with their pumps, front and rear drive-unit history with torque and speed heat maps, DC/DC converter lifetime histograms, charger health and live charge telemetry, TCAM backup battery health, live satellite skyplot, and service countdowns. See [Subsystem telemetry](/docs/subsystem-telemetry).
+- **Driving and display**: Read the instrument cluster's trip, odometer, service interval and display records. The odometer view compares values from other modules. See [Driving and display](/docs/driving-display).
+- **12 V Sleep Drain**: Shows how much current the car draws while parked, with the stored 12 V statistics behind the verdict. See [Parasitic drain](/docs/parasitic-drain).
+- **Engine Diagnostics**: Dedicated combustion and hybrid measurements for CMA and SPA petrol, diesel, and plug-in hybrid cars, plus the standard OBD values (emissions readiness, distance since codes were cleared) when the engine module answers them. See [Engine diagnostics](/docs/engine-lane).
 
 ## History, Maintenance, and Reference screens
 
-- **Sessions & Comparison**: Your local archive of every scan, with side-by-side comparison views for fault codes, battery health trends, cell voltages, module lists, and software updates. See [Sessions and evidence](/docs/sessions-and-evidence).
+- **Sessions & Comparison**: Reopen saved scans and compare fault codes, battery trends, cell voltages, module lists or software versions. A small capture taken on connection also feeds **Since your last visit**, which can show new charge counts, resets, added keys and cleared codes. See [Sessions and evidence](/docs/sessions-and-evidence).
+- **Module data**: Every named readout group per module (battery, gateway, display, climate, charger, drive units and more) in one place, with plain-language status lines, lifetime histories and timelines. See [Module data](/docs/module-data).
+- **Gateway**: The gateway module's security and diagnostic-access logs, network histories and reset log, decoded to dated events. See [ECU reference](/docs/ecu-reference).
 - **ECU Inventory & Firmware**: Lists every module fitted to the car along with its hardware and software part numbers, so you can see exactly which modules a workshop visit or over-the-air update changed. See [Firmware and inventory](/docs/firmware-and-inventory).
-- **Service & Maintenance**: Confirmed maintenance routines such as retracting the electric parking brake for pad changes, resetting the service reminder, or calibrating climate dampers. See [Service functions](/docs/service-functions).
+- **Service & Maintenance**: Confirmed maintenance routines such as retracting the electric parking brake for pad changes, resetting the service reminder, or calibrating climate dampers. Each routine carries a support label; several are still in beta. See [Service functions](/docs/service-functions).
 - **DID Explorer, Captures & Sweeps, Capabilities, Activity Log**: Advanced tools for sweeping every readable parameter across the car, re-analyzing saved captures offline, checking what the current build and vehicle support, and reviewing the live communication log.

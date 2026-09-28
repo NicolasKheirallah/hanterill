@@ -22,15 +22,17 @@ Skärmen **Fordon** samlar fordonets identitet och korskontroller mellan styrenh
 
 - **Fullständigt chassinummer (VIN) med ett klick för integritetsmaskering**: Hela det 17-ställiga chassinumret visas tydligt på skärmen Fordon och i Inspektionsrapporten så att du enkelt kan jämföra det med registreringsbeviset och chassiplåten. När du vill ta en skärmbild eller dela en rapport döljer du identifierande tecken med ett enda klick.
 - **Kontroll av mätarställning över upp till 29 styrenheter**: Moderna fordon lagrar körsträckan i en rad olika styrenheter, inte bara i förardisplayen. Hanterill läser av och jämför mätarställningen över upp till 29 moduler så att du direkt ser om alla styrenheter är överens eller om en modul har bytts ut eller manipulerats.
-- **Antal registrerade nycklar och live-avkänning av nyckeltransponder**: Visar hur många nycklar som är inprogrammerade i fordonets startspärr och visar i realtid när en nyckel eller transponder känns av i kupén. Det är extra värdefullt vid begagnatköp för att kontrollera att inga saknade nycklar ligger kvar som behöriga i fordonet.
+- **Antal registrerade nycklar, live-avkänning och låshistorik**: Visar hur många nycklar som är inprogrammerade i fordonets startspärr – med markering om bilen har fler än de två den såldes med – och visar i realtid när en nyckel eller transponder känns av i kupén. En daterad historik över senaste låsningar, upplåsningar och nyckelknappstryckningar (varje post med dess körmätarställning) visar hur bilen faktiskt använts. Det är extra värdefullt vid begagnatköp för att kontrollera att inga saknade nycklar ligger kvar som behöriga i fordonet.
+- **Däcktryckssensorer**: Visar om hjulen har inlärda trycksensorer. När bilen saknar dem säger kortet det och förklarar att appen i stället bevakar hjulhastigheterna – en avläsning som namnger sin egen begränsning i stället för att visa tomt.
 - **Fordonets driftläge**: Visar om fordonet befinner sig i normalt kundläge eller om det har lämnats i verkstads-, fabriks- eller transportläge.
 
 ## Hur fordonets plattform fastställs
 
 Hanterill gissar aldrig plattform utifrån en enda ledtråd. I stället väger programmet samman flera
 oberoende mätbevis (chassinumrets tillverkarprefix, gatewayens signatur och vilka specifika
-styrenheter som svarar på nätverket) för att fastställa om fordonet bygger på **CMA**, **SPA**
-eller **SEA1**.
+styrenheter som svarar på nätverket) för att fastställa om fordonet bygger på **CMA**, **SPA**,
+**SEA1** eller en av de nyare Geely-arkitekturerna såsom **SEA2/PMA2** som appen känner igen på
+forskningsnivå.
 
 För att en plattform ska låsas krävs samstämmiga bevis från minst två oberoende kontroller. Om ett
 fordon sover och ännu inte lämnat tillräckligt underlag markeras plattformen som en provisorisk
