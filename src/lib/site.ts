@@ -53,6 +53,18 @@ export const otherProjects = [
     image: "/assets/hisingen/menubar-dashboard.png",
     imageRatio: 591 / 757,
   },
+  {
+    slug: "polestar-mcp",
+    name: "polestar-mcp",
+    repo: "NicolasKheirallah/polestar-mcp",
+    get repoUrl() {
+      return `https://github.com/${this.repo}`;
+    },
+    platform: "Node.js",
+    license: "MIT",
+    image: "/assets/polestar-mcp/demo-dump.png",
+    imageRatio: 591 / 757,
+  },
 ] as const;
 
 /** Primary nav. `key` resolves against the `nav` message namespace. */

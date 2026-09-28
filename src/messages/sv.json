@@ -1625,6 +1625,16 @@
         "Laddhistorik med kostnadsspårning och CSV-export",
         "Byggt med AppKit och SwiftUI, MIT-licensierat"
       ]
+    },
+    "polestar-mcp": {
+      "tagline": "Din Polestars svar över Model Context Protocol.",
+      "description": "En skrivskyddad MCP-server för Polestar Data Portals M2M-API. Tjugosex verktyg svarar i klarspråk: laddning, räckvidd, lås, körmätare, servicenedräkning, en ladduppskattning och de billigaste timmarna att ladda, var och en med sin dataålder. Fungerar i Claude Desktop, ZCode, Cursor eller din egen verktygslåda, och en offline-demo kör hela servern mot sanerade inspelade fixturer utan inloggningsuppgifter.",
+      "highlights": [
+        "26 skrivskyddade verktyg över 15 API-domäner, alla med readOnlyHint",
+        "Bedömning i ett anrop, ladduppskattning och planerare för billigaste timmarna",
+        "Resurser, prenumerationer och tre färdiga prompts",
+        "Körs offline mot sanerade fixturer; MIT-licensierad"
+      ]
     }
   },
   "network": {

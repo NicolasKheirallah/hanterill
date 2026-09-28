@@ -428,6 +428,16 @@
         "Charging history with cost tracking and CSV export",
         "Native AppKit and SwiftUI, MIT-licensed"
       ]
+    },
+    "polestar-mcp": {
+      "tagline": "Your Polestar's answers over the Model Context Protocol.",
+      "description": "A read-only MCP server for the Polestar Data Portal M2M API. Twenty-six tools answer in plain language: charge, range, locks, odometer, service countdown, a charging estimate and the cheapest hours to charge, each with its data age attached. Works in Claude Desktop, ZCode, Cursor or your own tooling, and an offline demo runs the whole server on sanitized captured fixtures, no credentials needed.",
+      "highlights": [
+        "26 read-only tools across 15 API domains, every one readOnlyHint",
+        "One-call briefing, charging estimate and cheapest-hours planner",
+        "Resources, subscriptions and three ready-made prompts",
+        "Runs offline against sanitized fixtures; MIT-licensed"
+      ]
     }
   },
   "common": {
