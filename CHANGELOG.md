@@ -2,6 +2,912 @@
 
 All notable changes to Hanterill. Versions follow [SemVer](https://semver.org/).
 
+## [0.3.0] - 2026-10-02
+
+Hanterill 0.3.0 is one of the largest updates so far.
+
+This release expands what Hanterill can inspect across the battery, charging system, drive units, infotainment, connectivity, vehicle history and service systems. It also introduces much stricter handling of incomplete or uncertain diagnostic results.
+
+A major focus of 0.3.0 has been making sure Hanterill tells you **what the car actually reported**, rather than filling gaps with assumptions.
+
+### Highlights
+
+#### Drive-unit history
+
+A new Drive Units view provides much deeper information about the front and rear electric motors.
+
+Depending on available data, Hanterill can show:
+
+- operating time
+- powered time
+- regeneration usage
+- acceleration usage
+- torque availability
+- motor temperatures
+- inverter temperatures
+- coolant temperatures
+- current history
+- torque and speed distributions
+- operating-condition heat maps
+- voltage-spike history
+
+The view also makes it easier to compare front and rear drive-unit usage.
+
+Where historical band boundaries or physical scales are still being researched, they remain clearly marked as provisional.
+
+#### Charge history
+
+Hanterill can now show lifetime AC and DC charging counts when the related vehicle records agree with each other.
+
+If the underlying records disagree, Hanterill does not invent a number. The result is left unresolved and the discrepancy is shown.
+
+Historical charge distributions are also visualised as charts.
+
+Where the exact boundaries of a charge band have not yet been established, Hanterill shows numbered bands rather than pretending they represent known percentages.
+
+#### A better reset module
+
+Resetting a single ECU now says exactly what happened. Hanterill asks for explicit confirmation, reports whether the controller acknowledged the request, and shows **outcome unknown** when it cannot tell whether the reset finished. Cached readings are cleared afterwards so stale values are not shown as fresh, and the ECU page disables the BECM reset up front instead of letting you start something that would be refused.
+
+The recorded reset-all procedure runs as a cancellable job with VIN verification and three explicit confirmations. Hanterill separates **request delivered** from **vehicle physically rebooted**, a cancelled or interrupted run still returns its partial results, and the confirmation dialog and audit log state what was actually sent.
+
+Generic broadcast resets and a direct BECM reset remain blocked. See ECU and service functions for the details.
+
+#### A better interface
+
+Owner-facing screens now lead with understandable names such as battery voltage or coolant temperature instead of diagnostic identifiers. Raw codes remain in the expert tools.
+
+The Battery page has separate full-width sections, so large cell maps no longer overlap neighbouring information. The light and dark themes use cleaner neutral surfaces and one consistent blue accent. Fault-code rows show their description in the list, the Live Data catalogue has All signals, Selected and Favourites views, and a Demo Mode banner appears on every screen. Keyboard and accessibility support have also improved. See User interface for the full list.
+
+#### New icons and logo
+
+Hanterill has a new logo mark, in a colour version and a version for dark backgrounds, and a new browser icon.
+
+The application icon has been replaced for Windows and macOS, including the sizes Windows uses for tiles and the Store listing.
+
+#### Deeper battery diagnostics
+
+The Battery pages now show per-cell State of Health, capacity and State of Charge, module temperatures from the pack's own sensors, charging history, and contactor and pre-charge history.
+
+The Battery Health verdict now takes the reported State of Health into account, and a partial cell read is shown as an incomplete measurement instead of being graded as a full inspection.
+
+#### More reliable fault codes
+
+Active, pending and stored codes are now handled the same way on the Fault Codes page, the Overview and the Inspection Report. A module that was not read shows **Not read** instead of looking clean, and clearing codes no longer claims success without evidence.
+
+#### New infotainment diagnostics
+
+Hanterill now has a dedicated **Infotainment** page for the car's Android Automotive head unit and audio amplifier.
+
+Depending on what the vehicle reports, it can show:
+
+- Android version
+- software build
+- security patch level
+- hardware information
+- part and software numbers
+- storage wear estimate
+- infotainment restart history
+- cloud-service errors
+- connection history
+- software-update history
+- audio amplifier information
+
+Software update records are translated into plain descriptions such as installed, failed and retried, or withdrawn before completion.
+
+A new **Since your last reading** section can also highlight new restarts, connection changes, cloud errors and software-update activity since the previous read.
+
+The infotainment page is deliberately owner-focused. Technical values that cannot yet be explained reliably are not presented as meaningful vehicle information.
+
+#### TCAM connectivity diagnostics
+
+The TCAM page now includes a new **Connectivity** section.
+
+It can inspect information reported by the vehicle about:
+
+- cloud connectivity
+- service discovery
+- provisioning
+- cellular connectivity
+- mobile network registration
+- connection history
+- failed network registrations
+- modem software
+- emergency-call system software
+
+Hanterill does not attempt to interpret unknown network rejection codes or turn them into a good/bad verdict.
+
+Potential identifiers found in the returned data are also redacted before being displayed.
+
+#### Improved TCAM and GPS information
+
+The TCAM page has been redesigned to better explain what the module is actually reporting.
+
+GNSS data is now identified and presented as navigation/positioning information rather than a large block of hexadecimal data.
+
+Where available, Hanterill can show information such as:
+
+- fix state
+- satellites
+- signal-quality information
+- TCAM software information
+- module status
+- backup-battery information
+
+Coordinates remain on the GPS page behind the existing location consent controls.
+
+#### Better TCAM backup-battery diagnostics
+
+Backup-battery readings are now more transparent.
+
+If the normal reading is unavailable and Hanterill has to use an alternative method, the app shows what happened instead of simply reporting that no reading was attempted.
+
+Measured values are also no longer thrown away simply because they fall outside an expected voltage range. An unusual value is shown and flagged rather than hidden behind a decode error.
+
+This is particularly important when investigating a genuinely failing TCAM backup battery.
+
+---
+
+### Battery diagnostics
+
+#### Much deeper battery information
+
+Battery diagnostics have received another major expansion.
+
+Depending on vehicle and platform support, Hanterill can now show:
+
+- battery State of Health
+- per-cell State of Health
+- per-cell learned capacity
+- per-cell State of Charge
+- cell voltages
+- cell balance
+- battery-module temperatures
+- hottest and coldest modules
+- temperature spread
+- battery awake time
+- AC and DC charging history
+- time spent in different charge bands
+- contactor behaviour
+- pre-charge history
+- isolation-related information
+- battery identity information
+- additional lifetime statistics
+
+The cell views have also been improved with clearer heat maps and better highlighting of the strongest, weakest, hottest and coldest areas of the pack.
+
+#### Battery Health now considers actual degradation
+
+The Battery Health verdict now considers the battery's SoH classification before declaring the pack healthy.
+
+Previously, good cell balance could potentially result in a positive overall result even when the reported State of Health itself was below the relevant warranty threshold.
+
+A healthy-looking cell map can no longer override a poor SoH result.
+
+#### Partial cell reads are no longer treated as complete
+
+Cell-balance classifications are now only applied when Hanterill actually obtained enough data to justify them.
+
+A partial cell sweep is shown as an **incomplete measurement**, rather than being graded as though the whole battery was inspected.
+
+The same rule is now used on the Battery page and in exported reports.
+
+#### Better explanation when battery data is missing
+
+When a per-cell SoH, capacity or State of Charge reading is unavailable, Hanterill now records why.
+
+Instead of simply showing an empty value, the app can distinguish between situations such as:
+
+- the module did not answer
+- the read failed
+- the returned data could not be decoded
+- the result was outside the expected range
+- the measurement was incomplete
+
+This makes it much easier to distinguish a genuine battery issue from a failed diagnostic read.
+
+#### Correct battery temperature data
+
+The battery thermal map now uses the battery pack's actual module temperature sensors.
+
+This replaces an earlier interpretation that could produce misleading high/low battery-temperature values.
+
+For supported CMA vehicles, Hanterill can now display the pack's 27 modules with two temperature sensors per module and identify the warmest and coolest areas of the pack.
+
+#### Corrected State of Charge readings
+
+The primary State of Charge readings now come from the BECM's own confirmed values.
+
+Multiple available sources are compared and the app tells you whether they agree instead of silently choosing one.
+
+#### Corrected battery-capacity reference
+
+Capacity fade calculations now use the reference derived from the vehicle's own battery data rather than the previous topology-based figure.
+
+This brings the calculated capacity loss much closer to the BECM-reported State of Health.
+
+---
+
+### Charging
+
+#### More charging information
+
+The Charging page now includes much more information from the on-board charger.
+
+During an active charging session, supported vehicles can report:
+
+- power from the grid
+- power entering the battery
+- charging efficiency
+- voltage per phase
+- current per phase
+- charging limits
+- pilot signal
+- charger status
+
+Historical information can also include:
+
+- AC charge count
+- DC fast-charge count
+- charging distributions
+- time spent in charge bands
+- selected charger statistics
+
+Lifetime AC and DC charging counts and the charge-distribution charts are covered under Charge history in the Highlights.
+
+#### Corrected charger-health information
+
+Several charger values previously interpreted as lifetime counters were found not to behave like lifetime statistics.
+
+Those readings are no longer presented as charge-cycle or restart counts without supporting evidence.
+
+---
+
+### Drive units and power
+
+The new Drive Units view is described under Drive-unit history in the Highlights.
+
+#### DC/DC converter diagnostics
+
+The Power page can now inspect the DC/DC converter that supplies the vehicle's 12 V electrical system.
+
+Available information can include:
+
+- operating history
+- 12 V output voltage
+- output current
+- output power
+- available power
+- high-voltage input
+- board temperature
+- historical operating distributions
+
+#### Improved 12 V diagnostics
+
+The 12 V system now uses the vehicle's actual battery-voltage reading rather than a control-module supply voltage that had previously been interpreted as the battery terminal voltage.
+
+Additional information can include:
+
+- battery voltage
+- estimated capacity
+- current
+- standby current
+- low-voltage statistics
+- battery age
+- battery temperature history
+- battery-related fault information
+
+Hanterill also accounts for known measurement offsets when comparing the 12 V reading reported by different modules.
+
+---
+
+### Driving and vehicle history
+
+#### Redesigned Driving page
+
+The Driving page now focuses on useful information instead of exposing large diagnostic tables first.
+
+It includes information such as:
+
+- trip distance
+- driving time
+- average speed
+- average energy use
+- odometer
+- service intervals
+- learned consumption
+- vehicle messages
+- display history
+- driver-assistance information
+- selected vehicle statistics
+
+Large secondary data sets are only read when needed, reducing the number of requests sent to the vehicle.
+
+#### Learned energy consumption
+
+Hanterill can now display energy-consumption information learned by the vehicle together with historical usage distributions.
+
+Where the physical meaning of a historical band has not yet been completely established, the app says so instead of assigning an unsupported scale.
+
+#### Automatic capture when connecting
+
+Connecting to a vehicle can now create a small diagnostic snapshot automatically.
+
+The snapshot can include selected information such as:
+
+- charging history
+- 12 V statistics
+- vehicle resets
+- vehicle clocks
+- VIN
+- selected vehicle-state information
+
+The next time the same vehicle is connected, Hanterill can compare the captures.
+
+#### Since your last visit
+
+The Sessions page can now highlight meaningful changes since the previous capture.
+
+Depending on available data, this can include:
+
+- additional charging cycles
+- new gateway resets
+- newly added keys
+- recently cleared fault codes
+- new charger alarms
+- clock synchronisation changes
+
+Captures are matched to the vehicle, so information from different cars is not silently compared.
+
+---
+
+### Vehicle page
+
+#### Better odometer verification
+
+The Vehicle page now leads with the result of its odometer cross-check.
+
+If the available controllers agree, Hanterill says so directly.
+
+If they disagree, the conflicting readings are promoted to the top and Hanterill can flag the discrepancy for review.
+
+Large controller lists remain available but are collapsed by default when they add little information.
+
+#### Better controller-time comparison
+
+Vehicle clocks and controller uptime information are also presented as a consensus where possible.
+
+If everything agrees, you get one clear result.
+
+If controllers disagree, Hanterill highlights the modules that differ.
+
+#### Keys and locking
+
+The Vehicle page can now show information such as:
+
+- number of registered keys
+- whether more keys appear to exist than expected
+- starts associated with keys
+- lock events
+- unlock events
+- key-button activity
+- odometer values associated with recorded events
+
+#### Tyre-pressure sensors
+
+Hanterill can inspect whether tyre-pressure sensors appear to be learned by the vehicle.
+
+Where the available data cannot distinguish between missing sensors and a vehicle designed to operate without them, the interface says so instead of guessing.
+
+#### More vehicle information
+
+Additional vehicle information now includes selected data for:
+
+- standard OBD information
+- vehicle configuration
+- grille and spoiler shutters
+- car mode
+- ride-height information
+- immobiliser/transponder information
+
+Values whose meaning has not been established remain raw or explicitly unverified.
+
+---
+
+### Fault codes
+
+#### More accurate fault classification
+
+Fault handling has received extensive corrections.
+
+Active, pending and stored codes are now handled consistently throughout the Fault Codes page, Overview and Inspection Report.
+
+This fixes situations where:
+
+- a currently failing code appeared only as stored
+- one fault appeared more than once
+- active and pending totals double-counted the same code
+- the report and Fault Codes page disagreed
+- exported fault state disagreed with the screen
+
+#### A module that was not scanned no longer appears healthy
+
+A missing result is no longer interpreted as an empty fault list.
+
+If Hanterill did not actually read a module, it now says **Not read**.
+
+Only a module that was successfully read and returned no codes receives a clean result.
+
+#### DTC descriptions visible directly in the list
+
+Fault-code rows now show the longer description directly beneath the title when one is available.
+
+You no longer have to open every code individually just to see its description.
+
+#### Recently cleared fault information
+
+Supported vehicles can expose information such as:
+
+- driving cycles since codes were cleared
+- time with a fault
+- limited-operation history
+- selected controller-reset information
+
+This helps when inspecting a used vehicle or chasing an intermittent issue.
+
+#### Offline fault-code decoding
+
+Captured fault-code data can now be pasted into Hanterill and decoded without being connected to the vehicle.
+
+#### Safer DTC clearing
+
+Fault-code clearing has been extensively tightened.
+
+Hanterill now keeps track of which modules were actually cleared, which failed, which could not be verified and why an operation stopped.
+
+If a controller still reports a fault after clearing, Hanterill performs a follow-up check and reports the codes that remain.
+
+Cancelling a clear operation also keeps any partial results already returned instead of simply discarding the information.
+
+The clear dialog no longer carries potentially risky choices forward from the previous operation.
+
+#### Fault clearing does not claim success without evidence
+
+An unanswered or incomplete erase is no longer treated as proof that the codes were cleared.
+
+Unresolved operations are reported as unresolved or inconclusive.
+
+Some modules, including operations that would require unsupported high-voltage preparation, remain blocked.
+
+---
+
+### ECU and service functions
+
+#### ECU reset
+
+Individual supported ECUs can be reset from their ECU detail page.
+
+The process uses explicit confirmation and reports whether the controller acknowledged the request.
+
+If Hanterill cannot determine whether the reset actually completed, it reports the outcome as unknown rather than claiming success.
+
+Cached readings are cleared after a reset so stale values are not presented as fresh vehicle data.
+
+#### Vehicle-wide reset remains heavily restricted
+
+Generic broadcast reset operations and direct BECM reset remain blocked where the required high-voltage preparation cannot be verified.
+
+A separate recorded reset-all procedure exists for the specific observed vehicle procedure. It uses additional vehicle checks, VIN verification and multiple confirmations.
+
+Even there, Hanterill distinguishes between **request delivered** and **vehicle physically rebooted**. A transmitted reset is not presented as physical confirmation of a reboot.
+
+#### Experimental parking-brake procedures
+
+Experimental electronic parking-brake procedures are available for supported BCM/VDDM configurations.
+
+These include:
+
+- release
+- apply
+- enter service position
+- leave service position
+
+The procedures require explicit confirmation and perform additional checks before commands are sent.
+
+**These functions remain experimental.** Controller acknowledgement is not the same as confirming that the brake physically moved, and Hanterill does not claim physical validation where that validation has not been performed.
+
+Unsupported controller combinations remain blocked.
+
+#### Service authentication
+
+Selected ECU detail pages now support locally confirmed service-level authentication.
+
+This can unlock access required by certain advanced service operations.
+
+The process includes safeguards for invalid responses, lockouts and unsuccessful authentication attempts.
+
+Sensitive authentication information is not included in normal diagnostic output.
+
+Service authentication does not automatically authorise every other service routine, and physical-vehicle validation is still required for supported write operations.
+
+#### Clearer Service Routines page
+
+The Service Routines page now makes the consequences of write operations much clearer.
+
+Improvements include:
+
+- visible read-only/write availability
+- risk labels on medium- and high-risk functions
+- clearer prerequisites
+- stronger confirmation for higher-risk operations
+- better navigation between routine categories
+- clearer explanations when an operation is unavailable
+
+Write operations should now look and behave noticeably differently from ordinary diagnostic reads.
+
+---
+
+### Overview
+
+#### More useful conclusions
+
+The Overview page now uses the vehicle information already collected to provide actual diagnostic findings instead of only showing raw numbers.
+
+Potential findings include:
+
+- odometer disagreement
+- State of Charge disagreement
+- poor battery SoH
+- cell imbalance
+- incomplete cell measurement
+- low 12 V voltage
+- overdue service
+- incomplete diagnostic coverage
+- active fault codes
+
+#### Charging and TCAM added to system status
+
+The systems overview now includes charging information and the TCAM backup battery.
+
+The battery row also focuses on the battery-health verdict rather than repeating the same headline number shown elsewhere.
+
+#### Missing information is shown explicitly
+
+Instead of simply saying that some measurements are missing, the Overview now identifies which important readings were unavailable.
+
+The capture time is also displayed clearly so you can see how old the information is.
+
+---
+
+### Reports
+
+#### One consistent Inspection Report
+
+The on-screen report and exported reports now use the same underlying vehicle findings.
+
+This addresses cases where one view could previously classify something differently from another.
+
+#### Missing data is no longer presented as a pass
+
+If a diagnostic section was not read or was excluded, the report says so.
+
+For example, leaving out the fault-code scan no longer produces a green result that looks like the vehicle was scanned and found clean.
+
+#### Better fault reporting
+
+The Inspection Report now includes faults that are failing or pending even if they have not yet reached a fully confirmed stored state.
+
+Stored-only codes remain available separately.
+
+The report, PDF certificate and Fault Codes page therefore describe the same vehicle condition.
+
+#### Improved battery reporting
+
+Battery reports now use the same SoH, cell-balance and completeness rules as the main Battery page.
+
+A partial battery read can no longer become a confident balance verdict simply because it was exported to PDF.
+
+#### Optional location
+
+Location remains excluded from Inspection Reports by default.
+
+It can be explicitly included when needed.
+
+#### Better buyer-oriented information
+
+Reports can include useful inspection information such as:
+
+- registered keys
+- evidence of recently cleared fault codes
+- limited-operation history
+- tyre-pressure sensor status
+- charging history
+- drive-unit usage
+- battery condition
+- odometer agreement
+
+#### Improved report layout
+
+The report layout has been improved across desktop, narrow windows and print/PDF views.
+
+Long findings and report controls should no longer squeeze headings or collapse into unreadable layouts.
+
+Dates and timestamps also follow the selected locale more consistently.
+
+---
+
+### Live data
+
+#### Improved signal selection
+
+The Live Data signal catalogue now offers:
+
+- All signals
+- Selected
+- Favourites
+
+You can browse the available signals even before connecting to a vehicle.
+
+Changing the catalogue filters while recording also no longer changes which signals are already being captured.
+
+#### Live recordings no longer stop after 45 seconds
+
+A bug could incorrectly classify an active recording as stalled after approximately 45 seconds.
+
+Valid incoming sample batches now keep the recording alive as expected.
+
+A genuinely silent connection can still trigger the normal timeout protection.
+
+---
+
+### Connection and reliability
+
+#### Safer reconnect behaviour
+
+Hanterill no longer blindly resends potentially state-changing commands after a connection interruption.
+
+Read operations can safely be retried, but a command that may already have triggered an actuator or routine is not automatically sent a second time.
+
+This avoids the possibility of performing the same physical action twice after an uncertain timeout.
+
+#### Better recovery after cancelled operations
+
+Cancelling during connection recovery no longer leaves the diagnostic session permanently stuck in a recovering state.
+
+#### Better Windows connection errors
+
+Windows should now more accurately distinguish a host that actively refuses the diagnostic port from a normal connection timeout.
+
+#### Better handling of saved data
+
+Several edge cases that could cause saved sessions or settings to fail have been fixed.
+
+This includes:
+
+- extremely fast consecutive saves
+- reconnects that generated duplicate identifiers
+- temporary file locks from antivirus software
+- malformed settings data
+
+#### Failed operations no longer spin forever
+
+If Hanterill receives a result that it cannot decode, the operation now ends with an error instead of leaving the screen permanently showing that it is still running.
+
+#### Better handling of fast operations
+
+Very quick operations can no longer complete before the desktop application has started listening for their result.
+
+---
+
+### Firmware
+
+#### Firmware audit no longer guesses the latest version
+
+The Firmware Audit previously contained placeholder comparison data that could result in a module being labelled **Up to date** or **Behind** without an authoritative source for the latest manufacturer firmware.
+
+Those claims have been removed.
+
+Hanterill can still:
+
+- show the software installed in the vehicle
+- compare software between two captures of the same vehicle
+- identify modules that could not be read
+
+But it will not claim that a vehicle has the manufacturer's newest firmware unless there is a reliable source for that comparison.
+
+---
+
+### Performance
+
+#### Faster diagnostic reads
+
+Where supported, Hanterill can request several readings from a module in the same exchange instead of issuing one request for every value.
+
+This substantially reduces communication overhead on larger diagnostic pages.
+
+If a controller does not accept larger grouped requests, Hanterill automatically falls back to smaller ones.
+
+#### Less unnecessary vehicle traffic
+
+Several screens now read only the information they actually need.
+
+For example:
+
+- detailed Driving data loads only when requested
+- combustion-engine data is not automatically read on an EV
+- previously retrieved information can be reused during the same session
+
+This should make larger diagnostic views faster while placing less load on the vehicle.
+
+#### Smaller production build
+
+Development-only simulated vehicle data is no longer bundled into normal production releases.
+
+---
+
+### User interface
+
+#### Technical identifiers moved out of the way
+
+Most owner-facing screens now lead with understandable names such as battery voltage, backup-battery state or coolant temperature rather than diagnostic identifiers.
+
+Raw diagnostic codes remain available in expert tools where they are actually useful.
+
+#### Improved Battery page layout
+
+The Battery page's main health, per-cell and State of Charge areas are now separate full-width sections.
+
+Large cell maps should no longer overlap neighbouring information, and they remain usable on smaller displays.
+
+#### Improved 12 V views
+
+Unverified 12 V values no longer receive invented physical units.
+
+Unknown data is shown as undecoded until its meaning is established.
+
+#### Demo mode is clearly labelled everywhere
+
+Simulated vehicle data now produces a global Demo Mode banner.
+
+You should no longer be able to navigate to another screen and mistake demo readings for data measured from a real car.
+
+#### Better keyboard and accessibility support
+
+0.3.0 includes several accessibility improvements:
+
+- sortable tables can be operated with the keyboard
+- focus moves correctly when navigating between pages
+- form errors are associated with their controls
+- keyboard focus is more visible
+- interactive rows provide pressed-state feedback
+- colour contrast has been improved
+- narrow-screen layouts have been improved
+
+#### Refreshed visual design
+
+The default light and dark themes have been updated with cleaner neutral surfaces and a more consistent blue accent.
+
+Typography, page headers, status labels and spacing have also been made more consistent across the application.
+
+---
+
+### Languages
+
+#### Much more of Hanterill is translated
+
+Large parts of the application that previously contained hardcoded English are now included in the translation system.
+
+This includes areas such as:
+
+- reports and PDF exports
+- service functions
+- ECU actions
+- connection screens
+- DID Explorer
+- GPS
+- climate
+- retrofit checks
+- export dialogs
+- appearance settings
+- infotainment
+- TCAM connectivity
+
+All nine supported languages now contain the new strings.
+
+The newly added non-English infotainment and TCAM connectivity translations are machine-generated and still need native-language review.
+
+#### More natural interface wording
+
+English interface text has also received a general cleanup.
+
+Technical or developer-oriented wording has been replaced with shorter, more natural descriptions, and headings/buttons now use more consistent sentence casing.
+
+---
+
+### Updates
+
+#### Optional update checking is back
+
+Hanterill can once again check whether a newer release has been published.
+
+From **Settings → About → Updates** you can:
+
+- check manually
+- optionally enable a daily check when Hanterill starts
+
+Automatic checking is disabled by default.
+
+The update check only looks for a newer published version. Hanterill does not automatically download or install anything, and vehicle information is not included in the request.
+
+---
+
+### Security and privacy
+
+#### Safer network targets
+
+The desktop application now restricts which network addresses its diagnostic connection can target.
+
+Vehicle link-local addresses remain supported because they are required for direct DoIP connections.
+
+#### Better local credential storage
+
+Settings, profiles and local service credentials are now stored in the operating system's per-user application-data location instead of whichever directory Hanterill happened to be started from.
+
+#### Improved log redaction
+
+VINs, network addresses and other identifiers are now redacted in more log formats.
+
+#### Location remains opt-in
+
+GPS information is excluded from reports by default and must be explicitly enabled when wanted.
+
+---
+
+### Important accuracy corrections
+
+0.3.0 corrects several earlier interpretations after additional vehicle captures and validation.
+
+These include corrections to:
+
+- battery-module temperatures
+- battery isolation information
+- 12 V battery voltage
+- charger-history values
+- battery State of Charge
+- battery capacity reference
+- drive-unit history
+- charge-history distributions
+- VIN-based Polestar model detection
+- cell numbering
+- fault-state classification
+- firmware-version reporting
+
+Where Hanterill does not yet have enough evidence to assign a physical meaning, scale or verdict, the value is now increasingly shown as **Experimental**, **Raw**, **Not established** or **Not read** rather than being presented as confirmed fact.
+
+---
+
+### Experimental features and known limitations
+
+Some parts of Hanterill remain research-oriented and in beta.
+
+In particular:
+
+- electronic parking-brake write procedures remain experimental
+- service-level authentication still experimental
+- most service proceduers are placeholders and not fully implemented
+- some reset procedures remain intentionally blocked
+- some battery and drive-unit historical scales are still provisional
+- some histogram boundaries remain unknown
+- some configuration values have measured presence information but no verified human-readable meaning
+- newly discovered diagnostic values may remain raw until sufficient vehicle evidence exists
+
+Hanterill's rule for these cases is simple: **unknown data should remain unknown until there is enough evidence to describe it correctly.**
+
+
+Images
+
+
+
 ## [0.2.2] - 2026-09-23
 
 Version 0.2.2 adds initial diagnostic support for Volvo SPA1 vehicles such as the XC60 and XC90, and a connection fallback for Polestar 4 and other SEA vehicles. DID scans now report how much of the planned scan actually completed; an interrupted scan can be resumed with verified results preserved. Screens lead with plain-language findings instead of raw identifiers. When a reading cannot be obtained, Hanterill explains what happened rather than leaving an empty field behind.
