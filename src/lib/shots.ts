@@ -135,6 +135,108 @@ export const galleryExtras: ShotEntry[] = [
     detailKey: "inspectionEvidenceDetail",
     href: "/features/inspection-reports",
   },
+  {
+    root: "/assets/12v-battery-level.png",
+    labelKey: "batteryLevel12v",
+    detailKey: "batteryLevel12v",
+    href: "/features/system-telemetry",
+  },
+  {
+    root: "/assets/build-configuration.png",
+    labelKey: "buildConfiguration",
+    detailKey: "buildConfiguration",
+    href: "/docs/vehicle-configuration",
+  },
+  {
+    root: "/assets/charge-history.png",
+    labelKey: "chargeHistory",
+    detailKey: "chargeHistory",
+    href: "/docs/charging",
+  },
+  {
+    root: "/assets/dtc-history.png",
+    labelKey: "dtcHistory",
+    detailKey: "dtcHistory",
+    href: "/docs/dtc-scanning",
+  },
+  {
+    root: "/assets/dtc-current.png",
+    labelKey: "dtcCurrent",
+    detailKey: "dtcCurrent",
+    href: "/features/vehicle-diagnostics",
+  },
+  {
+    root: "/assets/driving-display.png",
+    labelKey: "drivingDisplay",
+    detailKey: "drivingDisplay",
+    href: "/docs/driving-display",
+  },
+  {
+    root: "/assets/drive-unit-telemetry.png",
+    labelKey: "driveUnitTelemetry",
+    detailKey: "driveUnitTelemetry",
+    href: "/features/live-data",
+  },
+  {
+    root: "/assets/ihu-update.png",
+    labelKey: "ihuUpdate",
+    detailKey: "ihuUpdate",
+    href: "/docs/firmware-and-inventory",
+  },
+  {
+    root: "/assets/infotainment.png",
+    labelKey: "infotainment",
+    detailKey: "infotainment",
+    href: "/features/system-telemetry",
+  },
+  {
+    root: "/assets/trip-computer.png",
+    labelKey: "tripComputer",
+    detailKey: "tripComputer",
+    href: "/docs/driving-display",
+  },
+  {
+    root: "/assets/vehicle-entity.png",
+    labelKey: "vehicleEntity",
+    detailKey: "vehicleEntity",
+    href: "/docs/vehicle-identity",
+  },
+  {
+    root: "/assets/cell-map2.png",
+    labelKey: "cellMapDetailView",
+    detailKey: "cellMapDetailView",
+    href: "/features/battery-health",
+  },
+  {
+    root: "/assets/did-explorer.png",
+    labelKey: "didExplorer",
+    detailKey: "didExplorer",
+    href: "/docs/did-catalogue",
+  },
+  {
+    root: "/assets/drive-units-use.png",
+    labelKey: "driveUnitsUse",
+    detailKey: "driveUnitsUse",
+    href: "/features/live-data",
+  },
+  {
+    root: "/assets/parasitic-draw.png",
+    labelKey: "parasiticDraw",
+    detailKey: "parasiticDraw",
+    href: "/docs/parasitic-drain",
+  },
+  {
+    root: "/assets/reset-module.png",
+    labelKey: "resetModule",
+    detailKey: "resetModule",
+    href: "/features/service-functions",
+  },
+  {
+    root: "/assets/settings.png",
+    labelKey: "settings",
+    detailKey: "settings",
+    href: "/docs/workspace-tour",
+  },
 ];
 
 /** Every capture, in gallery order. */
