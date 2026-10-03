@@ -1,12 +1,12 @@
-Most screens answer one question at a time: is the battery healthy, or why did the 12 V battery go flat over the weekend. The **Module data** screen is different: it shows every named group of readings a module keeps about itself, in one place. It is the closest thing in the app to reading the module's own service records.
+The **Module data** screen puts each control unit's named readout groups in one place. Open a group to inspect its current values, counters or dated records without hunting through the other screens.
 
 ## How a readout works
 
 Each module exposes numbered *readout groups*: small sets of related records such as "charge history", "wake-up log" or "12 V statistics". On the **Module data** screen:
 
 - A group **reads as soon as you open it**, and **Read again** in the group header refreshes it.
-- A plain status line tells you how much of the read carried meaning, for example *"All 17 values read."* A group where nothing decoded says so in one line instead of showing filler.
-- Key figures appear as stat tiles, followed by a table of the rows that have a plain value. Rows the app cannot yet decode stay folded away with the reason in words; the counts line still reports how much of the read was meaningful.
+- A status line reports coverage, for example *"All 17 values read."* If nothing decoded, it says so.
+- Key figures appear first, followed by a table of decoded values. Undecoded rows stay collapsed with a reason; the coverage count includes them.
 - Raw identifiers (DID numbers, payload bytes) never clutter the screen; they are kept in the saved JSON if you archive the session.
 
 ## What each module keeps
@@ -22,12 +22,12 @@ Some groups also appear in place on the screen that owns the topic (the battery 
 
 ## Histories and timelines
 
-Many groups are *histories*: dated events rather than single numbers. Each event is aged against the module's own clock, so a lock event reads as a real timestamp and a reset log entry carries the odometer at the time it happened. Structured events say what they were in words (a lock or unlock, a wake-up with its reason, a reset with its counter) instead of a bare code.
+Many groups contain dated events. Hanterill uses the module's clock to date a lock or wake event; a reset entry can also carry the odometer reading at the time. Where the module provides enough detail, the screen names the event and its reason instead of showing only a code.
 
-## What the screen will not invent
+## Unconfirmed values
 
-<Callout kind="caution" title="Readings keep their honest labels">
-Values the app cannot yet decode stay undecoded, hours whose scale is unconfirmed are marked *likely*, and histogram bins without established edges are numbered rather than labelled with units. A verdict you can act on says so; everything else says what is missing.
+<Callout kind="caution" title="Check the labels before using a value">
+The app leaves unknown values undecoded. It marks hours *likely* when their scale is unconfirmed and numbers histogram bands whose boundaries are not established. Check coverage and source before acting on a result.
 </Callout>
 
 Some groups need the module's extended diagnostic session; those carry an **extended** toggle in the group header and read once you allow it.

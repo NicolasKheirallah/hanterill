@@ -1,11 +1,11 @@
-Vyn **Körning och display** läser instrumentklustret – modulen som bilen själv litar på för att
-visa föraren vad som händer. Den svarar på frågorna en köpare eller ägare faktiskt ställer: hur
-mycket har den här bilen egentligen körts, och när är nästa service?
+Vyn **Körning och display** läser resor, mätarställning, serviceintervall och displaydata från
+instrumentklustret. Jämför dess mätarställning med kopior i andra styrenheter innan du tolkar en
+skillnad som ett fel.
 
 ## Körmätarens korskontroll
 
-Huvudkortet är körmätaren. Bilen sparar flera kopior av körda kilometer i olika moduler –
-klustret, gatewayen, batterimodulen med flera – och vyn läser dem tillsammans:
+Bilen sparar mätarställningen i instrumentklustret, gatewayen, batterimodulen och andra
+styrenheter. Kortet för mätarställning läser kopiorna tillsammans:
 
 - Korskontrollen redovisas rakt ut, till exempel *"6 av 6 kopior överensstämmer"*.
 - Om kopior inte stämmer, eller om en manipulationsflagga är satt någonstans, säger kortet det med
@@ -21,29 +21,27 @@ nollställningsräknarna, så du ser om visade värden nyligen nollställts.
 
 ## Serviceintervall
 
-Klustret för serviceintervallet i egna räknare. Vyn visar återstående tid och sträcka till nästa
-service och till 12-voltsbatteriets skötselintervall, och varnar när klustrets två
-räknarposter inte längre beskriver samma servicehändelse – vilket du vill veta innan du betalar
-för en service som redan gjorts.
+Instrumentklustret håller reda på serviceintervallen med egna räknare. Vyn visar tid och sträcka
+till nästa service och kontroll av 12 V-batteriet. Om två räknare ger olika besked om samma
+servicehändelse får du en varning; kontrollera servicehistoriken innan du drar en slutsats.
 
 ## Displaydata
 
-Tavlan under översikten ger varje displaygrupp i klustret ett kort: avkodade värden som
-nyckeltal och historiken som en tidslinje, med en täckningschip som *"2 av 72 avkodade"*.
-Grupper där inget ännu avkodits delar en ärlig rad i stället för utfyllnadskort. Laddning,
-meddelanden, förarstöd och systemdata följer samma mönster på anrop – varje panel läses första
-gången du öppnar den, i stället för att skicka en salva trafik på bussen när sidan öppnas.
+Under översikten visas avkodade värden och daterade poster för varje displaygrupp. Ett antal som
+*"2 av 72 avkodade"* visar hur stor del av svaret Hanterill kan tolka. Om inget har avkodats
+står det i gruppen. Panelerna för laddning, meddelanden, förarstöd och systemdata läser bilen
+först när du öppnar dem, så sidan frågar inte alla grupper på en gång.
 
 ## Inlärd energianvändning
 
-Bilen lär sig sin egen förbrukning när den körs. Vyn visar den inlärda förbrukningen per band –
-sannolikt per hastighetsband, i kWh/100 km på testbilen – tillsammans med hur ofta varje band
-körts. Banden numreras eftersom deras exakta gränser inte är fastställda; datans form är poängen,
-inte sista enheten.
+Vyn visar bilens inlärda förbrukning i numrerade intervall och hur ofta bilen registrerat varje
+intervall. På testbilen verkar värdena anges i kWh/100 km och kan höra till hastighetsintervall.
+Gränserna är ännu inte bekräftade, så använd fördelningen som sammanhang utan att tilldela ett
+visst intervall en hastighet.
 
 <Callout kind="note" title="Därför markeras vissa siffror *sannolikt*">
-Värden vars skala ännu inte kunnat bekräftas mot bilen märks *sannolikt* i stället för att visas
-som fakta. Etiketten är ett löfte: när en siffra visas utan den har skalan kontrollerats.
+Hanterill märker ett värde *sannolikt* när bilen har lämnat det men skalan ännu inte har
+bekräftats. Värden utan den etiketten har en kontrollerad skala.
 </Callout>
 
 ## Läs vidare

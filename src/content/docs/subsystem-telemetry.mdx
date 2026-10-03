@@ -18,15 +18,15 @@ The drive units keep lifetime records too. The view shows operating and powered 
 
 ## Power and the DC/DC converter
 
-**Power** groups available high-voltage and 12 V supply readings, the 12 V battery's temperature-band history with numbered bands and sample counts, and the car's power-mode history: lifetime minutes asleep, parked, in use and driving, how many times the car went to sleep, and how long it has been awake since the last wake-up.
+**Power** groups high-voltage and 12 V supply readings. It also shows the 12 V battery's temperature history in numbered bands, with sample counts, and the car's recorded time asleep, parked, in use and driving. Sleep counts and time since the last wake-up appear where the car reports them.
 
-The DC/DC converter that charges the 12 V system sits in the front drive unit. Its lifetime histograms show running time, 12 V output power, current and voltage, maximum power available, high-voltage input current and voltage, and board temperature. The scales are not yet confirmed, so hours are marked *likely* and heat-map axes are numbered. Related voltages may be reported by different units; a difference is something to examine with the car's operating state in mind, not on its own proof of a faulty cable or ground.
+The DC/DC converter in the front drive unit charges the 12 V system. Its history covers running time, output power, current and voltage, available power, high-voltage input and board temperature. The scales still need confirmation, so hours carry a *likely* label and heat-map axes stay numbered. Compare voltages from different units while accounting for the car's operating state; a mismatch alone does not identify a bad cable or ground.
 
 ## Charging, steering, telematics, GPS and service schedule
 
 **Charging** has its own guide: see [Charging](/docs/charging) for the live charger telemetry and the charger's health counters.
 
-**Steering** is an honest gap on current cars: the steering angle and rate sensors do not answer these reads over the diagnostic channel, and the screen says so rather than showing a stale value. Check for fault codes instead; calibration is a separate service action that changes the car.
+On cars tested so far, the steering angle and rate sensors have not answered these requests over the diagnostic channel. **Steering** shows that limit and points you to fault codes instead. Calibration is a separate service action that changes the car.
 
 **Telematics** can show the backup battery and other available module readings. **GPS** reads the car's position only when you request a fix. Review location data before sharing an export. These screens report what the unit returned; they cannot by themselves identify the cause of a weak signal or an emergency-call warning.
 

@@ -1,4 +1,5 @@
-Hanterill kommunicerar med bilen genom diagnoskabeln och sparar sessioner på din dator. Eftersom datorappen kräver inget konto och inte skickar diagnossessioner till någon molntjänst beskriver den här sidan vad som sparas lokalt och vad du bör kontrollera innan du delar en fil.
+Hanterill sparar diagnossessioner på din dator och talar med bilen via kabeln. Du behöver inget
+konto; på den här sidan står vad som sparas och vad du bör granska innan du delar en fil.
 
 ## Vad som stannar på din dator
 
@@ -10,20 +11,17 @@ Allt som Hanterill spelar in lagras lokalt i din användarmapp:
 - **Aktivitetslogg**: En lokal logg över vilka diagnostiksteg som körts under sessionen, med chassinummer (VIN) automatiskt maskerade.
 - **Fordonsknuten upptäcktscache**: Lagras under en envägshash av chassinumret så att en vanlig fillistning på datorn aldrig avslöjar fordonets identitet.
 
-## Vad som aldrig samlas in eller skickas vidare
+## Vad Hanterill inte skickar till externa tjänster
 
-- Ingen telemetri eller bakgrundstrafik
-- Ingen analys eller spårning av hur du använder programmet
-- Inget molnkonto, ingen inloggning och ingen licensserver
-- Inga fordonsdata eller felkoder som laddas upp någonstans
-- Inga tredjepartsbibliotek för kraschrapportering
+- Ingen användningsanalys eller spårning i bakgrunden
+- Ingen kontoinloggning eller licenskontroll
+- Inga diagnossessioner, fordonsdata eller felkoder som laddas upp
+- Inga kraschrapporter till tredje part
 
-Datorappen fungerar helt offline – i ett underjordiskt garage eller längs vägkanten utan Wi-Fi –
-och skickar ingenting om du inte ber om det. Det finns exakt ett valfritt nätverksanrop: slår du på
-**Inställningar -> Uppdateringar** frågar appen en gång per dag GitHubs publika releaseflöde om en
-nyare taggad version finns och visar en notis du kan avfärda. Anropet är detsamma för alla, innehåller
-inget om dig, din dator eller ditt fordon, och ingen installationsfil laddas någonsin ner. Allt
-annat stannar på bilens sida av kabeln eller på din disk.
+Du kan köra en diagnossession utan internet. Om du aktiverar **Inställningar -> Uppdateringar**
+kan appen fråga GitHubs publika utgåveflöde en gång per dag om en nyare version finns. Den visar
+en notis men laddar inte ner någon installationsfil. Förfrågan innehåller varken fordonsvärden
+eller chassinummer.
 
 ## Visning och maskering av chassinummer (VIN)
 

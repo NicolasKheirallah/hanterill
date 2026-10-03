@@ -6,7 +6,7 @@ A scan may be complete, partial or unsupported for a particular vehicle. Where t
 
 The app may distinguish **measured** values from values **calculated** from other readings. A provisional interpretation means the decoder needs more verification. Neither a provisional value nor a missing value should be treated as proof of a fault or proof of good health.
 
-Some figures carry an explicit **likely** label (drive-unit and DC/DC operating hours, learned consumption bands) because the value is real but its unit or scale has not yet been confirmed against the car. Histograms whose bin edges are not established show numbered bands instead of percentages or temperatures. A "likely" label is not noise to ignore: it is the difference between a checked number and an unchecked one. Where a group decodes only part of what the module returned, the status line says so outright, for example *"12 of 70 values read."*
+Hanterill marks some returned values **likely** because their unit or scale still needs checking against the car. Drive-unit and DC/DC operating hours and learned consumption bands can carry this label. Histograms with unknown boundaries use numbered bands, and a partial decoder reports its coverage, for example *"12 of 70 values read."* Keep those limits in mind when comparing readings.
 
 ## Check when and how it was read
 
@@ -14,6 +14,6 @@ A saved session shows what the car reported when that session was captured. Live
 
 ## Use comparisons carefully
 
-Cross-checks compare related values, such as pack voltage with the sum of cell voltages or charge figures from different units. The app runs a wider set of these than one page shows: the same odometer read from several modules, one vehicle clock compared across modules, the 12 V supply read from every module that reports it (with each module's known reading offset taken out), battery temperature and pack voltage compared between the thermal manager and the battery module, and the displayed charge level against the energy remaining. The Cross-Check screen shows the expected and observed numbers behind each verdict instead of the verdict alone.
+Cross-checks compare related readings. They cover pack voltage against the cell sum, mileage and clock values from several modules, and the 12 V supply where multiple units report it. The app also compares battery temperature and voltage across the thermal and battery modules, and displayed charge against remaining energy. **Cross-Check** shows the expected and observed values behind each result, including any known offset applied to a module's 12 V reading.
 
 Agreement increases confidence in a reading, but it does not prove every sensor is correct. A disagreement can reflect timing, an incomplete read or a real issue. Read the coverage and the individual values before deciding what to investigate next.

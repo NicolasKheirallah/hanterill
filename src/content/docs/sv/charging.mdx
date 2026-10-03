@@ -8,7 +8,7 @@ och eventuella felkoder. Ett saknat värde kan inte ensamt peka ut orsaken.
 Välj **Läs laddningstelemetri** för att se ladduttagets låsstatus, kabelns rapporterade
 strömkapacitet och batteripaketets spänning. Medan bilen faktiskt laddar läser vyn också
 ombordladdaren live: effekt från nätet, effekt in i batteriet, laddarens verkningsgrad, spänning
-och ström per fas, de effektlämningar som gäller och pilotstyrningen. Dessa värden verifierades
+och ström per fas, de effektgränser som gäller och pilotstyrningen. Dessa värden verifierades
 mot paketspänningen och strömmen på en referensbil som laddade; ett tomt värde betyder att bilen
 inte lämnade den avläsningen.
 
@@ -25,8 +25,8 @@ Ombordladdaren håller livstidsräknare, och vyn läser dem direkt:
   batterivyans laddhistorik).
 - **Laddarcyklar**: laddarens egen räknare över laddcykler.
 - **Laddarhälsa som staplar**: antal AC-laddningar, omstarter och livstidslarm per effektblock.
-  Larmen samlas över laddarens liv, så en gammal händelse bevisar inte ett nuvarande fel – men ett
-  block med många omstarter bredvid ett laddningsklagomål är värt en närmare titt.
+  Ett gammalt larm bevisar inte ett aktuellt fel; upprepade omstarter tillsammans med ett
+  laddningsproblem ger skäl att undersöka effektblocket.
 
 ## Undersök en laddningsgräns
 
@@ -43,5 +43,5 @@ stationens meddelanden och läs eventuella felkoder.
 ## När ett värde saknas
 
 Appen visar om laddningsvärdet mättes eller saknas. Tolka inte ett tomt värde för kabel, lås eller
-effekt som noll. De live-värden syns bara medan en laddsession pågår; läs igen medan bilen är
+effekt som noll. De levande värdena syns bara medan en laddsession pågår; läs igen medan bilen är
 ansluten till laddaren om första försöket gav för lite underlag.

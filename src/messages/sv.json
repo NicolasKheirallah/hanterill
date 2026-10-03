@@ -1,48 +1,48 @@
 {
   "meta": {
     "title": "Hanterill | Fordonsdiagnostik för Volvo & Polestar",
-    "description": "Fordonsdiagnostik med tillgänglig källkod för Volvo och Polestar som stöds. Läs batterihälsa och realtidsdata via DoIP och UDS. Allt körs lokalt och är gratis för privat bruk."
+    "description": "Anslut Hanterill till en Volvo eller Polestar som stöds med ENET-kabel. Läs batterihälsa, felkoder och realtidsdata på datorn; sessionerna sparas lokalt."
   },
   "seo": {
     "home": {
       "title": "Hanterill | Fordonsdiagnostik för Volvo & Polestar",
-      "desc": "Fordonsdiagnostik med tillgänglig källkod för Volvo och Polestar som stöds. Läs batterihälsa och realtidsdata via DoIP och UDS. Allt körs lokalt och är gratis för privat bruk."
+      "desc": "Anslut en Volvo eller Polestar som stöds med ENET-kabel. Läs batterihälsa, felkoder och realtidsdata på datorn; privat användning är gratis."
     },
     "features": {
       "title": "Funktioner",
-      "desc": "Sju funktioner, från batterihälsa och felkoder till livedata, systemdata, inspektionsrapporter, sessioner och serviceåtgärder. Se vad de läser och kräver."
+      "desc": "Se vilka värden Hanterill kan läsa från bilen, hur sessioner sparas och vilka serviceåtgärder som kräver bekräftelse."
     },
     "batteryHealth": {
       "title": "Batterihälsa",
-      "desc": "Läs batteriets hälsotillstånd och laddningsnivå, spänning, cellgruppernas värden, obalans och temperatur från fordonets batterihanteringssystem."
+      "desc": "Läs batteristyrenhetens uppskattningar av hälsa och laddning tillsammans med spänning, cellgruppsvärden och temperaturer. Kontrollera stödet för din bil."
     },
     "vehicleDiagnostics": {
       "title": "Fordonsdiagnostik",
-      "desc": "Upptäck styrenheter via DoIP. Läs identitet, felkoder och frysta ramdata, skanna dataidentifierare och jämför programvaruversioner. Radering kräver bekräftelse."
+      "desc": "Se vilka styrenheter som svarar, granska aktiva och lagrade felkoder och jämför programvaruversioner. Radering av koder kräver bekräftelse."
     },
     "liveData": {
       "title": "Realtidsdata",
-      "desc": "Följ batterispänning och ström, batteri- och växelriktartemperatur, motorns vridmoment och 12 V-systemets spänning med avläsningar på begäran."
+      "desc": "Följ batteri, växelriktare, motor och 12 V-system medan bilen är ansluten. Spara en inspelning och se när ett värde saknades."
     },
     "systemTelemetry": {
       "title": "Subsystemstelemetri",
-      "desc": "Följ fler system än batteriet: klimatanläggning, drivenheter, laddning, TCAM, styrning, serviceintervall, GPS och fordonskonfiguration."
+      "desc": "Öppna separata vyer för laddning, drivenheter, klimat och effekt. Varje vy visar vilka värden bilen faktiskt lämnade."
     },
     "inspectionReports": {
       "title": "Inspektionsrapporter",
-      "desc": "En poängsatt kontroll inför köp, baserad på skrivskyddad diagnostik. Varje bedömning av batteri, felkoder och mätarställning kan spåras till en dokumenterad regel."
+      "desc": "Granska batteri, felkoder och mätarställning bakom resultatet i en begagnatkontroll. Saknade värden syns i rapporten."
     },
     "sessionsEvidence": {
       "title": "Sessioner och underlag",
-      "desc": "Spara diagnossessioner lokalt och jämför felkoder, cellvärden och programvaruversioner före och efter en åtgärd. Lägg till anteckningar och exportera resultaten."
+      "desc": "Spara diagnosskanningar på datorn. Jämför felkoder, cellvärden och programvara mellan besök eller exportera en session."
     },
     "serviceFunctions": {
       "title": "Servicefunktioner",
-      "desc": "Serviceåtgärder som kan ändra fordonet kräver var sin bekräftelse, bland annat radering av felkoder, servicerutiner, anpassningar och omstart av styrenheter."
+      "desc": "Se vilka servicerutiner den installerade versionen stöder för din bil. Varje åtgärd kräver bekräftelse, och bilen kan neka den."
     },
     "vehicles": {
       "title": "Fordon som stöds",
-      "desc": "Se vilka Volvo-, Polestar-, Zeekr- och Lynk & Co-modeller Hanterill kan läsa, hur stödet har verifierats och vad som har testats på riktiga fordon."
+      "desc": "Kontrollera vilka modeller och funktioner som har testats innan du litar på ett värde. CMA är verifierad; andra plattformar har begränsningar."
     },
     "download": {
       "title": "Ladda ner",
@@ -54,11 +54,11 @@
     },
     "safety": {
       "title": "Säkerhet",
-      "desc": "Hur Hanterill skiljer skrivskyddad diagnostik från åtgärder som ändrar fordonet, och vad programvaruåtkomst gör och inte gör säkert."
+      "desc": "Se vilka kontroller som bara läser bilen och vilka serviceåtgärder som ändrar den. Bekräfta varje åtgärd och följ bilens serviceanvisningar."
     },
     "privacy": {
       "title": "Integritetsskydd",
-      "desc": "Hanterill är helt lokalt. Ingen telemetri, ingen analys, inget konto, ingen backend, ingen diagnostisk data laddas upp. VIN och position tas bort där de inte behövs."
+      "desc": "Hanterill sparar diagnossessioner på datorn och kräver inget konto. Granska valen för VIN och plats innan du delar en export."
     },
     "about": {
       "title": "Om Hanterill: ett oberoende diagnosprojekt",
@@ -128,11 +128,11 @@
     },
     "docs": {
       "title": "Dokumentation",
-      "desc": "Lär dig hur Hanterill fungerar, från anslutning och batteridiagnostik till felkoder, livedata och inspektionsrapportens regler."
+      "desc": "Börja med kabeln och läs sedan hur du tolkar batteridata, felkoder och rapporter. Guiderna förklarar var resultaten kommer ifrån."
     },
     "troubleshooting": {
       "title": "Fordonet dyker inte upp",
-      "desc": "Felsök när fordonet inte hittas: kontrollera tändning, RJ45-anslutning, brandvägg, UDP-port 13400 och Ethernet-adapter."
+      "desc": "Kontrollera kabel, Ethernet-adapter, bilens läge och brandvägg om fordonet inte visas. Anslutningsloggen hjälper dig hitta steget som misslyckas."
     },
     "changelog": {
       "title": "Ändringslogg",
@@ -144,11 +144,11 @@
     },
     "walkthrough": {
       "title": "Genomgång av alla funktioner",
-      "desc": "Hela genomgången av Hanterill: batterihälsa, fordonsdiagnostik, livedata, subsystemtelemetri, inspektionsrapporter, sessioner och servicefunktioner, var och en med sin demo."
+      "desc": "Prova webbplatsens exempelinstrument och se vad varje funktion läser. Exemplen använder fasta data, inte en ansluten bil."
     },
     "caseStudy": {
       "title": "Casestudie: en komplett session",
-      "desc": "En representativ diagnostiksession från referensfordonet Polestar 2: symptomen, felkoder med status, frysta ramdata, batterivärden, omdömet och diffen efter åtgärd."
+      "desc": "Följ en exempelsession på Polestar 2 från första skanningen till jämförelsen efter reparation. Värdena är exempel, ingen diagnos."
     }
   },
   "common": {
@@ -248,7 +248,7 @@
   },
   "pricing": {
     "promise": "Privat användning är gratis i varje version.",
-    "detail": "Alla appens diagnosfunktioner följer med i nedladdningen. Du behöver inget konto och det finns ingen provperiod eller betald nivå. Verkstäder som tar betalt för arbetet kan fråga om en kommersiell licens.",
+    "detail": "Alla diagnosfunktioner följer med i nedladdningen, utan konto eller provperiod. Verkstäder som tar betalt för arbetet kan fråga om en kommersiell licens.",
     "heading": "Privat bruk kostar ingenting",
     "body": "Installera Hanterill och använd de funktioner som din bil stöder. Privat användning kostar ingenting, varken nu eller i senare versioner.",
     "commercial": "Verkstäder och serviceföretag behöver en kommersiell licens om de tar betalt för arbete med Hanterill. Licensen för privat bruk täcker inte det arbetet."
@@ -669,7 +669,7 @@
       "CMA": "Compact Modular Architecture. Polestar 2 och mindre eldrivna Volvo-modeller är testade här. Batteriet har 108 cellgrupper i 27 moduler. CMA-modeller med förbränningsmotor eller hybriddrift har delvis stöd.",
       "SPA": "Scalable Product Architecture. Delvis stöd. DoIP-anslutning, styrenhetslista och felkodsskanning är testade på V90 T6, och katalogen innehåller hybridbatteriernas layouter medan djupare batteriläsningar verifieras.",
       "SEA": "Sustainable Experience Architecture. Styrenheter, DoIP-adresser, dataidentifierare och cellgrupper för SEA1 är kartlagda. Funktionerna behöver verifieras på fler fordon.",
-      "SPA2": "Andra generationens SPA. Annan gateway- och säkerhetsmodell. Under utredning."
+      "SPA2": "Andra generationens SPA har en annan gateway och säkerhetsmodell; Hanterills stöd är ännu på forskningsstadiet."
     },
     "statusNotes": {
       "supported": "Verifierad implementation i drift. Batteri, felkoder, styrenhetsidentifiering och realtidsdata testas regelbundet.",
@@ -703,7 +703,7 @@
     "serviceModesModule": "Modul",
     "serviceModesService": "Service",
     "serviceModesStatus": "Status",
-    "serviceModesNote": "Vissa serviceåtgärder skyddas av bilens säkerhetsnivå. Hanterill kan kontrollera om nivån är låst, men kan inte låsa upp den. Bilen kan därför neka en åtgärd som finns i listan. Följ bilens serviceanvisningar och utför åtgärderna bara på fordon som du har rätt att arbeta med. Vanliga avläsningar ändrar inte bilen.",
+    "serviceModesNote": "Vissa serviceåtgärder kräver en säkerhetsnivå som Hanterill inte kan låsa upp. Appen kan kontrollera nivån, men bilen kan ändå neka åtgärden. Följ bilens serviceanvisningar och använd funktionerna bara på en bil som du har rätt att arbeta med; vanliga avläsningar ändrar inte bilen.",
     "serviceModesSafety": "Säkerhet och gränser",
     "serviceStatus": {
       "beta": "Bekräftelse krävs",
@@ -877,7 +877,7 @@
       },
       {
         "q": "Kan Hanterill skada min bil?",
-        "a": "Vanliga avläsningar ändrar inte fordonet. Åtgärder som kan ändra det kräver en egen bekräftelse och kan innebära risker om de används fel. En version utan skrivstöd avvisar sådana kommandon. Följ alltid tillverkarens anvisningar vid service, särskilt kring högspänning."
+        "a": "Vanliga skanningar läser bara bilen. En serviceåtgärd kan flytta en del eller ändra en inställning, så Hanterill kräver en egen bekräftelse för varje åtgärd. Följ bilens serviceanvisningar, särskilt vid högspänning."
       },
       {
         "q": "Är detta ett officiellt verktyg från Volvo eller Polestar?",
@@ -907,7 +907,7 @@
       },
       {
         "q": "Min bil är märkt Delvis, Testas eller Utreds. Kan jag använda den?",
-        "a": "Du kan eventuellt ansluta och läsa fordonsidentitet. Batterivärden och felkodstolkning kan ännu vara obekräftade, så använd dem inte som grund för service eller köp. Kör inga servicerutiner på ett fordon där funktionen inte är verifierad."
+        "a": "Du kan kanske ansluta och läsa bilens identitet. Kontrollera stödstatus för varje funktion innan du litar på resultatet; batteri- och felkodstolkning på fordon under testning eller forskning behöver verifieras. Kör inte en servicerutin som inte har verifierats."
       },
       {
         "q": "Är detta godkänt av Volvo eller Polestar?",
@@ -1081,7 +1081,7 @@
     },
     "liveData": {
       "hChannels": "Kanaler",
-      "pChannels": "Välj vilka värden du vill följa ovanför diagrammet. Vanliga batteri- och drivlinjevärden är grupperade så att du snabbt kan komma igång. Hur ofta värdena uppdateras beror på vad bilens styrenheter kan lämna.",
+      "pChannels": "Välj kanaler ovanför diagrammet. Batteri- och drivlinjevärden finns i färdiga grupper; uppdateringstakten beror på vad bilens styrenheter kan lämna.",
       "hReading": "Läsa diagrammet",
       "pReading": "Pausa diagrammet för att granska en punkt. Luckor i inspelningen visas som luckor, utan påhittade mätvärden. Kurvan här är simulerad och kommer inte från en bil.",
       "hExport": "Export",
@@ -1209,7 +1209,7 @@
       "hMeasured": "Mätt, inte tillverkat",
       "pMeasured": "Varje fält på dessa sidor är en typad observation: värde, tillstånd, källa och avkodningsversion, eller ett registrerat misslyckande. En DID som vägrar med en negativ svarskod ger en vägran, inte en nolla. Ett parkerat fordon med en drivande rotorsignal klassas som stillastående i visningslagret utan att röra råvärdet.",
       "hChecks": "Konsistenskontroller",
-      "pChecks": "Tio korsignalkontroller jämför fordonets egna avläsningar mot varandra: packspänning mot summan av sina celler, rapporterad effekt mot beräknad, strömplausibilitet vid parkering, kompressorstatus mot köldmedietryck, kylmedelsdifferenser per axel. De körs på de aktuella batteri-, motor- och klimatläsningarna. En kontroll som saknar indata registrerar det som otillräcklig data. Ingen av dem påstår ett fel: värsta dom är en varning.",
+      "pChecks": "Tio kontroller jämför värden som hör ihop, bland annat paketspänning mot summan av cellspänningarna, rapporterad effekt mot beräknad effekt och kompressorns läge mot köldmedietrycket. De använder aktuella avläsningar från batteri, drivlina och klimat. Saknas ett värde visas otillräckligt underlag; en avvikelse ger en varning att undersöka, inte en feldiagnos.",
       "hBoundaries": "Gränser",
       "pBoundaries": "Avkodning av kabelklassning förblir experimentell. Utrustningsindex som katalogen inte namnger förblir numeriska. Okända layouter bevaras som utforskande bevis i stället för att göras till ett uttalande om ditt fordon.",
       "thermalDocs": "Termisk och celldokumentation"
@@ -1595,7 +1595,7 @@
     "safetyLead": "Diagnostikmjukvara kan läsa väldigt mycket och ändra några saker. Hanterill är byggd så att du alltid vet vilket som är vilket.",
     "privacyEyebrow": "Integritet",
     "privacyTitle": "Helt lokalt.",
-    "privacyLead": "Hanterill har ingen backend och inget kontosystem. Programmet kommunicerar med fordonet och skriver till din disk. Det är hela dataflödet.",
+    "privacyLead": "Hanterill talar med bilen och sparar avläsningarna på din dator. Diagnossessioner kräver varken konto eller någon server.",
     "aboutEyebrow": "Om",
     "aboutTitle": "Ett projekt för dem som vill förstå sina fordon.",
     "aboutLead": "Hanterill började som ett sätt att läsa CMA-batteridata utan en verkstadsprenumeration. Det växte till ett allmänt DoIP- och UDS-diagnosverktyg.",
@@ -1690,19 +1690,19 @@
       },
       "freeze": {
         "title": "Läs villkoren bakom dem",
-        "body": "BECM sparade batterispänning, ström, laddningsnivå och temperatur när felkoden registrerades. Vid 62 % laddning var batteriet belastat när styrenheten markerade obalansen. Ögonblicksbilden ger sammanhang, men fastställer inte orsaken ensam."
+        "body": "BECM sparade batterispänning, ström, laddningsnivå och temperatur när felkoden registrerades. I exemplet var batteriet belastat vid 62 % laddning när styrenheten markerade obalansen; de uppgifterna fastställer inte orsaken ensamma."
       },
       "battery": {
         "title": "Läs paketet självt",
-        "body": "Batteriets hälsotillstånd är 94,72 %. Skillnaden mellan högsta och lägsta cellgrupp är 8 mV, och modul 14 står för den största avvikelsen. Det ger mer information än procenttalet på instrumentpanelen."
+        "body": "Exemplet visar 94,72 % batterihälsa och 8 mV spridning mellan 108 cellgrupper, med störst avvikelse i modul 14. Instrumentpanelens enda procenttal visar inte den fördelningen."
       },
       "verdict": {
         "title": "Poängsätt den",
-        "body": "Inspektionsrapporten poängsätter sessionen mot den regeluppsättning den levereras med, och anger regeln bakom varje utfall. Utfallet här är en bevakningspunkt snarare än ett fel: ingen kod är aktiv, men en modul ligger i kanten av toleransbandet och ögonblicksbilden visar att den rör sig under last."
+        "body": "Exempelrapporten markerar batterifyndet för granskning och hänvisar till regeln bakom resultatet. Ingen felkod är aktiv, men en modul ligger vid gränsen för rapportens intervall. Den sparade ögonblicksbilden visar när koden registrerades, inte hur värdet har ändrats över tid."
       },
       "after": {
         "title": "Sök igen och jämför",
-        "body": "Efter verkstadens programvaruuppdatering görs en ny skanning. Appen jämför vilka felkoder som försvann, vilka som finns kvar och hur cellgruppernas värden har ändrats. Båda sessionerna sparas."
+        "body": "Spara en ny skanning efter verkstadens programvaruuppdatering och jämför med den första. Jämförelsen visar vilka koder som försvann eller ändrade status och om spridningen mellan cellgrupper ändrades. Båda sessionerna finns kvar lokalt."
       }
     },
     "disclaimer": "Representativ session med exempelvärden. Inte en verklig fordonsläsning och inte en diagnos för någon specifik bil.",

@@ -18,15 +18,24 @@ Drivenheterna sparar också historik. Vyn visar driftstimmar (märkta *sannolikt
 
 ## Elförsörjning och DC/DC-omvandlaren
 
-**Elförsörjning** samlar tillgängliga värden från högspänningssystemet och 12 V-systemet, 12 V-batteriets temperaturbandshistorik med numrerade band och antal prov, samt bilens effektlägeshistorik: livstidsminuter sovande, parkerad, i bruk och körande, hur många gånger bilen somnat och hur länge den varit vaken sedan senaste vaknandet.
+**Elförsörjning** samlar avläsningar från högspänningssystemet och 12 V-systemet. Vyn visar också
+12 V-batteriets temperaturhistorik i numrerade intervall med antal prover samt bilens registrerade
+tid sovande, parkerad, i bruk och körande. Antal insomningar och tid sedan senaste väckningen visas
+där bilen lämnar uppgifterna.
 
-DC/DC-omvandlaren som laddar 12 V-systemet sitter i den främre drivenheten. Dess livstidshistogram visar drifttid, uteffekt, ström och spänning på 12 V-sidan, maximal tillgänglig effekt, högspänningsström och spänning på ingången, samt korttemperatur. Skalorna är ännu inte bekräftade, så timmar markeras *sannolikt* och värmekartors axlar numreras. Besläktade spänningar kan rapporteras av olika enheter; en skillnad behöver bedömas med bilens driftläge i åtanke, inte som ensam bevisning för en trasig kabel eller jordpunkt.
+DC/DC-omvandlaren i den främre drivenheten laddar 12 V-systemet. Dess historik omfattar drifttid,
+uteffekt, ström och spänning, tillgänglig effekt, högspänningsingång och temperatur på kretskortet.
+Skalorna behöver fortfarande bekräftas, så timmar märks *sannolikt* och värmekartans axlar
+numreras. Jämför spänningar från olika enheter med hänsyn till bilens driftläge; en avvikelse ensam
+pekar inte ut en trasig kabel eller jordpunkt.
 
 ## Laddning, styrning, telematik, GPS och serviceschema
 
 **Laddning** har en egen guide: se [Laddning](/docs/charging) för live-laddtelemetri och laddarens hälsoräknare.
 
-**Styrning** är ett ärligt gap på aktuella bilar: rattvinkel- och varvtalsgivarna svarar inte på dessa avläsningar över diagnoskanalen, och vyn säger det i stället för att visa ett inaktuellt värde. Läs felkoder i stället; kalibrering är en separat serviceåtgärd som ändrar bilen.
+På de bilar som testats hittills har givarna för rattvinkel och vinkelhastighet inte svarat på
+dessa förfrågningar via diagnoskanalen. **Styrning** visar begränsningen och hänvisar till
+felkoderna. Kalibrering är en separat serviceåtgärd som ändrar bilen.
 
 **Telematik** kan visa reservbatteriet och andra tillgängliga värden från enheten. **GPS** läser bilens position först när du begär en positionsbestämning. Granska platsuppgifter innan du delar en export. Vyerna visar vad enheterna svarade; de pekar inte ensamma ut orsaken till svag signal eller en varning om nödsamtal.
 

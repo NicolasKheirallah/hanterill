@@ -1,8 +1,8 @@
-The **Driving and display** screen reads the instrument cluster, the module the car itself trusts to show the driver what is happening. It answers the questions a buyer or an owner actually asks: how much has this car really been driven, and when is the next service due?
+The **Driving and display** screen reads records from the instrument cluster: trips, mileage, service intervals and display data. Compare its odometer reading with copies stored elsewhere in the car before treating a disagreement as a fault.
 
 ## The odometer verdict
 
-The headline card is the odometer. The car keeps several copies of the mileage in different modules (the cluster, the gateway, the battery module and others), and the screen reads them together:
+The car keeps copies of the mileage in the cluster, gateway, battery module and other control units. The odometer card reads them together:
 
 - It states the cross-check outright, for example *"6 of 6 copies agree"*.
 - If copies disagree, or a tamper flag is set anywhere, the card says so with a warning tone.
@@ -14,18 +14,18 @@ One read brings the cluster's trip computer: trip distance and drive time, avera
 
 ## Service intervals
 
-The cluster tracks the service schedule in its own counters. The screen shows the remaining time and distance to the next service and the 12 V battery care interval, and warns when the cluster's two counter records no longer describe the same service event, which is exactly what you want to know before paying for a service that was already done.
+The cluster tracks service intervals in its own counters. The screen shows the time and distance remaining before the next service and 12 V battery check. It warns when two counter records disagree about the service event; check the car's service history before drawing a conclusion.
 
 ## Display data
 
-The board below the overview gives each of the cluster's display groups a card: its decoded values as stat tiles and its history as a timeline list, with a coverage chip such as *"2 of 72 decoded"*. Groups where nothing has been decoded yet share one honest line instead of filler cards. Charging, messages, driver-assistance and system data follow the same pattern on request: each panel reads the first time you open it rather than putting a burst of traffic on the car at page load.
+Below the overview, each display group has a card for decoded values and a timeline for dated records. A count such as *"2 of 72 decoded"* shows how much of the response Hanterill understands. Groups with no decoded values show that status in one line. The charging, message, driver-assistance and system panels read on first open, so opening this page does not query them all at once.
 
 ## Learned energy use
 
-The car learns its own consumption as it is driven. The screen shows the learned consumption per band (likely per speed band, in kWh/100 km on the test car) together with how often each band has been driven. The bands are numbered because their exact edges are not established; the shape of the data is the point, not the last unit.
+The screen shows the car's learned consumption in numbered bands and how often it recorded each band. On the test car, the values appear to use kWh/100 km and may correspond to speed ranges. The band boundaries have not been confirmed, so use the distribution as context rather than assigning a speed to a particular band.
 
 <Callout kind="note" title="Why some figures are marked *likely*">
-Values whose scale could not yet be confirmed against the car are labelled *likely* rather than shown as facts. That label is a promise: when a figure is displayed without it, the scale has been checked.
+Hanterill marks a value *likely* when the car returned it but its scale has not yet been confirmed. Values shown without that label have a checked scale.
 </Callout>
 
 ## Where to go next

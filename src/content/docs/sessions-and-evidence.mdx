@@ -16,7 +16,7 @@ Other comparison views can show changes in firmware or module inventory when bot
 
 When you connect, Hanterill saves a small set of readings for later comparison. It includes lifetime charge counts, time in each charge band, selected 12 V statistics, the gateway reset log, clocks from two modules and the VIN. The capture takes seconds; it does not start a full scan.
 
-The capture is compared with the previous stored one for the same car, and the **Since your last visit** list on the Sessions screen reports what actually changed: a charge count that grew, a reset counter that advanced, clocks that lost sync, a key that was added, fault codes that were cleared, or new charger alarms. Findings also appear as toasts when you connect. The first capture stores a baseline and says so; a capture from a different car is never diffed against this one. The trend view shows one row per saved session with the deltas chained per vehicle, so repeated visits build a history without you running anything manually.
+Hanterill compares the small capture with the previous one for the same car. **Since your last visit** can then show a higher charge count, a new reset or clocks that lost sync. If the saved sessions contain the relevant reads, comparisons can also show changed keys, cleared faults or charger alarms. The first capture establishes a baseline, and the app never compares captures from different cars. The trend view keeps one row per saved session.
 
 ## Export and privacy
 

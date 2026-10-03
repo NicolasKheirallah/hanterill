@@ -84,9 +84,9 @@ From every module that answers, Hanterill reads a standard set of identity recor
   ["Software number and version", "Shows the exact firmware currently running on the module."],
 ]} />
 
-Because Hanterill collects these identity records from every responding module across the car,
-a single scan produces a complete hardware and software inventory that the
-[Firmware & Inventory](/docs/firmware-and-inventory) screen can compare between service visits.
+Hanterill collects identity records from the modules that answer. The resulting inventory shows
+which hardware and software versions were read, and [Firmware & Inventory](/docs/firmware-and-inventory)
+can compare those records between visits. Check coverage before treating a missing module as removed.
 
 ## Tools inside the ECU Registry screen
 
@@ -96,7 +96,7 @@ When you select an individual module in the **ECUs** screen inside the app, you 
 - **Check security lock status (read-only)**: Query whether the module's protected maintenance levels are currently locked or unlocked without attempting to unlock them or changing anything on the car.
 - **Reset a single module**: Send a targeted module restart command when you need to reboot one specific control unit after troubleshooting, behind an explicit confirmation dialog.
 
-Modules that keep named readout groups (battery, central, gateway, display, climate, charger, engine and drive units) also show those groups as panels on their detail page, and every group is available together on the [Module data](/docs/module-data) screen. The **Gateway** module gets a dedicated screen for its logs: security and diagnostic-access events with their lifetime counts, network-management and Ethernet histories, and the reset log with an odometer reading and reason per reset: a quick way to see whether a car has had an atypical life before any test drive.
+Modules with named readout groups show them on their detail page and in [Module data](/docs/module-data). That includes the battery, gateway, display, climate, charger, engine and drive units. The **Gateway** screen shows security and diagnostic-access events, network and Ethernet histories, and resets with an odometer reading and reason where the car recorded them. Review the dates and coverage before drawing conclusions about a car's past.
 
 ## Separate registries for SPA and SEA1
 

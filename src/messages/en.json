@@ -1,48 +1,48 @@
 {
   "meta": {
     "title": "Hanterill | Vehicle Diagnostics for Volvo & Polestar",
-    "description": "Source-available vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and for personal use."
+    "description": "Connect Hanterill to a supported Volvo or Polestar with an ENET cable. Read battery health, fault codes and live data on your computer; sessions stay local."
   },
   "seo": {
     "home": {
       "title": "Hanterill | Vehicle Diagnostics for Volvo & Polestar",
-      "desc": "Source-available vehicle diagnostics, battery health and live telemetry for supported Volvo and Polestar vehicles over DoIP and UDS. Local, private and free for personal use."
+      "desc": "Connect a supported Volvo or Polestar with an ENET cable. Read battery health, fault codes and live data on your computer; private use is free."
     },
     "features": {
       "title": "Features",
-      "desc": "All seven features: battery health, fault codes, live data, system telemetry, inspection reports, sessions and service functions - what each reads and what it needs."
+      "desc": "See what Hanterill reads from a connected car, how it saves a session and which service actions need confirmation."
     },
     "batteryHealth": {
       "title": "Battery health",
-      "desc": "Read state of health and charge, pack voltage, per-cell-group potentials, imbalance and thermal data reported by the vehicle battery management system."
+      "desc": "Read the battery controller's health and charge estimates beside pack voltage, cell-group values and temperatures. Check support for your car."
     },
     "vehicleDiagnostics": {
       "title": "Vehicle diagnostics",
-      "desc": "ECU discovery over DoIP, identification data, DTCs by status with freeze frames, all-module DID scans, firmware inventory and clearing behind an explicit confirmation."
+      "desc": "Find responding control units, inspect active and stored fault codes, and compare module software versions. Clearing codes requires confirmation."
     },
     "liveData": {
       "title": "Live data",
-      "desc": "Live engineering telemetry: pack voltage and current, battery and inverter temperature, motor torque and 12 V system voltage, with on-demand periodic sampling."
+      "desc": "Plot battery, inverter, motor and 12 V readings while connected. Save a recording and see gaps where the car did not answer."
     },
     "systemTelemetry": {
       "title": "System telemetry",
-      "desc": "Subsystem read views beyond the battery: climate loop, drive units, charging and power, TCAM, steering, service schedule, GPS and the vehicle option map."
+      "desc": "Open separate readouts for charging, drive units, climate and power. Each view shows which readings the car returned."
     },
     "inspectionReports": {
       "title": "Inspection reports",
-      "desc": "A scored pre-purchase inspection built from read-only diagnostics: pack degradation, cell balance, fault severity and odometer consistency, each verdict traceable to a versioned rule."
+      "desc": "Check the battery, fault and odometer evidence behind a used-car inspection result. Missing readings stay visible in the report."
     },
     "sessionsEvidence": {
       "title": "Sessions and evidence",
-      "desc": "Diagnostic sessions archive locally and compare inside the app: fault code diffs, cell-by-cell pack history, firmware before and after, operator notes and exports."
+      "desc": "Save diagnostic scans on your computer. Compare faults, cell readings and firmware between visits or export a session."
     },
     "serviceFunctions": {
       "title": "Service functions",
-      "desc": "Write operations that ship in every release, each behind its own confirmation: fault-code clearing, service routines, adaptations and ECU reset."
+      "desc": "See which service routines the installed build supports on your car. Each action requires confirmation, and the car may refuse it."
     },
     "vehicles": {
       "title": "Supported vehicles",
-      "desc": "Which Volvo, Polestar, Zeekr and Lynk & Co models Hanterill reads today, with the verification status of each platform and what has been tested on real hardware."
+      "desc": "Check tested models and support for each function before relying on a reading. CMA is tested; other platforms have limits."
     },
     "download": {
       "title": "Download",
@@ -54,11 +54,11 @@
     },
     "safety": {
       "title": "Safety",
-      "desc": "How Hanterill separates read-only diagnostics from operations that change the vehicle, and what software access does and does not make safe."
+      "desc": "See which checks only read the car and which service actions change it. Confirm each write separately and follow the vehicle's service instructions."
     },
     "privacy": {
       "title": "Privacy",
-      "desc": "Hanterill is entirely local. No telemetry, no analytics, no account, no backend, no diagnostic data uploaded. VIN and position are redacted where they are not needed."
+      "desc": "Hanterill stores diagnostic sessions on your computer and needs no account. Review VIN and location choices before sharing an export."
     },
     "about": {
       "title": "About Hanterill: an independent diagnostic project",
@@ -128,11 +128,11 @@
     },
     "docs": {
       "title": "Documentation",
-      "desc": "How Hanterill works, in detail. From plugging in a cable to reading battery health, fault codes, live data and the scored inspection report."
+      "desc": "Start with the cable, then learn how to read battery data, faults and reports. The guides explain where each result comes from."
     },
     "troubleshooting": {
       "title": "The car does not appear",
-      "desc": "Fixing a connection that will not come up: ignition state, the RJ45 port, UDP 13400 firewalls, adapter compatibility, and how link recovery works."
+      "desc": "Check the cable, Ethernet adapter, car state and firewall when a vehicle does not appear. Use the connection log to find the failing step."
     },
     "changelog": {
       "title": "Changelog",
@@ -144,11 +144,11 @@
     },
     "walkthrough": {
       "title": "Feature walkthrough",
-      "desc": "The full Hanterill walkthrough: battery health, vehicle diagnostics, live data, subsystem telemetry, inspection reports, sessions and service functions, each with its live demo."
+      "desc": "Try the site's sample instruments and see what each Hanterill feature reads. The examples use fixed data, not a connected car."
     },
     "caseStudy": {
       "title": "Case study: one complete session",
-      "desc": "A representative diagnostic session on the reference Polestar 2: the complaint, codes with status, freeze frames, battery numbers, the verdict and the after-repair diff."
+      "desc": "Follow a sample Polestar 2 session from the first scan to the comparison after repair. Its values are examples, not a diagnosis."
     }
   },
   "body": {
@@ -254,7 +254,7 @@
     },
     "liveData": {
       "hChannels": "Channels",
-      "pChannels": "Choose the readings you want above the chart. Common battery and drive readings are grouped for a quick start. The refresh rate depends on what the car's control units can provide.",
+      "pChannels": "Choose channels above the chart. Battery and drive readings have ready-made groups, and the refresh rate follows what the car's control units can supply.",
       "hReading": "Reading the chart",
       "pReading": "Pause the chart to inspect a point. Gaps in the recording stay visible instead of being filled with invented readings. The trace shown here is simulated, not a reading from a car.",
       "hExport": "Export",
@@ -382,7 +382,7 @@
       "hMeasured": "Measured, not manufactured",
       "pMeasured": "Each field on these pages is a typed observation: value, state, source and decoder version, or a recorded failure. A DID that refuses with a negative response code produces a refusal, not a zero. A parked car with a drifting rotor reading is classified stationary at the display layer without touching the raw value.",
       "hChecks": "Consistency checks",
-      "pChecks": "Ten cross-signal checks compare the vehicle's own readings against each other: pack voltage against the sum of its cells, reported power against calculated, current plausibility while parked, compressor state against refrigerant pressure, axle coolant deltas. They run on the live battery, motor and climate reads. A check that is missing an input records it as insufficient data. None of them claims a fault: the worst verdict is a warning.",
+      "pChecks": "Ten checks compare related readings from the car, including pack voltage against the cell sum, reported power against calculated power and compressor state against refrigerant pressure. They run on current battery, motor and climate data. If an input is missing, the result says there is not enough data; a mismatch produces a warning for you to investigate, not a fault diagnosis.",
       "hBoundaries": "Boundaries",
       "pBoundaries": "Cable-rating decoding stays experimental. Option indexes the catalogue does not name remain numeric. Unknown layouts are kept as exploratory evidence rather than turned into a verdict about your car.",
       "thermalDocs": "Thermal and cell documentation"
@@ -537,7 +537,7 @@
   },
   "pricing": {
     "promise": "Private use is free in every release.",
-    "detail": "The download includes every diagnostic function in the app. There is no account, trial or paid tier. Workshops that charge for this work can ask about a commercial licence.",
+    "detail": "Every diagnostic function in the app comes with the download, with no account or trial to set up. Workshops that charge for this work can ask about a commercial licence.",
     "heading": "Private use costs nothing",
     "body": "Install Hanterill and use the functions your car supports. Private use costs nothing, now or in later releases.",
     "commercial": "Workshops and service providers need a commercial licence if they charge for work done with Hanterill. The private-use licence does not cover that work."
@@ -958,7 +958,7 @@
       "CMA": "Compact Modular Architecture. The tested platform: Polestar 2 and the smaller electric Volvos. 108 cell groups, 27 modules by 4. Combustion and hybrid CMA cars are partially supported through the engine reference lane.",
       "SPA": "Scalable Product Architecture. Partially supported. DoIP connection, module inventory and fault scans have been exercised on a live V90 T6, and the center-tunnel hybrid battery pack layouts ship in the catalogue while deeper battery reads are being verified.",
       "SEA": "Sustainable Experience Architecture. The SEA1 registry, DoIP routing addresses, DID catalogue and cell mapping for EX30-class cars are defined. The definitions still need testing on more cars.",
-      "SPA2": "Second-generation SPA. Different gateway and security model. Under investigation."
+      "SPA2": "Second-generation SPA uses a different gateway and security model; Hanterill's support is still at the research stage."
     },
     "statusNotes": {
       "supported": "Verified runtime implementation. Battery, DTC, ECU identification and live data are exercised regularly.",
@@ -992,7 +992,7 @@
     "serviceModesModule": "Module",
     "serviceModesService": "Service",
     "serviceModesStatus": "Status",
-    "serviceModesNote": "Some service actions are protected by the car's security level. Hanterill can check whether a level is locked, but cannot unlock it. A listed action may therefore be refused by your car. Follow the vehicle's service instructions and use these actions only on a vehicle you are authorized to work on. Reading results does not change the car.",
+    "serviceModesNote": "Some service actions require a security level that Hanterill cannot unlock. The app can check the level, but the car may still refuse a listed action. Follow the vehicle's service instructions and use these actions only on a car you are authorized to work on; ordinary readings do not change the car.",
     "serviceModesSafety": "Safety and boundaries",
     "serviceStatus": {
       "beta": "Confirmation required",
@@ -1166,7 +1166,7 @@
       },
       {
         "q": "Can Hanterill damage my car?",
-        "a": "No. Hanterill transmits read services unless you explicitly confirm a write, and every operation that changes the vehicle asks for confirmation on its own under the safety policy. A build compiled without the write feature refuses those commands outright. High-voltage service still requires the manufacturer's procedures."
+        "a": "Ordinary scans only read the car. A service action can move a part or change a setting, so Hanterill asks you to confirm each one separately. Follow the vehicle's service instructions, especially around high voltage."
       },
       {
         "q": "Is this an official Volvo or Polestar tool?",
@@ -1196,7 +1196,7 @@
       },
       {
         "q": "My car is listed as Partial, Testing or Research. Can I use it?",
-        "a": "You can connect and, on some, read identification data. Do not rely on battery figures or fault interpretation, and do not run service routines. Partial, Testing and Research all mean the decoding still needs testing on more cars."
+        "a": "You may be able to connect and read the vehicle's identity. Check the support label for each function before relying on a result; battery and fault decoding on Testing or Research vehicles still need verification. Do not run an unverified service routine."
       },
       {
         "q": "Is this endorsed by Volvo or Polestar?",
@@ -1617,7 +1617,7 @@
     "safetyLead": "Diagnostic software can read a great deal and change a few things. Hanterill is built so you always know which is which.",
     "privacyEyebrow": "Privacy",
     "privacyTitle": "Entirely local.",
-    "privacyLead": "Hanterill has no backend and no account system. It talks to the vehicle and writes to your disk. That is the entire data path.",
+    "privacyLead": "Hanterill talks to the car and stores readings on your computer. It has no account system or backend for diagnostic sessions.",
     "aboutEyebrow": "About",
     "aboutTitle": "A project for people who want to understand their vehicles.",
     "aboutLead": "Hanterill started as a way to read CMA battery data without a dealer subscription. It grew into a general DoIP and UDS diagnostic tool.",
@@ -1690,19 +1690,19 @@
       },
       "freeze": {
         "title": "Read the conditions behind them",
-        "body": "The BECM saved pack voltage, current, charge level and temperature when its code was set. At 62 % charge, the pack was under load when the module flagged the imbalance. That snapshot gives the code context; it does not identify the cause by itself."
+        "body": "The BECM saved pack voltage, current, charge level and temperature when its code was set. The sample shows a pack at 62 % charge under load when the module flagged an imbalance; that context does not identify the cause by itself."
       },
       "battery": {
         "title": "Read the pack itself",
-        "body": "State of health 94.72 %, cell-group spread 8 mV across 108 potentials, module 14 carrying most of it. The spread is inside tolerance, which is why the car never lit a lamp - and why the dashboard percentage alone could not have told the owner any of this."
+        "body": "The sample shows a 94.72 % health estimate and an 8 mV spread across 108 cell groups, with the largest deviation in module 14. The dashboard's single percentage would not show that distribution."
       },
       "verdict": {
         "title": "Score it",
-        "body": "The inspection report scores the session against the rule set it ships with, and cites the rule behind each verdict. The outcome here is a watch item rather than a fault: no code is active, but one module sits at the edge of the tolerance band and the snapshot shows it moving under load."
+        "body": "The sample inspection report marks the battery finding for review and cites the rule behind it. No fault code is active, but one module sits at the edge of the report's band. The saved snapshot shows the conditions when the code was set; it cannot show how the reading changed over time."
       },
       "after": {
         "title": "Re-scan and diff",
-        "body": "After the module firmware update the workshop applied, a second scan runs and the two sessions compare themselves: which codes cleared, which stayed, which appeared, and how the cell-group spread moved. The archive keeps both, so the comparison does not depend on anyone's notes."
+        "body": "After the workshop's firmware update, save a second scan and compare it with the first. The comparison shows codes that cleared or changed status and any change in cell-group spread. Both sessions remain in the local archive."
       }
     },
     "disclaimer": "Representative session with sample values. Not a live vehicle reading, and not a diagnosis for any specific car.",

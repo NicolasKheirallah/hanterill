@@ -1,19 +1,16 @@
-De flesta vyer svarar på en fråga i taget: är batteriet friskt, eller varför tog 12-voltsbatteriet
-slut över helgen. Vyn **Moduldata** är annorlunda: den visar varje namngiven grupp av
-avläsningar som en modul sparar om sig själv, på ett ställe. Det är närmast appen kommer modulens
-egna servicehandlingar.
+Vyn **Moduldata** samlar varje styrenhets namngivna avläsningsgrupper. Öppna en grupp för att se
+aktuella värden, räknare eller daterade poster utan att leta genom appens andra vyer.
 
 ## Så fungerar en avläsning
 
-Varje modul exponerar numrerade *avläsningsgrupper* – små uppsättningar av relaterade poster som
+Varje styrenhet har numrerade *avläsningsgrupper*: uppsättningar av relaterade poster som
 "laddhistorik", "vakningslogg" eller "12 V-statistik". På vyn **Moduldata**:
 
 - En grupp **läses så snart du öppnar den**, och **Läs igen** i gruppens sidhuvud uppdaterar den.
-- En statusrad i klarspråk talar om hur mycket av läsningen som bar mening, till exempel *"Alla 17
-  värden lästa."* En grupp där inget avkodits säger det i en rad i stället för att visa utfyllnad.
-- Nyckeltal visas som kort, följt av en tabell med raderna som har ett klartextvärde. Rader
-  appen ännu inte kan avkoda hålls ihopvikta med orsaken i ord – räkneraden rapporterar ändå hur
-  mycket av läsningen som bar mening.
+- En statusrad visar täckningen, till exempel *"Alla 17 värden lästa."* Om inget har avkodats står
+  det tydligt.
+- Viktiga värden visas först, följda av en tabell med avkodade värden. Rader som appen inte kan
+  tolka hålls ihopvikta med en förklaring; de ingår i täckningsräkningen.
 - Råa identifierare (DID-nummer, payloadbyte) stör aldrig vyn; de sparas i JSON-filen om du
   arkiverar sessionen.
 
@@ -39,17 +36,17 @@ drivenhetsgrupperna på **Drivlina** – så att du sällan behöver lämna vyn 
 
 ## Historiker och tidslinjer
 
-Många grupper är *historiker*: daterade händelser i stället för enskilda tal. Varje händelse åldras
-mot modulens egen klocka, så en låshändelse visas som en verklig tidpunkt och en reset-loggpost
-bär körmätarställningen den hände vid. Strukturerade händelser säger vad de var i ord – en låsning
-eller upplåsning, en vakning med orsak, en reset med räknare – i stället för en bar kod.
+Många grupper innehåller daterade händelser. Hanterill använder styrenhetens klocka för att
+tidsätta låsningar och väckningar; en omstartspost kan också innehålla mätarställningen vid
+tillfället. När bilen lämnar tillräckligt med uppgifter visar vyn händelsens namn och orsak i
+stället för bara en kod.
 
-## Vad vyn inte hittar på
+## Obekräftade värden
 
-<Callout kind="caution" title="Avläsningar behåller sina ärliga etiketter">
-Värden appen ännu inte kan avkoda förblir oavkodade, timmar vars skala inte bekräftats markeras
-*sannolikt*, och histogrambin utan fastställda gränser numreras i stället för att märkas med
-enheter. Ett omdöme du kan handla efter säger det; allt annat säger vad som saknas.
+<Callout kind="caution" title="Kontrollera etiketten innan du använder ett värde">
+Appen lämnar okända värden oavkodade. Timmar med obekräftad skala märks *sannolikt*, och
+histogramintervall utan fastställda gränser numreras. Kontrollera täckning och källa innan du
+agerar utifrån ett resultat.
 </Callout>
 
 Vissa grupper kräver modulens utökade diagnostiksession; de har en **utökad**-växel i gruppens

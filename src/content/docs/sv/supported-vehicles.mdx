@@ -3,38 +3,39 @@ Stödet i Hanterill varierar mellan bilmodeller. En bil kan gå att ansluta äve
 ## Vad supportnivåerna betyder
 
 <SpecList rows={[
-  ["Verifierad (CMA eldrivna fordon)", "Bekräftat på riktiga produktionsfordon. Alla 44 aktiva styrenheter på eldrivna fordon, battericeller, temperaturer, felkoder, livedata och servicefunktioner är verifierade mot faktisk fordonshårdvara."],
-  ["Under utprovning / Provisorisk (SPA och SEA1)", "Styrmodulregister, batterilayouter och givardefinitioner är inbyggda i appen. Grundläggande identifiering, felkoder och mätvärden fungerar, medan vissa enskilda skalningsformler fortfarande dubbelkontrolleras på fler fordonsmodeller."],
-  ["Referens (CMA förbränning / hybrid)", "De fem ytterligare drivline- och avgasreningsmodulerna i det fullständiga CMA-registret på 49 styrenheter finns katalogiserade tillsammans med en dedikerad motorvy för bensin- och hybridmodeller."],
+  ["Verifierad", "Anslutning, identifiering av styrenheter, felkodsskanning, batterivärden och realtidsdata har testats på ett riktigt referensfordon. Se stödstatus för varje åtgärd innan du kör en servicerutin."],
+  ["Delvis stöd", "Grundläggande diagnostik har testats på ett riktigt fordon, men vissa batteri- eller systemspecifika avläsningar behöver verifieras på fler bilar."],
+  ["Under testning", "Styrmodulregister, diagnosadresser och batterilayouter finns i appen. Behandla värdena som preliminära tills de har kontrollerats på fler fordon och mjukvaruversioner."],
+  ["Forskning", "Plattformen undersöks fortfarande. En gateway kan svara utan att styrenhets- och batteriavkodningen är redo för vanlig diagnostik."],
 ]} />
 
 ## 1. CMA (Compact Modular Architecture)
 
 **CMA** är referensplattformen som Hanterill först utvecklades och verifierades på.
 
-- **Modeller**: Polestar 2, Volvo XC40 (inklusive XC40 Recharge / EX40), Volvo C40 Recharge / EC40, Lynk & Co 01, 02, 03 och 05 samt Geely Xingyue / Tugella.
-- **Styrmodulregister**: 49 katalogiserade styrenheter (44 aktiva på eldrivna fordon samt 5 referensmoduler för hybrid, förbränningsmotor och luftfjädring).
-- **Batterilayouter**: Stöder 108-cellspaketet (78 kWh nominellt, 27 moduler), 96-cellspaketet (69 kWh Standard Range, 24 moduler) samt det nyare 82 kWh-paketet.
-- **Vad som är verifierat**: Fullständig batteridiagnostik på cellnivå, laddningsvy, beräkning av vilodränering, felkodsläsning och rensning med ögonblicksbilder, livedata, delsystemsvyer, mjukvaruinventering, inspektionsrapport (0 till 100) samt 16 servicefunktioner.
+- **Eldrivna modeller med verifierat stöd**: Polestar 2, Volvo XC40 Recharge / EX40 och Volvo C40 Recharge / EC40. Batterivärden, felkodsskanning, realtidsdata och delsystemsvyer har testats på referensfordon.
+- **CMA-katalogen**: 49 styrenheter finns katalogiserade. Vilka som svarar beror på bilens utrustning; fem poster gäller drivlinor eller tillval som inte finns i varje elbil.
+- **Batterilayouter**: De eldrivna modellerna har bland annat paket med 96 eller 108 cellgrupper. Layouten väljs utifrån bilens avläsningar.
+- **Förbränning och laddhybrid**: Volvo XC40 med dessa drivlinor och Lynk & Co 01 / 02 / 05 har delvis stöd genom [Motordiagnostik](/docs/engine-lane). Hybridbatterierna behöver testas på fler bilar.
 
 ## 2. SPA (Scalable Product Architecture)
 
 **SPA** omfattar de större 60- och 90-serierna från Volvo och Polestar 1.
 
-- **Modeller**: Volvo XC90 (2016+), S90, V90, V90 Cross Country, XC60 (2018+), S60 (2019+), V60, V60 Cross Country samt Polestar 1.
+- **Modeller**: Volvo XC60, S60, V60, S90, V90 och XC90, inklusive T8 Recharge-laddhybrider.
 - **Styrmodulregister**: 41 katalogiserade styrenheter i ett eget SPA-register (skilt från CMA).
-- **Batterilayouter**: Stöder plug-in-hybridpaketen (Twin Engine / Recharge T6 och T8) med 96 celler, 102 celler och det nyare långräckviddspaketet med 108 celler.
-- **Vad som fungerar idag**: DoIP-identifiering, chassinummer (VIN) och fordonsprofil, felkodsläsning och rensning över alla 41 styrenheter, mjukvaruinventering, DID-utforskare, motorvy för förbrännings- och hybridmodeller samt provisorisk batterihälsa.
+- **Vad som testats på bil**: DoIP-anslutning, fordonsidentitet, inventering av svarande styrenheter och felkodsskanning på en Volvo V90 T6 från 2018.
+- **Batteriet**: Layouter med 96 och 102 cellgrupper finns i katalogen. Djupare avläsningar på T8-hybrider behöver fortfarande verifieras på fler bilar.
 
 ## 3. SEA1 (Sustainable Experience Architecture)
 
 **SEA1** är den moderna elbilsplattformen som används i nyare kompakta och medelstora eldrivna
 fordon.
 
-- **Modeller**: Volvo EX30, Polestar 4, Zeekr X, Zeekr 001 och Smart #1 / #3.
+- **Modeller**: Volvo EX30, Polestar 4 och Zeekr 001 / 009 / X.
 - **Styrmodulregister**: 25 katalogiserade styrenheter i ett eget SEA1-register.
 - **Batterilayouter**: Katalogen innehåller EX30 Standard Range med LFP (litiumjärnfosfat, 51 kWh och 120 cellgrupper) och Extended Range med NMC (nickel, mangan och kobolt, 69 kWh och 107 cellgrupper). Appen väljer layout från bilens värden. Det är inte ett direkt test av batteriets kemi, och avläsningar på denna plattform är fortfarande preliminära.
-- **Vad som fungerar idag**: DoIP-anslutning, chassinummer (VIN), plattformsidentifiering, felkodsskanning över 25 styrenheter, mjukvaruinventering samt provisorisk batteri- och cellavläsning.
+- **Vad som testats på bil**: Direkt anslutning till gatewayen på en Zeekr 001 från 2024. Styrenhets- och batterikatalogerna finns i appen, men övriga avläsningar behöver testas vidare.
 
 ## Plattformar som ännu inte är kartlagda (SPA2)
 
