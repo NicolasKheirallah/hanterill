@@ -1,0 +1,18 @@
+--- a/src/ipc/useOperation.ts
++++ b/src/ipc/useOperation.ts
+@@ -163,9 +163,12 @@
+   useEffect(() => {
+     reducerRef.current = new TerminalEventReducer({
+       quietWindowMs: OPERATION_HOOK_QUIET_MS,
+-      // A batch or lifecycle event says nothing about liveness on this path:
+-      // only a progress-bearing event re-arms the stall window.
+-      provesLiveness: isProgressSignal,
++      // Live samples prove progress even when the stream emits no scan progress.
++      provesLiveness: (envelope) =>
++        isProgressSignal(envelope) ||
++        (activeCommandRef.current?.type === 'startLive' &&
++          envelope.event.type === 'observationBatch' &&
++          envelope.event.count > 0),
+       cancel: (operationId) => {
+         void sendCommand({ type: 'cancel', operationId }).catch(() => undefined);
+       },
