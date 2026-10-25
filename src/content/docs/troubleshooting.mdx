@@ -17,11 +17,11 @@ Look at the RJ45 port on your computer or USB-to-Ethernet adapter. Within a coup
 
 ## 3. Does the app say "Waiting for network address (DHCP)"?
 
-When you first plug the Ethernet cable in, your computer spends 5 to 10 seconds asking if a home router (DHCP server) is on the wire. Because a car does not run a home router, your computer waits briefly and then assigns itself a **link-local address** starting with `169.254.x.x`.
+On Windows and macOS, when you first plug the Ethernet cable in, your computer spends 5 to 10 seconds asking if a home router (DHCP server) is on the wire. Because a car does not run a home router, your computer waits briefly and then assigns itself a **link-local address** starting with `169.254.x.x`.
 
 - **What to do**: Wait about 10 seconds after plugging the cable in until the adapter on the **Connection** screen shows an address starting with `169.254.`, then click **Find vehicle**.
-- **Do not set a `192.168.x.x` static IP**: Leave your Ethernet adapter set to **Automatic (DHCP)**. Setting a home-style `192.168.x.x` address prevents your computer from talking to the car's `169.254.x.x` gateway.
-- **On Linux**: NetworkManager does not fall back to a link-local address on its own. Set the wired connection's IPv4 method to **Link-Local Only** once (for example `nmcli connection modify "Wired connection 1" ipv4.method link-local`), then unplug and replug the cable.
+- **Use a link-local address**: A home-style `192.168.x.x` address does not put your computer on the car's `169.254.x.x` network.
+- **On Linux**: Depending on the network configuration, the wired adapter may never receive a link-local address automatically. If it has no `169.254.x.x` address, or only `lo` / `127.0.0.1` appears in Hanterill, follow [Linux Ethernet setup](/docs/installation#linux-set-up-the-ethernet-address). The guide covers a saved NetworkManager setting and a temporary address for testing.
 
 ## 4. Is a VPN or firewall blocking port 13400?
 

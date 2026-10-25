@@ -7,7 +7,7 @@ Hanterill connects to supported cars through a standard ENET cable. The same cab
 When you plug an ENET cable between your car's OBD-II port and your computer's Ethernet adapter, three things happen in order:
 
 1. **The car detects the connection**: The same ENET cable connects supported models to your computer. Keep the car awake so its diagnostic connection is available.
-2. **Both sides pick local network addresses automatically**: Neither your laptop nor your car runs a home router (DHCP server). Instead, after a few seconds of waiting, both your computer and the car automatically pick **link-local IP addresses** in the `169.254.x.x` range. Your computer's operating system will often call this a "Self-assigned IP" or "Unidentified network with no internet access". That is completely normal and is exactly what the car expects.
+2. **Both sides need local network addresses**: Neither your laptop nor your car runs a home router (DHCP server). On Windows and macOS, after a few seconds of waiting, both your computer and the car automatically pick **link-local IP addresses** in the `169.254.x.x` range. Your computer's operating system will often call this a "Self-assigned IP" or "Unidentified network with no internet access". That is normal. On Linux, you may need to [set up the wired adapter's link-local address](/docs/installation#linux-set-up-the-ethernet-address) first.
 3. **Hanterill opens the connection**: The car's gateway accepts the connection and passes requests to the battery, brake and other control units.
 
 <ProtocolFlow
@@ -37,7 +37,7 @@ While connecting, the **Connection** screen shows a live, plain-language status 
 
 | Status shown in the app | What it means in plain language | What to do |
 | :--- | :--- | :--- |
-| **Waiting for network address (DHCP)** | Your computer just detected the cable and is still waiting a few seconds to see if a home router is present before picking its `169.254.x.x` address. | Wait 5 to 10 seconds and click **Find vehicle** again. |
+| **Waiting for network address (DHCP)** | Your computer just detected the cable and is still waiting a few seconds to see if a home router is present before picking its `169.254.x.x` address. | Wait 5 to 10 seconds and click **Find vehicle** again. On Linux, check [Ethernet setup](/docs/installation#linux-set-up-the-ethernet-address) if no address appears. |
 | **Link down / No carrier** | The Ethernet adapter sees no electrical signal from the car. | Check that the car is awake, both plugs are seated and your computer's Ethernet adapter is connected. |
 | **Port closed on gateway** | The car is on the network, but its diagnostic port is currently asleep or refused the connection. | Wake the dashboard (press the brake pedal or turn ignition on) and try again. |
 | **Unreadable traffic** | Data arrived on the wire that is not valid diagnostic traffic. | Disconnect any VPN client or virtual network bridge that may be intercepting local traffic. |

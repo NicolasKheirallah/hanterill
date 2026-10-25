@@ -28,6 +28,74 @@ Open Hanterill from the Start menu after installation. Windows may show a securi
 
 Install the package that matches your distribution, then open Hanterill from your application menu. An AppImage is a portable file; your file manager may ask you to mark it as executable before it will open.
 
+## Linux: set up the Ethernet address
+
+Hanterill needs your wired adapter to have an IPv4 address in the `169.254.x.x` range. On Ubuntu and other Linux systems, you may need to configure this yourself, even when the cable is connected and the link light blinks.
+
+In [issue #11](https://github.com/NicolasKheirallah/hanterill/issues/11), an Ubuntu user had a working USB Ethernet link but the adapter did not appear in Hanterill. Adding a link-local address made it appear and allowed data reads. Seeing only `lo` / `127.0.0.1` is a clue: that is the computer's internal loopback interface, not the cable to the car.
+
+### 1. Find the wired adapter and check its address
+
+Plug in the cable and wake the car, then open a terminal:
+
+```bash
+ip -br link
+```
+
+Look for the wired adapter, often named `enx…`, `enp…` or `eth0`. The commands below use `enx00e04c681f03` as an example. Replace it with your own adapter name each time; do not use `lo` or your Wi-Fi interface.
+
+```bash
+ip -4 addr show dev enx00e04c681f03
+```
+
+Look for an `inet 169.254.../16` line. If it is already there, select that adapter in Hanterill and choose **Find vehicle**. If there is no IPv4 address, use one of the two options below. If the link shows `NO-CARRIER`, check the cable and wake the car first.
+
+### 2. Save the setting with NetworkManager
+
+These commands apply to systems managed by NetworkManager, including many Ubuntu desktop installations. Find the connection profile attached to your wired adapter:
+
+```bash
+nmcli -f NAME,DEVICE connection show
+```
+
+The profile name and adapter name are different things. Replace `Wired connection 1` below with the profile name from the `NAME` column for your wired adapter:
+
+```bash
+nmcli connection modify "Wired connection 1" ipv4.method link-local ipv6.method link-local
+nmcli connection up "Wired connection 1"
+```
+
+If NetworkManager reports insufficient permissions, repeat the command with `sudo`. If `nmcli` is unavailable or NetworkManager is not running, use your distribution's network settings to select IPv4 **Link-Local Only**, or use the temporary option below.
+
+The setting stays in this profile for future car connections. If you also use the profile for a home or office network, record its original settings before changing them and restore them afterwards. If both IPv4 and IPv6 originally used automatic addressing, restore them with:
+
+```bash
+nmcli connection modify "Wired connection 1" ipv4.method auto ipv6.method auto
+nmcli connection up "Wired connection 1"
+```
+
+### Alternative: add an address for a test session
+
+To try the fix without editing a saved connection profile, add the address that resolved issue #11:
+
+```bash
+sudo ip addr add 169.254.10.10/16 dev enx00e04c681f03
+```
+
+Use this only on the adapter connected directly to the car, and only if that address is not already in use on the link. This is temporary; it is not saved across reboots and your network manager may remove it when reconnecting. To remove it yourself:
+
+```bash
+sudo ip addr del 169.254.10.10/16 dev enx00e04c681f03
+```
+
+### 3. Verify and connect
+
+Run `ip -4 addr show dev enx00e04c681f03` again and confirm an `inet 169.254.../16` line appears. Return to Hanterill's **Connection** screen, refresh the adapter list if needed, select the wired adapter and choose **Find vehicle**.
+
+If the address is present but the car still does not answer, continue with [Troubleshooting](/docs/troubleshooting). This setup gives the computer a suitable network address; check [Supported vehicles](/docs/supported-vehicles) for what Hanterill can read from your model.
+
+For the network settings used here, see the [NetworkManager IPv4 reference](https://networkmanager.dev/docs/api/latest/settings-ipv4.html) and [nmcli manual](https://networkmanager.dev/docs/api/latest/nmcli.html).
+
 ## Check that installation worked
 
 Open the **Connection** screen. With no car plugged in you should still see your wired Ethernet adapters listed with a plain-language verdict for each (Wi-Fi and virtual adapters are filtered out), and a **Link down** style status while nothing is connected to the cable. That means the app is installed correctly and can see your network hardware.

@@ -11,15 +11,15 @@ Om du klickar på **Skanna nätverk** på skärmen **Anslutning** och listan fö
 
 ### Vänta 10 sekunder på länk-lokal IP-adress (`169.254.x.x`)
 
-När du kopplar in ENET-kabeln väntar datorn först några sekunder på en router (DHCP). När den
+När du kopplar in ENET-kabeln på Windows eller macOS väntar datorn först några sekunder på en router (DHCP). När den
 märker att ingen router finns tilldelar den automatiskt en länk-lokal adress som börjar på
 `169.254.x.x`. Om du klickade på **Skanna nätverk** samma sekund som du satte i kabeln, vänta 10
 sekunder och prova igen.
 
-- **På Linux**: NetworkManager väljer inte en länk-lokal adress av sig själv. Ställ in IPv4-metoden
-  för den trådbundna anslutningen till **endast länk-lokal** en gång (till exempel
-  `nmcli connection modify "Wired connection 1" ipv4.method link-local`) och koppla sedan ur och i
-  kabeln igen.
+- **På Linux**: Beroende på nätverksinställningarna kanske den trådbundna adaptern inte får en
+  länk-lokal adress automatiskt. Om den saknar en `169.254.x.x`-adress, eller om bara
+  `lo` / `127.0.0.1` visas i Hanterill, följ [Ethernet-inställningar för Linux](/docs/installation#linux-ställ-in-ethernet-adressen).
+  Guiden visar en sparad NetworkManager-inställning och en tillfällig adress för test.
 
 ### Kontrollera brandvägg och lokalt nätverkstillstånd
 

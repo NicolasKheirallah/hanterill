@@ -12,11 +12,11 @@ saker, i ordning:
 
 1. **Bilen upptäcker anslutningen**: Samma ENET-kabel förbinder modellerna som stöds med din
    dator. Håll bilen vaken så att dess diagnostiska anslutning är tillgänglig.
-2. **Båda sidor väljer lokala nätverksadresser automatiskt**: Varken din dator eller bilen kör en
-   hemrouter (DHCP-server). I stället väljer datorn och bilen efter några sekunder automatiskt
+2. **Båda sidor behöver lokala nätverksadresser**: Varken din dator eller bilen kör en
+   hemrouter (DHCP-server). På Windows och macOS väljer datorn och bilen efter några sekunder automatiskt
    **länk-lokala IP-adresser** i intervallet `169.254.x.x`. Operativsystemet kallar det ofta
-   "Självvald adress" eller "Oidentifierat nätverk utan internetåtkomst". Det är helt normalt och
-   exakt vad bilen förväntar sig.
+   "Självvald adress" eller "Oidentifierat nätverk utan internetåtkomst". Det är normalt. På Linux kan du först behöva
+   [ställa in adapterns länk-lokala adress](/docs/installation#linux-ställ-in-ethernet-adressen).
 3. **Hanterill öppnar anslutningen**: Bilens gateway accepterar anslutningen och skickar
    förfrågningarna vidare till batteri-, broms- och övriga styrenheter.
 

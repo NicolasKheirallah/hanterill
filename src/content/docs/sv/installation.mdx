@@ -28,6 +28,74 @@ Datorn kan be dig godkänna en app som laddats ned från internet. Kontrollera a
 
 Installera paketet som passar din distribution och öppna sedan Hanterill från programmenyn. En AppImage är en portabel fil. Filhanteraren kan be dig göra den körbar innan den öppnas.
 
+## Linux: ställ in Ethernet-adressen
+
+Hanterill behöver en IPv4-adress i intervallet `169.254.x.x` på din trådbundna adapter. På Ubuntu och andra Linux-system kan du behöva ställa in detta själv, även om kabeln är ansluten och länklampan blinkar.
+
+I [ärende #11](https://github.com/NicolasKheirallah/hanterill/issues/11) hade en Ubuntu-användare en fungerande USB-Ethernet-länk, men adaptern visades inte i Hanterill. När användaren lade till en länk-lokal adress visades adaptern och data kunde läsas. Om du bara ser `lo` / `127.0.0.1` är det en ledtråd: det är datorns interna loopback-gränssnitt, inte kabeln till fordonet.
+
+### 1. Hitta den trådbundna adaptern och kontrollera adressen
+
+Anslut kabeln, väck fordonet och öppna en terminal:
+
+```bash
+ip -br link
+```
+
+Leta efter den trådbundna adaptern, som ofta heter `enx…`, `enp…` eller `eth0`. Kommandona nedan använder `enx00e04c681f03` som exempel. Byt ut namnet mot din egen adapters namn varje gång. Använd inte `lo` eller Wi-Fi-gränssnittet.
+
+```bash
+ip -4 addr show dev enx00e04c681f03
+```
+
+Leta efter en rad med `inet 169.254.../16`. Om den redan finns, välj adaptern i Hanterill och starta sökningen efter fordon. Om IPv4-adress saknas, använd ett av alternativen nedan. Om länken visar `NO-CARRIER`, kontrollera kabeln och väck fordonet först.
+
+### 2. Spara inställningen med NetworkManager
+
+Kommandona gäller system som hanteras av NetworkManager, bland annat många Ubuntu-installationer för datorer. Hitta anslutningsprofilen för din trådbundna adapter:
+
+```bash
+nmcli -f NAME,DEVICE connection show
+```
+
+Profilnamnet och adapternamnet är olika saker. Byt ut `Wired connection 1` nedan mot profilnamnet i kolumnen `NAME` för din trådbundna adapter:
+
+```bash
+nmcli connection modify "Wired connection 1" ipv4.method link-local ipv6.method link-local
+nmcli connection up "Wired connection 1"
+```
+
+Om NetworkManager säger att behörighet saknas, kör kommandot igen med `sudo`. Om `nmcli` saknas eller NetworkManager inte körs, välj IPv4 **endast länk-lokal** i distributionens nätverksinställningar eller använd det tillfälliga alternativet nedan.
+
+Inställningen sparas i profilen för kommande fordonsanslutningar. Om du även använder profilen för hem- eller kontorsnätverket, anteckna de ursprungliga inställningarna innan du ändrar dem och återställ dem efteråt. Om både IPv4 och IPv6 tidigare använde automatisk adresstilldelning återställer du dem med:
+
+```bash
+nmcli connection modify "Wired connection 1" ipv4.method auto ipv6.method auto
+nmcli connection up "Wired connection 1"
+```
+
+### Alternativ: lägg till en adress för ett test
+
+För att prova utan att ändra en sparad anslutningsprofil kan du lägga till adressen som löste ärende #11:
+
+```bash
+sudo ip addr add 169.254.10.10/16 dev enx00e04c681f03
+```
+
+Använd detta enbart på adaptern som är direkt ansluten till fordonet, och bara om adressen inte redan används på länken. Adressen sparas inte efter omstart, och nätverkshanteraren kan ta bort den vid återanslutning. Du kan själv ta bort den med:
+
+```bash
+sudo ip addr del 169.254.10.10/16 dev enx00e04c681f03
+```
+
+### 3. Kontrollera och anslut
+
+Kör `ip -4 addr show dev enx00e04c681f03` igen och kontrollera att en rad med `inet 169.254.../16` visas. Gå tillbaka till **Anslutning** i Hanterill, uppdatera adapterlistan vid behov, välj den trådbundna adaptern och starta sökningen efter fordon.
+
+Om adressen finns men fordonet ändå inte svarar, fortsätt med [Felsökning](/docs/troubleshooting). Inställningen ger datorn en lämplig nätverksadress. Se [Fordon som stöds](/docs/supported-vehicles) för vad Hanterill kan läsa från din modell.
+
+Inställningarna beskrivs i [NetworkManagers IPv4-referens](https://networkmanager.dev/docs/api/latest/settings-ipv4.html) och [manualen för nmcli](https://networkmanager.dev/docs/api/latest/nmcli.html).
+
 ## Kontrollera installationen
 
 Öppna vyn **Anslutning**. Även utan bil inkopplad ska du se datorns trådbundna Ethernet-adaptrar
