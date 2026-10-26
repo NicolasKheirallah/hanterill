@@ -32,7 +32,7 @@ Install the package that matches your distribution, then open Hanterill from you
 
 Hanterill needs your wired adapter to have an IPv4 address in the `169.254.x.x` range. On Ubuntu and other Linux systems, you may need to configure this yourself, even when the cable is connected and the link light blinks.
 
-In [issue #11](https://github.com/NicolasKheirallah/hanterill/issues/11), an Ubuntu user had a working USB Ethernet link but the adapter did not appear in Hanterill. Adding a link-local address made it appear and allowed data reads. Seeing only `lo` / `127.0.0.1` is a clue: that is the computer's internal loopback interface, not the cable to the car.
+If Hanterill only shows `lo` / `127.0.0.1`, it is showing your computer's internal loopback interface. Check the wired adapter's address using the steps below.
 
 ### 1. Find the wired adapter and check its address
 
@@ -76,7 +76,7 @@ nmcli connection up "Wired connection 1"
 
 ### Alternative: add an address for a test session
 
-To try the fix without editing a saved connection profile, add the address that resolved issue #11:
+To test the connection without editing a saved profile, add a temporary address:
 
 ```bash
 sudo ip addr add 169.254.10.10/16 dev enx00e04c681f03

@@ -32,7 +32,7 @@ Installera paketet som passar din distribution och öppna sedan Hanterill från 
 
 Hanterill behöver en IPv4-adress i intervallet `169.254.x.x` på din trådbundna adapter. På Ubuntu och andra Linux-system kan du behöva ställa in detta själv, även om kabeln är ansluten och länklampan blinkar.
 
-I [ärende #11](https://github.com/NicolasKheirallah/hanterill/issues/11) hade en Ubuntu-användare en fungerande USB-Ethernet-länk, men adaptern visades inte i Hanterill. När användaren lade till en länk-lokal adress visades adaptern och data kunde läsas. Om du bara ser `lo` / `127.0.0.1` är det en ledtråd: det är datorns interna loopback-gränssnitt, inte kabeln till fordonet.
+Om Hanterill bara visar `lo` / `127.0.0.1` ser du datorns interna loopback-gränssnitt. Kontrollera den trådbundna adapterns adress med stegen nedan.
 
 ### 1. Hitta den trådbundna adaptern och kontrollera adressen
 
@@ -76,7 +76,7 @@ nmcli connection up "Wired connection 1"
 
 ### Alternativ: lägg till en adress för ett test
 
-För att prova utan att ändra en sparad anslutningsprofil kan du lägga till adressen som löste ärende #11:
+För att testa anslutningen utan att ändra en sparad profil kan du lägga till en tillfällig adress:
 
 ```bash
 sudo ip addr add 169.254.10.10/16 dev enx00e04c681f03
